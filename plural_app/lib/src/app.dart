@@ -14,9 +14,9 @@ class MyApp extends StatelessWidget {
         title: 'Plural App',
         theme: ThemeData(
           useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.black),
         ),
-        home: MyHomePage(),
+        home: PluralAppHomePage(),
       ),
     );
   }
@@ -46,7 +46,7 @@ class MyAppState extends ChangeNotifier {
 
 }
 
-class MyHomePage extends StatelessWidget {
+class PluralAppHomePage extends StatelessWidget {
 
   final children = [
     TimelineTile(
@@ -82,10 +82,124 @@ class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView(
-        padding: const EdgeInsets.all(8),
-        children: children,
+      body: Center(
+        child: Column(
+          children: [
+            SizedBox(
+              height: 50,
+            ),
+            Row(
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: Container(
+                    color: Colors.green,
+                    child: Text("green"),
+                  ),
+                ),
+                Expanded(
+                  flex: 6,
+                  child: Column(
+                    children: [
+                      Text(
+                          "Hi, Dedie",
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20.0,
+                          ),
+                          textAlign: TextAlign.center,
+                      ),
+                      Text(
+                          "2024.09.03",
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.center,
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                    ],
+                  )
+                ),
+                Expanded(
+                  flex: 2,
+                  child: Container(
+                    color: Colors.blue,
+                    child: Text("blue"),
+                  ),
+                ),
+              ],
+            ),
+            Expanded(
+              child: Row(
+                children: [
+                  Expanded(
+                    child: ListView(
+                      padding: const EdgeInsets.all(8),
+                      children: children,
+                    ),
+                  ),
+                ],
+              )),
+            Row(
+              children: [
+                Expanded(
+                  child: _PluralBottomAppBar()
+                ),
+              ],
+            ),
+            SizedBox(
+              height: 10,
+            )
+          ],
         ),
+      ),
+    );
+  }
+}
+
+class _PluralBottomAppBar extends StatelessWidget {
+
+  @override
+  Widget build(BuildContext context) {
+    return BottomAppBar(
+      color: Theme.of(context).colorScheme.primary,
+      child: IconTheme(
+        data: IconThemeData(color: Theme.of(context).colorScheme.onPrimary),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            FloatingActionButton(
+              onPressed: () {},
+              tooltip: "Close Menu",
+              backgroundColor: Colors.black,
+              foregroundColor: Colors.white,
+              shape: CircleBorder(),
+              child: const Icon(Icons.close),
+            ),
+            IconButton(
+              onPressed: () {},
+              icon: const Icon(Icons.library_add),
+              tooltip: "Add Ask",
+            ),
+            IconButton(
+              onPressed: () {},
+              icon: const Icon(Icons.settings),
+              tooltip: "Settings",
+            ),
+            IconButton(
+              onPressed: () {},
+              icon: const Icon(Icons.person_add_alt_rounded),
+              tooltip: "Invite Users",
+            ),
+            IconButton(
+              onPressed: () {},
+              icon: const Icon(Icons.grass),
+              tooltip: "Add Garden",
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
