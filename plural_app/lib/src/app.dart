@@ -49,33 +49,25 @@ class MyAppState extends ChangeNotifier {
 class PluralAppHomePage extends StatelessWidget {
 
   final children = [
-    TimelineTile(
-      node: TimelineNode.simple(),
-      oppositeContents: Card(
-        child: Container(
-          padding: const EdgeInsets.all(50.0),
-          child: Text('Test Card Dedie'),
-          ),
-        ),
-      ),
-      TimelineTile(
-        node: TimelineNode.simple(),
-        oppositeContents: Card(
-          child: Container(
-            padding: const EdgeInsets.all(50.0),
-            child: Text('Test Card Dedie'),
-            ),
-        ),
-      ),
-      TimelineTile(
-        node: TimelineNode.simple(),
-        contents: Card(
-          child: Container(
-            padding: const EdgeInsets.all(50.0),
-            child: Text('Test Card Dedie'),
-            ),
-        ),
-      ),
+    SizedBox(
+      height: 25,
+      child: SolidLineConnector(),
+    ),
+    _ComponentRow(),
+    SizedBox(
+      height: 50,
+      child: SolidLineConnector(),
+    ),
+    _ComponentRow(),
+    SizedBox(
+      height: 50,
+      child: SolidLineConnector(),
+    ),
+    _ComponentRow(),
+    SizedBox(
+      height: 25,
+      child: SolidLineConnector(),
+    ),
   ];
 
 
@@ -158,6 +150,106 @@ class PluralAppHomePage extends StatelessWidget {
   }
 }
 
+class _ComponentRow extends StatelessWidget {
+  const _ComponentRow({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return TimelineTile(
+      node: TimelineNode.simple(),
+      contents: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          elevation: 5.0,
+          padding: const EdgeInsets.all(15.0),
+          shape: CircleBorder(),
+        ),
+        onPressed: () => _dialogBuilder(context),
+        child: Icon(
+          Icons.edit,
+        )
+      ),
+      oppositeContents: SizedBox(
+        height: 185.0,
+        width: 300.0,
+        child: GestureDetector(
+          onTap: () => _dialogBuilder(context),
+          child: Card(
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text("2024.09.13"),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text(
+                        "10 days left",
+                        style: TextStyle(fontWeight: FontWeight.bold)
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 25
+                  ),
+                  Wrap(
+                    runSpacing: 20.0,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                            Flexible(
+                              child: Text(
+                                "Need help with veggies and fruits this week hiii :(",
+                                textAlign: TextAlign.end,
+                              ),
+                            ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                            OutlinedButton(
+                              onPressed: null,
+                              child: Text("Groceries"),
+                            ),
+                            Icon(Icons.arrow_drop_down_rounded),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            ),
+        ),
+      ),
+      );
+  }
+
+  Future _dialogBuilder(BuildContext context) {
+      return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return SimpleDialog(
+            title: Text("Dialog Title"),
+            children: [
+              SimpleDialogOption(
+                onPressed: () { Navigator.of(context).pop(); },
+                child: Text("Click to close"),
+              )
+            ],
+          );
+        });
+  }
+}
+
 class _PluralBottomAppBar extends StatelessWidget {
 
   @override
@@ -167,7 +259,7 @@ class _PluralBottomAppBar extends StatelessWidget {
       child: IconTheme(
         data: IconThemeData(color: Theme.of(context).colorScheme.onPrimary),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             FloatingActionButton(
               onPressed: () {},
