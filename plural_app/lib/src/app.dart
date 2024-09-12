@@ -132,7 +132,8 @@ class PluralAppHomePage extends StatelessWidget {
                     ),
                   ),
                 ],
-              )),
+              )
+              ),
             Row(
               children: [
                 Expanded(
@@ -141,7 +142,7 @@ class PluralAppHomePage extends StatelessWidget {
               ],
             ),
             SizedBox(
-              height: 10,
+              height: 35,
             )
           ],
         ),
@@ -251,46 +252,96 @@ class _ComponentRow extends StatelessWidget {
 }
 
 class _PluralBottomAppBar extends StatelessWidget {
+  // Icons
+  final _iconColor = Colors.white;
+  final _iconBackgroundColor = Colors.black;
+  final _iconButtonIconSize = 31.0;
+
+  // Container
+  final _containerColor = const Color.fromARGB(255, 51, 51, 51);
+  final _widthConstraint = 350.0;
+  final _heightConstraint = 50.0;
+  final _borderRadius = 50.0;
+  final _emptySizedBoxWidth = 10.0;
+
+  // Elevated Button
+  final _elevatedButtonLeftPosition = -10.0;
+  final _elevatedButtonElevation = 5.0;
+  final _elevatedButtonPadding = 18.0;
+  static const _elevatedButtonIconSize = 30.0;
 
   @override
   Widget build(BuildContext context) {
-    return BottomAppBar(
-      color: Theme.of(context).colorScheme.primary,
-      child: IconTheme(
-        data: IconThemeData(color: Theme.of(context).colorScheme.onPrimary),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            FloatingActionButton(
-              onPressed: () {},
-              tooltip: "Close Menu",
-              backgroundColor: Colors.black,
-              foregroundColor: Colors.white,
-              shape: CircleBorder(),
-              child: const Icon(Icons.close),
+    return Center(
+      child: Stack(
+        alignment: Alignment.centerLeft,
+        clipBehavior: Clip.none,
+        children: [
+          Container(
+            constraints: BoxConstraints.expand(
+              width: _widthConstraint,
+              height: _heightConstraint
             ),
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.library_add),
-              tooltip: "Add Ask",
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(_borderRadius),
+              color: _containerColor,
             ),
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.settings),
-              tooltip: "Settings",
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                SizedBox(
+                  width: _emptySizedBoxWidth,
+                ),
+                IconButton(
+                  color: _iconColor,
+                  icon: const Icon(Icons.library_add),
+                  iconSize: _iconButtonIconSize,
+                  tooltip: "Add Ask",
+                  onPressed: () {},
+                ),
+                IconButton(
+                  color: _iconColor,
+                  icon: const Icon(Icons.settings),
+                  iconSize: _iconButtonIconSize,
+                  tooltip: "Settings",
+                  onPressed: () {},
+                ),
+                IconButton(
+                  color: _iconColor,
+                  icon: const Icon(Icons.mail),
+                  iconSize: _iconButtonIconSize,
+                  tooltip: "Invitations",
+                  onPressed: () {},
+                ),
+                IconButton(
+                  color: _iconColor,
+                  icon: const Icon(Icons.grass),
+                  iconSize: _iconButtonIconSize,
+                  tooltip: "Add Garden",
+                  onPressed: () {},
+                ),
+              ],
             ),
-            IconButton(
+          ),
+          Positioned(
+            left: _elevatedButtonLeftPosition,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: _iconBackgroundColor,
+                elevation: _elevatedButtonElevation,
+                iconColor: _iconColor,
+                padding: EdgeInsets.all(_elevatedButtonPadding),
+                shape: CircleBorder(),
+              ),
               onPressed: () {},
-              icon: const Icon(Icons.person_add_alt_rounded),
-              tooltip: "Invite Users",
+              child: const Icon(
+                Icons.close,
+                size: _elevatedButtonIconSize,
+              ),
             ),
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.grass),
-              tooltip: "Add Garden",
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
