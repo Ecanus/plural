@@ -1,7 +1,8 @@
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
+import 'package:plural_app/src/constants/app_sizes.dart';
 import 'package:provider/provider.dart';
-import 'package:timelines/timelines.dart';
+import 'package:timeline_tile/timeline_tile.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -14,7 +15,7 @@ class MyApp extends StatelessWidget {
         title: 'Plural App',
         theme: ThemeData(
           useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.black),
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
         ),
         home: PluralAppHomePage(),
       ),
@@ -48,29 +49,6 @@ class MyAppState extends ChangeNotifier {
 
 class PluralAppHomePage extends StatelessWidget {
 
-  final children = [
-    SizedBox(
-      height: 25,
-      child: SolidLineConnector(),
-    ),
-    _ComponentRow(),
-    SizedBox(
-      height: 50,
-      child: SolidLineConnector(),
-    ),
-    _ComponentRow(),
-    SizedBox(
-      height: 50,
-      child: SolidLineConnector(),
-    ),
-    _ComponentRow(),
-    SizedBox(
-      height: 25,
-      child: SolidLineConnector(),
-    ),
-  ];
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -85,8 +63,8 @@ class PluralAppHomePage extends StatelessWidget {
                 Expanded(
                   flex: 2,
                   child: Container(
-                    color: Colors.green,
-                    child: Text("green"),
+                    // color: Colors.green,
+                    // child: Text("green"),
                   ),
                 ),
                 Expanded(
@@ -107,17 +85,15 @@ class PluralAppHomePage extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                           textAlign: TextAlign.center,
                       ),
-                      SizedBox(
-                        height: 20,
-                      ),
+                      gapH20
                     ],
                   )
                 ),
                 Expanded(
                   flex: 2,
                   child: Container(
-                    color: Colors.blue,
-                    child: Text("blue"),
+                    // color: Colors.blue,
+                    // child: Text("blue"),
                   ),
                 ),
               ],
@@ -125,12 +101,7 @@ class PluralAppHomePage extends StatelessWidget {
             Expanded(
               child: Row(
                 children: [
-                  Expanded(
-                    child: ListView(
-                      padding: const EdgeInsets.all(8),
-                      children: children,
-                    ),
-                  ),
+                  PluralAppTimeline(),
                 ],
               )
               ),
@@ -141,9 +112,7 @@ class PluralAppHomePage extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(
-              height: 35,
-            )
+            gapH35
           ],
         ),
       ),
@@ -151,104 +120,342 @@ class PluralAppHomePage extends StatelessWidget {
   }
 }
 
-class _ComponentRow extends StatelessWidget {
-  const _ComponentRow({
+class PluralAppTimeline extends StatelessWidget {
+
+  final testChild1 = PluralAppViewableTimelineTile(
+    tileDate: "2024.09.04",
+    tileTimeRemaining: "16 hours left",
+    tileText: "Need help with groceries this week. Anything helps. appreciate yall!",
+  );
+
+  final testChild2 = PluralAppViewableTimelineTile(
+    tileDate: "2024.09.16",
+    tileTimeRemaining: "13 days left",
+    tileText: "Dropped my phone last night :( dammit",
+  );
+
+  final testChild3 = PluralAppEditableTimelineTile(
+    tileDate: "2024.09.23",
+    tileTimeRemaining: "20 days left",
+    tileText: "Hey! my mom is sick and we can use help with meds",
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: ListView(
+        padding: const EdgeInsets.all(8),
+        children: [
+          testChild1,
+          testChild2,
+          testChild3,
+        ],
+      ),
+    );
+  }
+}
+
+class PluralAppViewableTimelineTile extends StatelessWidget {
+  const PluralAppViewableTimelineTile({
     super.key,
+    required this.tileDate,
+    required this.tileTimeRemaining,
+    required this.tileText
   });
+
+  final String tileDate;
+  final String tileTimeRemaining;
+  final String tileText;
 
   @override
   Widget build(BuildContext context) {
     return TimelineTile(
-      node: TimelineNode.simple(),
-      contents: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          elevation: 5.0,
-          padding: const EdgeInsets.all(15.0),
-          shape: CircleBorder(),
-        ),
-        onPressed: () => _dialogBuilder(context),
-        child: Icon(
-          Icons.edit,
-        )
+      alignment: TimelineAlign.center,
+      indicatorStyle: const IndicatorStyle(
+        width: PluralAppTimelineValues.indicatorWidth,
+        color: PluralAppTimelineValues.mainColor,
       ),
-      oppositeContents: SizedBox(
-        height: 185.0,
-        width: 300.0,
-        child: GestureDetector(
-          onTap: () => _dialogBuilder(context),
-          child: Card(
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Text("2024.09.13"),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Text(
-                        "10 days left",
-                        style: TextStyle(fontWeight: FontWeight.bold)
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 25
-                  ),
-                  Wrap(
-                    runSpacing: 20.0,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                            Flexible(
-                              child: Text(
-                                "Need help with veggies and fruits this week hiii :(",
-                                textAlign: TextAlign.end,
-                              ),
-                            ),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                            OutlinedButton(
-                              onPressed: null,
-                              child: Text("Groceries"),
-                            ),
-                            Icon(Icons.arrow_drop_down_rounded),
-                        ],
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            ),
+      beforeLineStyle: const LineStyle(
+        color: PluralAppTimelineValues.mainColor,
+        thickness: PluralAppTimelineValues.timelineThickness,
+      ),
+      startChild: GestureDetector(
+        onTap: () => dialogBuilder(context),
+        child: PluralAppBaseTimelineTile(
+          tileDate: tileDate,
+          tileTimeRemaining: tileTimeRemaining,
+          tileText: tileText,
+          alignment: Alignment.centerRight,
         ),
       ),
-      );
+    );
+  }
+}
+
+class PluralAppEditableTimelineTile extends StatelessWidget {
+  const PluralAppEditableTimelineTile({
+    super.key,
+    required this.tileDate,
+    required this.tileTimeRemaining,
+    required this.tileText
+  });
+
+  final String tileDate;
+  final String tileTimeRemaining;
+  final String tileText;
+
+  @override
+  Widget build(BuildContext context) {
+    return TimelineTile(
+      alignment: TimelineAlign.center,
+      indicatorStyle: const IndicatorStyle(
+        width: PluralAppTimelineValues.indicatorWidth,
+        color: PluralAppTimelineValues.mainColor,
+      ),
+      beforeLineStyle: const LineStyle(
+        color: PluralAppTimelineValues.mainColor,
+        thickness: PluralAppTimelineValues.timelineThickness,
+      ),
+      endChild: PluralAppBaseTimelineTile(
+        tileDate: tileDate,
+        tileTimeRemaining: tileTimeRemaining,
+        tileText: tileText,
+        alignment: Alignment.centerLeft,
+      ),
+    );
+  }
+}
+
+class PluralAppBaseTimelineTile extends StatelessWidget {
+  const PluralAppBaseTimelineTile({
+    super.key,
+    required this.tileDate,
+    required this.tileTimeRemaining,
+    required this.tileText,
+    required this.alignment
+  });
+
+  final String tileDate;
+  final String tileTimeRemaining;
+  final String tileText;
+  final Alignment alignment;
+
+  @override
+  Widget build(BuildContext context) {
+    bool isViewable = alignment == Alignment.centerRight;
+
+    final MainAxisAlignment axisAlignment =
+       isViewable ? MainAxisAlignment.end : MainAxisAlignment.start;
+
+    final TextAlign textAlignment =
+      isViewable ? TextAlign.end : TextAlign.start;
+
+    return Align(
+      alignment: alignment,
+      child: Container(
+        padding: EdgeInsets.all(PluralAppPaddings.p10),
+        constraints: BoxConstraints.expand(
+          width: PluralAppConstraints.c375,
+          height: PluralAppConstraints.c230,
+        ),
+        child: Card(
+          elevation: PluralAppElevations.e7,
+          color: Colors.white,
+          child: Padding(
+            padding: EdgeInsets.all(PluralAppPaddings.p10),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: axisAlignment,
+                  children: [
+                    Text(tileDate),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: axisAlignment,
+                  children: [
+                    Text(
+                      tileTimeRemaining,
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+                gapH25,
+                Wrap(
+                  runSpacing: PluralAppRunSpacings.rs20,
+                  children: [
+                    Row(
+                      mainAxisAlignment: axisAlignment,
+                      children: [
+                        Flexible(
+                          child: Text(
+                            tileText,
+                            textAlign: textAlignment,
+                          ),
+                        )
+                      ]
+                    ),
+                    gapH60,
+                    Row(
+                      mainAxisAlignment: axisAlignment,
+                      children: getTimelineTileFooterChildren(isViewable)
+                    ),
+                  ],
+                ),
+              ]
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
-  Future _dialogBuilder(BuildContext context) {
-      return showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return SimpleDialog(
-            title: Text("Dialog Title"),
-            children: [
-              SimpleDialogOption(
-                onPressed: () { Navigator.of(context).pop(); },
-                child: Text("Click to close"),
-              )
-            ],
-          );
-        });
+  List<Widget> getTimelineTileFooterChildren(bool isViewable) {
+    List<Widget> widgets = [];
+
+    Widget button = OutlinedButton(
+      onPressed: null,
+      style: OutlinedButton.styleFrom(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(
+            Radius.circular(5.0)),
+        ),
+      ),
+      child: Text("Groceries"),
+    );
+
+    Widget icon = Icon(
+      Icons.arrow_drop_down_circle_rounded,
+      color: Colors.grey,
+    );
+
+    if (isViewable) {
+      widgets.add(button);
+      widgets.add(gapW15);
+      widgets.add(icon);
+    } else {
+      widgets.add(button);
+    }
+
+    return widgets;
   }
+}
+
+// class _ComponentRow extends StatelessWidget {
+//   const _ComponentRow({
+//     super.key,
+//   });
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return TimelineTile(
+//       node: TimelineNode.simple(),
+//       contents: ElevatedButton(
+//         style: ElevatedButton.styleFrom(
+//           elevation: 5.0,
+//           padding: const EdgeInsets.all(15.0),
+//           shape: CircleBorder(),
+//         ),
+//         onPressed: () => _dialogBuilder(context),
+//         child: Icon(
+//           Icons.edit,
+//         )
+//       ),
+//       oppositeContents: SizedBox(
+//         height: 185.0,
+//         width: 300.0,
+//         child: GestureDetector(
+//           onTap: () => _dialogBuilder(context),
+//           child: Card(
+//             child: Padding(
+//               padding: const EdgeInsets.all(10.0),
+//               child: Column(
+//                 children: [
+//                   Row(
+//                     mainAxisAlignment: MainAxisAlignment.end,
+//                     children: [
+//                       Text("2024.09.13"),
+//                     ],
+//                   ),
+//                   Row(
+//                     mainAxisAlignment: MainAxisAlignment.end,
+//                     children: [
+//                       Text(
+//                         "10 days left",
+//                         style: TextStyle(fontWeight: FontWeight.bold)
+//                       ),
+//                     ],
+//                   ),
+//                   SizedBox(
+//                     height: 25
+//                   ),
+//                   Wrap(
+//                     runSpacing: 20.0,
+//                     children: [
+//                       Row(
+//                         mainAxisAlignment: MainAxisAlignment.end,
+//                         children: [
+//                             Flexible(
+//                               child: Text(
+//                                 "Need help with veggies and fruits this week hiii :(",
+//                                 textAlign: TextAlign.end,
+//                               ),
+//                             ),
+//                         ],
+//                       ),
+//                       Row(
+//                         mainAxisAlignment: MainAxisAlignment.end,
+//                         children: [
+//                             OutlinedButton(
+//                               onPressed: null,
+//                               child: Text("Groceries"),
+//                             ),
+//                             Icon(Icons.arrow_drop_down_rounded),
+//                         ],
+//                       ),
+//                     ],
+//                   ),
+//                 ],
+//               ),
+//             ),
+//             ),
+//         ),
+//       ),
+//       );
+//   }
+
+//   Future _dialogBuilder(BuildContext context) {
+//       return showDialog(
+//         context: context,
+//         builder: (BuildContext context) {
+//           return SimpleDialog(
+//             title: Text("Dialog Title"),
+//             children: [
+//               SimpleDialogOption(
+//                 onPressed: () { Navigator.of(context).pop(); },
+//                 child: Text("Click to close"),
+//               )
+//             ],
+//           );
+//         });
+//   }
+// }
+
+Future dialogBuilder(BuildContext context) {
+  return showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return SimpleDialog(
+        title: Text("Dialog Title"),
+        children: [
+          SimpleDialogOption(
+            onPressed: () { Navigator.of(context).pop(); },
+            child: Text("Click to close"),
+          )
+        ],
+      );
+    }
+  );
 }
 
 class _PluralBottomAppBar extends StatelessWidget {
