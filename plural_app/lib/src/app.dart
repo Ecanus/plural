@@ -1,6 +1,7 @@
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 import 'package:plural_app/src/constants/app_sizes.dart';
+import 'package:plural_app/src/constants/strings.dart';
 import 'package:provider/provider.dart';
 import 'package:timeline_tile/timeline_tile.dart';
 
@@ -10,7 +11,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => MyAppState(),
+      create: (context) => PluralAppState(),
       child: MaterialApp(
         title: 'Plural App',
         theme: ThemeData(
@@ -23,7 +24,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyAppState extends ChangeNotifier {
+class PluralAppState extends ChangeNotifier {
   var current = WordPair.random();
   var favorites = <WordPair>[];
 
@@ -40,82 +41,69 @@ class MyAppState extends ChangeNotifier {
     }
     notifyListeners();
   }
-
-  void removeFavorite() {
-
-  }
-
 }
 
 class PluralAppHomePage extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
         child: Column(
           children: [
-            SizedBox(
-              height: 50,
-            ),
+            gapH60,
             Row(
               children: [
-                Expanded(
-                  flex: 2,
-                  child: Container(
-                    // color: Colors.green,
-                    // child: Text("green"),
-                  ),
-                ),
-                Expanded(
-                  flex: 6,
-                  child: Column(
-                    children: [
-                      Text(
-                          "Hi, Dedie",
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20.0,
-                          ),
-                          textAlign: TextAlign.center,
-                      ),
-                      Text(
-                          "2024.09.03",
-                          overflow: TextOverflow.ellipsis,
-                          textAlign: TextAlign.center,
-                      ),
-                      gapH20
-                    ],
-                  )
-                ),
-                Expanded(
-                  flex: 2,
-                  child: Container(
-                    // color: Colors.blue,
-                    // child: Text("blue"),
-                  ),
-                ),
+                flex2,
+                PluralAppHeader(),
+                flex2,
               ],
             ),
+            gapH30,
             Expanded(
               child: Row(
-                children: [
-                  PluralAppTimeline(),
-                ],
+                children: [PluralAppTimeline()],
               )
-              ),
+            ),
             Row(
-              children: [
-                Expanded(
-                  child: _PluralBottomAppBar()
-                ),
-              ],
+              //children: [Expanded(child: PluralAppBottomBar())],
+              //children: [Expanded(child: PluralAppBottomButton())],
+              children: [Expanded(child: PluralAppFooter())],
             ),
             gapH35
           ],
         ),
       ),
+    );
+  }
+}
+
+class PluralAppHeader extends StatelessWidget {
+  const PluralAppHeader({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      flex: PluralAppFlexes.f6,
+      child: Column(
+        children: [
+          Text(
+              "Hi, Dedie",
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: PluralAppFontSizes.s25,
+              ),
+              textAlign: TextAlign.center,
+          ),
+          Text(
+              "2024.09.03",
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
+          ),
+        ],
+      )
     );
   }
 }
@@ -126,12 +114,14 @@ class PluralAppTimeline extends StatelessWidget {
     tileDate: "2024.09.04",
     tileTimeRemaining: "16 hours left",
     tileText: "Need help with groceries this week. Anything helps. appreciate yall!",
+    isSponsored: false,
   );
 
   final testChild2 = PluralAppViewableTimelineTile(
     tileDate: "2024.09.16",
     tileTimeRemaining: "13 days left",
     tileText: "Dropped my phone last night :( dammit",
+    isSponsored: true,
   );
 
   final testChild3 = PluralAppEditableTimelineTile(
@@ -144,7 +134,7 @@ class PluralAppTimeline extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: ListView(
-        padding: const EdgeInsets.all(8),
+        padding: const EdgeInsets.all(PluralAppPaddings.p8),
         children: [
           testChild1,
           testChild2,
@@ -160,34 +150,38 @@ class PluralAppViewableTimelineTile extends StatelessWidget {
     super.key,
     required this.tileDate,
     required this.tileTimeRemaining,
-    required this.tileText
+    required this.tileText,
+    required this.isSponsored,
   });
 
   final String tileDate;
   final String tileTimeRemaining;
   final String tileText;
+  final bool isSponsored;
 
   @override
   Widget build(BuildContext context) {
     return TimelineTile(
       alignment: TimelineAlign.center,
-      indicatorStyle: const IndicatorStyle(
-        width: PluralAppTimelineValues.indicatorWidth,
-        color: PluralAppTimelineValues.mainColor,
+      indicatorStyle: pluralAppIndicatorStyle,
+      beforeLineStyle: pluralAppLineStyle,
+      startChild: PluralAppBaseTimelineTile(
+        tileDate: tileDate,
+        tileTimeRemaining: tileTimeRemaining,
+        tileText: tileText,
+        alignment: Alignment.centerRight,
       ),
-      beforeLineStyle: const LineStyle(
-        color: PluralAppTimelineValues.mainColor,
-        thickness: PluralAppTimelineValues.timelineThickness,
-      ),
-      startChild: GestureDetector(
-        onTap: () => dialogBuilder(context),
-        child: PluralAppBaseTimelineTile(
-          tileDate: tileDate,
-          tileTimeRemaining: tileTimeRemaining,
-          tileText: tileText,
-          alignment: Alignment.centerRight,
+      endChild: isSponsored ? Container(
+        padding: const EdgeInsets.all(PluralAppPaddings.p5),
+        child: Align(
+          alignment: Alignment.centerLeft,
+          child: Icon(
+            Icons.check_circle,
+            color: PluralAppColors.primaryColor,
+            size: PluralAppIconSizes.s30
+          ),
         ),
-      ),
+      ) : null,
     );
   }
 }
@@ -208,13 +202,21 @@ class PluralAppEditableTimelineTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return TimelineTile(
       alignment: TimelineAlign.center,
-      indicatorStyle: const IndicatorStyle(
-        width: PluralAppTimelineValues.indicatorWidth,
-        color: PluralAppTimelineValues.mainColor,
-      ),
-      beforeLineStyle: const LineStyle(
-        color: PluralAppTimelineValues.mainColor,
-        thickness: PluralAppTimelineValues.timelineThickness,
+      indicatorStyle: pluralAppIndicatorStyle,
+      beforeLineStyle: pluralAppLineStyle,
+      startChild: Align(
+        alignment: Alignment.centerRight,
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            elevation: PluralAppElevations.e5,
+            padding: const EdgeInsets.all(PluralAppPaddings.p15),
+            shape: CircleBorder(),
+            iconColor: PluralAppColors.secondaryColor,
+            backgroundColor: PluralAppColors.primaryColor
+          ),
+          onPressed: () => dialogBuilder(context),
+          child: Icon(Icons.edit)
+        ),
       ),
       endChild: PluralAppBaseTimelineTile(
         tileDate: tileDate,
@@ -260,7 +262,7 @@ class PluralAppBaseTimelineTile extends StatelessWidget {
         ),
         child: Card(
           elevation: PluralAppElevations.e7,
-          color: Colors.white,
+          color: PluralAppColors.secondaryColor,
           child: Padding(
             padding: EdgeInsets.all(PluralAppPaddings.p10),
             child: Column(
@@ -298,7 +300,7 @@ class PluralAppBaseTimelineTile extends StatelessWidget {
                     gapH60,
                     Row(
                       mainAxisAlignment: axisAlignment,
-                      children: getTimelineTileFooterChildren(isViewable)
+                      children: getTimelineTileFooterChildren(context, isViewable)
                     ),
                   ],
                 ),
@@ -310,136 +312,153 @@ class PluralAppBaseTimelineTile extends StatelessWidget {
     );
   }
 
-  List<Widget> getTimelineTileFooterChildren(bool isViewable) {
+  List<Widget> getTimelineTileFooterChildren(
+    BuildContext context, bool isViewable) {
     List<Widget> widgets = [];
 
-    Widget button = OutlinedButton(
+    Widget tag = OutlinedButton(
       onPressed: null,
       style: OutlinedButton.styleFrom(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(
-            Radius.circular(5.0)),
+            Radius.circular(PluralAppBorderRadii.r5)),
         ),
       ),
       child: Text("Groceries"),
     );
 
-    Widget icon = Icon(
-      Icons.arrow_drop_down_circle_rounded,
-      color: Colors.grey,
+    Widget button = SizedBox(
+      width: PluralAppDimensions.d25,
+      height: PluralAppDimensions.d25,
+      child: IconButton(
+        color: PluralAppColors.primaryColor,
+        icon: const Icon(Icons.arrow_drop_down_circle_rounded),
+        padding: const EdgeInsets.all(PluralAppPaddings.p0),
+        onPressed: () => dialogBuilder(context),
+      ),
     );
 
     if (isViewable) {
-      widgets.add(button);
+      widgets.add(tag);
       widgets.add(gapW15);
-      widgets.add(icon);
-    } else {
       widgets.add(button);
+    } else {
+      widgets.add(tag);
     }
 
     return widgets;
   }
 }
 
-// class _ComponentRow extends StatelessWidget {
-//   const _ComponentRow({
-//     super.key,
-//   });
+class PluralAppFooter extends StatelessWidget {
+  final ValueNotifier<bool> _isFooterCollapsed = ValueNotifier<bool>(true);
 
-//   @override
-//   Widget build(BuildContext context) {
-//     return TimelineTile(
-//       node: TimelineNode.simple(),
-//       contents: ElevatedButton(
-//         style: ElevatedButton.styleFrom(
-//           elevation: 5.0,
-//           padding: const EdgeInsets.all(15.0),
-//           shape: CircleBorder(),
-//         ),
-//         onPressed: () => _dialogBuilder(context),
-//         child: Icon(
-//           Icons.edit,
-//         )
-//       ),
-//       oppositeContents: SizedBox(
-//         height: 185.0,
-//         width: 300.0,
-//         child: GestureDetector(
-//           onTap: () => _dialogBuilder(context),
-//           child: Card(
-//             child: Padding(
-//               padding: const EdgeInsets.all(10.0),
-//               child: Column(
-//                 children: [
-//                   Row(
-//                     mainAxisAlignment: MainAxisAlignment.end,
-//                     children: [
-//                       Text("2024.09.13"),
-//                     ],
-//                   ),
-//                   Row(
-//                     mainAxisAlignment: MainAxisAlignment.end,
-//                     children: [
-//                       Text(
-//                         "10 days left",
-//                         style: TextStyle(fontWeight: FontWeight.bold)
-//                       ),
-//                     ],
-//                   ),
-//                   SizedBox(
-//                     height: 25
-//                   ),
-//                   Wrap(
-//                     runSpacing: 20.0,
-//                     children: [
-//                       Row(
-//                         mainAxisAlignment: MainAxisAlignment.end,
-//                         children: [
-//                             Flexible(
-//                               child: Text(
-//                                 "Need help with veggies and fruits this week hiii :(",
-//                                 textAlign: TextAlign.end,
-//                               ),
-//                             ),
-//                         ],
-//                       ),
-//                       Row(
-//                         mainAxisAlignment: MainAxisAlignment.end,
-//                         children: [
-//                             OutlinedButton(
-//                               onPressed: null,
-//                               child: Text("Groceries"),
-//                             ),
-//                             Icon(Icons.arrow_drop_down_rounded),
-//                         ],
-//                       ),
-//                     ],
-//                   ),
-//                 ],
-//               ),
-//             ),
-//             ),
-//         ),
-//       ),
-//       );
-//   }
+  final buttonStyle = ElevatedButton.styleFrom(
+    backgroundColor: PluralAppColors.onPrimaryColor,
+    elevation: PluralAppElevations.e5,
+    iconColor: PluralAppColors.secondaryColor,
+    padding: EdgeInsets.all(PluralAppPaddings.p18),
+    shape: CircleBorder(),
+  );
 
-//   Future _dialogBuilder(BuildContext context) {
-//       return showDialog(
-//         context: context,
-//         builder: (BuildContext context) {
-//           return SimpleDialog(
-//             title: Text("Dialog Title"),
-//             children: [
-//               SimpleDialogOption(
-//                 onPressed: () { Navigator.of(context).pop(); },
-//                 child: Text("Click to close"),
-//               )
-//             ],
-//           );
-//         });
-//   }
-// }
+  bool isFooterCollapsedCheck () {
+    return _isFooterCollapsed.value = !_isFooterCollapsed.value;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final showActionsButton = ElevatedButton(
+      style: buttonStyle,
+      onPressed: isFooterCollapsedCheck,
+      child: Icon(Icons.add, size: PluralAppIconSizes.s30),
+    );
+
+    final hideActionsButton = ElevatedButton(
+      style: buttonStyle,
+      onPressed: isFooterCollapsedCheck,
+      child: Icon(Icons.close, size: PluralAppIconSizes.s30),
+    );
+
+    return ValueListenableBuilder(
+      valueListenable: _isFooterCollapsed,
+      builder: (BuildContext context, bool value, Widget? child) {
+        return value ?
+          Center(child: showActionsButton) :
+          PluralAppBottomBar(hideActionsButton: hideActionsButton,);
+      }
+    );
+  }
+}
+
+class PluralAppBottomBar extends StatelessWidget {
+  const PluralAppBottomBar({
+    super.key,
+    required this.hideActionsButton
+  });
+
+  final Widget hideActionsButton;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Stack(
+        alignment: Alignment.centerLeft,
+        clipBehavior: Clip.none,
+        children: [
+          Container(
+            constraints: BoxConstraints.expand(
+              width: PluralAppConstraints.c350,
+              height: PluralAppConstraints.c50
+            ),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(PluralAppBorderRadii.r50),
+              color: PluralAppColors.darkGrey,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                gapW10,
+                IconButton(
+                  color: PluralAppColors.secondaryColor,
+                  icon: const Icon(Icons.library_add),
+                  iconSize: PluralAppButtonSizes.s31,
+                  tooltip: Strings.tooltipAddAsk,
+                  onPressed: () {},
+                ),
+                IconButton(
+                  color: PluralAppColors.secondaryColor,
+                  icon: const Icon(Icons.settings),
+                  iconSize: PluralAppButtonSizes.s31,
+                  tooltip: Strings.tooltipSettings,
+                  onPressed: () {},
+                ),
+                IconButton(
+                  color: PluralAppColors.secondaryColor,
+                  icon: const Icon(Icons.mail),
+                  iconSize: PluralAppButtonSizes.s31,
+                  tooltip: Strings.tooltipInvitations,
+                  onPressed: () {},
+                ),
+                IconButton(
+                  color: PluralAppColors.secondaryColor,
+                  icon: const Icon(Icons.grass),
+                  iconSize: PluralAppButtonSizes.s31,
+                  tooltip: Strings.tooltipAddGarden,
+                  onPressed: () {},
+                ),
+              ],
+            ),
+          ),
+          Positioned(
+            left: PluralAppPositions.pNeg10,
+            child: hideActionsButton,
+          ),
+        ],
+      ),
+    );
+  }
+}
 
 Future dialogBuilder(BuildContext context) {
   return showDialog(
@@ -456,102 +475,6 @@ Future dialogBuilder(BuildContext context) {
       );
     }
   );
-}
-
-class _PluralBottomAppBar extends StatelessWidget {
-  // Icons
-  final _iconColor = Colors.white;
-  final _iconBackgroundColor = Colors.black;
-  final _iconButtonIconSize = 31.0;
-
-  // Container
-  final _containerColor = const Color.fromARGB(255, 51, 51, 51);
-  final _widthConstraint = 350.0;
-  final _heightConstraint = 50.0;
-  final _borderRadius = 50.0;
-  final _emptySizedBoxWidth = 10.0;
-
-  // Elevated Button
-  final _elevatedButtonLeftPosition = -10.0;
-  final _elevatedButtonElevation = 5.0;
-  final _elevatedButtonPadding = 18.0;
-  static const _elevatedButtonIconSize = 30.0;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Stack(
-        alignment: Alignment.centerLeft,
-        clipBehavior: Clip.none,
-        children: [
-          Container(
-            constraints: BoxConstraints.expand(
-              width: _widthConstraint,
-              height: _heightConstraint
-            ),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(_borderRadius),
-              color: _containerColor,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                SizedBox(
-                  width: _emptySizedBoxWidth,
-                ),
-                IconButton(
-                  color: _iconColor,
-                  icon: const Icon(Icons.library_add),
-                  iconSize: _iconButtonIconSize,
-                  tooltip: "Add Ask",
-                  onPressed: () {},
-                ),
-                IconButton(
-                  color: _iconColor,
-                  icon: const Icon(Icons.settings),
-                  iconSize: _iconButtonIconSize,
-                  tooltip: "Settings",
-                  onPressed: () {},
-                ),
-                IconButton(
-                  color: _iconColor,
-                  icon: const Icon(Icons.mail),
-                  iconSize: _iconButtonIconSize,
-                  tooltip: "Invitations",
-                  onPressed: () {},
-                ),
-                IconButton(
-                  color: _iconColor,
-                  icon: const Icon(Icons.grass),
-                  iconSize: _iconButtonIconSize,
-                  tooltip: "Add Garden",
-                  onPressed: () {},
-                ),
-              ],
-            ),
-          ),
-          Positioned(
-            left: _elevatedButtonLeftPosition,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: _iconBackgroundColor,
-                elevation: _elevatedButtonElevation,
-                iconColor: _iconColor,
-                padding: EdgeInsets.all(_elevatedButtonPadding),
-                shape: CircleBorder(),
-              ),
-              onPressed: () {},
-              child: const Icon(
-                Icons.close,
-                size: _elevatedButtonIconSize,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }
 
 // class MyHomePage extends StatefulWidget {
@@ -617,103 +540,103 @@ class _PluralBottomAppBar extends StatelessWidget {
 // }
 
 
-class GeneratorPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    var appState = context.watch<MyAppState>();
-    var pair = appState.current;
+// class GeneratorPage extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     var appState = context.watch<MyAppState>();
+//     var pair = appState.current;
 
-    IconData icon;
-    if (appState.favorites.contains(pair)) {
-      icon = Icons.favorite;
-    } else {
-      icon = Icons.favorite_border;
-    }
+//     IconData icon;
+//     if (appState.favorites.contains(pair)) {
+//       icon = Icons.favorite;
+//     } else {
+//       icon = Icons.favorite_border;
+//     }
 
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          BigCard(pair: pair),
-          SizedBox(height: 10),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ElevatedButton.icon(
-                onPressed: () {
-                  appState.toggleFavorite();
-                },
-                icon: Icon(icon),
-                label: Text('Like'),
-              ),
-              SizedBox(width: 10),
-              ElevatedButton(
-                onPressed: () {
-                  appState.getNext();
-                },
-                child: Text('Next'),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
+//     return Center(
+//       child: Column(
+//         mainAxisAlignment: MainAxisAlignment.center,
+//         children: [
+//           BigCard(pair: pair),
+//           SizedBox(height: 10),
+//           Row(
+//             mainAxisSize: MainAxisSize.min,
+//             children: [
+//               ElevatedButton.icon(
+//                 onPressed: () {
+//                   appState.toggleFavorite();
+//                 },
+//                 icon: Icon(icon),
+//                 label: Text('Like'),
+//               ),
+//               SizedBox(width: 10),
+//               ElevatedButton(
+//                 onPressed: () {
+//                   appState.getNext();
+//                 },
+//                 child: Text('Next'),
+//               ),
+//             ],
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
 
-class FavoritesPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    var appState = context.watch<MyAppState>();
-    var favorites = appState.favorites;
+// class FavoritesPage extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     var appState = context.watch<MyAppState>();
+//     var favorites = appState.favorites;
 
-    if (appState.favorites.isEmpty) {
-      return Center(
-        child: Text('No favorites yet.'),
-      );
-    }
+//     if (appState.favorites.isEmpty) {
+//       return Center(
+//         child: Text('No favorites yet.'),
+//       );
+//     }
 
-    return ListView(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(20),
-          child: Text('You have ${favorites.length} favorites saved:'),
-        ),
-        for (var favorite in favorites)
-          ListTile(
-            leading: Icon(Icons.favorite),
-            title: Text(favorite.asLowerCase),
-      ),
-      ],
-    );
-  }
-}
+//     return ListView(
+//       children: [
+//         Padding(
+//           padding: const EdgeInsets.all(20),
+//           child: Text('You have ${favorites.length} favorites saved:'),
+//         ),
+//         for (var favorite in favorites)
+//           ListTile(
+//             leading: Icon(Icons.favorite),
+//             title: Text(favorite.asLowerCase),
+//       ),
+//       ],
+//     );
+//   }
+// }
 
-class BigCard extends StatelessWidget {
-  const BigCard({
-    super.key,
-    required this.pair,
-  });
+// class BigCard extends StatelessWidget {
+//   const BigCard({
+//     super.key,
+//     required this.pair,
+//   });
 
-  final WordPair pair;
+//   final WordPair pair;
 
-  @override
-  Widget build(BuildContext context) {
-    var theme = Theme.of(context);
-    var style = theme.textTheme.displayMedium!.copyWith(
-      color: theme.colorScheme.onPrimary,
-    );
+//   @override
+//   Widget build(BuildContext context) {
+//     var theme = Theme.of(context);
+//     var style = theme.textTheme.displayMedium!.copyWith(
+//       color: theme.colorScheme.onPrimary,
+//     );
 
-    return Card(
-      color: theme.colorScheme.primary,
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Text(
-          pair.asLowerCase,
-          style: style,
-          semanticsLabel: "${pair.first} ${pair.second}",
-        ),
-      ),
-    );
-  }
-}
+//     return Card(
+//       color: theme.colorScheme.primary,
+//       child: Padding(
+//         padding: const EdgeInsets.all(20.0),
+//         child: Text(
+//           pair.asLowerCase,
+//           style: style,
+//           semanticsLabel: "${pair.first} ${pair.second}",
+//         ),
+//       ),
+//     );
+//   }
+// }
