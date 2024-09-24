@@ -1,9 +1,16 @@
-import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
-import 'package:plural_app/src/constants/app_sizes.dart';
-import 'package:plural_app/src/constants/strings.dart';
+
 import 'package:provider/provider.dart';
 import 'package:timeline_tile/timeline_tile.dart';
+import 'package:english_words/english_words.dart';
+
+// Features
+import 'package:plural_app/src/features/asks/presentation/ask_dialog.dart';
+
+// Constants
+import 'package:plural_app/src/constants/app_sizes.dart';
+import 'package:plural_app/src/constants/strings.dart';
+import 'package:plural_app/src/constants/values.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -11,20 +18,20 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => PluralAppState(),
+      create: (context) => AppState(),
       child: MaterialApp(
         title: 'Plural App',
         theme: ThemeData(
           useMaterial3: true,
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
         ),
-        home: PluralAppHomePage(),
+        home: AppHomePage(),
       ),
     );
   }
 }
 
-class PluralAppState extends ChangeNotifier {
+class AppState extends ChangeNotifier {
   var current = WordPair.random();
   var favorites = <WordPair>[];
 
@@ -43,7 +50,7 @@ class PluralAppState extends ChangeNotifier {
   }
 }
 
-class PluralAppHomePage extends StatelessWidget {
+class AppHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,20 +61,18 @@ class PluralAppHomePage extends StatelessWidget {
             Row(
               children: [
                 flex2,
-                PluralAppHeader(),
+                AppHeader(),
                 flex2,
               ],
             ),
             gapH30,
             Expanded(
               child: Row(
-                children: [PluralAppTimeline()],
+                children: [AppTimeline()],
               )
             ),
             Row(
-              //children: [Expanded(child: PluralAppBottomBar())],
-              //children: [Expanded(child: PluralAppBottomButton())],
-              children: [Expanded(child: PluralAppFooter())],
+              children: [Expanded(child: AppFooter())],
             ),
             gapH35
           ],
@@ -77,15 +82,15 @@ class PluralAppHomePage extends StatelessWidget {
   }
 }
 
-class PluralAppHeader extends StatelessWidget {
-  const PluralAppHeader({
+class AppHeader extends StatelessWidget {
+  const AppHeader({
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      flex: PluralAppFlexes.f6,
+      flex: AppFlexes.f6,
       child: Column(
         children: [
           Text(
@@ -93,7 +98,7 @@ class PluralAppHeader extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
-                fontSize: PluralAppFontSizes.s25,
+                fontSize: AppFontSizes.s25,
               ),
               textAlign: TextAlign.center,
           ),
@@ -108,23 +113,23 @@ class PluralAppHeader extends StatelessWidget {
   }
 }
 
-class PluralAppTimeline extends StatelessWidget {
+class AppTimeline extends StatelessWidget {
 
-  final testChild1 = PluralAppViewableTimelineTile(
+  final testChild1 = AppViewableTimelineTile(
     tileDate: "2024.09.04",
     tileTimeRemaining: "16 hours left",
     tileText: "Need help with groceries this week. Anything helps. appreciate yall!",
     isSponsored: false,
   );
 
-  final testChild2 = PluralAppViewableTimelineTile(
+  final testChild2 = AppViewableTimelineTile(
     tileDate: "2024.09.16",
     tileTimeRemaining: "13 days left",
     tileText: "Dropped my phone last night :( dammit",
     isSponsored: true,
   );
 
-  final testChild3 = PluralAppEditableTimelineTile(
+  final testChild3 = AppEditableTimelineTile(
     tileDate: "2024.09.23",
     tileTimeRemaining: "20 days left",
     tileText: "Hey! my mom is sick and we can use help with meds",
@@ -134,7 +139,7 @@ class PluralAppTimeline extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: ListView(
-        padding: const EdgeInsets.all(PluralAppPaddings.p8),
+        padding: const EdgeInsets.all(AppPaddings.p8),
         children: [
           testChild1,
           testChild2,
@@ -145,8 +150,8 @@ class PluralAppTimeline extends StatelessWidget {
   }
 }
 
-class PluralAppViewableTimelineTile extends StatelessWidget {
-  const PluralAppViewableTimelineTile({
+class AppViewableTimelineTile extends StatelessWidget {
+  const AppViewableTimelineTile({
     super.key,
     required this.tileDate,
     required this.tileTimeRemaining,
@@ -163,22 +168,22 @@ class PluralAppViewableTimelineTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return TimelineTile(
       alignment: TimelineAlign.center,
-      indicatorStyle: pluralAppIndicatorStyle,
-      beforeLineStyle: pluralAppLineStyle,
-      startChild: PluralAppBaseTimelineTile(
+      indicatorStyle: appIndicatorStyle,
+      beforeLineStyle: appLineStyle,
+      startChild: AppBaseTimelineTile(
         tileDate: tileDate,
         tileTimeRemaining: tileTimeRemaining,
         tileText: tileText,
         alignment: Alignment.centerRight,
       ),
       endChild: isSponsored ? Container(
-        padding: const EdgeInsets.all(PluralAppPaddings.p5),
+        padding: const EdgeInsets.all(AppPaddings.p5),
         child: Align(
           alignment: Alignment.centerLeft,
           child: Icon(
             Icons.check_circle,
-            color: PluralAppColors.primaryColor,
-            size: PluralAppIconSizes.s30
+            color: AppColors.primaryColor,
+            size: AppIconSizes.s30
           ),
         ),
       ) : null,
@@ -186,8 +191,8 @@ class PluralAppViewableTimelineTile extends StatelessWidget {
   }
 }
 
-class PluralAppEditableTimelineTile extends StatelessWidget {
-  const PluralAppEditableTimelineTile({
+class AppEditableTimelineTile extends StatelessWidget {
+  const AppEditableTimelineTile({
     super.key,
     required this.tileDate,
     required this.tileTimeRemaining,
@@ -202,23 +207,23 @@ class PluralAppEditableTimelineTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return TimelineTile(
       alignment: TimelineAlign.center,
-      indicatorStyle: pluralAppIndicatorStyle,
-      beforeLineStyle: pluralAppLineStyle,
+      indicatorStyle: appIndicatorStyle,
+      beforeLineStyle: appLineStyle,
       startChild: Align(
         alignment: Alignment.centerRight,
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-            elevation: PluralAppElevations.e5,
-            padding: const EdgeInsets.all(PluralAppPaddings.p15),
+            elevation: AppElevations.e5,
+            padding: const EdgeInsets.all(AppPaddings.p15),
             shape: CircleBorder(),
-            iconColor: PluralAppColors.secondaryColor,
-            backgroundColor: PluralAppColors.primaryColor
+            iconColor: AppColors.secondaryColor,
+            backgroundColor: AppColors.primaryColor
           ),
           onPressed: () => dialogBuilder(context),
           child: Icon(Icons.edit)
         ),
       ),
-      endChild: PluralAppBaseTimelineTile(
+      endChild: AppBaseTimelineTile(
         tileDate: tileDate,
         tileTimeRemaining: tileTimeRemaining,
         tileText: tileText,
@@ -228,8 +233,8 @@ class PluralAppEditableTimelineTile extends StatelessWidget {
   }
 }
 
-class PluralAppBaseTimelineTile extends StatelessWidget {
-  const PluralAppBaseTimelineTile({
+class AppBaseTimelineTile extends StatelessWidget {
+  const AppBaseTimelineTile({
     super.key,
     required this.tileDate,
     required this.tileTimeRemaining,
@@ -255,16 +260,16 @@ class PluralAppBaseTimelineTile extends StatelessWidget {
     return Align(
       alignment: alignment,
       child: Container(
-        padding: EdgeInsets.all(PluralAppPaddings.p10),
+        padding: EdgeInsets.all(AppPaddings.p10),
         constraints: BoxConstraints.expand(
-          width: PluralAppConstraints.c375,
-          height: PluralAppConstraints.c230,
+          width: AppConstraints.c375,
+          height: AppConstraints.c230,
         ),
         child: Card(
-          elevation: PluralAppElevations.e7,
-          color: PluralAppColors.secondaryColor,
+          elevation: AppElevations.e7,
+          color: AppColors.secondaryColor,
           child: Padding(
-            padding: EdgeInsets.all(PluralAppPaddings.p10),
+            padding: EdgeInsets.all(AppPaddings.p10),
             child: Column(
               children: [
                 Row(
@@ -284,7 +289,7 @@ class PluralAppBaseTimelineTile extends StatelessWidget {
                 ),
                 gapH25,
                 Wrap(
-                  runSpacing: PluralAppRunSpacings.rs20,
+                  runSpacing: AppRunSpacings.rs20,
                   children: [
                     Row(
                       mainAxisAlignment: axisAlignment,
@@ -321,19 +326,19 @@ class PluralAppBaseTimelineTile extends StatelessWidget {
       style: OutlinedButton.styleFrom(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(
-            Radius.circular(PluralAppBorderRadii.r5)),
+            Radius.circular(AppBorderRadii.r5)),
         ),
       ),
       child: Text("Groceries"),
     );
 
     Widget button = SizedBox(
-      width: PluralAppDimensions.d25,
-      height: PluralAppDimensions.d25,
+      width: AppWidths.w25,
+      height: AppHeights.h25,
       child: IconButton(
-        color: PluralAppColors.primaryColor,
+        color: AppColors.primaryColor,
         icon: const Icon(Icons.arrow_drop_down_circle_rounded),
-        padding: const EdgeInsets.all(PluralAppPaddings.p0),
+        padding: const EdgeInsets.all(AppPaddings.p0),
         onPressed: () => dialogBuilder(context),
       ),
     );
@@ -350,18 +355,20 @@ class PluralAppBaseTimelineTile extends StatelessWidget {
   }
 }
 
-class PluralAppFooter extends StatelessWidget {
+/// Parent Widget of the AppBottomBar and all widgets
+/// at the bottom of the App.
+class AppFooter extends StatelessWidget {
   final ValueNotifier<bool> _isFooterCollapsed = ValueNotifier<bool>(true);
 
   final buttonStyle = ElevatedButton.styleFrom(
-    backgroundColor: PluralAppColors.onPrimaryColor,
-    elevation: PluralAppElevations.e5,
-    iconColor: PluralAppColors.secondaryColor,
-    padding: EdgeInsets.all(PluralAppPaddings.p18),
+    backgroundColor: AppColors.onPrimaryColor,
+    elevation: AppElevations.e5,
+    iconColor: AppColors.secondaryColor,
+    padding: EdgeInsets.all(AppPaddings.p18),
     shape: CircleBorder(),
   );
 
-  bool isFooterCollapsedCheck () {
+  bool toggleIsFooterCollapsed () {
     return _isFooterCollapsed.value = !_isFooterCollapsed.value;
   }
 
@@ -369,14 +376,14 @@ class PluralAppFooter extends StatelessWidget {
   Widget build(BuildContext context) {
     final showActionsButton = ElevatedButton(
       style: buttonStyle,
-      onPressed: isFooterCollapsedCheck,
-      child: Icon(Icons.add, size: PluralAppIconSizes.s30),
+      onPressed: toggleIsFooterCollapsed,
+      child: Icon(Icons.add, size: AppIconSizes.s30),
     );
 
     final hideActionsButton = ElevatedButton(
       style: buttonStyle,
-      onPressed: isFooterCollapsedCheck,
-      child: Icon(Icons.close, size: PluralAppIconSizes.s30),
+      onPressed: toggleIsFooterCollapsed,
+      child: Icon(Icons.close, size: AppIconSizes.s30),
     );
 
     return ValueListenableBuilder(
@@ -384,14 +391,14 @@ class PluralAppFooter extends StatelessWidget {
       builder: (BuildContext context, bool value, Widget? child) {
         return value ?
           Center(child: showActionsButton) :
-          PluralAppBottomBar(hideActionsButton: hideActionsButton,);
+          AppBottomBar(hideActionsButton: hideActionsButton,);
       }
     );
   }
 }
 
-class PluralAppBottomBar extends StatelessWidget {
-  const PluralAppBottomBar({
+class AppBottomBar extends StatelessWidget {
+  const AppBottomBar({
     super.key,
     required this.hideActionsButton
   });
@@ -407,12 +414,12 @@ class PluralAppBottomBar extends StatelessWidget {
         children: [
           Container(
             constraints: BoxConstraints.expand(
-              width: PluralAppConstraints.c350,
-              height: PluralAppConstraints.c50
+              width: AppConstraints.c350,
+              height: AppConstraints.c50
             ),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(PluralAppBorderRadii.r50),
-              color: PluralAppColors.darkGrey,
+              borderRadius: BorderRadius.circular(AppBorderRadii.r50),
+              color: AppColors.darkGrey1,
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -420,30 +427,30 @@ class PluralAppBottomBar extends StatelessWidget {
               children: [
                 gapW10,
                 IconButton(
-                  color: PluralAppColors.secondaryColor,
+                  color: AppColors.secondaryColor,
                   icon: const Icon(Icons.library_add),
-                  iconSize: PluralAppButtonSizes.s31,
+                  iconSize: AppButtonSizes.s31,
                   tooltip: Strings.tooltipAddAsk,
-                  onPressed: () {},
+                  onPressed: () => createAskDialogBuilder(context),
                 ),
                 IconButton(
-                  color: PluralAppColors.secondaryColor,
+                  color: AppColors.secondaryColor,
                   icon: const Icon(Icons.settings),
-                  iconSize: PluralAppButtonSizes.s31,
+                  iconSize: AppButtonSizes.s31,
                   tooltip: Strings.tooltipSettings,
                   onPressed: () {},
                 ),
                 IconButton(
-                  color: PluralAppColors.secondaryColor,
+                  color: AppColors.secondaryColor,
                   icon: const Icon(Icons.mail),
-                  iconSize: PluralAppButtonSizes.s31,
+                  iconSize: AppButtonSizes.s31,
                   tooltip: Strings.tooltipInvitations,
                   onPressed: () {},
                 ),
                 IconButton(
-                  color: PluralAppColors.secondaryColor,
+                  color: AppColors.secondaryColor,
                   icon: const Icon(Icons.grass),
-                  iconSize: PluralAppButtonSizes.s31,
+                  iconSize: AppButtonSizes.s31,
                   tooltip: Strings.tooltipAddGarden,
                   onPressed: () {},
                 ),
@@ -451,7 +458,7 @@ class PluralAppBottomBar extends StatelessWidget {
             ),
           ),
           Positioned(
-            left: PluralAppPositions.pNeg10,
+            left: AppPositions.pNeg10,
             child: hideActionsButton,
           ),
         ],
@@ -465,7 +472,7 @@ Future dialogBuilder(BuildContext context) {
     context: context,
     builder: (BuildContext context) {
       return SimpleDialog(
-        title: Text("Dialog Title"),
+        title: Text("TO REMOVE Dialog Title"),
         children: [
           SimpleDialogOption(
             onPressed: () { Navigator.of(context).pop(); },

@@ -1,52 +1,63 @@
 import "package:flutter/material.dart";
-import "package:timeline_tile/timeline_tile.dart";
 
-class PluralAppBorderRadii {
+class AppBorderRadii {
   static const r5 = 5.0;
+  static const r10 = 10.0;
+  static const r15 = 15.0;
   static const r50 = 50.0;
 }
 
-class PluralAppButtonSizes {
+class AppButtonSizes {
   static const s31 = 31.0;
 }
 
-class PluralAppColors {
-  static const primaryColor = Colors.grey; // Use theme finally
-  static const secondaryColor = Colors.white;
-  static const onPrimaryColor = Colors.black;
-  static const darkGrey = Color.fromARGB(255, 51, 51, 51);
-}
-
-class PluralAppConstraints {
+class AppConstraints {
+  static const c40 = 40.0;
+  static const c45 = 45.0;
   static const c50 = 50.0;
+  static const c55 = 55.0;
+  static const c65 = 65.0;
+  static const c75 = 75.0;
+  static const c80 = 80.0;
+  static const c100 = 100.0;
+  static const c230 = 230.0;
   static const c350 = 350.0;
   static const c375 = 375.0;
-  static const c230 = 230.0;
+  static const c600 = 600.0;
+  static const c650 = 650.0;
+  static const c800 = 800.0;
 }
 
-class PluralAppDimensions {
-  static const d25 = 25.0;
+class AppWidths {
+  static const w25 = 25.0;
+  static const w200 = 200.0;
 }
 
-class PluralAppElevations {
+class AppHeights {
+  static const h25 = 25.0;
+  static const h40 = 40.0;
+}
+
+class AppElevations {
   static const e5 = 5.0;
   static const e7 = 7.0;
 }
 
-class PluralAppFlexes {
+class AppFlexes {
   static const f2 = 2;
   static const f6 = 6;
 }
 
-class PluralAppFontSizes {
+class AppFontSizes {
+  static const s10 = 10.0;
   static const s25 = 25.0;
 }
 
-class PluralAppIconSizes {
+class AppIconSizes {
   static const s30 = 30.0;
 }
 
-class PluralAppPaddings {
+class AppPaddings {
   static const p0 = 0.0;
   static const p5 = 5.0;
   static const p8 = 8.0;
@@ -61,42 +72,33 @@ class PluralAppPaddings {
   static const p60 = 60.0;
 }
 
-class PluralAppPositions {
+class AppPositions {
   static const pNeg10 = -10.0;
 }
 
-class PluralAppRunSpacings {
+class AppRunSpacings {
   static const rs20 = 20.0;
 }
 
 // Constant gap widths
-const gapW10 = SizedBox(width: PluralAppPaddings.p10);
-const gapW15 = SizedBox(width: PluralAppPaddings.p15);
+const gapW10 = SizedBox(width: AppPaddings.p10);
+const gapW15 = SizedBox(width: AppPaddings.p15);
 
 // Constant gap heights
-const gapH20 = SizedBox(height: PluralAppPaddings.p20);
-const gapH25 = SizedBox(height: PluralAppPaddings.p25);
-const gapH30 = SizedBox(height: PluralAppPaddings.p30);
-const gapH35 = SizedBox(height: PluralAppPaddings.p35);
-const gapH50 = SizedBox(height: PluralAppPaddings.p50);
-const gapH60 = SizedBox(height: PluralAppPaddings.p60);
+const gapH10 = SizedBox(height: AppPaddings.p10);
+const gapH20 = SizedBox(height: AppPaddings.p20);
+const gapH25 = SizedBox(height: AppPaddings.p25);
+const gapH30 = SizedBox(height: AppPaddings.p30);
+const gapH35 = SizedBox(height: AppPaddings.p35);
+const gapH50 = SizedBox(height: AppPaddings.p50);
+const gapH60 = SizedBox(height: AppPaddings.p60);
 
 // Constant flexes
-const flex2 = Expanded(flex: PluralAppFlexes.f2, child: SizedBox());
-const flex6 = Expanded(flex: PluralAppFlexes.f6, child: SizedBox());
+const flex2 = Expanded(flex: AppFlexes.f2, child: SizedBox());
+const flex6 = Expanded(flex: AppFlexes.f6, child: SizedBox());
 
 // Timeline Tile Values
-class PluralAppTimelineValues {
+class AppTimelineSizes {
   static const indicatorWidth = 15.0;
   static const timelineThickness = 4.0;
 }
-
-const pluralAppIndicatorStyle = IndicatorStyle(
-  width: PluralAppTimelineValues.indicatorWidth,
-  color: PluralAppColors.primaryColor,
-);
-
-const pluralAppLineStyle = LineStyle(
-  color: PluralAppColors.primaryColor,
-  thickness: PluralAppTimelineValues.timelineThickness,
-);
