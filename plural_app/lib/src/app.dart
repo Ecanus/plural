@@ -2,10 +2,16 @@ import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
 import 'package:timeline_tile/timeline_tile.dart';
-import 'package:english_words/english_words.dart';
+//import 'package:english_words/english_words.dart';
 
-// Features
+// Asks
 import 'package:plural_app/src/features/asks/presentation/ask_dialog.dart';
+
+// Authentication
+import 'package:plural_app/src/features/authentication/domain/app_user.dart';
+
+// Garden
+import 'package:plural_app/src/features/gardens/presentation/garden_header.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
@@ -32,22 +38,27 @@ class MyApp extends StatelessWidget {
 }
 
 class AppState extends ChangeNotifier {
-  var current = WordPair.random();
-  var favorites = <WordPair>[];
+  AppUser testUser = AppUser(
+    uid: "12345",
+    email: "user@test.com",
+    password: "testPASSWORD",
+    firstName: "Akosua",
+    lastName: "Dankye"
+  );
 
-  void getNext() {
-    current = WordPair.random();
-    notifyListeners();
-  }
+  // void getNext() {
+  //   current = WordPair.random();
+  //   notifyListeners();
+  // }
 
-  void toggleFavorite() {
-    if (favorites.contains(current)) {
-      favorites.remove(current);
-    } else {
-      favorites.add(current);
-    }
-    notifyListeners();
-  }
+  // void toggleFavorite() {
+  //   if (favorites.contains(current)) {
+  //     favorites.remove(current);
+  //   } else {
+  //     favorites.add(current);
+  //   }
+  //   notifyListeners();
+  // }
 }
 
 class AppHomePage extends StatelessWidget {
@@ -61,7 +72,7 @@ class AppHomePage extends StatelessWidget {
             Row(
               children: [
                 flex2,
-                AppHeader(),
+                GardenHeader(),
                 flex2,
               ],
             ),
@@ -78,37 +89,6 @@ class AppHomePage extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-class AppHeader extends StatelessWidget {
-  const AppHeader({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      flex: AppFlexes.f6,
-      child: Column(
-        children: [
-          Text(
-              "Hi, Dedie",
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: AppFontSizes.s25,
-              ),
-              textAlign: TextAlign.center,
-          ),
-          Text(
-              "2024.09.03",
-              overflow: TextOverflow.ellipsis,
-              textAlign: TextAlign.center,
-          ),
-        ],
-      )
     );
   }
 }
