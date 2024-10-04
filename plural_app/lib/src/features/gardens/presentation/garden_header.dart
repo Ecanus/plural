@@ -16,7 +16,8 @@ class GardenHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<AppState>();
-    var headerText = Strings.gardenHeaderText1 + appState.testUser.firstName;
+    //var headerText = Strings.gardenHeaderText1 + appState.testUser!.firstName;
+    var headerText = "TESTING";
 
     return Expanded(
       flex: AppFlexes.f6,

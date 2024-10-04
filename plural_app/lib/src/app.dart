@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
-
 import 'package:provider/provider.dart';
-import 'package:timeline_tile/timeline_tile.dart';
-//import 'package:english_words/english_words.dart';
 
 // Asks
 import 'package:plural_app/src/features/asks/presentation/ask_dialog.dart';
 
 // Authentication
 import 'package:plural_app/src/features/authentication/domain/app_user.dart';
+import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
 
 // Garden
 import 'package:plural_app/src/features/gardens/presentation/garden_header.dart';
+import 'package:plural_app/src/features/gardens/presentation/garden_timeline.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
@@ -38,13 +37,9 @@ class MyApp extends StatelessWidget {
 }
 
 class AppState extends ChangeNotifier {
-  AppUser testUser = AppUser(
-    uid: "12345",
-    email: "user@test.com",
-    password: "testPASSWORD",
-    firstName: "Akosua",
-    lastName: "Dankye"
-  );
+  AppUser? testUser = AuthRepository.getUserByUID(uid: "TESTUSER1");
+
+  // TODO: Raise exception if testUser is null
 
   // void getNext() {
   //   current = WordPair.random();
@@ -79,7 +74,7 @@ class AppHomePage extends StatelessWidget {
             gapH30,
             Expanded(
               child: Row(
-                children: [AppTimeline()],
+                children: [GardenTimeline()],
               )
             ),
             Row(
@@ -93,247 +88,254 @@ class AppHomePage extends StatelessWidget {
   }
 }
 
-class AppTimeline extends StatelessWidget {
+// class AppTimeline extends StatefulWidget {
 
-  final testChild1 = AppViewableTimelineTile(
-    tileDate: "2024.09.04",
-    tileTimeRemaining: "16 hours left",
-    tileText: "Need help with groceries this week. Anything helps. appreciate yall!",
-    isSponsored: false,
-  );
+//   @override
+//   State<AppTimeline> createState() => _AppTimelineState();
+// }
 
-  final testChild2 = AppViewableTimelineTile(
-    tileDate: "2024.09.16",
-    tileTimeRemaining: "13 days left",
-    tileText: "Dropped my phone last night :( dammit",
-    isSponsored: true,
-  );
+// class _AppTimelineState extends State<AppTimeline> {
+//   List<Ask> gardenTimelineTiles;
 
-  final testChild3 = AppEditableTimelineTile(
-    tileDate: "2024.09.23",
-    tileTimeRemaining: "20 days left",
-    tileText: "Hey! my mom is sick and we can use help with meds",
-  );
+//   final testChild1 = AppViewableTimelineTile(
+//     tileDate: "2024.09.04",
+//     tileTimeRemaining: "16 hours left",
+//     tileText: "Need help with groceries this week. Anything helps. appreciate yall!",
+//     isSponsored: false,
+//   );
 
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: ListView(
-        padding: const EdgeInsets.all(AppPaddings.p8),
-        children: [
-          testChild1,
-          testChild2,
-          testChild3,
-        ],
-      ),
-    );
-  }
-}
+//   final testChild2 = AppViewableTimelineTile(
+//     tileDate: "2024.09.16",
+//     tileTimeRemaining: "13 days left",
+//     tileText: "Dropped my phone last night :( dammit",
+//     isSponsored: true,
+//   );
 
-class AppViewableTimelineTile extends StatelessWidget {
-  const AppViewableTimelineTile({
-    super.key,
-    required this.tileDate,
-    required this.tileTimeRemaining,
-    required this.tileText,
-    required this.isSponsored,
-  });
+//   final testChild3 = AppEditableTimelineTile(
+//     tileDate: "2024.09.23",
+//     tileTimeRemaining: "20 days left",
+//     tileText: "Hey! my mom is sick and we can use help with meds",
+//   );
 
-  final String tileDate;
-  final String tileTimeRemaining;
-  final String tileText;
-  final bool isSponsored;
+//   @override
+//   Widget build(BuildContext context) {
+//     return Expanded(
+//       child: ListView(
+//         padding: const EdgeInsets.all(AppPaddings.p8),
+//         children: [
+//           testChild1,
+//           testChild2,
+//           testChild3,
+//         ],
+//       ),
+//     );
+//   }
+// }
 
-  @override
-  Widget build(BuildContext context) {
-    return TimelineTile(
-      alignment: TimelineAlign.center,
-      indicatorStyle: appIndicatorStyle,
-      beforeLineStyle: appLineStyle,
-      startChild: AppBaseTimelineTile(
-        tileDate: tileDate,
-        tileTimeRemaining: tileTimeRemaining,
-        tileText: tileText,
-        alignment: Alignment.centerRight,
-      ),
-      endChild: isSponsored ? Container(
-        padding: const EdgeInsets.all(AppPaddings.p5),
-        child: Align(
-          alignment: Alignment.centerLeft,
-          child: Icon(
-            Icons.check_circle,
-            color: AppColors.primaryColor,
-            size: AppIconSizes.s30
-          ),
-        ),
-      ) : null,
-    );
-  }
-}
+// class AppViewableTimelineTile extends StatelessWidget {
+//   const AppViewableTimelineTile({
+//     super.key,
+//     required this.tileDate,
+//     required this.tileTimeRemaining,
+//     required this.tileText,
+//     required this.isSponsored,
+//   });
 
-class AppEditableTimelineTile extends StatelessWidget {
-  const AppEditableTimelineTile({
-    super.key,
-    required this.tileDate,
-    required this.tileTimeRemaining,
-    required this.tileText
-  });
+//   final String tileDate;
+//   final String tileTimeRemaining;
+//   final String tileText;
+//   final bool isSponsored;
 
-  final String tileDate;
-  final String tileTimeRemaining;
-  final String tileText;
+//   @override
+//   Widget build(BuildContext context) {
+//     return TimelineTile(
+//       alignment: TimelineAlign.center,
+//       indicatorStyle: appIndicatorStyle,
+//       beforeLineStyle: appLineStyle,
+//       startChild: AppBaseTimelineTile(
+//         tileDate: tileDate,
+//         tileTimeRemaining: tileTimeRemaining,
+//         tileText: tileText,
+//         alignment: Alignment.centerRight,
+//       ),
+//       endChild: isSponsored ? Container(
+//         padding: const EdgeInsets.all(AppPaddings.p5),
+//         child: Align(
+//           alignment: Alignment.centerLeft,
+//           child: Icon(
+//             Icons.check_circle,
+//             color: AppColors.primaryColor,
+//             size: AppIconSizes.s30
+//           ),
+//         ),
+//       ) : null,
+//     );
+//   }
+// }
 
-  @override
-  Widget build(BuildContext context) {
-    return TimelineTile(
-      alignment: TimelineAlign.center,
-      indicatorStyle: appIndicatorStyle,
-      beforeLineStyle: appLineStyle,
-      startChild: Align(
-        alignment: Alignment.centerRight,
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            elevation: AppElevations.e5,
-            padding: const EdgeInsets.all(AppPaddings.p15),
-            shape: CircleBorder(),
-            iconColor: AppColors.secondaryColor,
-            backgroundColor: AppColors.primaryColor
-          ),
-          onPressed: () => dialogBuilder(context),
-          child: Icon(Icons.edit)
-        ),
-      ),
-      endChild: AppBaseTimelineTile(
-        tileDate: tileDate,
-        tileTimeRemaining: tileTimeRemaining,
-        tileText: tileText,
-        alignment: Alignment.centerLeft,
-      ),
-    );
-  }
-}
+// class AppEditableTimelineTile extends StatelessWidget {
+//   const AppEditableTimelineTile({
+//     super.key,
+//     required this.tileDate,
+//     required this.tileTimeRemaining,
+//     required this.tileText
+//   });
 
-class AppBaseTimelineTile extends StatelessWidget {
-  const AppBaseTimelineTile({
-    super.key,
-    required this.tileDate,
-    required this.tileTimeRemaining,
-    required this.tileText,
-    required this.alignment
-  });
+//   final String tileDate;
+//   final String tileTimeRemaining;
+//   final String tileText;
 
-  final String tileDate;
-  final String tileTimeRemaining;
-  final String tileText;
-  final Alignment alignment;
+//   @override
+//   Widget build(BuildContext context) {
+//     return TimelineTile(
+//       alignment: TimelineAlign.center,
+//       indicatorStyle: appIndicatorStyle,
+//       beforeLineStyle: appLineStyle,
+//       startChild: Align(
+//         alignment: Alignment.centerRight,
+//         child: ElevatedButton(
+//           style: ElevatedButton.styleFrom(
+//             elevation: AppElevations.e5,
+//             padding: const EdgeInsets.all(AppPaddings.p15),
+//             shape: CircleBorder(),
+//             iconColor: AppColors.secondaryColor,
+//             backgroundColor: AppColors.primaryColor
+//           ),
+//           onPressed: () => dialogBuilder(context),
+//           child: Icon(Icons.edit)
+//         ),
+//       ),
+//       endChild: AppBaseTimelineTile(
+//         tileDate: tileDate,
+//         tileTimeRemaining: tileTimeRemaining,
+//         tileText: tileText,
+//         alignment: Alignment.centerLeft,
+//       ),
+//     );
+//   }
+// }
 
-  @override
-  Widget build(BuildContext context) {
-    bool isViewable = alignment == Alignment.centerRight;
+// class AppBaseTimelineTile extends StatelessWidget {
+//   const AppBaseTimelineTile({
+//     super.key,
+//     required this.tileDate,
+//     required this.tileTimeRemaining,
+//     required this.tileText,
+//     required this.alignment
+//   });
 
-    final MainAxisAlignment axisAlignment =
-       isViewable ? MainAxisAlignment.end : MainAxisAlignment.start;
+//   final String tileDate;
+//   final String tileTimeRemaining;
+//   final String tileText;
+//   final Alignment alignment;
 
-    final TextAlign textAlignment =
-      isViewable ? TextAlign.end : TextAlign.start;
+//   @override
+//   Widget build(BuildContext context) {
+//     bool isViewable = alignment == Alignment.centerRight;
 
-    return Align(
-      alignment: alignment,
-      child: Container(
-        padding: EdgeInsets.all(AppPaddings.p10),
-        constraints: BoxConstraints.expand(
-          width: AppConstraints.c375,
-          height: AppConstraints.c230,
-        ),
-        child: Card(
-          elevation: AppElevations.e7,
-          color: AppColors.secondaryColor,
-          child: Padding(
-            padding: EdgeInsets.all(AppPaddings.p10),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: axisAlignment,
-                  children: [
-                    Text(tileDate),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: axisAlignment,
-                  children: [
-                    Text(
-                      tileTimeRemaining,
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
-                gapH25,
-                Wrap(
-                  runSpacing: AppRunSpacings.rs20,
-                  children: [
-                    Row(
-                      mainAxisAlignment: axisAlignment,
-                      children: [
-                        Flexible(
-                          child: Text(
-                            tileText,
-                            textAlign: textAlignment,
-                          ),
-                        )
-                      ]
-                    ),
-                    gapH60,
-                    Row(
-                      mainAxisAlignment: axisAlignment,
-                      children: getTimelineTileFooterChildren(context, isViewable)
-                    ),
-                  ],
-                ),
-              ]
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+//     final MainAxisAlignment axisAlignment =
+//        isViewable ? MainAxisAlignment.end : MainAxisAlignment.start;
 
-  List<Widget> getTimelineTileFooterChildren(
-    BuildContext context, bool isViewable) {
-    List<Widget> widgets = [];
+//     final TextAlign textAlignment =
+//       isViewable ? TextAlign.end : TextAlign.start;
 
-    Widget tag = OutlinedButton(
-      onPressed: null,
-      style: OutlinedButton.styleFrom(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(
-            Radius.circular(AppBorderRadii.r5)),
-        ),
-      ),
-      child: Text("Groceries"),
-    );
+//     return Align(
+//       alignment: alignment,
+//       child: Container(
+//         padding: EdgeInsets.all(AppPaddings.p10),
+//         constraints: BoxConstraints.expand(
+//           width: AppConstraints.c375,
+//           height: AppConstraints.c230,
+//         ),
+//         child: Card(
+//           elevation: AppElevations.e7,
+//           color: AppColors.secondaryColor,
+//           child: Padding(
+//             padding: EdgeInsets.all(AppPaddings.p10),
+//             child: Column(
+//               children: [
+//                 Row(
+//                   mainAxisAlignment: axisAlignment,
+//                   children: [
+//                     Text(tileDate),
+//                   ],
+//                 ),
+//                 Row(
+//                   mainAxisAlignment: axisAlignment,
+//                   children: [
+//                     Text(
+//                       tileTimeRemaining,
+//                       style: TextStyle(fontWeight: FontWeight.bold),
+//                     ),
+//                   ],
+//                 ),
+//                 gapH25,
+//                 Wrap(
+//                   runSpacing: AppRunSpacings.rs20,
+//                   children: [
+//                     Row(
+//                       mainAxisAlignment: axisAlignment,
+//                       children: [
+//                         Flexible(
+//                           child: Text(
+//                             tileText,
+//                             textAlign: textAlignment,
+//                           ),
+//                         )
+//                       ]
+//                     ),
+//                     gapH60,
+//                     Row(
+//                       mainAxisAlignment: axisAlignment,
+//                       children: getTimelineTileFooterChildren(context, isViewable)
+//                     ),
+//                   ],
+//                 ),
+//               ]
+//             ),
+//           ),
+//         ),
+//       ),
+//     );
+//   }
 
-    Widget button = SizedBox(
-      width: AppWidths.w25,
-      height: AppHeights.h25,
-      child: IconButton(
-        color: AppColors.primaryColor,
-        icon: const Icon(Icons.arrow_drop_down_circle_rounded),
-        padding: const EdgeInsets.all(AppPaddings.p0),
-        onPressed: () => dialogBuilder(context),
-      ),
-    );
+//   List<Widget> getTimelineTileFooterChildren(
+//     BuildContext context, bool isViewable) {
+//     List<Widget> widgets = [];
 
-    if (isViewable) {
-      widgets.add(tag);
-      widgets.add(gapW15);
-      widgets.add(button);
-    } else {
-      widgets.add(tag);
-    }
+//     Widget tag = OutlinedButton(
+//       onPressed: null,
+//       style: OutlinedButton.styleFrom(
+//         shape: RoundedRectangleBorder(
+//           borderRadius: BorderRadius.all(
+//             Radius.circular(AppBorderRadii.r5)),
+//         ),
+//       ),
+//       child: Text("Groceries"),
+//     );
 
-    return widgets;
-  }
-}
+//     Widget button = SizedBox(
+//       width: AppWidths.w25,
+//       height: AppHeights.h25,
+//       child: IconButton(
+//         color: AppColors.primaryColor,
+//         icon: const Icon(Icons.arrow_drop_down_circle_rounded),
+//         padding: const EdgeInsets.all(AppPaddings.p0),
+//         onPressed: () => dialogBuilder(context),
+//       ),
+//     );
+
+//     if (isViewable) {
+//       widgets.add(tag);
+//       widgets.add(gapW15);
+//       widgets.add(button);
+//     } else {
+//       widgets.add(tag);
+//     }
+
+//     return widgets;
+//   }
+// }
 
 /// Parent Widget of the AppBottomBar and all widgets
 /// at the bottom of the App.

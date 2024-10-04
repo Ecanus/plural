@@ -1,11 +1,17 @@
-class AppUser {
-  const AppUser({
+import 'package:plural_app/src/features/authentication/domain/log_data.dart';
+
+class AppUser with LogData{
+  AppUser({
     required this.uid,
     required this.email,
     required this.password,
     required this.firstName,
     required this.lastName,
   });
+
+  // Log Data
+  @override
+  DateTime logCreationDate = DateTime.now();
 
   final String uid;
   final String email;

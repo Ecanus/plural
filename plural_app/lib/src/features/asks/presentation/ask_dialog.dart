@@ -224,17 +224,17 @@ class AskDialogExistingAsksList extends StatelessWidget {
             children: [
               ExistingAskListTile(
                 title: "Ask #1",
-                subtitle: "2024.09.13\nThe subtitle of Ask #1 is this.",
+                subtitle: "2024-09-13\nThe subtitle of Ask #1 is this.",
                 viewCallback: viewCallback,
               ),
               ExistingAskListTile(
                 title: "Ask #2",
-                subtitle: "2024.09.13\nPickles!!!",
+                subtitle: "2024-09-13\nPickles!!!",
                 viewCallback: viewCallback,
               ),
               ExistingAskListTile(
                 title: "Ask #2",
-                subtitle: "2024.09.13\nTomorrow is the day, I swear! I do?",
+                subtitle: "2024-09-13\nTomorrow is the day, I swear! I do?",
                 viewCallback: viewCallback,
               ),
             ]
