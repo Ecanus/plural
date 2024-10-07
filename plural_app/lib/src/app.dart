@@ -37,23 +37,7 @@ class MyApp extends StatelessWidget {
 }
 
 class AppState extends ChangeNotifier {
-  AppUser? testUser = AuthRepository.getUserByUID(uid: "TESTUSER1");
 
-  // TODO: Raise exception if testUser is null
-
-  // void getNext() {
-  //   current = WordPair.random();
-  //   notifyListeners();
-  // }
-
-  // void toggleFavorite() {
-  //   if (favorites.contains(current)) {
-  //     favorites.remove(current);
-  //   } else {
-  //     favorites.add(current);
-  //   }
-  //   notifyListeners();
-  // }
 }
 
 class AppHomePage extends StatelessWidget {

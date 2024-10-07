@@ -4,7 +4,6 @@ class AppUser with LogData{
   AppUser({
     required this.uid,
     required this.email,
-    required this.password,
     required this.firstName,
     required this.lastName,
   });
@@ -15,7 +14,6 @@ class AppUser with LogData{
 
   final String uid;
   final String email;
-  final String password;
   final String firstName;
   final String lastName;
 

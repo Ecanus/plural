@@ -7,7 +7,13 @@ import 'package:plural_app/src/constants/pocketbase.dart';
 class AsksRepository {
   AsksRepository({
     required this.pb,
-  });
+    required usernameOrEmail,
+    required password
+  }) {
+    // Log In
+    pb.collection(Collection.users).authWithPassword(
+      usernameOrEmail, password);
+  }
 
   final PocketBase pb;
 
@@ -86,15 +92,10 @@ class AsksRepository {
     // TODO: Implement
   }
 
-  // Queries on the asks collection to retrieve records by corresponding
-  // params. [deserialize], if true, converts retrieved records
-  // into Ask instances.
+  // method that queries on the asks collection to retrieve records
+  // by corresponding params.
+  //[deserialize], if true, converts retrieved records into Ask instances.
   Future get({bool deserialize = true}) async {
-    // TODO: Change to the @authorize annotation
-    await pb.admins.authWithPassword(
-      "dediekanda@gmail.com",
-      "plural>one");
-
     var result = await pb.collection(Collection.asks).getList(
       sort: "created"
     );

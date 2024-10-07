@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:timeline_tile/timeline_tile.dart';
 
 // Asks
 import 'package:plural_app/src/features/asks/domain/ask.dart';
 
+// Auth
+import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
+
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
 import 'package:plural_app/src/constants/values.dart';
-
-var testLoggedInUserUID = "TESTUSER1";
 
 class GardenTimelineTile extends StatelessWidget {
   const GardenTimelineTile({
@@ -20,9 +22,13 @@ class GardenTimelineTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ask.creatorUID == testLoggedInUserUID ?
+    final getIt = GetIt.instance;
+    final authRespository = getIt<AuthRepository>();
+    final currentUserUID = authRespository.getCurrentUserUID();
+
+    return ask.creatorUID == currentUserUID ?
       EditableGardenTimelineTile(ask: ask) :
-      ViewableGardenTimelineTile(ask: ask);
+      ViewableGardenTimelineTile(ask: ask, currentUserUID: currentUserUID,);
   }
 }
 
@@ -30,9 +36,11 @@ class ViewableGardenTimelineTile extends StatelessWidget {
   const ViewableGardenTimelineTile({
     super.key,
     required this.ask,
+    required this.currentUserUID,
   });
 
   final Ask ask;
+  final String currentUserUID;
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +54,7 @@ class ViewableGardenTimelineTile extends StatelessWidget {
         tileText: ask.description,
         alignment: Alignment.centerRight,
       ),
-      endChild: ask.isSponsoredByUser(testLoggedInUserUID) ?
+      endChild: ask.isSponsoredByUser(currentUserUID) ?
         Container(
           padding: const EdgeInsets.all(AppPaddings.p5),
           child: Align(
@@ -188,17 +196,6 @@ class BaseGardenTimelineTile extends StatelessWidget {
     BuildContext context, bool isViewable) {
     List<Widget> widgets = [];
 
-    Widget tag = OutlinedButton(
-      onPressed: null,
-      style: OutlinedButton.styleFrom(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(
-            Radius.circular(AppBorderRadii.r5)),
-        ),
-      ),
-      child: Text("Groceries"),
-    );
-
     Widget button = SizedBox(
       width: AppWidths.w25,
       height: AppHeights.h25,
@@ -211,11 +208,8 @@ class BaseGardenTimelineTile extends StatelessWidget {
     );
 
     if (isViewable) {
-      widgets.add(tag);
       widgets.add(gapW15);
       widgets.add(button);
-    } else {
-      widgets.add(tag);
     }
 
     return widgets;

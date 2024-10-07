@@ -78,18 +78,23 @@ class Ask with LogData{
     List<Ask> instances = [];
 
     for (var record in records) {
+      // Format fullySponsoredDate if non-null
       var fullySponsoredDate = record["fullySponsoredDate"];
       var formattedFullySponsoredDate = fullySponsoredDate != "" ?
         DateTime.parse(fullySponsoredDate) : null;
 
-      instances.add(Ask(
+      var newAsk = Ask(
         uid: record["id"],
-        creatorUID: record["creatorUID"],
+        creatorUID: record["creator"],
         description: record["description"],
         deadlineDate: DateTime.parse(record["deadlineDate"]),
         targetDonationSum: record["targetDonationSum"],
         fullySponsoredDate: formattedFullySponsoredDate,
-      ));
+      );
+
+      newAsk.sponsorIDS = List<String>.from(record["sponsors"]);
+
+      instances.add(newAsk);
     }
 
     return instances;

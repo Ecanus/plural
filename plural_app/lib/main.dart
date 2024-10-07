@@ -5,6 +5,7 @@ import 'package:plural_app/src/app.dart';
 import 'package:plural_app/src/utils/service_locator.dart';
 
 void main() {
-  setupGetIt();
+  logIn(usernameOrEmail: "testuser2", password: "pickles2");
+  createGetItInstances();
   runApp(MyApp());
 }

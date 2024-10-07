@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:get_it/get_it.dart';
 
-import 'package:plural_app/src/app.dart';
+// Auth
+import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
+
+// Gardens
 import 'package:plural_app/src/features/gardens/presentation/garden_clock.dart';
 
 // Constants
@@ -15,16 +18,16 @@ class GardenHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var appState = context.watch<AppState>();
-    //var headerText = Strings.gardenHeaderText1 + appState.testUser!.firstName;
-    var headerText = "TESTING";
+    final getIt = GetIt.instance;
+    final authRespository = getIt<AuthRepository>();
+    final currentUser = authRespository.getCurrentUser();
 
     return Expanded(
       flex: AppFlexes.f6,
       child: Column(
         children: [
           Text(
-              headerText,
+              Strings.gardenHeaderText1 + currentUser.firstName,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
