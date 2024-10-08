@@ -1,6 +1,4 @@
-import 'package:plural_app/src/features/authentication/domain/log_data.dart';
-
-class AppUser with LogData{
+class AppUser {
   AppUser({
     required this.uid,
     required this.email,
@@ -8,14 +6,14 @@ class AppUser with LogData{
     required this.lastName,
   });
 
-  // Log Data
-  @override
-  DateTime logCreationDate = DateTime.now();
-
   final String uid;
   final String email;
   final String firstName;
   final String lastName;
+
+  String get fullName {
+    return "$firstName $lastName";
+  }
 
   @override
   bool operator ==(Object other) {

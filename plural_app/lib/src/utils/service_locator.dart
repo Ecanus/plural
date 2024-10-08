@@ -1,6 +1,9 @@
 import 'package:get_it/get_it.dart';
 import 'package:pocketbase/pocketbase.dart';
 
+// Constants
+import 'package:plural_app/src/constants/pocketbase.dart';
+
 // Asks
 import 'package:plural_app/src/features/asks/data/asks_repository.dart';
 
@@ -23,10 +26,10 @@ void createGetItInstances() {
     ));
 }
 
-void logIn({
+Future<void> logIn({
   required usernameOrEmail,
   required password
-}) {
+}) async {
   final getIt = GetIt.instance;
 
   // Database
@@ -38,8 +41,6 @@ void logIn({
   getIt.registerLazySingleton<AsksRepository>(
     () => AsksRepository(
       pb: getIt<PocketBase>(),
-      usernameOrEmail: usernameOrEmail,
-      password: password
     )
   );
 
@@ -47,8 +48,10 @@ void logIn({
   getIt.registerLazySingleton<AuthRepository>(
     () => AuthRepository(
       pb: getIt<PocketBase>(),
-      usernameOrEmail: usernameOrEmail,
-      password: password
     )
   );
+
+  // Log In
+  await getIt<PocketBase>().collection(Collection.users).authWithPassword(
+    usernameOrEmail, password);
 }

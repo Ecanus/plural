@@ -26,3 +26,29 @@ class AppTextFormField extends StatelessWidget {
     );
   }
 }
+
+class AppTextFormFieldFilled extends StatelessWidget {
+  const AppTextFormFieldFilled({
+    super.key,
+    required this.value,
+  });
+
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.only(
+        top: AppPaddings.p20,
+        bottom: AppPaddings.p20
+      ),
+      child: TextFormField(
+        enabled: false,
+        initialValue: value,
+        decoration: InputDecoration(
+          hintText: value,
+        ),
+      ),
+    );
+  }
+}

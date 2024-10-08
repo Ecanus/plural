@@ -4,6 +4,7 @@ import 'package:timeline_tile/timeline_tile.dart';
 
 // Asks
 import 'package:plural_app/src/features/asks/domain/ask.dart';
+import 'package:plural_app/src/features/asks/presentation/ask_dialog.dart';
 
 // Auth
 import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
@@ -49,9 +50,7 @@ class ViewableGardenTimelineTile extends StatelessWidget {
       indicatorStyle: appIndicatorStyle,
       beforeLineStyle: appLineStyle,
       startChild: BaseGardenTimelineTile(
-        tileDate: ask.formattedDeadlineDate,
-        tileTimeRemaining: ask.timeRemainingString,
-        tileText: ask.description,
+        ask: ask,
         alignment: Alignment.centerRight,
       ),
       endChild: ask.isSponsoredByUser(currentUserUID) ?
@@ -94,14 +93,12 @@ class EditableGardenTimelineTile extends StatelessWidget {
             iconColor: AppColors.secondaryColor,
             backgroundColor: AppColors.primaryColor
           ),
-          onPressed: () => dialogBuilder(context),
+          onPressed: () => createAskDialogBuilder(context),
           child: Icon(Icons.edit)
         ),
       ),
       endChild: BaseGardenTimelineTile(
-        tileDate: ask.formattedDeadlineDate,
-        tileTimeRemaining: ask.timeRemainingString,
-        tileText: ask.description,
+        ask: ask,
         alignment: Alignment.centerLeft,
       ),
     );
@@ -111,15 +108,11 @@ class EditableGardenTimelineTile extends StatelessWidget {
 class BaseGardenTimelineTile extends StatelessWidget {
   const BaseGardenTimelineTile({
     super.key,
-    required this.tileDate,
-    required this.tileTimeRemaining,
-    required this.tileText,
+    required this.ask,
     required this.alignment
   });
 
-  final String tileDate;
-  final String tileTimeRemaining;
-  final String tileText;
+  final Ask ask;
   final Alignment alignment;
 
   @override
@@ -150,14 +143,14 @@ class BaseGardenTimelineTile extends StatelessWidget {
                 Row(
                   mainAxisAlignment: axisAlignment,
                   children: [
-                    Text(tileDate),
+                    Text(ask.formattedDeadlineDate),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: axisAlignment,
                   children: [
                     Text(
-                      tileTimeRemaining,
+                      ask.timeRemainingString,
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ],
@@ -171,7 +164,7 @@ class BaseGardenTimelineTile extends StatelessWidget {
                       children: [
                         Flexible(
                           child: Text(
-                            tileText,
+                            ask.description,
                             textAlign: textAlignment,
                           ),
                         )
@@ -180,7 +173,10 @@ class BaseGardenTimelineTile extends StatelessWidget {
                     gapH60,
                     Row(
                       mainAxisAlignment: axisAlignment,
-                      children: getTimelineTileFooterChildren(context, isViewable)
+                      children: getTimelineTileFooterChildren(
+                        context: context,
+                        isViewable: isViewable,
+                        ask: ask)
                     ),
                   ],
                 ),
@@ -192,8 +188,11 @@ class BaseGardenTimelineTile extends StatelessWidget {
     );
   }
 
-  List<Widget> getTimelineTileFooterChildren(
-    BuildContext context, bool isViewable) {
+  List<Widget> getTimelineTileFooterChildren({
+    required BuildContext context,
+    required bool isViewable,
+    required Ask ask
+  }) {
     List<Widget> widgets = [];
 
     Widget button = SizedBox(
@@ -203,7 +202,9 @@ class BaseGardenTimelineTile extends StatelessWidget {
         color: AppColors.primaryColor,
         icon: const Icon(Icons.arrow_drop_down_circle_rounded),
         padding: const EdgeInsets.all(AppPaddings.p0),
-        onPressed: () => dialogBuilder(context),
+        onPressed: () => createViewableAskDialog(
+          context: context,
+          ask: ask),
       ),
     );
 
@@ -214,21 +215,4 @@ class BaseGardenTimelineTile extends StatelessWidget {
 
     return widgets;
   }
-}
-
-Future dialogBuilder(BuildContext context) {
-  return showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return SimpleDialog(
-        title: Text("TO REMOVE Dialog Title"),
-        children: [
-          SimpleDialogOption(
-            onPressed: () { Navigator.of(context).pop(); },
-            child: Text("Click to close"),
-          )
-        ],
-      );
-    }
-  );
 }

@@ -1,68 +1,20 @@
 // Pocketbase
 import 'package:pocketbase/pocketbase.dart';
 
-// Auth
-import "package:plural_app/src/features/authentication/domain/app_user.dart";
-
 // Constants
 import 'package:plural_app/src/constants/pocketbase.dart';
 
+// Auth
+import "package:plural_app/src/features/authentication/domain/app_user.dart";
+
 class AuthRepository {
   AuthRepository({
-    required this.pb,
-    required usernameOrEmail,
-    required password
-  }) {
-      // Log In
-      pb.collection(Collection.users).authWithPassword(
-        usernameOrEmail, password);
-  }
+    required this.pb
+  });
 
   final PocketBase pb;
 
-  // static List<AppUser> _fakeDB = [
-  //   AppUser(
-  //     uid: "PLURALTESTUSER1",
-  //     email: "user1@test.com",
-  //     password: "pickles1",
-  //     firstName: "Test",
-  //     lastName: "User1"
-  //   ),
-  //   AppUser(
-  //     uid: "TESTUSER2",
-  //     email: "user2@test.com",
-  //     password: "pickles2",
-  //     firstName: "Test",
-  //     lastName: "User2"
-  //   ),
-  //   AppUser(
-  //     uid: "TESTUSER2",
-  //     email: "user3@test.com",
-  //     password: "pickles3",
-  //     firstName: "Yaa",
-  //     lastName: "Owusu"
-  //   ),
-  // ];
-
-  // Sign-Up
-  // Future<void> signUp({
-  //   required uid,
-  //   required email,
-  //   required password,
-  //   required firstName,
-  //   required lastName,
-  // }) async {
-  //   final body = {
-  //     "username": firstName + lastName,
-  //     "name": firstName + " " + lastName,
-  //     "email": email,
-  //     "password": password,
-  //     "passwordConfirm": password,
-  //   };
-
-  //   final record = await pb.collection("users").create(body: body);
-  //   print(record);
-  // }
+  AppUser? _currentUser;
 
   String getCurrentUserUID() {
     return pb.authStore.model.id;
@@ -70,25 +22,39 @@ class AuthRepository {
 
   AppUser getCurrentUser() {
     var user = pb.authStore.model;
+    user = user.toJson();
 
     // TODO: Raise error if user is null
 
-    user = user.toJson();
+    // Cache currentUser if currentUser is null
+    if (_currentUser == null) {
+      var currentUser = AppUser(
+        uid: user["id"],
+        email: user["email"],
+        firstName: user["firstName"],
+        lastName: user["lastName"]
+      );
 
-    return AppUser(
-      uid: user["id"],
-      email: user["email"],
-      firstName: user["firstName"],
-      lastName: user["lastName"]
-    );
+      _currentUser = currentUser;
+    }
+
+    return _currentUser!;
   }
 
-  // Get
-  // AppUser? getUserByUID({required String uid}) {
-  //   for(final AppUser user in _fakeDB) {
-  //     if (user.uid == uid) return user;
-  //   }
+  Future<AppUser> getUserByUID(String uid) async {
+    var result = await pb.collection(Collection.users).getList(
+      filter: 'id = "$uid"'
+    );
 
-  //   return null;
-  // }
+    // TODO: Raise error if result is empty
+
+    var record = result.toJson()["items"][0];
+
+    return AppUser(
+      uid: record["id"],
+      email: record["email"],
+      firstName: record["firstName"],
+      lastName: record["lastName"]
+    );
+  }
 }

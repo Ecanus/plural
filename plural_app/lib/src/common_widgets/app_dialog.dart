@@ -4,17 +4,19 @@ import 'package:flutter/material.dart';
 import 'package:plural_app/src/constants/app_sizes.dart';
 import 'package:plural_app/src/constants/values.dart';
 
+// Widget housing the dimensions and theme shared across
+// all dialog boxes used in the app.
 class AppDialog extends StatelessWidget {
   const AppDialog({
     super.key,
     required this.view,
-    this.viewNavBar,
     required this.viewTitle,
+    this.viewNavBar,
   });
 
   final Widget view;
-  final Widget? viewNavBar;
   final String viewTitle;
+  final Widget? viewNavBar;
 
   @override
   Widget build(BuildContext context) {

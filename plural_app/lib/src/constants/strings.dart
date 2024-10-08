@@ -15,6 +15,10 @@ class Strings {
   static const hintTextTargetAmount = "Target Amount";
   static const hintTextDescription = "Description";
 
+  static const isAskSponsoredLabel = "Is Ask sponsored";
+
+  static const close = "Close Window";
+
   // Garden
   static const gardenHeaderText1 = "Hi, ";
 

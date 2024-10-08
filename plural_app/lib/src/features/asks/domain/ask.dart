@@ -1,7 +1,10 @@
 import 'package:intl/intl.dart';
+import 'package:get_it/get_it.dart';
 
-// Authentication
+// Auth
 import 'package:plural_app/src/features/authentication/domain/log_data.dart';
+import "package:plural_app/src/features/authentication/domain/app_user.dart";
+import "package:plural_app/src/features/authentication/data/auth_repository.dart";
 
 // Constants
 import 'package:plural_app/src/constants/strings.dart';
@@ -30,6 +33,8 @@ class Ask with LogData{
   int targetDonationSum;
 
   List<String> sponsorIDS = [];
+
+  AppUser? creator;
 
   String get formattedDeadlineDate {
     return DateFormat(Strings.dateformatYMMdd).format(deadlineDate);
@@ -74,18 +79,25 @@ class Ask with LogData{
   }
 
   static Future<List<Ask>> createInstancesFromQuery(query) async {
+    final authRepository = GetIt.instance<AuthRepository>();
+
     var records = await query.toJson()["items"];
     List<Ask> instances = [];
 
     for (var record in records) {
+      var creatorUID = record["creator"];
+
       // Format fullySponsoredDate if non-null
       var fullySponsoredDate = record["fullySponsoredDate"];
       var formattedFullySponsoredDate = fullySponsoredDate != "" ?
         DateTime.parse(fullySponsoredDate) : null;
 
+      // Get AppUser that created the Ask
+      var creator = await authRepository.getUserByUID(creatorUID);
+
       var newAsk = Ask(
         uid: record["id"],
-        creatorUID: record["creator"],
+        creatorUID: creatorUID,
         description: record["description"],
         deadlineDate: DateTime.parse(record["deadlineDate"]),
         targetDonationSum: record["targetDonationSum"],
@@ -93,6 +105,7 @@ class Ask with LogData{
       );
 
       newAsk.sponsorIDS = List<String>.from(record["sponsors"]);
+      newAsk.creator = creator;
 
       instances.add(newAsk);
     }
