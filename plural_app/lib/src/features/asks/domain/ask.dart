@@ -40,6 +40,10 @@ class Ask with LogData{
     return DateFormat(Strings.dateformatYMMdd).format(deadlineDate);
   }
 
+  bool get isFullySponsored {
+    return fullySponsoredDate != null;
+  }
+
   String get timeRemainingString {
     var timeRemaining = deadlineDate.difference(DateTime.now());
 

@@ -4,7 +4,8 @@ import 'package:timeline_tile/timeline_tile.dart';
 
 // Asks
 import 'package:plural_app/src/features/asks/domain/ask.dart';
-import 'package:plural_app/src/features/asks/presentation/ask_dialog.dart';
+import 'package:plural_app/src/features/asks/presentation/viewable_ask_dialog.dart';
+import 'package:plural_app/src/features/asks/presentation/editable_ask_dialog.dart';
 
 // Auth
 import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
@@ -93,8 +94,11 @@ class EditableGardenTimelineTile extends StatelessWidget {
             iconColor: AppColors.secondaryColor,
             backgroundColor: AppColors.primaryColor
           ),
-          onPressed: () => createAskDialogBuilder(context),
-          child: Icon(Icons.edit)
+          onPressed: () => createEditableAskDialog(
+            context: context,
+            ask: ask
+          ),
+          child: Icon(Icons.mode_edit_outlined)
         ),
       ),
       endChild: BaseGardenTimelineTile(
@@ -204,7 +208,8 @@ class BaseGardenTimelineTile extends StatelessWidget {
         padding: const EdgeInsets.all(AppPaddings.p0),
         onPressed: () => createViewableAskDialog(
           context: context,
-          ask: ask),
+          ask: ask
+        ),
       ),
     );
 

@@ -1,95 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 
 // Common Widgets
 import 'package:plural_app/src/common_widgets/app_dialog.dart';
 import 'package:plural_app/src/common_widgets/app_text_form_field.dart';
-import 'package:plural_app/src/common_widgets/app_checkbox_form_field.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
 import 'package:plural_app/src/constants/strings.dart';
-import 'package:plural_app/src/constants/values.dart';
 
 // Ask
-import 'package:plural_app/src/features/asks/domain/ask.dart';
-
-// Auth
-import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
+import 'package:plural_app/src/features/asks/presentation/ask_dialog_header.dart';
+import 'package:plural_app/src/features/asks/presentation/ask_dialog_header_button.dart';
 
 enum ViewKey {
   existingAsksList,
   editAskForm,
   createAskForm,
-}
-
-Future createViewableAskDialog({
-  required BuildContext context,
-  required Ask ask
-}) {
-  return showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AppDialog(
-        view: AskDialogViewForm(ask: ask),
-        viewTitle: Strings.asksViewTitle
-      );
-    }
-  );
-}
-
-class AskDialogViewForm extends StatelessWidget {
-  const AskDialogViewForm({
-    super.key,
-    required this.ask,
-  });
-
-  final Ask ask;
-
-  @override
-  Widget build(BuildContext context) {
-    final currentUserUID = GetIt.instance<AuthRepository>().getCurrentUserUID();
-
-    final Widget headerButton = AskDialogHeaderButton(
-      onPressed: () => Navigator.pop(context),
-      icon: Icon(Icons.close),
-      label: Strings.close
-    );
-
-    return Column(
-      children: [
-        AskDialogViewHeader(headerButton: headerButton),
-        Expanded(
-          child: ListView(
-            padding: const EdgeInsets.all(AppPaddings.p35),
-            children: [
-              Form(
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(child: AppTextFormFieldFilled(value: ask.formattedDeadlineDate,)),
-                        Expanded(
-                          child: AppCheckboxFormFieldFilled(
-                            value: ask.isSponsoredByUser(currentUserUID),
-                            text: Strings.isAskSponsoredLabel,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                          ),
-                        ),
-                      ],
-                    ),
-                    AppTextFormFieldFilled(value: ask.creator!.fullName,),
-                    AppTextFormFieldFilled(value: ask.description,),
-                    AppTextFormFieldFilled(value: ask.targetDonationSum.toString(),),
-                  ],
-                ),
-              ),
-            ]
-          ),
-        ),
-      ],
-    );
-  }
 }
 
 Future createAskDialogBuilder(BuildContext context) {
@@ -144,68 +70,6 @@ class AskDialogView extends StatelessWidget {
   }
 }
 
-class AskDialogViewHeader extends StatelessWidget {
-  const AskDialogViewHeader({
-    super.key,
-    required this.headerButton,
-  });
-
-  final Widget headerButton;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      clipBehavior: Clip.antiAlias,
-      constraints: BoxConstraints.expand(
-        height: AppConstraints.c100,
-        width: AppConstraints.c800,
-      ),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.only(
-          bottomRight: Radius.circular(AppBorderRadii.r15),
-          bottomLeft: Radius.circular(AppBorderRadii.r15),
-        ),
-      ),
-      child: Center(
-        child: headerButton
-      ),
-    );
-  }
-}
-
-class AskDialogHeaderButton extends StatelessWidget {
-  const AskDialogHeaderButton({
-    super.key,
-    required this.onPressed,
-    required this.icon,
-    required this.label,
-  });
-
-  final Function onPressed;
-  final Icon icon;
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: AppWidths.w200,
-      height: AppHeights.h40,
-      child: ElevatedButton.icon(
-        onPressed: () => onPressed(),
-        style: ElevatedButton.styleFrom(
-          foregroundColor: AppColors.secondaryColor,
-          backgroundColor: AppColors.onPrimaryColor,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(AppBorderRadii.r10)),
-          ),
-        ),
-        icon: icon,
-        label: Text(label)
-      ),
-    );
-  }
-}
-
 class AskDialogCreateForm extends StatelessWidget {
   const AskDialogCreateForm({
     super.key,
@@ -233,7 +97,7 @@ class AskDialogCreateForm extends StatelessWidget {
 
     return Column(
       children: [
-        AskDialogViewHeader(headerButton: headerButton),
+        AskDialogHeader(primaryHeaderButton: headerButton),
         Expanded(
           child: ListView(
             padding: const EdgeInsets.all(AppPaddings.p35),
@@ -294,7 +158,7 @@ class AskDialogExistingAsksList extends StatelessWidget {
 
     return Column(
       children: [
-      AskDialogViewHeader(headerButton: headerButton),
+      AskDialogHeader(primaryHeaderButton: headerButton),
         Expanded(
           child: ListView(
             padding: const EdgeInsets.all(AppPaddings.p35),
@@ -375,7 +239,7 @@ class AskDialogEditForm extends StatelessWidget {
 
     return Column(
       children: [
-        AskDialogViewHeader(headerButton: headerButton),
+        AskDialogHeader(primaryHeaderButton: headerButton),
         Expanded(
           child: ListView(
             padding: const EdgeInsets.all(AppPaddings.p35),

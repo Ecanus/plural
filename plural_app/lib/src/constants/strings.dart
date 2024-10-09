@@ -7,6 +7,10 @@ class Strings {
 
   // Ask Dialog
   static const asksViewTitle = "Asks";
+
+  static const viewableAskDialogTitle = "View Ask";
+  static const editableAskDialogTitle = "Edit Ask";
+
   static const askDialogNavButtonNew = "New Ask";
   static const askDialogNavButtonCreate = "Create Ask";
   static const askDialogNavButtonEdit = "Edit Ask";
@@ -15,9 +19,13 @@ class Strings {
   static const hintTextTargetAmount = "Target Amount";
   static const hintTextDescription = "Description";
 
-  static const isAskSponsoredLabel = "Is Ask sponsored";
+  static const isAskSponsoredLabel = "Is Sponsored";
+  static const isAskFullySponsoredLabel = "Is Fully Sponsored";
 
-  static const close = "Close Window";
+  static const selectDateLabel = "Select Date";
+
+  static const closeLabel = "Close Window";
+  static const updateLabel = "Update";
 
   // Garden
   static const gardenHeaderText1 = "Hi, ";

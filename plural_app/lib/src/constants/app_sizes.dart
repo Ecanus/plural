@@ -30,6 +30,7 @@ class AppConstraints {
 
 class AppWidths {
   static const w25 = 25.0;
+  static const w150 = 150.0;
   static const w200 = 200.0;
 }
 
@@ -83,6 +84,7 @@ class AppRunSpacings {
 // Constant gap widths
 const gapW10 = SizedBox(width: AppPaddings.p10);
 const gapW15 = SizedBox(width: AppPaddings.p15);
+const gapW20 = SizedBox(width: AppPaddings.p20);
 
 // Constant gap heights
 const gapH10 = SizedBox(height: AppPaddings.p10);

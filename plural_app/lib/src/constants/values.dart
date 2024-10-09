@@ -35,4 +35,6 @@ const appLineStyle = LineStyle(
   thickness: AppTimelineSizes.timelineThickness,
 );
 
-const numDaysAskDuration = 30;
+class AppDateValues {
+  static const datePickerThreshold = Duration(days: 365);
+}

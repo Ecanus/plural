@@ -6,10 +6,14 @@ import 'package:plural_app/src/constants/app_sizes.dart';
 class AppTextFormField extends StatelessWidget {
   const AppTextFormField({
     super.key,
-    required this.hintText,
+    this.initialValue = "",
+    this.hintText = "",
+    this.maxLines = 1
   });
 
+  final String initialValue;
   final String hintText;
+  final int? maxLines;
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +26,8 @@ class AppTextFormField extends StatelessWidget {
         decoration: InputDecoration(
           hintText: hintText
         ),
+        initialValue: initialValue,
+        maxLines: maxLines,
       ),
     );
   }
@@ -29,11 +35,12 @@ class AppTextFormField extends StatelessWidget {
 
 class AppTextFormFieldFilled extends StatelessWidget {
   const AppTextFormFieldFilled({
-    super.key,
     required this.value,
+    this.maxLines = 1
   });
 
   final String value;
+  final int? maxLines;
 
   @override
   Widget build(BuildContext context) {
@@ -45,9 +52,7 @@ class AppTextFormFieldFilled extends StatelessWidget {
       child: TextFormField(
         enabled: false,
         initialValue: value,
-        decoration: InputDecoration(
-          hintText: value,
-        ),
+        maxLines: maxLines
       ),
     );
   }
