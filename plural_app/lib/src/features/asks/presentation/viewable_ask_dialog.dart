@@ -64,24 +64,32 @@ class AskDialogViewForm extends StatelessWidget {
                       children: [
                         Expanded(
                           child: AppTextFormFieldFilled(
+                            label: Strings.askDeadlineDateLabel,
                             value: ask.formattedDeadlineDate,
                           )
                         ),
                         Expanded(
                           child: AppCheckboxFormFieldFilled(
-                            value: ask.isSponsoredByUser(currentUserUID),
-                            text: Strings.isAskSponsoredLabel,
                             mainAxisAlignment: MainAxisAlignment.center,
+                            text: Strings.isAskSponsoredLabel,
+                            value: ask.isSponsoredByUser(currentUserUID),
                           ),
                         ),
                       ],
                     ),
-                    AppTextFormFieldFilled(value: ask.creator!.fullName,),
                     AppTextFormFieldFilled(
-                      value: ask.description,
-                      maxLines: null
+                      label: Strings.askCreatorLabel,
+                      value: ask.creator!.fullName,
                     ),
-                    AppTextFormFieldFilled(value: ask.targetDonationSum.toString(),),
+                    AppTextFormFieldFilled(
+                      label: Strings.askDescriptionLabel,
+                      maxLines: null,
+                      value: ask.description,
+                    ),
+                    AppTextFormFieldFilled(
+                      label: Strings.askTargetDonationSumLabel,
+                      value: ask.targetDonationSum.toString(),
+                    ),
                   ],
                 ),
               ),

@@ -3,6 +3,7 @@ import 'package:pocketbase/pocketbase.dart';
 
 // Constants
 import 'package:plural_app/src/constants/pocketbase.dart';
+import 'package:plural_app/src/constants/strings.dart';
 
 // Auth
 import "package:plural_app/src/features/authentication/domain/app_user.dart";
@@ -42,19 +43,19 @@ class AuthRepository {
   }
 
   Future<AppUser> getUserByUID(String uid) async {
-    var result = await pb.collection(Collection.users).getList(
-      filter: 'id = "$uid"'
+    var result = await pb.collection(Collection.users).getFirstListItem(
+      'id = "$uid"'
     );
 
     // TODO: Raise error if result is empty
 
-    var record = result.toJson()["items"][0];
+    var record = result.toJson();
 
     return AppUser(
       uid: record["id"],
-      email: record["email"],
-      firstName: record["firstName"],
-      lastName: record["lastName"]
+      email: record[UserField.email],
+      firstName: record[UserField.firstName],
+      lastName: record[UserField.lastName]
     );
   }
 }

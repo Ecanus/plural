@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+// Common Methods
+import 'package:plural_app/src/common_methods/form_validators.dart';
+
 // Common Widgets
 import 'package:plural_app/src/constants/app_sizes.dart';
 
@@ -10,17 +13,23 @@ import 'package:plural_app/src/constants/values.dart';
 
 class AppDatePickerFormField extends StatefulWidget {
   AppDatePickerFormField({
+    required this.fieldName,
     required this.initialValue,
+    this.label = "",
+    required this.modelMap,
   });
 
+  final String fieldName;
   final DateTime initialValue;
+  final String label;
+  final Map modelMap;
 
   @override
   State<AppDatePickerFormField> createState() => _AppDatePickerFormFieldState();
 }
 
 class _AppDatePickerFormFieldState extends State<AppDatePickerFormField> {
-  var _controller = TextEditingController();
+  final _controller = TextEditingController();
 
   @override
   void initState() {
@@ -46,7 +55,16 @@ class _AppDatePickerFormFieldState extends State<AppDatePickerFormField> {
         Expanded(
           child: TextFormField(
             controller: _controller,
-            enabled: false
+            decoration: InputDecoration(
+              label: Text(widget.label),
+            ),
+            enabled: false,
+            onSaved: (value) => saveToMap(
+              widget.fieldName,
+              widget.modelMap,
+              value,
+            ),
+            validator: (value) => validateDatePickerFormField(value),
           )
         ),
       ],

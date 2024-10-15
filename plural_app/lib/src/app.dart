@@ -144,7 +144,8 @@ class AppBottomBar extends StatelessWidget {
                   icon: const Icon(Icons.library_add),
                   iconSize: AppButtonSizes.s31,
                   tooltip: Strings.tooltipAddAsk,
-                  onPressed: () => createAskDialogBuilder(context),
+                  // onPressed: () => createAskDialogBuilder(context),
+                  onPressed: null,
                 ),
                 IconButton(
                   color: AppColors.secondaryColor,

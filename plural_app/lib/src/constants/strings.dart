@@ -1,3 +1,23 @@
+class AskField {
+  static const creator = "creator";
+  static const creatorUID = "creatorUID";
+  static const description = "description";
+  static const deadlineDate = "deadlineDate";
+  static const fullySponsoredDate = "fullySponsoredDate";
+  static const targetDonationSum = "targetDonationSum";
+  static const uid = "uid";
+}
+
+class UserField {
+  static const email = "email";
+  static const firstName = "firstName";
+  static const lastName = "lastName";
+}
+
+class ErrorString {
+  static const invalidValue = "A valid value is required";
+}
+
 class Strings {
   // Tooltips
   static const tooltipAddAsk = "Add Ask";
@@ -26,6 +46,11 @@ class Strings {
 
   static const closeLabel = "Close Window";
   static const updateLabel = "Update";
+
+  static const askTargetDonationSumLabel = "Target Donation Sum";
+  static const askDescriptionLabel = "Description";
+  static const askDeadlineDateLabel = "Deadline Date";
+  static const askCreatorLabel = "Creator";
 
   // Garden
   static const gardenHeaderText1 = "Hi, ";

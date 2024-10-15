@@ -13,6 +13,10 @@ class AppColors {
   static const lightShadow = Color.fromARGB(255, 92, 92, 92);
 }
 
+class AppDateValues {
+  static const datePickerThreshold = Duration(days: 365);
+}
+
 class AppDialogValues {
   static const blurRadius = 5.0;
   static const spreadRadius = 1.0;
@@ -25,6 +29,17 @@ class AppDialogNavBarValues {
   static const offset = Offset(0, -1.0); // Top
 }
 
+class AppMaxLengthValues {
+  static const max4 = 4;
+  static const max20 = 20;
+  static const max30 = 30;
+  static const max250 = 250;
+}
+
+class AppMaxLinesValues {
+  static const max1 = 1;
+}
+
 const appIndicatorStyle = IndicatorStyle(
   width: AppTimelineSizes.indicatorWidth,
   color: AppColors.primaryColor,
@@ -34,7 +49,3 @@ const appLineStyle = LineStyle(
   color: AppColors.primaryColor,
   thickness: AppTimelineSizes.timelineThickness,
 );
-
-class AppDateValues {
-  static const datePickerThreshold = Duration(days: 365);
-}

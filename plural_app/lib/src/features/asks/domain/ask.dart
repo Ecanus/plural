@@ -116,4 +116,15 @@ class Ask with LogData{
 
     return instances;
   }
+
+  Map toMap() {
+    return {
+      "uid": uid,
+      "creatorUID": creatorUID,
+      "description": description,
+      "deadlineDate": deadlineDate,
+      "targetDonationSum": targetDonationSum,
+      "fullySponsoredDate": fullySponsoredDate,
+    };
+  }
 }
