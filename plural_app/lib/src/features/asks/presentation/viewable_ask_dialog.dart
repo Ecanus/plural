@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
 // Common Widgets
-import 'package:plural_app/src/common_widgets/app_dialog.dart';
 import 'package:plural_app/src/common_widgets/app_text_form_field.dart';
 import 'package:plural_app/src/common_widgets/app_checkbox_form_field.dart';
 
@@ -12,6 +11,7 @@ import 'package:plural_app/src/constants/strings.dart';
 
 // Ask
 import 'package:plural_app/src/features/asks/domain/ask.dart';
+import 'package:plural_app/src/features/asks/presentation/ask_dialog.dart';
 import 'package:plural_app/src/features/asks/presentation/ask_dialog_header.dart';
 
 // Auth
@@ -26,16 +26,16 @@ enum ViewKey {
 Future createViewableAskDialog({
   required BuildContext context,
   required Ask ask
-}) {
-  return showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AppDialog(
-        view: AskDialogViewForm(ask: ask),
-        viewTitle: Strings.viewableAskDialogTitle
-      );
-    }
-  );
+  }) async {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AskDialog(
+          view: AskDialogViewForm(ask: ask),
+          viewTitle: Strings.viewableAskDialogTitle,
+        );
+      }
+    );
 }
 
 class AskDialogViewForm extends StatelessWidget {

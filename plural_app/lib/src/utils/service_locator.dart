@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:pocketbase/pocketbase.dart';
 
@@ -6,6 +7,7 @@ import 'package:plural_app/src/constants/pocketbase.dart';
 
 // Asks
 import 'package:plural_app/src/features/asks/data/asks_repository.dart';
+import 'package:plural_app/src/features/asks/domain/ask_dialog_manager.dart';
 
 // Auth
 import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
@@ -17,13 +19,19 @@ import 'package:plural_app/src/features/gardens/domain/garden_timeline_notifier.
 void createGetItInstances() {
   final getIt = GetIt.instance;
 
+  // Asks
+  getIt.registerLazySingleton<AskDialogManager>(
+    () => AskDialogManager()
+  );
+
   // Gardens
   getIt.registerSingleton<GardenTimelineNotifier>(GardenTimelineNotifier());
 
   getIt.registerLazySingleton<GardenManager>(
     () => GardenManager(
       timelineNotifier: getIt<GardenTimelineNotifier>()
-    ));
+    )
+  );
 }
 
 Future<void> logIn({

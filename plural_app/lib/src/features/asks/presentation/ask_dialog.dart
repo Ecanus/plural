@@ -1,22 +1,101 @@
-// import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
-// // Common Widgets
-// import 'package:plural_app/src/common_widgets/app_dialog.dart';
-// import 'package:plural_app/src/common_widgets/app_text_form_field.dart';
+// Constants
+import 'package:plural_app/src/constants/app_sizes.dart';
+import 'package:plural_app/src/constants/values.dart';
 
-// // Constants
-// import 'package:plural_app/src/constants/app_sizes.dart';
-// import 'package:plural_app/src/constants/strings.dart';
+// Asks
+import 'package:plural_app/src/features/asks/domain/ask_dialog_manager.dart';
 
-// // Ask
-// import 'package:plural_app/src/features/asks/presentation/ask_dialog_header.dart';
-// import 'package:plural_app/src/features/asks/presentation/ask_dialog_header_button.dart';
+// Widget that houses dimensions and theme shared across
+// all Ask dialog boxes used in the app.
+class AskDialog extends StatefulWidget {
+  const AskDialog({
+    super.key,
+    required this.view,
+    this.viewNavBar,
+    required this.viewTitle,
+  });
 
-// enum ViewKey {
-//   existingAsksList,
-//   editAskForm,
-//   createAskForm,
-// }
+  final Widget view;
+  final String viewTitle;
+  final Widget? viewNavBar;
+
+  @override
+  State<AskDialog> createState() => _AskDialogState();
+}
+
+class _AskDialogState extends State<AskDialog> {
+  final stateManager = GetIt.instance<AskDialogManager>();
+
+  @override
+  void initState() {
+    super.initState();
+
+    stateManager.dialogViewNotifier.value = widget.view;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      child: Container(
+        clipBehavior: Clip.antiAlias,
+        constraints: BoxConstraints.expand(
+          width: AppConstraints.c600,
+          height: AppConstraints.c650,
+        ),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(AppBorderRadii.r15),
+        ),
+        child: Column(
+          children: [
+            Expanded(
+              child: ValueListenableBuilder(
+                valueListenable: stateManager.dialogViewNotifier,
+                builder: (BuildContext context, Widget view, Widget? _) {
+                  return view;
+                }
+              )
+            ),
+            widget.viewNavBar ?? Container(),
+            Container(
+              constraints: BoxConstraints.expand(
+                height: AppConstraints.c100,
+                width: AppConstraints.c800,
+              ),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  bottomRight: Radius.circular(AppBorderRadii.r15),
+                  bottomLeft: Radius.circular(AppBorderRadii.r15),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.onPrimaryColor,
+                    blurRadius: AppDialogValues.blurRadius,
+                    spreadRadius: AppDialogValues.spreadRadius,
+                    offset: AppDialogValues.offset,
+                  ),
+                ],
+                color: AppColors.darkGrey2,
+              ),
+              child: Center(
+                child: Text(
+                  widget.viewTitle,
+                  style: TextStyle(
+                    color: AppColors.secondaryColor,
+                    fontSize: AppFontSizes.s25,
+                    fontWeight: FontWeight.bold,
+                  ),
+                )
+              )
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
 
 // Future createAskDialogBuilder(BuildContext context) {
 
@@ -112,148 +191,6 @@
 //                     AppTextFormField(hintText: Strings.hintTextDescription,),
 //                     AppTextFormField(hintText: Strings.hintTextDescription,),
 //                     AppTextFormField(hintText: Strings.hintTextDescription,),
-//                   ],
-//                 ),
-//               ),
-//             ]
-//           ),
-//         ),
-//       ],
-//     );
-//   }
-// }
-
-// class AskDialogExistingAsksList extends StatelessWidget {
-//   const AskDialogExistingAsksList({
-//     super.key,
-//     required this.viewCallback,
-//   });
-
-//   final Function viewCallback;
-
-//   @override
-//   Widget build(BuildContext context) {
-
-//     void routeToCreateAskForm() {
-//       print("ROUTING to the create Ask Form");
-
-//       // Update the parent AskDialogView
-//       viewCallback(ViewKey.createAskForm);
-//     }
-
-//     void routeToEditAskForm() {
-//       print("ROUTING to the create Ask Form");
-
-//       // Update the parent AskDialogView
-//       viewCallback(ViewKey.createAskForm);
-//     }
-
-//     final Widget headerButton = AskDialogHeaderButton(
-//       onPressed: routeToCreateAskForm,
-//       icon: Icon(Icons.add),
-//       label: Strings.askDialogNavButtonNew
-//     );
-
-
-
-//     return Column(
-//       children: [
-//       AskDialogHeader(primaryHeaderButton: headerButton),
-//         Expanded(
-//           child: ListView(
-//             padding: const EdgeInsets.all(AppPaddings.p35),
-//             children: [
-//               ExistingAskListTile(
-//                 title: "Ask #1",
-//                 subtitle: "2024-09-13\nThe subtitle of Ask #1 is this.",
-//                 viewCallback: viewCallback,
-//               ),
-//               ExistingAskListTile(
-//                 title: "Ask #2",
-//                 subtitle: "2024-09-13\nPickles!!!",
-//                 viewCallback: viewCallback,
-//               ),
-//               ExistingAskListTile(
-//                 title: "Ask #2",
-//                 subtitle: "2024-09-13\nTomorrow is the day, I swear! I do?",
-//                 viewCallback: viewCallback,
-//               ),
-//             ]
-//           ),
-//         ),
-//       ],
-//     );
-//   }
-// }
-
-// class ExistingAskListTile extends StatelessWidget {
-//   const ExistingAskListTile({
-//     super.key,
-//     required this.title,
-//     required this.subtitle,
-//     required this.viewCallback
-//   });
-
-//   final String title;
-//   final String subtitle;
-//   final Function viewCallback;
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Card(
-//       elevation: AppElevations.e7,
-//       child: ListTile(
-//         title: Text(title),
-//         subtitle: Text(subtitle),
-//         trailing: Icon(Icons.arrow_forward_ios),
-//         onTap: () { viewCallback(ViewKey.editAskForm); },
-//       ),
-//     );
-//   }
-// }
-
-// class AskDialogEditForm extends StatelessWidget {
-//   const AskDialogEditForm({
-//     super.key,
-//     required this.viewCallback,
-//   });
-
-//   final Function viewCallback;
-
-//   @override
-//   Widget build(BuildContext context) {
-
-//     /// Validates create Ask form, saves form data, then returns to Existing Asks List.
-//     void submitUpdateAskForm() {
-//       print("Validating EDIT Ask Form. ROUTING to exisiting asks list.");
-
-//       // Update the parent AskDialogView
-//       viewCallback(ViewKey.existingAsksList);
-//     }
-
-//     final Widget headerButton = AskDialogHeaderButton(
-//       onPressed: submitUpdateAskForm,
-//       icon: Icon(Icons.edit),
-//       label: Strings.askDialogNavButtonEdit
-//     );
-
-//     return Column(
-//       children: [
-//         AskDialogHeader(primaryHeaderButton: headerButton),
-//         Expanded(
-//           child: ListView(
-//             padding: const EdgeInsets.all(AppPaddings.p35),
-//             children: [
-//               Form(
-//                 child: Column(
-//                   children: [
-//                     // AppTextFormField(hintText: Strings.hintTextTitle,),
-//                     // AppTextFormField(hintText: Strings.hintTextTargetAmount,),
-//                     // AppTextFormField(hintText: Strings.hintTextDescription,),
-//                     // AppTextFormField(hintText: Strings.hintTextDescription,),
-//                     // AppTextFormField(hintText: Strings.hintTextDescription,),
-//                     // AppTextFormField(hintText: Strings.hintTextDescription,),
-//                     // AppTextFormField(hintText: Strings.hintTextDescription,),
 //                   ],
 //                 ),
 //               ),

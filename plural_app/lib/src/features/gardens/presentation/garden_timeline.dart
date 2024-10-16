@@ -22,7 +22,6 @@ class _GardenTimelineState extends State<GardenTimeline> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     stateManager.timelineNotifier.updateValue();
   }

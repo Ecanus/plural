@@ -8,6 +8,7 @@ import "package:plural_app/src/features/authentication/data/auth_repository.dart
 
 // Constants
 import 'package:plural_app/src/constants/strings.dart';
+import 'package:plural_app/src/constants/values.dart';
 
 class Ask with LogData{
   Ask({
@@ -38,6 +39,14 @@ class Ask with LogData{
 
   String get formattedDeadlineDate {
     return DateFormat(Strings.dateformatYMMdd).format(deadlineDate);
+  }
+
+  String get truncatedDescription {
+    if (description.length > AppMaxLengthValues.max50) {
+      return "${description.substring(0, AppMaxLengthValues.max50)}...";
+    } else {
+      return description;
+    }
   }
 
   bool get isFullySponsored {

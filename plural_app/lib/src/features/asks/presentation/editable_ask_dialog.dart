@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:plural_app/src/common_methods/form_validators.dart';
 
 // Common Widgets
-import 'package:plural_app/src/common_widgets/app_dialog.dart';
 import 'package:plural_app/src/common_widgets/app_text_form_field.dart';
 import 'package:plural_app/src/common_widgets/app_checkbox_form_field.dart';
 import 'package:plural_app/src/common_widgets/app_date_picker_form_field.dart';
@@ -17,19 +16,20 @@ import 'package:plural_app/src/constants/values.dart';
 // Ask
 import 'package:plural_app/src/features/asks/domain/ask.dart';
 import 'package:plural_app/src/features/asks/domain/forms.dart';
+import 'package:plural_app/src/features/asks/presentation/ask_dialog.dart';
 import 'package:plural_app/src/features/asks/presentation/ask_dialog_header.dart';
 import 'package:plural_app/src/features/asks/presentation/ask_dialog_header_button.dart';
 
 Future createEditableAskDialog({
   required BuildContext context,
   required Ask ask
-}) {
+}) async {
   return showDialog(
     context: context,
     builder: (BuildContext context) {
-      return AppDialog(
+      return AskDialog(
         view: AskDialogEditForm(ask: ask),
-        viewTitle: Strings.editableAskDialogTitle
+        viewTitle: Strings.editableAskDialogTitle,
       );
     }
   );

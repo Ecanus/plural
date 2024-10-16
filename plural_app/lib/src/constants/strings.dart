@@ -14,14 +14,18 @@ class UserField {
   static const lastName = "lastName";
 }
 
+class ListedAskTileText {
+  static const title = "Ask";
+}
+
 class ErrorString {
   static const invalidValue = "A valid value is required";
 }
 
 class Strings {
   // Tooltips
-  static const tooltipAddAsk = "Add Ask";
-  static const tooltipAddGarden = "Add Garden";
+  static const tooltipAskMenu = "Asks";
+  static const tooltipGardenMenu = "Garden";
   static const tooltipInvitations = "Invitations";
   static const tooltipSettings = "Settings";
 
