@@ -5,108 +5,83 @@ import 'package:plural_app/src/common_methods/form_validators.dart';
 
 // Common Widgets
 import 'package:plural_app/src/common_widgets/app_text_form_field.dart';
-import 'package:plural_app/src/common_widgets/app_checkbox_form_field.dart';
 import 'package:plural_app/src/common_widgets/app_date_picker_form_field.dart';
-import 'package:plural_app/src/common_widgets/close_dialog_button.dart';
+import 'package:plural_app/src/features/asks/presentation/listed_asks_button.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
 import 'package:plural_app/src/constants/strings.dart';
 import 'package:plural_app/src/constants/values.dart';
 
-// Ask
+// Asks
 import 'package:plural_app/src/features/asks/domain/ask.dart';
 import 'package:plural_app/src/features/asks/domain/forms.dart';
 import 'package:plural_app/src/features/asks/presentation/ask_dialog.dart';
 import 'package:plural_app/src/features/asks/presentation/ask_dialog_header.dart';
 import 'package:plural_app/src/features/asks/presentation/ask_dialog_header_button.dart';
 
-Future createEditableAskDialog({
-  required BuildContext context,
-  required Ask ask
-}) async {
+Future createEditableAskDialog(BuildContext context) {
+
   return showDialog(
     context: context,
     builder: (BuildContext context) {
       return AskDialog(
-        view: AskDialogEditForm(ask: ask),
-        viewTitle: Strings.editableAskDialogTitle,
+        view: AskDialogCreateForm(),
+        viewTitle: Strings.creatableAskDialogTitle
       );
     }
   );
 }
 
-class AskDialogEditForm extends StatefulWidget {
-  const AskDialogEditForm({
+class AskDialogCreateForm extends StatefulWidget {
+  const AskDialogCreateForm({
     super.key,
-    required this.ask,
-    this.firstHeaderButton,
   });
 
-  final Ask ask;
-  final Widget? firstHeaderButton;
-
   @override
-  State<AskDialogEditForm> createState() => _AskDialogEditFormState();
+  State<AskDialogCreateForm> createState() => _AskDialogCreateFormState();
 }
 
-class _AskDialogEditFormState extends State<AskDialogEditForm> {
+class _AskDialogCreateFormState extends State<AskDialogCreateForm> {
   late GlobalKey<FormState> _formKey;
   late Map _askMap;
-
-  late ValueNotifier<bool> _buttonNotifier;
 
   @override
   void initState() {
     super.initState();
 
     _formKey = GlobalKey<FormState>();
-    _askMap = widget.ask.toMap();
-
-    _buttonNotifier = ValueNotifier<bool>(false);
-  }
-
-  void onChanged() {
-    _buttonNotifier.value = _formKey.currentState!.validate();
+    _askMap = Ask.emptyMap();
   }
 
   @override
   Widget build(BuildContext context) {
+
     final Widget submitFormButton = AskDialogHeaderButton(
-      buttonNotifier: _buttonNotifier,
-      icon: Icon(Icons.mode_edit_outlined),
-      label: Strings.updateLabel,
-      onPressed: () => submitUpdate(context, _formKey, _askMap),
+      buttonNotifier: ValueNotifier<bool>(true),
+      icon: Icon(Icons.add),
+      label: Strings.createLabel,
+      onPressed: () => submitCreate(context, _formKey, _askMap),
     );
 
     return Column(
       children: [
         AskDialogHeader(
-          firstHeaderButton: widget.firstHeaderButton ?? CloseDialogButton(),
-          secondHeaderButton: submitFormButton,
-        ),
+          firstHeaderButton: ListedAsksButton(),
+          secondHeaderButton: submitFormButton),
         Expanded(
           child: ListView(
             padding: const EdgeInsets.all(AppPaddings.p35),
             children: [
               Form(
                 key: _formKey,
-                onChanged: () => onChanged(),
                 child: Column(
                   children: [
-                    AppCheckboxFormField(
-                      fieldName: AskField.fullySponsoredDate,
-                      formFieldType: FormFieldType.datetimeNow,
-                      modelMap: _askMap,
-                      text: Strings.isAskFullySponsoredLabel,
-                      value: widget.ask.isFullySponsored,
-                    ),
                     Row(
                       children: [
                         Expanded(
                           child: AppDatePickerFormField(
                             fieldName: AskField.deadlineDate,
-                            initialValue: widget.ask.deadlineDate,
                             label: Strings.askDeadlineDateLabel,
                             modelMap: _askMap,
                           ),
@@ -116,7 +91,6 @@ class _AskDialogEditFormState extends State<AskDialogEditForm> {
                           child: AppTextFormField(
                             fieldName: AskField.targetDonationSum,
                             formFieldType: FormFieldType.int,
-                            initialValue: widget.ask.targetDonationSum.toString(),
                             label: Strings.askTargetDonationSumLabel,
                             maxLength: AppMaxLengthValues.max4,
                             modelMap: _askMap,
@@ -127,7 +101,6 @@ class _AskDialogEditFormState extends State<AskDialogEditForm> {
                     ),
                     AppTextFormField(
                       fieldName: AskField.description,
-                      initialValue: widget.ask.description,
                       label: Strings.askDescriptionLabel,
                       maxLength: AppMaxLengthValues.max250,
                       maxLines: null,

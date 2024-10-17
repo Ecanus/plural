@@ -136,4 +136,14 @@ class Ask with LogData{
       "fullySponsoredDate": fullySponsoredDate,
     };
   }
+
+  static Map emptyMap() {
+    return {
+      "uid": null,
+      "description": null,
+      "deadlineDate": null,
+      "targetDonationSum": null,
+      "fullySponsoredDate": null,
+    };
+  }
 }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:plural_app/src/features/asks/domain/ask.dart';
 import 'package:plural_app/src/features/asks/domain/utils.dart';
 import 'package:plural_app/src/features/asks/presentation/editable_ask_dialog.dart';
+import 'package:plural_app/src/features/asks/presentation/creatable_ask_dialog.dart';
 import 'package:plural_app/src/features/asks/presentation/listed_asks_dialog.dart';
 
 class AskDialogManager {
@@ -11,8 +12,16 @@ class AskDialogManager {
   Widget? view;
   ValueNotifier<Widget> dialogViewNotifier = ValueNotifier<Widget>(Container());
 
-  void showEditableAskDialogView(Ask ask) {
-    dialogViewNotifier.value = AskDialogEditForm(ask: ask);
+  void showCreatableAskDialogView() {
+    dialogViewNotifier.value = AskDialogCreateForm();
+  }
+
+  void showEditableAskDialogView(Ask ask, {Widget? firstHeaderButton}) {
+    dialogViewNotifier.value =
+      AskDialogEditForm(
+        ask: ask,
+        firstHeaderButton: firstHeaderButton,
+      );
   }
 
   Future<void> showAskDialogListView() async {

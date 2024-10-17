@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
+// Common Widgets
+import 'package:plural_app/src/features/asks/presentation/listed_asks_button.dart';
+
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
 
@@ -29,7 +32,12 @@ class ListedAskTile extends StatelessWidget {
         ),
         subtitle: Text(ask.truncatedDescription),
         trailing: Icon(Icons.arrow_forward_ios),
-        onTap: () { stateManager.showEditableAskDialogView(ask); },
+        onTap: () {
+          stateManager.showEditableAskDialogView(
+            ask,
+            firstHeaderButton: ListedAsksButton()
+          );
+        },
       ),
     );
   }

@@ -13,7 +13,9 @@ class AskDialogHeaderButton extends StatelessWidget {
     required this.onPressed,
   });
 
+  // Used by forms that dynamically disable this button
   final ValueNotifier<bool> buttonNotifier;
+
   final Icon icon;
   final String label;
   final Function onPressed;

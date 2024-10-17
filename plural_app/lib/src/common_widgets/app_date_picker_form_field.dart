@@ -14,13 +14,13 @@ import 'package:plural_app/src/constants/values.dart';
 class AppDatePickerFormField extends StatefulWidget {
   AppDatePickerFormField({
     required this.fieldName,
-    required this.initialValue,
+    this.initialValue,
     this.label = "",
     required this.modelMap,
   });
 
   final String fieldName;
-  final DateTime initialValue;
+  final DateTime? initialValue;
   final String label;
   final Map modelMap;
 
@@ -34,7 +34,9 @@ class _AppDatePickerFormFieldState extends State<AppDatePickerFormField> {
   @override
   void initState() {
     super.initState();
-    _controller.text = DateFormat(Strings.dateformatYMMdd).format(widget.initialValue);
+
+    _controller.text = widget.initialValue == null ?
+      "" : DateFormat(Strings.dateformatYMMdd).format(widget.initialValue!);
   }
 
   void setControllerText(DateTime newDate) {
@@ -79,7 +81,7 @@ Future<void> selectDate(
   ) async {
     var today = DateTime.now();
     var dateThreshold = today.add(AppDateValues.datePickerThreshold);
-    var initialDate = DateTime.parse(dateString);
+    var initialDate = dateString == "" ? null : DateTime.parse(dateString);
 
     final DateTime? datePicked = await showDatePicker(
       context: context,

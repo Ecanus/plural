@@ -34,8 +34,8 @@ class Strings {
 
   static const viewableAskDialogTitle = "View Ask";
   static const editableAskDialogTitle = "Edit Ask";
+  static const creatableAskDialogTitle = "Create Ask";
 
-  static const askDialogNavButtonNew = "New Ask";
   static const askDialogNavButtonCreate = "Create Ask";
   static const askDialogNavButtonEdit = "Edit Ask";
 
@@ -49,6 +49,8 @@ class Strings {
   static const selectDateLabel = "Select Date";
 
   static const closeLabel = "Close Window";
+  static const newAskLabel = "New Ask";
+  static const createLabel = "Create";
   static const updateLabel = "Update";
 
   static const askTargetDonationSumLabel = "Target Donation Sum";

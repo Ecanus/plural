@@ -55,4 +55,16 @@ class AsksRepository {
     );
   }
 
+  /// Uses the given [map] parameter to create a corresponding Ask
+  /// record in the database.
+  Future create(Map map) async {
+    await pb.collection(Collection.asks).create(
+      body: {
+        AskField.creator: GetIt.instance<AuthRepository>().getCurrentUserUID(),
+        AskField.description: map[AskField.description],
+        AskField.deadlineDate: map[AskField.deadlineDate],
+        AskField.targetDonationSum: map[AskField.targetDonationSum],
+      }
+    );
+  }
 }
