@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
 import 'package:plural_app/src/constants/values.dart';
 
-// Asks
-import 'package:plural_app/src/features/asks/domain/ask_dialog_manager.dart';
-
-// Widget that houses dimensions and theme shared across
-// all Ask dialog boxes used in the app.
-class AskDialog extends StatefulWidget {
-  const AskDialog({
+// Widget housing the dimensions and theme shared across
+// all dialog boxes used in the app.
+class AppDialog extends StatelessWidget {
+  const AppDialog({
     super.key,
     required this.view,
     required this.viewTitle,
@@ -19,20 +15,6 @@ class AskDialog extends StatefulWidget {
 
   final Widget view;
   final String viewTitle;
-
-  @override
-  State<AskDialog> createState() => _AskDialogState();
-}
-
-class _AskDialogState extends State<AskDialog> {
-  final stateManager = GetIt.instance<AskDialogManager>();
-
-  @override
-  void initState() {
-    super.initState();
-
-    stateManager.dialogViewNotifier.value = widget.view;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,14 +30,7 @@ class _AskDialogState extends State<AskDialog> {
         ),
         child: Column(
           children: [
-            Expanded(
-              child: ValueListenableBuilder(
-                valueListenable: stateManager.dialogViewNotifier,
-                builder: (BuildContext context, Widget view, Widget? _) {
-                  return view;
-                }
-              )
-            ),
+            Expanded(child: view),
             Container(
               constraints: BoxConstraints.expand(
                 height: AppConstraints.c100,
@@ -78,7 +53,7 @@ class _AskDialogState extends State<AskDialog> {
               ),
               child: Center(
                 child: Text(
-                  widget.viewTitle,
+                  viewTitle,
                   style: TextStyle(
                     color: AppColors.secondaryColor,
                     fontSize: AppFontSizes.s25,

@@ -5,6 +5,8 @@ import 'package:get_it/get_it.dart';
 import 'package:plural_app/src/common_widgets/app_text_form_field.dart';
 import 'package:plural_app/src/common_widgets/app_checkbox_form_field.dart';
 import 'package:plural_app/src/common_widgets/close_dialog_button.dart';
+import 'package:plural_app/src/common_widgets/app_dialog.dart';
+import 'package:plural_app/src/common_widgets/app_dialog_header.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
@@ -12,17 +14,9 @@ import 'package:plural_app/src/constants/strings.dart';
 
 // Ask
 import 'package:plural_app/src/features/asks/domain/ask.dart';
-import 'package:plural_app/src/features/asks/presentation/ask_dialog.dart';
-import 'package:plural_app/src/features/asks/presentation/ask_dialog_header.dart';
 
 // Auth
 import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
-
-enum ViewKey {
-  existingAsksList,
-  editAskForm,
-  createAskForm,
-}
 
 Future createViewableAskDialog({
   required BuildContext context,
@@ -31,7 +25,7 @@ Future createViewableAskDialog({
     return showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AskDialog(
+        return AppDialog(
           view: AskDialogViewForm(ask: ask),
           viewTitle: Strings.viewableAskDialogTitle,
         );
@@ -53,7 +47,7 @@ class AskDialogViewForm extends StatelessWidget {
 
     return Column(
       children: [
-        AskDialogHeader(firstHeaderButton: CloseDialogButton(),),
+        AppDialogHeader(firstHeaderButton: CloseDialogButton(),),
         Expanded(
           child: ListView(
             padding: const EdgeInsets.all(AppPaddings.p35),

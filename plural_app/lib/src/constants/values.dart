@@ -41,6 +41,10 @@ class AppMaxLinesValues {
   static const max1 = 1;
 }
 
+class GardenValues {
+  static const numTimelineAsks = 3;
+}
+
 const appIndicatorStyle = IndicatorStyle(
   width: AppTimelineSizes.indicatorWidth,
   color: AppColors.primaryColor,

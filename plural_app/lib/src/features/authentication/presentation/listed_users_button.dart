@@ -8,9 +8,9 @@ import 'package:plural_app/src/common_widgets/app_dialog_manager.dart';
 import 'package:plural_app/src/constants/values.dart';
 import 'package:plural_app/src/constants/strings.dart';
 
-class ListedAsksButton extends StatelessWidget {
-  const ListedAsksButton({
-    super.key,
+class ListedUsersButton extends StatelessWidget {
+  const ListedUsersButton({
+    super.key
   });
 
   @override
@@ -25,8 +25,8 @@ class ListedAsksButton extends StatelessWidget {
       child: IconButton(
         icon: Icon(Icons.list),
         color: AppColors.secondaryColor,
-        onPressed: () { stateManager.showAskDialogListView(); },
-        tooltip: Strings.asksListButtonTooltip,
+        onPressed: () { stateManager.showUserDialogListView(); },
+        tooltip: Strings.usersListButtonTooltip,
       ),
     );
   }

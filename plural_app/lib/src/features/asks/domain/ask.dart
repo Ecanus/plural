@@ -91,59 +91,64 @@ class Ask with LogData{
     return deadlineDate.compareTo(other.deadlineDate);
   }
 
-  static Future<List<Ask>> createInstancesFromQuery(query) async {
-    final authRepository = GetIt.instance<AuthRepository>();
+  static Future<List<Ask>> createInstancesFromQuery(
+    query,
+    { int? count
+    }) async {
+      final authRepository = GetIt.instance<AuthRepository>();
 
-    var records = await query.toJson()["items"];
-    List<Ask> instances = [];
+      var records = query.toJson()[Field.items];
+      records = count == null ? records : records.sublist(0, count);
 
-    for (var record in records) {
-      var creatorUID = record["creator"];
+      List<Ask> instances = [];
 
-      // Format fullySponsoredDate if non-null
-      var fullySponsoredDate = record["fullySponsoredDate"];
-      var formattedFullySponsoredDate = fullySponsoredDate != "" ?
-        DateTime.parse(fullySponsoredDate) : null;
+      for (var record in records) {
+        var creatorUID = record[AskField.creator];
 
-      // Get AppUser that created the Ask
-      var creator = await authRepository.getUserByUID(creatorUID);
+        // Format fullySponsoredDate if non-null
+        var fullySponsoredDate = record[AskField.fullySponsoredDate];
+        var formattedFullySponsoredDate = fullySponsoredDate != "" ?
+          DateTime.parse(fullySponsoredDate) : null;
 
-      var newAsk = Ask(
-        uid: record["id"],
-        creatorUID: creatorUID,
-        description: record["description"],
-        deadlineDate: DateTime.parse(record["deadlineDate"]),
-        targetDonationSum: record["targetDonationSum"],
-        fullySponsoredDate: formattedFullySponsoredDate,
-      );
+        // Get AppUser that created the Ask
+        var creator = await authRepository.getUserByUID(creatorUID);
 
-      newAsk.sponsorIDS = List<String>.from(record["sponsors"]);
-      newAsk.creator = creator;
+        var newAsk = Ask(
+          uid: record[Field.id],
+          creatorUID: creatorUID,
+          description: record[AskField.description],
+          deadlineDate: DateTime.parse(record[AskField.deadlineDate]),
+          targetDonationSum: record[AskField.targetDonationSum],
+          fullySponsoredDate: formattedFullySponsoredDate,
+        );
 
-      instances.add(newAsk);
-    }
+        newAsk.sponsorIDS = List<String>.from(record[AskField.sponsors]);
+        newAsk.creator = creator;
 
-    return instances;
+        instances.add(newAsk);
+      }
+
+      return instances;
   }
 
   Map toMap() {
     return {
-      "uid": uid,
-      "creatorUID": creatorUID,
-      "description": description,
-      "deadlineDate": deadlineDate,
-      "targetDonationSum": targetDonationSum,
-      "fullySponsoredDate": fullySponsoredDate,
+      Field.uid: uid,
+      AskField.creatorUID: creatorUID,
+      AskField.description: description,
+      AskField.deadlineDate: deadlineDate,
+      AskField.targetDonationSum: targetDonationSum,
+      AskField.fullySponsoredDate: fullySponsoredDate,
     };
   }
 
   static Map emptyMap() {
     return {
-      "uid": null,
-      "description": null,
-      "deadlineDate": null,
-      "targetDonationSum": null,
-      "fullySponsoredDate": null,
+      Field.uid: null,
+      AskField.description: null,
+      AskField.deadlineDate: null,
+      AskField.targetDonationSum: null,
+      AskField.fullySponsoredDate: null,
     };
   }
 }

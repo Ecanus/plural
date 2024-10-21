@@ -8,6 +8,9 @@ import 'package:plural_app/src/constants/values.dart';
 // Asks
 import 'package:plural_app/src/features/asks/presentation/listed_asks_dialog.dart';
 
+// Auth
+import 'package:plural_app/src/features/authentication/presentation/listed_users_dialog.dart';
+
 /// Parent Widget of the AppBottomBar and all widgets
 /// at the bottom of the App.
 class GardenFooter extends StatelessWidget {
@@ -95,10 +98,10 @@ class AppBottomBar extends StatelessWidget {
                 ),
                 IconButton(
                   color: AppColors.secondaryColor,
-                  icon: const Icon(Icons.mail),
+                  icon: const Icon(Icons.people_alt_rounded),
                   iconSize: AppButtonSizes.s31,
-                  tooltip: Strings.tooltipInvitations,
-                  onPressed: () {},
+                  tooltip: Strings.tooltipUsers,
+                  onPressed: () => createListedUsersDialog(context),
                 ),
                 IconButton(
                   color: AppColors.secondaryColor,

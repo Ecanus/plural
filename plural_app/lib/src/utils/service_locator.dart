@@ -6,7 +6,7 @@ import 'package:plural_app/src/constants/pocketbase.dart';
 
 // Asks
 import 'package:plural_app/src/features/asks/data/asks_repository.dart';
-import 'package:plural_app/src/features/asks/domain/ask_dialog_manager.dart';
+import 'package:plural_app/src/common_widgets/app_dialog_manager.dart';
 
 // Auth
 import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
@@ -18,9 +18,9 @@ import 'package:plural_app/src/features/gardens/domain/garden_timeline_notifier.
 void createGetItInstances() {
   final getIt = GetIt.instance;
 
-  // Asks
-  getIt.registerLazySingleton<AskDialogManager>(
-    () => AskDialogManager()
+  // Auth
+  getIt.registerLazySingleton<AppDialogManager>(
+    () => AppDialogManager()
   );
 
   // Gardens

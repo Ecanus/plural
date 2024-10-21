@@ -20,14 +20,15 @@ class AsksRepository {
 
   /// Queries on the asks collection to retrieve corresponding records in
   /// the database.
-  Future get({bool deserialize = true}) async {
-    var result = await pb.collection(Collection.asks).getList(
-      sort: "created"
-    );
+  Future<List<Ask>> get({
+    String sort = "created",
+    int? count
+    }) async {
+      var result = await pb.collection(Collection.asks).getList(
+        sort: sort
+      );
 
-    if (deserialize) return await Ask.createInstancesFromQuery(result);
-
-    return result;
+      return await Ask.createInstancesFromQuery(result, count: count);
   }
 
   Future<List<Ask>> getAsksByUserUID() async {
@@ -45,7 +46,7 @@ class AsksRepository {
   /// record in the database.
   Future update(Map map) async {
     await pb.collection(Collection.asks).update(
-      map[AskField.uid],
+      map[Field.uid],
       body: {
         AskField.description: map[AskField.description],
         AskField.deadlineDate: map[AskField.deadlineDate],

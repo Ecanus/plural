@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:plural_app/src/constants/app_sizes.dart';
 import 'package:plural_app/src/constants/values.dart';
 
-class AskDialogHeaderButton extends StatelessWidget {
-  const AskDialogHeaderButton({
+class AppDialogHeaderButton extends StatelessWidget {
+  const AppDialogHeaderButton({
     super.key,
     required this.buttonNotifier,
     required this.icon,

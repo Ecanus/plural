@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
 
-class AskDialogHeader extends StatelessWidget {
-  const AskDialogHeader({
+class AppDialogHeader extends StatelessWidget {
+  const AppDialogHeader({
     super.key,
     this.firstHeaderButton,
     this.secondHeaderButton,
@@ -18,6 +18,7 @@ class AskDialogHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<Widget> buttons = [];
+
     if (firstHeaderButton != null) buttons.add(firstHeaderButton!);
     if (secondHeaderButton != null) buttons.add(secondHeaderButton!);
     if (thirdHeaderButton != null) buttons.add(thirdHeaderButton!);

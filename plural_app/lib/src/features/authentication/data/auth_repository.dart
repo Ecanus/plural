@@ -42,6 +42,30 @@ class AuthRepository {
     return _currentUser!;
   }
 
+  Future<List<AppUser>> get({
+    String sort = "lastName, firstName",
+  }) async {
+    var result = await pb.collection(Collection.users).getList(
+      sort: sort
+    );
+    var records = result.toJson()["items"];
+
+    List<AppUser> instances = [];
+
+    for (var record in records) {
+      var newUser = AppUser(
+        uid: record["id"],
+        email: record[UserField.email],
+        firstName: record[UserField.firstName],
+        lastName: record[UserField.lastName]
+      );
+
+      instances.add(newUser);
+    }
+
+    return instances;
+  }
+
   Future<AppUser> getUserByUID(String uid) async {
     var result = await pb.collection(Collection.users).getFirstListItem(
       'id = "$uid"'

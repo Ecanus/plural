@@ -3,6 +3,10 @@ import 'package:get_it/get_it.dart';
 
 // Common Widgets
 import 'package:plural_app/src/common_widgets/close_dialog_button.dart';
+import 'package:plural_app/src/common_widgets/app_dialog_manager.dart';
+import 'package:plural_app/src/common_widgets/app_dialog.dart';
+import 'package:plural_app/src/common_widgets/app_dialog_header.dart';
+import 'package:plural_app/src/common_widgets/app_dialog_header_button.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
@@ -10,10 +14,6 @@ import 'package:plural_app/src/constants/strings.dart';
 
 // Asks
 import 'package:plural_app/src/features/asks/domain/utils.dart';
-import 'package:plural_app/src/features/asks/domain/ask_dialog_manager.dart';
-import 'package:plural_app/src/features/asks/presentation/ask_dialog.dart';
-import 'package:plural_app/src/features/asks/presentation/ask_dialog_header.dart';
-import 'package:plural_app/src/features/asks/presentation/ask_dialog_header_button.dart';
 import 'package:plural_app/src/features/asks/presentation/listed_ask_tile.dart';
 
 Future createListedAsksDialog(BuildContext context) async {
@@ -23,7 +23,7 @@ Future createListedAsksDialog(BuildContext context) async {
     return showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AskDialog(
+        return AppDialog(
           view: AskDialogList(listedAskTiles: listedAskTiles),
           viewTitle: Strings.asksViewTitle,
         );
@@ -42,9 +42,9 @@ class AskDialogList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final stateManager = GetIt.instance<AskDialogManager>();
+    final stateManager = GetIt.instance<AppDialogManager>();
 
-    final Widget creatableAskViewButton = AskDialogHeaderButton(
+    final Widget creatableAskViewButton = AppDialogHeaderButton(
       buttonNotifier: ValueNotifier<bool>(true),
       onPressed: () { stateManager.showCreatableAskDialogView(); },
       icon: Icon(Icons.add_comment),
@@ -53,7 +53,7 @@ class AskDialogList extends StatelessWidget {
 
     return Column(
       children: [
-        AskDialogHeader(
+        AppDialogHeader(
           firstHeaderButton: CloseDialogButton(),
           secondHeaderButton: creatableAskViewButton,
         ),
