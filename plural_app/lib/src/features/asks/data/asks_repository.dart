@@ -11,6 +11,9 @@ import 'package:plural_app/src/features/asks/domain/ask.dart';
 // Auth
 import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
 
+// Gardens
+import 'package:plural_app/src/features/gardens/domain/garden_manager.dart';
+
 class AsksRepository {
   AsksRepository({
     required this.pb,
@@ -21,11 +24,17 @@ class AsksRepository {
   /// Queries on the asks collection to retrieve corresponding records in
   /// the database.
   Future<List<Ask>> get({
-    String sort = "created",
-    int? count
+    int? count,
+    String filterString = "",
+    String sortString = "created",
     }) async {
+
+      var currentGardenUID = GetIt.instance<GardenManager>().currentGarden!.uid;
+      filterString = filterString == "" ? "garden = '$currentGardenUID'" : filterString;
+
       var result = await pb.collection(Collection.asks).getList(
-        sort: sort
+        filter: filterString,
+        sort: sortString
       );
 
       return await Ask.createInstancesFromQuery(result, count: count);

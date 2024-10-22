@@ -1,3 +1,6 @@
+// Auth
+import 'package:plural_app/src/features/authentication/domain/app_user_garden_record.dart';
+
 class AppUser {
   AppUser({
     required this.uid,
@@ -10,6 +13,8 @@ class AppUser {
   final String email;
   final String firstName;
   final String lastName;
+
+  AppUserGardenRecord? latestGardenRecord;
 
   String get fullName {
     return "$firstName $lastName";

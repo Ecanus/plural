@@ -7,7 +7,7 @@ import 'package:plural_app/src/features/authentication/presentation/listed_user_
 
 Future<List<ListedUserTile>> getListedUserTilesByUsers () async {
   final authRepository = GetIt.instance<AuthRepository>();
-  final currentGardenUsers = await authRepository.get();
+  final currentGardenUsers = await authRepository.getCurrentGardenUsers();
 
   return [for (AppUser user in currentGardenUsers) ListedUserTile(user: user)];
 }

@@ -1,3 +1,5 @@
+import 'package:get_it/get_it.dart';
+
 // Pocketbase
 import 'package:pocketbase/pocketbase.dart';
 
@@ -7,54 +9,70 @@ import 'package:plural_app/src/constants/strings.dart';
 
 // Auth
 import "package:plural_app/src/features/authentication/domain/app_user.dart";
+import 'package:plural_app/src/features/authentication/domain/app_user_garden_record.dart';
+
+// Gardens
+import 'package:plural_app/src/features/gardens/data/gardens_repository.dart';
+import 'package:plural_app/src/features/gardens/domain/garden_manager.dart';
 
 class AuthRepository {
   AuthRepository({
-    required this.pb
-  });
-
-  final PocketBase pb;
-
-  AppUser? _currentUser;
-
-  String getCurrentUserUID() {
-    return pb.authStore.model.id;
-  }
-
-  AppUser getCurrentUser() {
+    required this.pb,
+  }) {
     var user = pb.authStore.model;
     user = user.toJson();
 
-    // TODO: Raise error if user is null
+    currentUser = AppUser(
+      uid: user[Field.id],
+      email: user[UserField.email],
+      firstName: user[UserField.firstName],
+      lastName: user[UserField.lastName],
+    );
+  }
 
-    // Cache currentUser if currentUser is null
-    if (_currentUser == null) {
-      var currentUser = AppUser(
-        uid: user["id"],
-        email: user["email"],
-        firstName: user["firstName"],
-        lastName: user["lastName"]
-      );
+  final PocketBase pb;
 
-      _currentUser = currentUser;
-    }
+  AppUser? currentUser;
 
-    return _currentUser!;
+  String getCurrentUserUID() {
+    return currentUser!.uid;
+  }
+
+  Future<void> setCurrentUserLatestGardenRecord() async {
+    var user = pb.authStore.model;
+    user = user.toJson();
+
+    var result = await pb.collection(Collection.userGardenRecords).getList(
+      sort: "-updated",
+      filter: "user = '${currentUser!.uid}'"
+    );
+
+    var record = result.toJson()[PBKey.items][0];
+    String gardenUID = record[UserGardenRecordField.gardenUID];
+
+    final gardensRepository = GetIt.instance<GardensRepository>();
+    var garden = await gardensRepository.getGardenByUID(gardenUID);
+
+    currentUser!.latestGardenRecord = AppUserGardenRecord(
+      uid: record[Field.id],
+      user: currentUser!,
+      garden: garden
+    );
   }
 
   Future<List<AppUser>> get({
-    String sort = "lastName, firstName",
+    String sort = "${UserField.lastName}, ${UserField.firstName}",
   }) async {
+    List<AppUser> instances = [];
+
     var result = await pb.collection(Collection.users).getList(
       sort: sort
     );
-    var records = result.toJson()["items"];
-
-    List<AppUser> instances = [];
+    var records = result.toJson()[PBKey.items];
 
     for (var record in records) {
       var newUser = AppUser(
-        uid: record["id"],
+        uid: record[PBKey.items],
         email: record[UserField.email],
         firstName: record[UserField.firstName],
         lastName: record[UserField.lastName]
@@ -66,9 +84,39 @@ class AuthRepository {
     return instances;
   }
 
+  Future<List<AppUser>> getCurrentGardenUsers({
+    String sort = "${UserField.lastName}, ${UserField.firstName}",
+  }) async {
+    String currentGardenUID = GetIt.instance<GardenManager>().currentGarden!.uid;
+    List<AppUser> instances = [];
+
+    var result = await pb.collection(Collection.userGardenRecords).getList(
+      expand: "user",
+      filter: "garden = '$currentGardenUID'",
+      sort: "user.lastName, user.firstName"
+    );
+    var records = result.toJson()[PBKey.items];
+    print("RECORDS IS\n: $records");
+
+    for (var record in records) {
+      var recordUser = record[PBKey.expand][UserGardenRecordField.user];
+
+      var newUser = AppUser(
+        uid: record[UserGardenRecordField.userUID],
+        email: recordUser[UserField.email],
+        firstName: recordUser[UserField.firstName],
+        lastName: recordUser[UserField.lastName]
+      );
+
+      instances.add(newUser);
+    }
+
+    return instances;
+  }
+
   Future<AppUser> getUserByUID(String uid) async {
     var result = await pb.collection(Collection.users).getFirstListItem(
-      'id = "$uid"'
+      "id = '$uid'"
     );
 
     // TODO: Raise error if result is empty
@@ -76,7 +124,7 @@ class AuthRepository {
     var record = result.toJson();
 
     return AppUser(
-      uid: record["id"],
+      uid: record[Field.id],
       email: record[UserField.email],
       firstName: record[UserField.firstName],
       lastName: record[UserField.lastName]

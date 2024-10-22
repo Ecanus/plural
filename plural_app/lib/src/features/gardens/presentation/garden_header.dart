@@ -20,7 +20,7 @@ class GardenHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final getIt = GetIt.instance;
     final authRespository = getIt<AuthRepository>();
-    final currentUser = authRespository.getCurrentUser();
+    final currentUser = authRespository.currentUser!;
 
     return Expanded(
       flex: AppFlexes.f6,

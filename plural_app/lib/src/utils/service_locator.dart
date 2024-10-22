@@ -12,6 +12,7 @@ import 'package:plural_app/src/common_widgets/app_dialog_manager.dart';
 import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
 
 // Gardens
+import 'package:plural_app/src/features/gardens/data/gardens_repository.dart';
 import 'package:plural_app/src/features/gardens/domain/garden_manager.dart';
 import 'package:plural_app/src/features/gardens/domain/garden_timeline_notifier.dart';
 
@@ -44,6 +45,17 @@ Future<void> logIn({
     () => PocketBase("http://127.0.0.1:8090") // TODO: Change url dynamically by env
   );
 
+  // Log In
+  await getIt<PocketBase>().collection(Collection.users).authWithPassword(
+    usernameOrEmail, password);
+
+  // Gardens
+  getIt.registerLazySingleton<GardensRepository>(
+    () => GardensRepository(
+      pb: getIt<PocketBase>(),
+    )
+  );
+
   // Asks
   getIt.registerLazySingleton<AsksRepository>(
     () => AsksRepository(
@@ -58,7 +70,5 @@ Future<void> logIn({
     )
   );
 
-  // Log In
-  await getIt<PocketBase>().collection(Collection.users).authWithPassword(
-    usernameOrEmail, password);
+  await getIt<AuthRepository>().setCurrentUserLatestGardenRecord();
 }

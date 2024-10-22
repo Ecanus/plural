@@ -8,16 +8,32 @@ class AskField {
   static const sponsors = "sponsors";
 }
 
+class PBKey {
+  static const expand = "expand";
+  static const items = "items";
+}
+
 class Field {
   static const id = "id";
-  static const items = "items";
   static const uid = "uid";
+}
+
+class GardenField {
+  static const name = "name";
 }
 
 class UserField {
   static const email = "email";
   static const firstName = "firstName";
   static const lastName = "lastName";
+  static const latestGardenRecordUID = "latestGardenRecord";
+}
+
+class UserGardenRecordField {
+  static const gardenUID = "garden";
+  static const name = "name";
+  static const userUID = "user";
+  static const user = "user";
 }
 
 class ListedAskTileText {
