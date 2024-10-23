@@ -42,10 +42,14 @@ class AsksRepository {
 
   Future<List<Ask>> getAsksByUserUID() async {
     final currentUserUID = GetIt.instance<AuthRepository>().getCurrentUserUID();
+    final currentGarden = GetIt.instance<GardenManager>().currentGarden!;
 
     var result = await pb.collection(Collection.asks).getList(
-      sort: "created",
-      filter: "creator = '$currentUserUID'"
+      sort: Field.created,
+      filter: """
+          ${AskField.creator} = '$currentUserUID' &&
+          ${AskField.garden} = '${currentGarden.uid}'
+          """
     );
 
     return await Ask.createInstancesFromQuery(result);
@@ -74,6 +78,7 @@ class AsksRepository {
         AskField.description: map[AskField.description],
         AskField.deadlineDate: map[AskField.deadlineDate],
         AskField.targetDonationSum: map[AskField.targetDonationSum],
+        AskField.garden: GetIt.instance<GardenManager>().currentGarden!.uid,
       }
     );
   }

@@ -4,6 +4,7 @@ class AskField {
   static const description = "description";
   static const deadlineDate = "deadlineDate";
   static const fullySponsoredDate = "fullySponsoredDate";
+  static const garden = "garden";
   static const targetDonationSum = "targetDonationSum";
   static const sponsors = "sponsors";
 }
@@ -14,8 +15,10 @@ class PBKey {
 }
 
 class Field {
+  static const created = "created";
   static const id = "id";
   static const uid = "uid";
+  static const updated = "updated";
 }
 
 class GardenField {
@@ -30,6 +33,7 @@ class UserField {
 }
 
 class UserGardenRecordField {
+  static const garden = "garden";
   static const gardenUID = "garden";
   static const name = "name";
   static const userUID = "user";
@@ -46,8 +50,8 @@ class ErrorString {
 
 class Strings {
   // Tooltips
-  static const tooltipAskMenu = "Asks";
-  static const tooltipGardenMenu = "Garden";
+  static const tooltipAsks = "Asks";
+  static const tooltipGardens = "Gardens";
   static const tooltipSettings = "Settings";
   static const tooltipUsers = "Users";
 
@@ -83,6 +87,9 @@ class Strings {
 
   // Garden
   static const gardenHeaderText1 = "Hi, ";
+
+  // Garden Dialog
+  static const gardensViewTitle = "Gardens";
 
   // Date Formatting
   static const dateformatYMMdd = "y-MM-dd";

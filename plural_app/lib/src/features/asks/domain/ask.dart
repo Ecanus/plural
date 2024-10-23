@@ -98,7 +98,10 @@ class Ask with LogData{
       final authRepository = GetIt.instance<AuthRepository>();
 
       var records = query.toJson()[PBKey.items];
-      records = count == null ? records : records.sublist(0, count);
+
+      if (count != null && records.length >= count) {
+        records = records.sublist(0, count);
+      }
 
       List<Ask> instances = [];
 

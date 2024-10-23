@@ -1,39 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
-// Common Widgets
-import 'package:plural_app/src/common_widgets/app_dialog_manager.dart';
-
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
 
-// Auth
-import 'package:plural_app/src/features/authentication/domain/app_user.dart';
+// Gardens
+import 'package:plural_app/src/features/gardens/domain/garden.dart';
+import 'package:plural_app/src/features/gardens/domain/garden_manager.dart';
 
-class ListedUserTile extends StatelessWidget {
-  const ListedUserTile({
+class ListedGardenTile extends StatelessWidget {
+  const ListedGardenTile({
     super.key,
-    required this.user,
+    required this.garden,
   });
 
-  final AppUser user;
+  final Garden garden;
 
   @override
   Widget build(BuildContext context) {
-    final stateManager = GetIt.instance<AppDialogManager>();
+    final gardenStateManager = GetIt.instance<GardenManager>();
 
     return Card(
       elevation: AppElevations.e7,
       child: ListTile(
         title: Text(
-          user.fullName,
+          garden.name,
           style: TextStyle(fontWeight: FontWeight.w500),
         ),
         subtitle: Text(""),
         trailing: Icon(Icons.arrow_forward_ios),
-        onTap: () {
-          stateManager.showViewableUserDialogView(user);
-        },
+        onTap: () => gardenStateManager.changeGarden(context, garden),
       ),
     );
   }

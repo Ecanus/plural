@@ -1,4 +1,5 @@
 import 'package:get_it/get_it.dart';
+import 'package:intl/intl.dart';
 
 // Pocketbase
 import 'package:pocketbase/pocketbase.dart';
@@ -13,6 +14,7 @@ import 'package:plural_app/src/features/authentication/domain/app_user_garden_re
 
 // Gardens
 import 'package:plural_app/src/features/gardens/data/gardens_repository.dart';
+import "package:plural_app/src/features/gardens/domain/garden.dart";
 import 'package:plural_app/src/features/gardens/domain/garden_manager.dart';
 
 class AuthRepository {
@@ -84,19 +86,18 @@ class AuthRepository {
     return instances;
   }
 
-  Future<List<AppUser>> getCurrentGardenUsers({
-    String sort = "${UserField.lastName}, ${UserField.firstName}",
-  }) async {
+  Future<List<AppUser>> getCurrentGardenUsers() async {
     String currentGardenUID = GetIt.instance<GardenManager>().currentGarden!.uid;
     List<AppUser> instances = [];
 
     var result = await pb.collection(Collection.userGardenRecords).getList(
-      expand: "user",
-      filter: "garden = '$currentGardenUID'",
+      expand: UserGardenRecordField.user,
+      filter: "${UserGardenRecordField.garden} = '$currentGardenUID'",
       sort: "user.lastName, user.firstName"
     );
+
+    // TODO: Raise error if result is empty
     var records = result.toJson()[PBKey.items];
-    print("RECORDS IS\n: $records");
 
     for (var record in records) {
       var recordUser = record[PBKey.expand][UserGardenRecordField.user];
@@ -128,6 +129,24 @@ class AuthRepository {
       email: record[UserField.email],
       firstName: record[UserField.firstName],
       lastName: record[UserField.lastName]
+    );
+  }
+
+  Future<void> updateUserGardenRecord(AppUser user, Garden garden) async {
+    var result = await pb.collection(Collection.userGardenRecords).getFirstListItem(
+      """
+      ${UserGardenRecordField.userUID} = '${user.uid}' &&
+      ${UserGardenRecordField.gardenUID} = '${garden.uid}'
+      """
+    );
+
+    var userGardenRecord = result.toJson();
+
+    await pb.collection(Collection.userGardenRecords).update(
+      userGardenRecord[Field.id],
+      body: {
+        Field.updated: DateFormat(Strings.dateformatYMMdd).format(DateTime.now()),
+      }
     );
   }
 }

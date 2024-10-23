@@ -9,33 +9,33 @@ import 'package:plural_app/src/common_widgets/close_dialog_button.dart';
 import 'package:plural_app/src/constants/strings.dart';
 import 'package:plural_app/src/constants/app_sizes.dart';
 
-// Auth
-import 'package:plural_app/src/features/authentication/domain/utils.dart';
-import 'package:plural_app/src/features/authentication/presentation/listed_user_tile.dart';
+// Gardens
+import 'package:plural_app/src/features/gardens/domain/utils.dart';
+import 'package:plural_app/src/features/gardens/presentation/listed_garden_tile.dart';
 
-Future createListedUsersDialog(BuildContext context) async {
-  final listedUserTiles = await getListedUserTilesByUsers();
+Future createListedGardensDialog(BuildContext context) async {
+  final listedGardenTiles = await getListedGardenTilesByUser();
 
   if (context.mounted) {
     return showDialog(
       context: context,
       builder: (BuildContext context) {
         return AppDialog(
-          view: UserDialogList(listedUserTiles: listedUserTiles),
-          viewTitle: Strings.usersViewTitle,
+          view: GardenDialogList(listedGardenTiles: listedGardenTiles),
+          viewTitle: Strings.gardensViewTitle,
         );
       }
     );
   }
 }
 
-class UserDialogList extends StatelessWidget {
-  const UserDialogList({
+class GardenDialogList extends StatelessWidget {
+  const GardenDialogList({
     super.key,
-    required this.listedUserTiles,
+    required this.listedGardenTiles,
   });
 
-  final List<ListedUserTile> listedUserTiles;
+  final List<ListedGardenTile> listedGardenTiles;
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +46,7 @@ class UserDialogList extends StatelessWidget {
         Expanded(
           child: ListView(
             padding: const EdgeInsets.all(AppPaddings.p35),
-            children: listedUserTiles,
+            children: listedGardenTiles,
           ),
         ),
       ],

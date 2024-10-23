@@ -1,7 +1,10 @@
+import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
-// Gardens
+// Auth
 import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
+
+// Gardens
 import 'package:plural_app/src/features/gardens/domain/garden.dart';
 import 'package:plural_app/src/features/gardens/domain/garden_timeline_notifier.dart';
 
@@ -15,4 +18,15 @@ class GardenManager {
 
   Garden? currentGarden;
   GardenTimelineNotifier timelineNotifier;
+
+  Future<void> changeGarden(BuildContext context, Garden garden) async {
+    final authRepository = GetIt.instance<AuthRepository>();
+    final user = authRepository.currentUser!;
+
+    Navigator.pop(context);
+
+    currentGarden = garden;
+    await authRepository.updateUserGardenRecord(user, garden);
+    timelineNotifier.updateValue();
+  }
 }
