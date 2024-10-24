@@ -12,22 +12,22 @@ Future<void> submitUpdate(
   GlobalKey<FormState> formKey,
   Map map
   ) async {
-    if(formKey.currentState!.validate()) {
-      final asksRepository = GetIt.instance<AsksRepository>();
-      final gardenStateManager = GetIt.instance<GardenManager>();
+  if (formKey.currentState!.validate()) {
+    final asksRepository = GetIt.instance<AsksRepository>();
+    final gardenStateManager = GetIt.instance<GardenManager>();
 
-      // Save form
-      formKey.currentState!.save();
+    // Save form
+    formKey.currentState!.save();
 
-      // Update DB
-      await asksRepository.update(map);
+    // Update DB
+    await asksRepository.update(map);
 
-      // Rebuild the Garden Timeline
-      await gardenStateManager.timelineNotifier.updateValue();
+    // Rebuild the Garden Timeline
+    await gardenStateManager.timelineNotifier.updateValue();
 
-      // TODO: Wrap this method in a method that will either Close Dialog OR Reroute to Listed Asks Dialog
-      // Close the Dialog
-      if (context.mounted) Navigator.pop(context);
+    // TODO: Wrap this method in a method that will either Close Dialog OR Reroute to Listed Asks Dialog
+    // Close the Dialog
+    if (context.mounted) Navigator.pop(context);
   }
 }
 
@@ -36,22 +36,22 @@ Future<void> submitCreate(
   GlobalKey<FormState> formKey,
   Map map
   ) async {
-    if (formKey.currentState!.validate()) {
-      final asksRepository = GetIt.instance<AsksRepository>();
-      final gardenStateManager = GetIt.instance<GardenManager>();
+  if (formKey.currentState!.validate()) {
+    final asksRepository = GetIt.instance<AsksRepository>();
+    final gardenStateManager = GetIt.instance<GardenManager>();
 
-      // Save form
-      formKey.currentState!.save();
+    // Save form
+    formKey.currentState!.save();
 
-      // Update DB
-      await asksRepository.create(map);
+    // Update DB
+    await asksRepository.create(map);
 
-      // Rebuild the Garden Timeline
-      await gardenStateManager.timelineNotifier.updateValue();
+    // Rebuild the Garden Timeline
+    await gardenStateManager.timelineNotifier.updateValue();
 
-      // TODO: Wrap this method in a method that will either Close Dialog OR Reroute to Listed Asks Dialog
+    // TODO: Wrap this method in a method that will either Close Dialog OR Reroute to Listed Asks Dialog
 
-      // Close the Dialog
-      if (context.mounted) Navigator.pop(context);
-    }
+    // Close the Dialog
+    if (context.mounted) Navigator.pop(context);
   }
+}

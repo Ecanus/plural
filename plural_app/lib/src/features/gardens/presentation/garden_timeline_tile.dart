@@ -26,11 +26,11 @@ class GardenTimelineTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final getIt = GetIt.instance;
     final authRespository = getIt<AuthRepository>();
-    final currentUserUID = authRespository.getCurrentUserUID();
+    final currentUserID = authRespository.getCurrentUserID();
 
-    return ask.creatorUID == currentUserUID ?
+    return ask.creatorID == currentUserID ?
       EditableGardenTimelineTile(ask: ask) :
-      ViewableGardenTimelineTile(ask: ask, currentUserUID: currentUserUID,);
+      ViewableGardenTimelineTile(ask: ask, currentUserID: currentUserID,);
   }
 }
 
@@ -38,11 +38,11 @@ class ViewableGardenTimelineTile extends StatelessWidget {
   const ViewableGardenTimelineTile({
     super.key,
     required this.ask,
-    required this.currentUserUID,
+    required this.currentUserID,
   });
 
   final Ask ask;
-  final String currentUserUID;
+  final String currentUserID;
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +54,7 @@ class ViewableGardenTimelineTile extends StatelessWidget {
         ask: ask,
         alignment: Alignment.centerRight,
       ),
-      endChild: ask.isSponsoredByUser(currentUserUID) ?
+      endChild: ask.isSponsoredByUser(currentUserID) ?
         Container(
           padding: const EdgeInsets.all(AppPaddings.p5),
           child: Align(

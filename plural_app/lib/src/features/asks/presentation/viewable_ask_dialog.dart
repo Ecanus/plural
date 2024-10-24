@@ -43,7 +43,7 @@ class AskDialogViewForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final currentUserUID = GetIt.instance<AuthRepository>().getCurrentUserUID();
+    final currentUserID = GetIt.instance<AuthRepository>().getCurrentUserID();
 
     return Column(
       children: [
@@ -67,7 +67,7 @@ class AskDialogViewForm extends StatelessWidget {
                           child: AppCheckboxFormFieldFilled(
                             mainAxisAlignment: MainAxisAlignment.center,
                             text: Strings.isAskSponsoredLabel,
-                            value: ask.isSponsoredByUser(currentUserUID),
+                            value: ask.isSponsoredByUser(currentUserID),
                           ),
                         ),
                       ],

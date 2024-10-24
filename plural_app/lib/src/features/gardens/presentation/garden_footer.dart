@@ -9,7 +9,10 @@ import 'package:plural_app/src/constants/values.dart';
 import 'package:plural_app/src/features/asks/presentation/listed_asks_dialog.dart';
 
 // Auth
-import 'package:plural_app/src/features/authentication/presentation/listed_users_dialog.dart';
+import '''
+package:plural_app/src/features/authentication/presentation/listed_users_dialog.dart''';
+import '''
+package:plural_app/src/features/authentication/presentation/user_settings_dialog.dart''';
 
 // Gardens
 import 'package:plural_app/src/features/gardens/presentation/listed_gardens_dialog.dart';
@@ -97,7 +100,7 @@ class AppBottomBar extends StatelessWidget {
                   icon: const Icon(Icons.settings),
                   iconSize: AppButtonSizes.s31,
                   tooltip: Strings.tooltipSettings,
-                  onPressed: () {},
+                  onPressed: () => createUserSettingsDialog(context),
                 ),
                 IconButton(
                   color: AppColors.secondaryColor,

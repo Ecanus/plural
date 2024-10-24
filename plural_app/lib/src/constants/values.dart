@@ -30,10 +30,12 @@ class AppDialogNavBarValues {
 }
 
 class AppMaxLengthValues {
+  static const max1 = 1;
   static const max4 = 4;
   static const max20 = 20;
   static const max30 = 30;
   static const max50 = 50;
+  static const max75 = 75;
   static const max250 = 250;
 }
 
@@ -43,6 +45,11 @@ class AppMaxLinesValues {
 
 class GardenValues {
   static const numTimelineAsks = 3;
+}
+
+class UserSettingsValues {
+  static const textSizeMin = 1;
+  static const textSizeMax = 5;
 }
 
 const appIndicatorStyle = IndicatorStyle(

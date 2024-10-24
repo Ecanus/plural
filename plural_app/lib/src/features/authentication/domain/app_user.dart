@@ -3,13 +3,13 @@ import 'package:plural_app/src/features/authentication/domain/app_user_garden_re
 
 class AppUser {
   AppUser({
-    required this.uid,
+    required this.id,
     required this.email,
     required this.firstName,
     required this.lastName,
   });
 
-  final String uid;
+  final String id;
   final String email;
   final String firstName;
   final String lastName;
@@ -24,12 +24,12 @@ class AppUser {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
-    return other is AppUser && other.uid == uid && other.email == email;
+    return other is AppUser && other.id == id && other.email == email;
   }
 
   @override
-  int get hashCode => uid.hashCode ^ email.hashCode;
+  int get hashCode => id.hashCode ^ email.hashCode;
 
   @override
-  String toString() => 'AppUser(uid: $uid, email: $email)';
+  String toString() => 'AppUser(id: $id, email: $email)';
 }

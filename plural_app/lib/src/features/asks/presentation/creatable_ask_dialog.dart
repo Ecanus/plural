@@ -9,6 +9,7 @@ import 'package:plural_app/src/common_widgets/app_date_picker_form_field.dart';
 import 'package:plural_app/src/common_widgets/app_dialog.dart';
 import 'package:plural_app/src/common_widgets/app_dialog_header.dart';
 import 'package:plural_app/src/common_widgets/app_dialog_header_button.dart';
+
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
 import 'package:plural_app/src/constants/strings.dart';
@@ -67,7 +68,8 @@ class _AskDialogCreateFormState extends State<AskDialogCreateForm> {
       children: [
         AppDialogHeader(
           firstHeaderButton: ListedAsksButton(),
-          secondHeaderButton: submitFormButton),
+          secondHeaderButton: submitFormButton
+        ),
         Expanded(
           child: ListView(
             padding: const EdgeInsets.all(AppPaddings.p35),

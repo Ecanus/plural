@@ -1,6 +1,6 @@
 class AskField {
   static const creator = "creator";
-  static const creatorUID = "creatorUID";
+  static const creatorID = "creatorID";
   static const description = "description";
   static const deadlineDate = "deadlineDate";
   static const fullySponsoredDate = "fullySponsoredDate";
@@ -17,11 +17,11 @@ class PBKey {
 class Field {
   static const created = "created";
   static const id = "id";
-  static const uid = "uid";
   static const updated = "updated";
 }
 
 class GardenField {
+  static const creator = "creator";
   static const name = "name";
 }
 
@@ -29,15 +29,21 @@ class UserField {
   static const email = "email";
   static const firstName = "firstName";
   static const lastName = "lastName";
-  static const latestGardenRecordUID = "latestGardenRecord";
+  static const latestGardenRecordID = "latestGardenRecord";
 }
 
 class UserGardenRecordField {
   static const garden = "garden";
-  static const gardenUID = "garden";
+  static const gardenID = "garden";
   static const name = "name";
-  static const userUID = "user";
+  static const userID = "user";
   static const user = "user";
+}
+
+class UserSettingsField {
+  static const user = "user";
+  static const userID = "user";
+  static const textSize = "textSize";
 }
 
 class ListedAskTileText {
@@ -78,6 +84,17 @@ class Strings {
   static const askDeadlineDateLabel = "Deadline Date";
   static const askCreatorLabel = "Creator";
 
+  // Garden
+  static const gardenHeaderText1 = "Hi, ";
+
+  // Garden Dialog
+  static const gardensViewTitle = "Gardens";
+  static const newGardenLabel = "New Garden";
+
+  static const gardenNameLabel = "Name";
+
+  static const gardensListButtonTooltip = "Gardens List";
+
   // User Dialog
   static const usersViewTitle = "Users";
   static const usersListButtonTooltip = "Users List";
@@ -85,11 +102,13 @@ class Strings {
   static const userFirstNameLabel = "First Name";
   static const userLastNameLabel = "Last Name";
 
-  // Garden
-  static const gardenHeaderText1 = "Hi, ";
+  // Settings Dialog
+  static const settingsViewTitle = "Settings";
 
-  // Garden Dialog
-  static const gardensViewTitle = "Gardens";
+  static const gardensSettingsButtonTooltip = "Garden Settings";
+  static const userSettingsButtonTooltip = "User Settings";
+
+  static const userSettingsTextSizeLabel = "Text Size";
 
   // Date Formatting
   static const dateformatYMMdd = "y-MM-dd";

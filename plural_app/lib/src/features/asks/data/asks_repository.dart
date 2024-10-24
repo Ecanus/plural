@@ -29,8 +29,8 @@ class AsksRepository {
     String sortString = "created",
     }) async {
 
-      var currentGardenUID = GetIt.instance<GardenManager>().currentGarden!.uid;
-      filterString = filterString == "" ? "garden = '$currentGardenUID'" : filterString;
+      var currentGardenID = GetIt.instance<GardenManager>().currentGarden!.id;
+      filterString = filterString == "" ? "garden = '$currentGardenID'" : filterString;
 
       var result = await pb.collection(Collection.asks).getList(
         filter: filterString,
@@ -40,15 +40,15 @@ class AsksRepository {
       return await Ask.createInstancesFromQuery(result, count: count);
   }
 
-  Future<List<Ask>> getAsksByUserUID() async {
-    final currentUserUID = GetIt.instance<AuthRepository>().getCurrentUserUID();
+  Future<List<Ask>> getAsksByUserID() async {
+    final currentUserID = GetIt.instance<AuthRepository>().getCurrentUserID();
     final currentGarden = GetIt.instance<GardenManager>().currentGarden!;
 
     var result = await pb.collection(Collection.asks).getList(
       sort: Field.created,
       filter: """
-          ${AskField.creator} = '$currentUserUID' &&
-          ${AskField.garden} = '${currentGarden.uid}'
+          ${AskField.creator} = '$currentUserID' &&
+          ${AskField.garden} = '${currentGarden.id}'
           """
     );
 
@@ -59,7 +59,7 @@ class AsksRepository {
   /// record in the database.
   Future update(Map map) async {
     await pb.collection(Collection.asks).update(
-      map[Field.uid],
+      map[Field.id],
       body: {
         AskField.description: map[AskField.description],
         AskField.deadlineDate: map[AskField.deadlineDate],
@@ -71,14 +71,14 @@ class AsksRepository {
 
   /// Uses the given [map] parameter to create a corresponding Ask
   /// record in the database.
-  Future create(Map map) async {
+  Future<void> create(Map map) async {
     await pb.collection(Collection.asks).create(
       body: {
-        AskField.creator: GetIt.instance<AuthRepository>().getCurrentUserUID(),
+        AskField.creator: GetIt.instance<AuthRepository>().getCurrentUserID(),
         AskField.description: map[AskField.description],
         AskField.deadlineDate: map[AskField.deadlineDate],
         AskField.targetDonationSum: map[AskField.targetDonationSum],
-        AskField.garden: GetIt.instance<GardenManager>().currentGarden!.uid,
+        AskField.garden: GetIt.instance<GardenManager>().currentGarden!.id,
       }
     );
   }

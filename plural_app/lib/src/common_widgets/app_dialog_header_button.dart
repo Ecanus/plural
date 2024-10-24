@@ -11,6 +11,7 @@ class AppDialogHeaderButton extends StatelessWidget {
     required this.icon,
     required this.label,
     required this.onPressed,
+    this.width,
   });
 
   // Used by forms that dynamically disable this button
@@ -19,11 +20,12 @@ class AppDialogHeaderButton extends StatelessWidget {
   final Icon icon;
   final String label;
   final Function onPressed;
+  final double? width;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: AppWidths.w150,
+      width: width ?? AppWidths.w150,
       height: AppHeights.h40,
       child: ValueListenableBuilder(
         valueListenable: buttonNotifier,

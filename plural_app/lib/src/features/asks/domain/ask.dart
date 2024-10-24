@@ -12,8 +12,8 @@ import 'package:plural_app/src/constants/values.dart';
 
 class Ask with LogData{
   Ask({
-    required this.uid,
-    required this.creatorUID,
+    required this.id,
+    required this.creatorID,
     required this.description,
     required this.deadlineDate,
     required this.targetDonationSum,
@@ -26,8 +26,8 @@ class Ask with LogData{
     return DateTime.now();
   }
 
-  final String uid;
-  final String creatorUID;
+  final String id;
+  final String creatorID;
   String description;
   DateTime deadlineDate;
   DateTime? fullySponsoredDate;
@@ -75,11 +75,11 @@ class Ask with LogData{
     return "< $minutesLeft minutes left";
   }
 
-  bool isSponsoredByUser(String userUID) {
+  bool isSponsoredByUser(String userID) {
     // The creator of an Ask cannot sponsor that ask
-    if (creatorUID == userUID) return false;
+    if (creatorID == userID) return false;
 
-    return sponsorIDS.contains(userUID);
+    return sponsorIDS.contains(userID);
   }
 
   int compareTo(Ask other) {
@@ -106,7 +106,7 @@ class Ask with LogData{
       List<Ask> instances = [];
 
       for (var record in records) {
-        var creatorUID = record[AskField.creator];
+        var creatorID = record[AskField.creator];
 
         // Format fullySponsoredDate if non-null
         var fullySponsoredDate = record[AskField.fullySponsoredDate];
@@ -114,11 +114,11 @@ class Ask with LogData{
           DateTime.parse(fullySponsoredDate) : null;
 
         // Get AppUser that created the Ask
-        var creator = await authRepository.getUserByUID(creatorUID);
+        var creator = await authRepository.getUserByID(creatorID);
 
         var newAsk = Ask(
-          uid: record[Field.id],
-          creatorUID: creatorUID,
+          id: record[Field.id],
+          creatorID: creatorID,
           description: record[AskField.description],
           deadlineDate: DateTime.parse(record[AskField.deadlineDate]),
           targetDonationSum: record[AskField.targetDonationSum],
@@ -136,8 +136,8 @@ class Ask with LogData{
 
   Map toMap() {
     return {
-      Field.uid: uid,
-      AskField.creatorUID: creatorUID,
+      Field.id: id,
+      AskField.creatorID: creatorID,
       AskField.description: description,
       AskField.deadlineDate: deadlineDate,
       AskField.targetDonationSum: targetDonationSum,
@@ -147,7 +147,7 @@ class Ask with LogData{
 
   static Map emptyMap() {
     return {
-      Field.uid: null,
+      Field.id: null,
       AskField.description: null,
       AskField.deadlineDate: null,
       AskField.targetDonationSum: null,

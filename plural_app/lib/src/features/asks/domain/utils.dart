@@ -7,7 +7,7 @@ import 'package:plural_app/src/features/asks/presentation/listed_ask_tile.dart';
 
 Future<List<ListedAskTile>> getListedAskTilesByAsks () async {
   final asksRepository = GetIt.instance<AsksRepository>();
-  final currentUserAsksList = await asksRepository.getAsksByUserUID();
+  final currentUserAsksList = await asksRepository.getAsksByUserID();
 
   return [for (Ask ask in currentUserAsksList) ListedAskTile(ask: ask)];
 }

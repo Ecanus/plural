@@ -31,6 +31,7 @@ class AppConstraints {
 class AppWidths {
   static const w25 = 25.0;
   static const w150 = 150.0;
+  static const w175 = 175.0;
   static const w200 = 200.0;
 }
 

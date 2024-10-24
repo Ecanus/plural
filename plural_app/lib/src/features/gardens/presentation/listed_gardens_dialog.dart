@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
 // Common Widgets
 import 'package:plural_app/src/common_widgets/app_dialog.dart';
 import 'package:plural_app/src/common_widgets/app_dialog_header.dart';
 import 'package:plural_app/src/common_widgets/close_dialog_button.dart';
+import 'package:plural_app/src/common_widgets/app_dialog_manager.dart';
+import 'package:plural_app/src/common_widgets/app_dialog_header_button.dart';
 
 // Constants
 import 'package:plural_app/src/constants/strings.dart';
@@ -39,10 +42,22 @@ class GardenDialogList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final stateManager = GetIt.instance<AppDialogManager>();
+
+    final Widget creatableGardenViewButton = AppDialogHeaderButton(
+      buttonNotifier: ValueNotifier<bool>(true),
+      onPressed: () { stateManager.showCreatableGardenDialogView(); },
+      icon: Icon(Icons.add),
+      label: Strings.newGardenLabel,
+      width: AppWidths.w175,
+    );
+
     return Column(
       children: [
         AppDialogHeader(
-          firstHeaderButton: CloseDialogButton()),
+          firstHeaderButton: CloseDialogButton(),
+          secondHeaderButton: creatableGardenViewButton,
+        ),
         Expanded(
           child: ListView(
             padding: const EdgeInsets.all(AppPaddings.p35),

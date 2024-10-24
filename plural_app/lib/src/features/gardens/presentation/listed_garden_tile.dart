@@ -29,7 +29,7 @@ class ListedGardenTile extends StatelessWidget {
         ),
         subtitle: Text(""),
         trailing: Icon(Icons.arrow_forward_ios),
-        onTap: () => gardenStateManager.changeGarden(context, garden),
+        onTap: () => gardenStateManager.goToGarden(context, garden),
       ),
     );
   }

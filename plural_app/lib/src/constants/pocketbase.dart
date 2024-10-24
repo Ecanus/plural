@@ -3,4 +3,5 @@ class Collection {
   static const gardens = "gardens";
   static const users = "users";
   static const userGardenRecords = "userGardenRecords";
+  static const userSettings = "userSettings";
 }

@@ -19,7 +19,7 @@ class GardenManager {
   Garden? currentGarden;
   GardenTimelineNotifier timelineNotifier;
 
-  Future<void> changeGarden(BuildContext context, Garden garden) async {
+  Future<void> goToGarden(BuildContext context, Garden garden) async {
     final authRepository = GetIt.instance<AuthRepository>();
     final user = authRepository.currentUser!;
 
@@ -28,5 +28,9 @@ class GardenManager {
     currentGarden = garden;
     await authRepository.updateUserGardenRecord(user, garden);
     timelineNotifier.updateValue();
+  }
+
+  void updateGarden(Garden garden) {
+    currentGarden = garden;
   }
 }
