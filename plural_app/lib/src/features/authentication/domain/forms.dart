@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:go_router/go_router.dart';
 
 // Common Widgets
 import 'package:plural_app/src/common_widgets/app_dialog_manager.dart';
+
+// Constants
+import 'package:plural_app/src/constants/strings.dart';
 
 // Auth
 import "package:plural_app/src/features/authentication/data/auth_repository.dart";
@@ -32,4 +36,26 @@ Future<void> submitUpdate(
     await appDialogManager.showUserSettingsDialogView(
       userSettings: updatedUserSettings);
   }
+}
+
+Future<void> submitLogIn(
+  BuildContext context,
+  GlobalKey<FormState> formKey,
+  Map map,
+) async {
+  if (formKey.currentState!.validate()) {
+    // Save form
+    formKey.currentState!.save();
+
+    var isValid = await login(
+      map[LogInField.usernameOrEmail],
+      map[LogInField.password]);
+
+    if (isValid && context.mounted) {
+      GoRouter.of(context).go("/");
+    } else {
+      // TODO: Display Error Message for the TextFormFields
+    }
+  }
+
 }

@@ -13,18 +13,25 @@ class GardenClock extends StatefulWidget {
 }
 
 class _GardenClockState extends State<GardenClock> {
+  late Timer _timer;
   String formattedTime = DateFormat(Strings.dateformatYMMdd).format(DateTime.now());
 
   @override
   void initState() {
     super.initState();
-    Timer.periodic(const Duration(seconds: 60), (timer) => _update(timer));
+    _timer = Timer.periodic(const Duration(seconds: 60), (timer) => _update(timer));
   }
 
   void _update(Timer timer) {
     setState(() {
       formattedTime = DateFormat(Strings.dateformatYMMdd).format(DateTime.now());
     });
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
   }
 
   @override

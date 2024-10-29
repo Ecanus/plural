@@ -48,6 +48,12 @@ String? validateTextFormField(String? value) {
   return null;
 }
 
+String? validateUsernameOrEmail(String? value) {
+  if (value == null || value.isEmpty) return ErrorString.invalidValue;
+
+  return null;
+}
+
 String? validateDatePickerFormField(String? value) {
   if (value == null) return ErrorString.invalidValue;
 

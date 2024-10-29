@@ -20,6 +20,7 @@ import 'package:plural_app/src/constants/values.dart';
 import 'package:plural_app/src/features/authentication/domain/app_user_settings.dart';
 import 'package:plural_app/src/features/authentication/domain/forms.dart';
 import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
+import 'package:plural_app/src/features/authentication/presentation/log_out_button.dart';
 
 // Gardens
 import 'package:plural_app/src/features/gardens/presentation/garden_settings_button.dart';
@@ -85,6 +86,9 @@ class _UserSettingsDialogState extends State<UserSettingsDialog> {
           child: ListView(
             padding: const EdgeInsets.all(AppPaddings.p35),
             children: [
+              Center(
+                child: LogOutButton()
+              ),
               Form(
                 key: _formKey,
                 child: Column(

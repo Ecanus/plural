@@ -1,5 +1,8 @@
+import 'package:go_router/go_router.dart';
+
 import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
+import 'package:plural_app/src/constants/routes.dart';
 
 // Pocketbase
 import 'package:pocketbase/pocketbase.dart';
@@ -17,6 +20,9 @@ import 'package:plural_app/src/features/authentication/domain/app_user_garden_re
 import 'package:plural_app/src/features/gardens/data/gardens_repository.dart';
 import "package:plural_app/src/features/gardens/domain/garden.dart";
 import 'package:plural_app/src/features/gardens/domain/garden_manager.dart';
+
+// Service Locator
+import 'package:plural_app/src/utils/service_locator.dart';
 
 class AuthRepository {
   AuthRepository({
@@ -157,4 +163,27 @@ class AuthRepository {
       textSize: record[UserSettingsField.textSize]
     );
   }
+}
+
+Future<bool> login(String usernameOrEmail, String password) async {
+  var pb = PocketBase("http://127.0.0.1:8090"); // TODO: Change url dynamically by env
+
+  try {
+    await pb.collection(Collection.users).authWithPassword(
+    usernameOrEmail, password);
+
+    await registerGetItInstances(pb);
+    return true;
+  } on ClientException {
+    return false;
+  }
+}
+
+Future<void> logout(context) async {
+  final getIt = GetIt.instance;
+
+  getIt<PocketBase>().authStore.clear();
+  await getIt.reset();
+
+  if (context.mounted) GoRouter.of(context).go(Routes.login);
 }

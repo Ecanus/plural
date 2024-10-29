@@ -47,6 +47,8 @@ class AppElevations {
 
 class AppFlexes {
   static const f2 = 2;
+  static const f3 = 3;
+  static const f4 = 4;
   static const f6 = 6;
 }
 
@@ -98,6 +100,8 @@ const gapH60 = SizedBox(height: AppPaddings.p60);
 
 // Constant flexes
 const flex2 = Expanded(flex: AppFlexes.f2, child: SizedBox());
+const flex3 = Expanded(flex: AppFlexes.f3, child: SizedBox());
+const flex4 = Expanded(flex: AppFlexes.f4, child: SizedBox());
 const flex6 = Expanded(flex: AppFlexes.f6, child: SizedBox());
 
 // Timeline Tile Values

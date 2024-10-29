@@ -25,6 +25,11 @@ class GardenField {
   static const name = "name";
 }
 
+class LogInField {
+  static const password = "password";
+  static const usernameOrEmail = "usernameOrEmail";
+}
+
 class UserField {
   static const email = "email";
   static const firstName = "firstName";
@@ -52,6 +57,13 @@ class ListedAskTileText {
 
 class ErrorString {
   static const invalidValue = "A valid value is required";
+}
+
+class Labels {
+  static const login = "Log In";
+  static const logout = "Log Out";
+  static const password = "Password";
+  static const usernameOrEmail = "Username or Email";
 }
 
 class Strings {
