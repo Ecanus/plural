@@ -14,7 +14,12 @@ class PBKey {
   static const items = "items";
 }
 
-class Field {
+class ModelMapKeys {
+  static const errorTextKey = "errorText";
+  static const rebuildKey = "rebuild";
+}
+
+class GenericField {
   static const created = "created";
   static const id = "id";
   static const updated = "updated";
@@ -57,12 +62,16 @@ class ListedAskTileText {
 
 class ErrorString {
   static const invalidValue = "A valid value is required";
+  static const invalidEmailOrPassword = "Invalid username/email or password";
 }
 
 class Labels {
+  static const email = "Email";
   static const login = "Log In";
   static const logout = "Log Out";
   static const password = "Password";
+  static const signup = "Sign Up";
+  static const submit = "Submit";
   static const usernameOrEmail = "Username or Email";
 }
 
@@ -72,6 +81,10 @@ class Strings {
   static const tooltipGardens = "Gardens";
   static const tooltipSettings = "Settings";
   static const tooltipUsers = "Users";
+
+
+  // Log In
+  static const loginTooltip = "Log In";
 
   // Ask Dialog
   static const asksViewTitle = "Asks";

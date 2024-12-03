@@ -21,14 +21,15 @@ class AsksRepository {
 
   final PocketBase pb;
 
-  /// Queries on the asks collection to retrieve corresponding records in
-  /// the database.
+  /// Queries on the [Ask] collection to retrieve records in the database
+  /// with values matching the [filterString].
+  ///
+  /// Returns the list of retrieved [Ask]s.
   Future<List<Ask>> get({
     int? count,
     String filterString = "",
     String sortString = "created",
     }) async {
-
       var currentGardenID = GetIt.instance<GardenManager>().currentGarden!.id;
       filterString = filterString == "" ? "garden = '$currentGardenID'" : filterString;
 
@@ -40,14 +41,19 @@ class AsksRepository {
       return await Ask.createInstancesFromQuery(result, count: count);
   }
 
-  Future<List<Ask>> getAsksByUserID() async {
-    final currentUserID = GetIt.instance<AuthRepository>().getCurrentUserID();
+  /// Queries on the [Ask] collection to retrieve all records corresponding
+  /// to the given [userID] and the current [Garden].
+  ///
+  /// Returns the list of retrieved [Ask]s
+  Future<List<Ask>> getAsksByUserID({String? userID}) async {
     final currentGarden = GetIt.instance<GardenManager>().currentGarden!;
 
+    userID = userID ?? GetIt.instance<AuthRepository>().getCurrentUserID();
+
     var result = await pb.collection(Collection.asks).getList(
-      sort: Field.created,
+      sort: GenericField.created,
       filter: """
-          ${AskField.creator} = '$currentUserID' &&
+          ${AskField.creator} = '$userID' &&
           ${AskField.garden} = '${currentGarden.id}'
           """
     );
@@ -55,11 +61,11 @@ class AsksRepository {
     return await Ask.createInstancesFromQuery(result);
   }
 
-  /// Uses the given [map] parameter to update a corresponding Ask
-  /// record in the database.
+  /// Queries on the [Ask] collection to update the record corresponding
+  /// to information in the [map] parameter.
   Future update(Map map) async {
     await pb.collection(Collection.asks).update(
-      map[Field.id],
+      map[GenericField.id],
       body: {
         AskField.description: map[AskField.description],
         AskField.deadlineDate: map[AskField.deadlineDate],
@@ -69,8 +75,8 @@ class AsksRepository {
     );
   }
 
-  /// Uses the given [map] parameter to create a corresponding Ask
-  /// record in the database.
+  /// Queries on the [Ask] collection to create a record corresponding
+  /// to information in the [map] parameter.
   Future<void> create(Map map) async {
     await pb.collection(Collection.asks).create(
       body: {

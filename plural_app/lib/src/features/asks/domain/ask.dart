@@ -117,7 +117,7 @@ class Ask with LogData{
         var creator = await authRepository.getUserByID(creatorID);
 
         var newAsk = Ask(
-          id: record[Field.id],
+          id: record[GenericField.id],
           creatorID: creatorID,
           description: record[AskField.description],
           deadlineDate: DateTime.parse(record[AskField.deadlineDate]),
@@ -136,7 +136,7 @@ class Ask with LogData{
 
   Map toMap() {
     return {
-      Field.id: id,
+      GenericField.id: id,
       AskField.creatorID: creatorID,
       AskField.description: description,
       AskField.deadlineDate: deadlineDate,
@@ -147,7 +147,7 @@ class Ask with LogData{
 
   static Map emptyMap() {
     return {
-      Field.id: null,
+      GenericField.id: null,
       AskField.description: null,
       AskField.deadlineDate: null,
       AskField.targetDonationSum: null,

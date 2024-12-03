@@ -17,7 +17,7 @@ class Garden {
 
   Map toMap() {
     return {
-      Field.id: id,
+      GenericField.id: id,
       GardenField.creator: creator,
       GardenField.name: name,
     };
@@ -25,7 +25,7 @@ class Garden {
 
   static Map emptyMap() {
     return {
-      Field.id: null,
+      GenericField.id: null,
       GardenField.creator: null,
       GardenField.name: null,
     };

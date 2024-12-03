@@ -25,7 +25,7 @@ class AppUserSettings {
 
   Map toMap() {
     return {
-      Field.id: id,
+      GenericField.id: id,
       UserSettingsField.userID: user,
       UserSettingsField.textSize: textSize,
     };

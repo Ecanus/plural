@@ -23,7 +23,7 @@ class GardensRepository {
     final authRepository = GetIt.instance<AuthRepository>();
 
     var result = await pb.collection(Collection.gardens).getFirstListItem(
-      "${Field.id} = '$id'"
+      "${GenericField.id} = '$id'"
     );
 
     // TODO: Raise error if result is empty
@@ -31,7 +31,7 @@ class GardensRepository {
     var creator = await authRepository.getUserByID(record[GardenField.creator]);
 
     return Garden(
-      id: record[Field.id],
+      id: record[GenericField.id],
       creator: creator,
       name: record[GardenField.name]
     );
@@ -83,14 +83,14 @@ class GardensRepository {
     await pb.collection(Collection.userGardenRecords).create(
       body: {
         UserGardenRecordField.user: currentUserID,
-        UserGardenRecordField.gardenID: createdGarden.toJson()[Field.id]
+        UserGardenRecordField.gardenID: createdGarden.toJson()[GenericField.id]
       }
     );
   }
 
   Future<Garden> update(Map map) async {
     var result = await pb.collection(Collection.gardens).update(
-      map[Field.id],
+      map[GenericField.id],
       body: {
         GardenField.name: map[GardenField.name],
       }
@@ -101,7 +101,7 @@ class GardensRepository {
       record[GardenField.creator]);
 
     return Garden(
-      id: record[Field.id],
+      id: record[GenericField.id],
       creator: creator,
       name: record[GardenField.name]
     );

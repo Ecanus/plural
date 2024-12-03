@@ -5,6 +5,7 @@ import 'package:plural_app/src/common_methods/form_validators.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
+import 'package:plural_app/src/constants/strings.dart';
 import 'package:plural_app/src/constants/values.dart';
 
 class AppTextFormField extends StatefulWidget {
@@ -13,6 +14,7 @@ class AppTextFormField extends StatefulWidget {
     required this.fieldName,
     this.formFieldType = FormFieldType.string,
     this.hintText = "",
+    this.isPassword = false,
     this.initialValue = "",
     this.label = "",
     this.maxLength = AppMaxLengthValues.max20,
@@ -28,6 +30,7 @@ class AppTextFormField extends StatefulWidget {
   final FormFieldType formFieldType;
   final String hintText;
   final String initialValue;
+  final bool isPassword;
   final String label;
   final int maxLength;
   final int? maxLines;
@@ -47,6 +50,7 @@ class _AppTextFormFieldState extends State<AppTextFormField> {
   late double _paddingBottom;
   late double _paddingTop;
   late Function _validator;
+  late bool _isPasswordVisible;
 
   @override
   void dispose() {
@@ -61,9 +65,19 @@ class _AppTextFormFieldState extends State<AppTextFormField> {
 
     _paddingBottom = widget.paddingBottom ?? AppPaddings.p20;
     _paddingTop = widget.paddingTop ?? AppPaddings.p20;
+    _isPasswordVisible = false;
     _validator = widget.validator ?? validateTextFormField;
+  }
 
+  // Password
+  void togglePasswordVisibility() {
+    setState(() {
+      _isPasswordVisible = !_isPasswordVisible;
+    });
+  }
 
+  bool getPasswordVisibility() {
+    return _isPasswordVisible;
   }
 
   @override
@@ -76,12 +90,19 @@ class _AppTextFormFieldState extends State<AppTextFormField> {
       child: TextFormField(
         controller: _controller,
         decoration: InputDecoration(
+          errorText: widget.modelMap[ModelMapKeys.errorTextKey],
           hintText: widget.hintText,
           label: Text(widget.label),
+          suffixIcon: widget.isPassword ?
+            ShowHidePasswordButton(
+              isPasswordVisible: getPasswordVisibility,
+              onPressed: togglePasswordVisibility,
+            ) : null,
         ),
         inputFormatters: getInputFormatters(widget.textFieldType),
         maxLength: widget.maxLength,
         maxLines: widget.maxLines,
+        obscureText: (widget.isPassword && !_isPasswordVisible),
         onSaved: (value) => saveToMap(
           widget.fieldName,
           widget.modelMap,
@@ -120,6 +141,29 @@ class AppTextFormFieldFilled extends StatelessWidget {
           label: Text(label),
         ),
       ),
+    );
+  }
+}
+
+class ShowHidePasswordButton extends StatelessWidget {
+  const ShowHidePasswordButton({
+    super.key,
+    required this.isPasswordVisible,
+    required this.onPressed,
+  });
+
+  final Function isPasswordVisible;
+  final Function onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      onPressed: () => onPressed(),
+      icon: Icon(
+        isPasswordVisible()
+        ? Icons.visibility
+        : Icons.visibility_off_rounded
+      )
     );
   }
 }

@@ -52,9 +52,12 @@ Future<void> submitLogIn(
       map[LogInField.password]);
 
     if (isValid && context.mounted) {
+      // Log In Successful
       GoRouter.of(context).go("/");
     } else {
-      // TODO: Display Error Message for the TextFormFields
+      // Log In Failed
+      map[ModelMapKeys.errorTextKey] = ErrorString.invalidEmailOrPassword;
+      map[ModelMapKeys.rebuildKey]();
     }
   }
 

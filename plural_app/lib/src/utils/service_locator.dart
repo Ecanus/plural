@@ -19,6 +19,10 @@ import 'package:plural_app/src/features/gardens/domain/garden_timeline_notifier.
 Future<void> registerGetItInstances(PocketBase pb) async {
   final getIt = GetIt.instance;
 
+  // Always clear before creating anew
+  getIt<PocketBase>().authStore.clear();
+  await getIt.reset();
+
   // Database
   getIt.registerLazySingleton<PocketBase>(
     () => pb
@@ -38,7 +42,7 @@ Future<void> registerGetItInstances(PocketBase pb) async {
     )
   );
 
-    // Gardens
+  // Gardens
   getIt.registerLazySingleton<GardensRepository>(
     () => GardensRepository(
       pb: getIt<PocketBase>(),
@@ -60,20 +64,4 @@ Future<void> registerGetItInstances(PocketBase pb) async {
   );
 
   await getIt<AuthRepository>().setCurrentUserLatestGardenRecord();
-}
-
-Future<void> logIn({
-  required usernameOrEmail,
-  required password
-}) async {
-  final getIt = GetIt.instance;
-
-  // Database
-  getIt.registerLazySingleton<PocketBase>(
-    () => PocketBase("http://127.0.0.1:8090") // TODO: Change url dynamically by env
-  );
-
-  // Log In
-  await getIt<PocketBase>().collection(Collection.users).authWithPassword(
-    usernameOrEmail, password);
 }
