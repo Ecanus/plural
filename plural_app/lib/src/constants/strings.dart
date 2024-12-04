@@ -1,3 +1,4 @@
+// Fields
 class AskField {
   static const creator = "creator";
   static const creatorID = "creatorID";
@@ -7,16 +8,6 @@ class AskField {
   static const garden = "garden";
   static const targetDonationSum = "targetDonationSum";
   static const sponsors = "sponsors";
-}
-
-class PBKey {
-  static const expand = "expand";
-  static const items = "items";
-}
-
-class ModelMapKeys {
-  static const errorTextKey = "errorText";
-  static const rebuildKey = "rebuild";
 }
 
 class GenericField {
@@ -30,7 +21,8 @@ class GardenField {
   static const name = "name";
 }
 
-class LogInField {
+class SignInField {
+  static const confirmPassword = "confirmPassword";
   static const password = "password";
   static const usernameOrEmail = "usernameOrEmail";
 }
@@ -40,6 +32,7 @@ class UserField {
   static const firstName = "firstName";
   static const lastName = "lastName";
   static const latestGardenRecordID = "latestGardenRecord";
+  static const username = "username";
 }
 
 class UserGardenRecordField {
@@ -56,35 +49,35 @@ class UserSettingsField {
   static const textSize = "textSize";
 }
 
-class ListedAskTileText {
-  static const title = "Ask";
+// Keys
+class PBKey {
+  static const expand = "expand";
+  static const items = "items";
 }
 
-class ErrorString {
-  static const invalidValue = "A valid value is required";
-  static const invalidEmailOrPassword = "Invalid username/email or password";
+class ModelMapKeys {
+  static const errorTextKey = "errorText";
+  static const rebuildKey = "rebuild";
+  static const successTextKey = "successText";
 }
 
+// Labels
 class Labels {
+  static const confirmPassword = "Confirm Password";
   static const email = "Email";
+  static const firstName = "First Name";
+  static const lastName = "Last Name";
   static const login = "Log In";
   static const logout = "Log Out";
   static const password = "Password";
   static const signup = "Sign Up";
   static const submit = "Submit";
+  static const username = "Username";
   static const usernameOrEmail = "Username or Email";
 }
 
+// Strings
 class Strings {
-  // Tooltips
-  static const tooltipAsks = "Asks";
-  static const tooltipGardens = "Gardens";
-  static const tooltipSettings = "Settings";
-  static const tooltipUsers = "Users";
-
-
-  // Log In
-  static const loginTooltip = "Log In";
 
   // Ask Dialog
   static const asksViewTitle = "Asks";
@@ -109,16 +102,33 @@ class Strings {
   static const askDeadlineDateLabel = "Deadline Date";
   static const askCreatorLabel = "Creator";
 
+  // Date Formatting
+  static const dateformatYMMdd = "y-MM-dd";
+
   // Garden
   static const gardenHeaderText1 = "Hi, ";
 
   // Garden Dialog
   static const gardensViewTitle = "Gardens";
   static const newGardenLabel = "New Garden";
-
   static const gardenNameLabel = "Name";
-
   static const gardensListButtonTooltip = "Gardens List";
+
+  // Garden Footer
+  static const asksTooltip = "Asks";
+  static const gardensTooltip = "Gardens";
+  static const settingsTooltip = "Settings";
+  static const usersTooltip = "Users";
+
+  // Settings Dialog
+  static const settingsViewTitle = "Settings";
+  static const gardensSettingsButtonTooltip = "Garden Settings";
+  static const userSettingsButtonTooltip = "User Settings";
+  static const userSettingsTextSizeLabel = "Text Size";
+
+  // Sign In Tabs
+  static const loginTooltip = "Log In";
+  static const signupTooltip = "Sign Up";
 
   // User Dialog
   static const usersViewTitle = "Users";
@@ -126,15 +136,28 @@ class Strings {
 
   static const userFirstNameLabel = "First Name";
   static const userLastNameLabel = "Last Name";
+}
 
-  // Settings Dialog
-  static const settingsViewTitle = "Settings";
+class SignInString {
+  static const passwordLength = "Between 9 and 64 characters";
+  static const passwordLowercase = "A lowercase character";
+  static const passwordNumber = "A number";
+  static const passwordSpecial = "A special character";
+  static const passwordUppercase = "An uppercase character";
+}
 
-  static const gardensSettingsButtonTooltip = "Garden Settings";
-  static const userSettingsButtonTooltip = "User Settings";
+// Notifications
+class ErrorString {
+  static const invalidValue = "A valid value is required";
+  static const invalidEmailOrPassword = "Invalid username/email or password";
+  static const passwordMismatch = "Password values do not match";
+}
 
-  static const userSettingsTextSizeLabel = "Text Size";
+class SuccessString {
+  static const emailSent = "An email has been sent";
+}
 
-  // Date Formatting
-  static const dateformatYMMdd = "y-MM-dd";
+// Other
+class ListedAskTileText {
+  static const title = "Ask";
 }

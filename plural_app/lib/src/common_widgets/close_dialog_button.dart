@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 // Constants
-import 'package:plural_app/src/constants/values.dart';
+import 'package:plural_app/src/constants/app_values.dart';
 
 class CloseDialogButton extends StatelessWidget {
   const CloseDialogButton({

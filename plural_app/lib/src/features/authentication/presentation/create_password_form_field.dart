@@ -1,0 +1,259 @@
+import 'package:flutter/material.dart';
+
+// Common Methods
+import 'package:plural_app/src/common_methods/form_validators.dart';
+
+// Constants
+import 'package:plural_app/src/constants/app_sizes.dart';
+import 'package:plural_app/src/constants/strings.dart';
+import 'package:plural_app/src/constants/app_values.dart';
+
+class CreatePasswordFormField extends StatefulWidget {
+  const CreatePasswordFormField({
+    super.key,
+    this.maxLength = AppMaxLengthValues.max20,
+    this.maxLines = AppMaxLinesValues.max1,
+    required this.modelMap,
+    this.paddingBottom,
+    this.paddingTop,
+  });
+
+  final int maxLength;
+  final int? maxLines;
+  final Map modelMap;
+  final double? paddingBottom;
+  final double? paddingTop;
+
+  @override
+  State<CreatePasswordFormField> createState() => _CreatePasswordFormFieldState();
+}
+
+class _CreatePasswordFormFieldState extends State<CreatePasswordFormField> {
+  final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
+
+  late ValueNotifier<String> _passwordRequirementNotifier;
+
+  late double _paddingBottom;
+  late double _paddingTop;
+  late bool _isPasswordVisible;
+  late bool _isConfirmPasswordVisible;
+
+  @override
+  void dispose() {
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+
+    super.dispose();
+  }
+
+  @override void initState() {
+    super.initState();
+
+    _passwordController.text = "";
+    _passwordController.addListener(updatePasswordRequirementWidgets);
+
+    _confirmPasswordController.text = "";
+
+    _passwordRequirementNotifier = ValueNotifier<String>(_passwordController.text);
+
+    _paddingBottom = widget.paddingBottom ?? AppPaddings.p20;
+    _paddingTop = widget.paddingTop ?? AppPaddings.p20;
+
+    _isPasswordVisible = false;
+    _isConfirmPasswordVisible = false;
+  }
+
+  // Password
+  void togglePasswordVisibility() {
+    setState(() {
+      _isPasswordVisible = !_isPasswordVisible;
+    });
+  }
+
+  bool getPasswordVisibility() {
+    return _isPasswordVisible;
+  }
+
+  void updatePasswordRequirementWidgets() {
+    _passwordRequirementNotifier.value = _passwordController.text;
+  }
+
+  // Confirm Password
+  void toggleConfirmPasswordVisibility() {
+    setState(() {
+      _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
+    });
+  }
+
+  bool getConfirmPasswordVisibility() {
+    return _isConfirmPasswordVisible;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Container(
+          padding: EdgeInsets.only(
+            top: _paddingTop,
+          ),
+          child: TextFormField(
+            controller: _passwordController,
+            decoration: InputDecoration(
+              errorText: widget.modelMap[ModelMapKeys.errorTextKey],
+              label: Text(Labels.password),
+              suffixIcon: ShowHidePasswordButton(
+                isPasswordVisible: getPasswordVisibility,
+                onPressed: togglePasswordVisibility,
+              ),
+            ),
+            inputFormatters: getInputFormatters(TextFieldType.text),
+            maxLength: widget.maxLength,
+            maxLines: widget.maxLines,
+            obscureText: !_isPasswordVisible,
+            onSaved: (value) => saveToMap(
+              SignInField.password,
+              widget.modelMap,
+              value,
+              formFieldType: FormFieldType.string,
+            ),
+            validator:(value) => validateNewPassword(value),
+          ),
+        ),
+        Container(
+          padding: EdgeInsets.only(
+            bottom: AppPaddings.p25
+          ),
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: Column(
+              children: [
+                PasswordRequirementText(
+                  notifier: _passwordRequirementNotifier,
+                  requirement: checkPasswordLength,
+                  text: SignInString.passwordLength
+                ),
+                PasswordRequirementText(
+                  notifier: _passwordRequirementNotifier,
+                  requirement: checkHasLowercase,
+                  text: SignInString.passwordLowercase
+                ),
+                PasswordRequirementText(
+                  notifier: _passwordRequirementNotifier,
+                  requirement: checkHasUppercase,
+                  text: SignInString.passwordUppercase
+                ),
+                PasswordRequirementText(
+                  notifier: _passwordRequirementNotifier,
+                  requirement: checkHasNumber,
+                  text: SignInString.passwordNumber
+                ),
+                PasswordRequirementText(
+                  notifier: _passwordRequirementNotifier,
+                  requirement: checkHasSpecialCharacter,
+                  text: SignInString.passwordSpecial
+                ),
+              ],
+            ),
+          )
+        ),
+        Container(
+          padding: EdgeInsets.only(
+            top: _paddingTop,
+            bottom: _paddingBottom,
+          ),
+          child: TextFormField(
+            controller: _confirmPasswordController,
+            decoration: InputDecoration(
+              errorText: widget.modelMap[ModelMapKeys.errorTextKey],
+              label: Text(Labels.confirmPassword),
+              suffixIcon: ShowHidePasswordButton(
+                isPasswordVisible: getConfirmPasswordVisibility,
+                onPressed: toggleConfirmPasswordVisibility,
+              ),
+            ),
+            inputFormatters: getInputFormatters(TextFieldType.text),
+            maxLength: widget.maxLength,
+            maxLines: widget.maxLines,
+            obscureText: !_isConfirmPasswordVisible,
+            validator: (value) => validateConfirmNewPassword(
+              value,
+              _passwordController.text
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class ShowHidePasswordButton extends StatelessWidget {
+  const ShowHidePasswordButton({
+    super.key,
+    required this.isPasswordVisible,
+    required this.onPressed,
+  });
+
+  final Function isPasswordVisible;
+  final Function onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      onPressed: () => onPressed(),
+      icon: Icon(
+        isPasswordVisible()
+        ? Icons.visibility
+        : Icons.visibility_off_rounded
+      )
+    );
+  }
+}
+
+/// Class observing the TextFormField for the new password.
+/// Rebuilds the widget every time that the new password value changes.
+class PasswordRequirementText extends StatelessWidget {
+  const PasswordRequirementText({
+    super.key,
+    required this.notifier,
+    required this.requirement,
+    required this.text,
+  });
+
+  final ValueNotifier<String> notifier;
+  final Function requirement;
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder(
+      valueListenable: notifier,
+      builder: (BuildContext context, String passwordValue, Widget? _) {
+        final isValid = requirement(passwordValue);
+
+        final isValidIcon = Icon(
+          Icons.check,
+          color: Colors.green
+        );
+
+        final isInvalidIcon = Icon(Icons.close);
+
+        return Row(
+          children: [
+            isValid ? isValidIcon : isInvalidIcon,
+            gapW5,
+            Expanded(
+              child: Text(
+                text,
+                style: TextStyle(
+                  color: isValid ? Colors.green : Colors.black
+                )
+              )
+            ),
+          ],
+        );
+      }
+    );
+  }
+}

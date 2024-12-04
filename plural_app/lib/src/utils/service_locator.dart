@@ -1,9 +1,6 @@
 import 'package:get_it/get_it.dart';
 import 'package:pocketbase/pocketbase.dart';
 
-// Constants
-import 'package:plural_app/src/constants/pocketbase.dart';
-
 // Asks
 import 'package:plural_app/src/features/asks/data/asks_repository.dart';
 import 'package:plural_app/src/common_widgets/app_dialog_manager.dart';

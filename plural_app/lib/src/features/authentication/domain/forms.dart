@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:plural_app/src/common_widgets/app_dialog_manager.dart';
 
 // Constants
+import 'package:plural_app/src/constants/routes.dart';
 import 'package:plural_app/src/constants/strings.dart';
 
 // Auth
@@ -48,17 +49,44 @@ Future<void> submitLogIn(
     formKey.currentState!.save();
 
     var isValid = await login(
-      map[LogInField.usernameOrEmail],
-      map[LogInField.password]);
+      map[SignInField.usernameOrEmail],
+      map[SignInField.password]);
 
     if (isValid && context.mounted) {
       // Log In Successful
-      GoRouter.of(context).go("/");
+      GoRouter.of(context).go(Routes.home);
     } else {
       // Log In Failed
       map[ModelMapKeys.errorTextKey] = ErrorString.invalidEmailOrPassword;
       map[ModelMapKeys.rebuildKey]();
     }
   }
+}
 
+Future<void> submitSignUp(
+  BuildContext context,
+  GlobalKey<FormState> formKey,
+  Map map,
+) async {
+  if (formKey.currentState!.validate()) {
+    // Save form
+    formKey.currentState!.save();
+
+    var isValid = await signup(
+      map[UserField.firstName],
+      map[UserField.lastName],
+      map[UserField.username],
+      map[UserField.email],
+      map[SignInField.password]);
+
+    if (isValid && context.mounted) {
+      // Sign Up Successful
+      GoRouter.of(context).go(Routes.signIn);
+      map[ModelMapKeys.successTextKey] = SuccessString.emailSent;
+    } else {
+      // Sign Up Failed
+      map[ModelMapKeys.errorTextKey] = "Unimplemented Error Message";
+      map[ModelMapKeys.rebuildKey]();
+    }
+  }
 }

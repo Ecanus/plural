@@ -12,7 +12,7 @@ import 'package:plural_app/src/features/authentication/data/auth_repository.dart
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
-import 'package:plural_app/src/constants/values.dart';
+import 'package:plural_app/src/constants/app_values.dart';
 
 class GardenTimelineTile extends StatelessWidget {
   const GardenTimelineTile({

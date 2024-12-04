@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
-import 'package:plural_app/src/constants/values.dart';
+import 'package:plural_app/src/constants/app_values.dart';
 
 class AppDialogNavBar extends StatelessWidget {
   const AppDialogNavBar({

@@ -6,7 +6,7 @@ import 'package:plural_app/src/common_methods/form_validators.dart';
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
 import 'package:plural_app/src/constants/strings.dart';
-import 'package:plural_app/src/constants/values.dart';
+import 'package:plural_app/src/constants/app_values.dart';
 
 class AppTextFormField extends StatefulWidget {
   const AppTextFormField({

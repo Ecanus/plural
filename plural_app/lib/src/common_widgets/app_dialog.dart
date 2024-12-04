@@ -3,7 +3,7 @@ import 'package:get_it/get_it.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
-import 'package:plural_app/src/constants/values.dart';
+import 'package:plural_app/src/constants/app_values.dart';
 
 // Asks
 import 'package:plural_app/src/common_widgets/app_dialog_manager.dart';

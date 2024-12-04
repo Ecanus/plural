@@ -5,7 +5,7 @@ import 'package:get_it/get_it.dart';
 import 'package:plural_app/src/common_widgets/app_dialog_manager.dart';
 
 // Constants
-import 'package:plural_app/src/constants/values.dart';
+import 'package:plural_app/src/constants/app_values.dart';
 import 'package:plural_app/src/constants/strings.dart';
 
 class ListedAsksButton extends StatelessWidget {

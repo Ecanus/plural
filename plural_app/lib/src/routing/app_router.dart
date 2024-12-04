@@ -15,7 +15,7 @@ class AppRouter {
       initialLocation: Routes.signIn,
       routes: [
         GoRoute(
-          path: "/",
+          path: Routes.home,
           builder: (context, state) => GardenPage()
         ),
         GoRoute(

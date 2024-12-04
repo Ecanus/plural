@@ -190,7 +190,8 @@ class AuthRepository {
 ///
 /// Returns true if log in is successful, else false.
 Future<bool> login(String usernameOrEmail, String password) async {
-  var pb = PocketBase("http://127.0.0.1:8090"); // TODO: Change url dynamically by env
+  // TODO: Change url dynamically by env
+  var pb = PocketBase("http://127.0.0.1:8090");
 
   try {
     await pb.collection(Collection.users).authWithPassword(
@@ -211,4 +212,31 @@ Future<void> logout(context) async {
   await getIt.reset();
 
   if (context.mounted) GoRouter.of(context).go(Routes.signIn);
+}
+
+/// Attempts to create a new [User] record in the database with the given
+/// [firstName], [lastName], [username], [email], and [password] parameters.
+///
+/// Returns true if sign up is successful, else false.
+Future<bool> signup(
+  String firstName,
+  String lastName,
+  String username,
+  String email,
+  String password,
+) async {
+  // TODO: Change url dynamically by env
+  var pb = PocketBase("http://127.0.0.1:8090");
+
+  try {
+    // TODO: Implement Sign Up, and Confirmation Email sending
+    // await pb.collection(Collection.users).authWithPassword(
+    // usernameOrEmail, password);
+
+    // await registerGetItInstances(pb);
+    return true;
+  } on ClientException {
+    // TODO: Handle Already Existing User, and all other errors.
+    return false;
+  }
 }

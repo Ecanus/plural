@@ -86,6 +86,7 @@ class AppRunSpacings {
 }
 
 // Constant gap widths
+const gapW5 = SizedBox(width: AppPaddings.p5);
 const gapW10 = SizedBox(width: AppPaddings.p10);
 const gapW15 = SizedBox(width: AppPaddings.p15);
 const gapW20 = SizedBox(width: AppPaddings.p20);

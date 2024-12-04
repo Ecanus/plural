@@ -50,7 +50,6 @@ Future<void> submitCreate(
     await gardenStateManager.timelineNotifier.updateValue();
 
     // TODO: Wrap this method in a method that will either Close Dialog OR Reroute to Listed Asks Dialog
-
     // Close the Dialog
     if (context.mounted) Navigator.pop(context);
   }
