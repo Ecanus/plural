@@ -5,8 +5,9 @@ import 'package:plural_app/src/common_methods/form_validators.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
-import 'package:plural_app/src/constants/strings.dart';
 import 'package:plural_app/src/constants/app_values.dart';
+import 'package:plural_app/src/constants/form_values.dart';
+import 'package:plural_app/src/constants/strings.dart';
 
 class CreatePasswordFormField extends StatefulWidget {
   const CreatePasswordFormField({
@@ -32,6 +33,7 @@ class _CreatePasswordFormFieldState extends State<CreatePasswordFormField> {
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
 
+  late FocusNode _passwordFieldFocusNode;
   late ValueNotifier<String> _passwordRequirementNotifier;
 
   late double _paddingBottom;
@@ -42,7 +44,11 @@ class _CreatePasswordFormFieldState extends State<CreatePasswordFormField> {
   @override
   void dispose() {
     _passwordController.dispose();
+    _passwordController.removeListener(_updatePasswordRequirementWidgets);
     _confirmPasswordController.dispose();
+
+    _passwordFieldFocusNode.dispose();
+    _passwordFieldFocusNode.removeListener(_rebuild);
 
     super.dispose();
   }
@@ -51,42 +57,47 @@ class _CreatePasswordFormFieldState extends State<CreatePasswordFormField> {
     super.initState();
 
     _passwordController.text = "";
-    _passwordController.addListener(updatePasswordRequirementWidgets);
-
+    _passwordController.addListener(_updatePasswordRequirementWidgets);
     _confirmPasswordController.text = "";
+
+    _passwordFieldFocusNode = FocusNode();
+    _passwordFieldFocusNode.addListener(_rebuild);
 
     _passwordRequirementNotifier = ValueNotifier<String>(_passwordController.text);
 
     _paddingBottom = widget.paddingBottom ?? AppPaddings.p20;
     _paddingTop = widget.paddingTop ?? AppPaddings.p20;
-
     _isPasswordVisible = false;
     _isConfirmPasswordVisible = false;
   }
 
+  void _rebuild() {
+    setState(() {});
+  }
+
   // Password
-  void togglePasswordVisibility() {
+  void _togglePasswordVisibility() {
     setState(() {
       _isPasswordVisible = !_isPasswordVisible;
     });
   }
 
-  bool getPasswordVisibility() {
+  bool _getPasswordVisibility() {
     return _isPasswordVisible;
   }
 
-  void updatePasswordRequirementWidgets() {
+  void _updatePasswordRequirementWidgets() {
     _passwordRequirementNotifier.value = _passwordController.text;
   }
 
   // Confirm Password
-  void toggleConfirmPasswordVisibility() {
+  void _toggleConfirmPasswordVisibility() {
     setState(() {
       _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
     });
   }
 
-  bool getConfirmPasswordVisibility() {
+  bool _getConfirmPasswordVisibility() {
     return _isConfirmPasswordVisible;
   }
 
@@ -104,10 +115,11 @@ class _CreatePasswordFormFieldState extends State<CreatePasswordFormField> {
               errorText: widget.modelMap[ModelMapKeys.errorTextKey],
               label: Text(Labels.password),
               suffixIcon: ShowHidePasswordButton(
-                isPasswordVisible: getPasswordVisibility,
-                onPressed: togglePasswordVisibility,
+                isPasswordVisible: _getPasswordVisibility,
+                onPressed: _togglePasswordVisibility,
               ),
             ),
+            focusNode: _passwordFieldFocusNode,
             inputFormatters: getInputFormatters(TextFieldType.text),
             maxLength: widget.maxLength,
             maxLines: widget.maxLines,
@@ -118,45 +130,49 @@ class _CreatePasswordFormFieldState extends State<CreatePasswordFormField> {
               value,
               formFieldType: FormFieldType.string,
             ),
-            validator:(value) => validateNewPassword(value),
+            validator: (value) => validateNewPassword(value),
           ),
         ),
-        Container(
-          padding: EdgeInsets.only(
-            bottom: AppPaddings.p25
-          ),
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: Column(
-              children: [
-                PasswordRequirementText(
-                  notifier: _passwordRequirementNotifier,
-                  requirement: checkPasswordLength,
-                  text: SignInString.passwordLength
-                ),
-                PasswordRequirementText(
-                  notifier: _passwordRequirementNotifier,
-                  requirement: checkHasLowercase,
-                  text: SignInString.passwordLowercase
-                ),
-                PasswordRequirementText(
-                  notifier: _passwordRequirementNotifier,
-                  requirement: checkHasUppercase,
-                  text: SignInString.passwordUppercase
-                ),
-                PasswordRequirementText(
-                  notifier: _passwordRequirementNotifier,
-                  requirement: checkHasNumber,
-                  text: SignInString.passwordNumber
-                ),
-                PasswordRequirementText(
-                  notifier: _passwordRequirementNotifier,
-                  requirement: checkHasSpecialCharacter,
-                  text: SignInString.passwordSpecial
-                ),
-              ],
+        AnimatedSize(
+          duration: FormValues.passwordRequirementsRevealDuration,
+          child: Container(
+            height: _passwordFieldFocusNode.hasFocus ? null : 0.0,
+            padding: EdgeInsets.only(
+              bottom: AppPaddings.p25
             ),
-          )
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Column(
+                children: [
+                  PasswordRequirementText(
+                    notifier: _passwordRequirementNotifier,
+                    requirement: checkPasswordLength,
+                    text: SignInString.passwordLength
+                  ),
+                  PasswordRequirementText(
+                    notifier: _passwordRequirementNotifier,
+                    requirement: checkHasLowercase,
+                    text: SignInString.passwordLowercase
+                  ),
+                  PasswordRequirementText(
+                    notifier: _passwordRequirementNotifier,
+                    requirement: checkHasUppercase,
+                    text: SignInString.passwordUppercase
+                  ),
+                  PasswordRequirementText(
+                    notifier: _passwordRequirementNotifier,
+                    requirement: checkHasNumber,
+                    text: SignInString.passwordNumber
+                  ),
+                  PasswordRequirementText(
+                    notifier: _passwordRequirementNotifier,
+                    requirement: checkHasSpecialCharacter,
+                    text: SignInString.passwordSpecial
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
         Container(
           padding: EdgeInsets.only(
@@ -169,8 +185,8 @@ class _CreatePasswordFormFieldState extends State<CreatePasswordFormField> {
               errorText: widget.modelMap[ModelMapKeys.errorTextKey],
               label: Text(Labels.confirmPassword),
               suffixIcon: ShowHidePasswordButton(
-                isPasswordVisible: getConfirmPasswordVisibility,
-                onPressed: toggleConfirmPasswordVisibility,
+                isPasswordVisible: _getConfirmPasswordVisibility,
+                onPressed: _toggleConfirmPasswordVisibility,
               ),
             ),
             inputFormatters: getInputFormatters(TextFieldType.text),

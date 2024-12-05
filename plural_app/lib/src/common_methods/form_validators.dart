@@ -151,6 +151,6 @@ bool checkPasswordLength(String? value) {
   if (value == null || value.isEmpty) return false;
 
   return (
-    value.length >= SignInPage.passwordMinLength &&
-    value.length <= SignInPage.passwordMaxLength);
+    value.length >= FormValues.passwordMinLength &&
+    value.length <= FormValues.passwordMaxLength);
 }
