@@ -8,11 +8,12 @@ import 'package:plural_app/src/common_widgets/app_text_form_field.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
+import 'package:plural_app/src/constants/form_values.dart';
 import 'package:plural_app/src/constants/strings.dart';
-import 'package:plural_app/src/constants/app_values.dart';
 
-// Auth
+// Authentication
 import 'package:plural_app/src/features/authentication/domain/forms.dart';
+import 'package:plural_app/src/features/authentication/presentation/log_in_password_form_field.dart';
 
 class LogInTab extends StatelessWidget {
   const LogInTab({
@@ -33,17 +34,14 @@ class LogInTab extends StatelessWidget {
           AppTextFormField(
             fieldName: SignInField.usernameOrEmail,
             label: Labels.email,
-            maxLength: AppMaxLengthValues.max50,
+            maxLength: FormValues.emailMaxLength,
             modelMap: logInMap,
             paddingBottom: AppPaddings.p5,
             paddingTop: AppPaddings.p5,
             validator: validateUsernameOrEmail,
           ),
-          AppTextFormField(
-            fieldName: SignInField.password,
-            isPassword: true,
-            label: Labels.password,
-            maxLength: AppMaxLengthValues.max50,
+          LogInPasswordFormField(
+            maxLength: FormValues.passwordMaxLength,
             modelMap: logInMap,
             paddingBottom: AppPaddings.p5,
             paddingTop: AppPaddings.p5,

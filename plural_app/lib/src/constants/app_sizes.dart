@@ -24,6 +24,7 @@ class AppConstraints {
   static const c350 = 350.0;
   static const c375 = 375.0;
   static const c450 = 450.0;
+  static const c500 = 500.0;
   static const c600 = 600.0;
   static const c650 = 650.0;
   static const c800 = 800.0;
@@ -34,6 +35,7 @@ class AppWidths {
   static const w150 = 150.0;
   static const w175 = 175.0;
   static const w200 = 200.0;
+  static const w600 = 600.0;
 }
 
 class AppHeights {
@@ -75,6 +77,7 @@ class AppPaddings {
   static const p35 = 35.0;
   static const p50 = 50.0;
   static const p60 = 60.0;
+  static const p80 = 80.0;
 }
 
 class AppPositions {

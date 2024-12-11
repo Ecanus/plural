@@ -47,6 +47,10 @@ class GardenValues {
   static const numTimelineAsks = 3;
 }
 
+class SnackBarDurations {
+  static const s9 = 9;
+}
+
 class UserSettingsValues {
   static const textSizeMin = 1;
   static const textSizeMax = 5;

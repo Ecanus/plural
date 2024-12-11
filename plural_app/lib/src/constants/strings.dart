@@ -61,15 +61,22 @@ class ModelMapKeys {
   static const successTextKey = "successText";
 }
 
+// Headers
+class Headers {
+  static const enterEmail = "Enter Email Address";
+}
+
 // Labels
 class Labels {
   static const confirmPassword = "Confirm Password";
   static const email = "Email";
   static const firstName = "First Name";
+  static const forgotPassword = "Forgot Password";
   static const lastName = "Last Name";
   static const login = "Log In";
   static const logout = "Log Out";
   static const password = "Password";
+  static const sendEmail = "Send Email";
   static const signup = "Sign Up";
   static const submit = "Submit";
   static const username = "Username";
@@ -138,7 +145,7 @@ class Strings {
   static const userLastNameLabel = "Last Name";
 }
 
-class SignInString {
+class SignInStrings {
   static const passwordLength = "Between 9 and 64 characters";
   static const passwordLowercase = "A lowercase character";
   static const passwordNumber = "A number";
@@ -147,14 +154,14 @@ class SignInString {
 }
 
 // Notifications
-class ErrorString {
+class ErrorStrings {
   static const invalidValue = "A valid value is required";
   static const invalidEmailOrPassword = "Invalid username/email or password";
   static const passwordMismatch = "Password values do not match";
 }
 
-class SuccessString {
-  static const emailSent = "An email has been sent";
+class SnackBarStrings {
+  static const sentPasswordResetEmail = "Password reset instructions were sent to";
 }
 
 // Other

@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 // Common Methods
 import 'package:plural_app/src/common_methods/form_validators.dart';
 
+// Common Widgets
+import 'package:plural_app/src/common_widgets/show_hide_password_button.dart';
+
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
 import 'package:plural_app/src/constants/app_values.dart';
@@ -12,14 +15,12 @@ import 'package:plural_app/src/constants/strings.dart';
 class CreatePasswordFormField extends StatefulWidget {
   const CreatePasswordFormField({
     super.key,
-    this.maxLength = AppMaxLengthValues.max20,
     this.maxLines = AppMaxLinesValues.max1,
     required this.modelMap,
     this.paddingBottom,
     this.paddingTop,
   });
 
-  final int maxLength;
   final int? maxLines;
   final Map modelMap;
   final double? paddingBottom;
@@ -53,7 +54,8 @@ class _CreatePasswordFormFieldState extends State<CreatePasswordFormField> {
     super.dispose();
   }
 
-  @override void initState() {
+  @override
+  void initState() {
     super.initState();
 
     _passwordController.text = "";
@@ -121,7 +123,7 @@ class _CreatePasswordFormFieldState extends State<CreatePasswordFormField> {
             ),
             focusNode: _passwordFieldFocusNode,
             inputFormatters: getInputFormatters(TextFieldType.text),
-            maxLength: widget.maxLength,
+            maxLength: FormValues.passwordMaxLength,
             maxLines: widget.maxLines,
             obscureText: !_isPasswordVisible,
             onSaved: (value) => saveToMap(
@@ -147,27 +149,27 @@ class _CreatePasswordFormFieldState extends State<CreatePasswordFormField> {
                   PasswordRequirementText(
                     notifier: _passwordRequirementNotifier,
                     requirement: checkPasswordLength,
-                    text: SignInString.passwordLength
+                    text: SignInStrings.passwordLength
                   ),
                   PasswordRequirementText(
                     notifier: _passwordRequirementNotifier,
                     requirement: checkHasLowercase,
-                    text: SignInString.passwordLowercase
+                    text: SignInStrings.passwordLowercase
                   ),
                   PasswordRequirementText(
                     notifier: _passwordRequirementNotifier,
                     requirement: checkHasUppercase,
-                    text: SignInString.passwordUppercase
+                    text: SignInStrings.passwordUppercase
                   ),
                   PasswordRequirementText(
                     notifier: _passwordRequirementNotifier,
                     requirement: checkHasNumber,
-                    text: SignInString.passwordNumber
+                    text: SignInStrings.passwordNumber
                   ),
                   PasswordRequirementText(
                     notifier: _passwordRequirementNotifier,
                     requirement: checkHasSpecialCharacter,
-                    text: SignInString.passwordSpecial
+                    text: SignInStrings.passwordSpecial
                   ),
                 ],
               ),
@@ -190,7 +192,7 @@ class _CreatePasswordFormFieldState extends State<CreatePasswordFormField> {
               ),
             ),
             inputFormatters: getInputFormatters(TextFieldType.text),
-            maxLength: widget.maxLength,
+            maxLength: FormValues.passwordMaxLength,
             maxLines: widget.maxLines,
             obscureText: !_isConfirmPasswordVisible,
             validator: (value) => validateConfirmNewPassword(
@@ -200,29 +202,6 @@ class _CreatePasswordFormFieldState extends State<CreatePasswordFormField> {
           ),
         ),
       ],
-    );
-  }
-}
-
-class ShowHidePasswordButton extends StatelessWidget {
-  const ShowHidePasswordButton({
-    super.key,
-    required this.isPasswordVisible,
-    required this.onPressed,
-  });
-
-  final Function isPasswordVisible;
-  final Function onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return IconButton(
-      onPressed: () => onPressed(),
-      icon: Icon(
-        isPasswordVisible()
-        ? Icons.visibility
-        : Icons.visibility_off_rounded
-      )
     );
   }
 }

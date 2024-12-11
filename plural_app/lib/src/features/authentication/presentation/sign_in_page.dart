@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:plural_app/src/constants/app_sizes.dart';
 import 'package:plural_app/src/constants/strings.dart';
 
-// Auth
+// Authentication
 import 'package:plural_app/src/features/authentication/presentation/log_in_tab.dart';
 import 'package:plural_app/src/features/authentication/presentation/sign_up_tab.dart';
 
@@ -48,8 +48,8 @@ class _SignInPageState extends State<SignInPage> {
       body: Center(
         child: Container(
           constraints: BoxConstraints.expand(
-            width: AppConstraints.c450,
-            height: AppConstraints.c450
+            width: AppConstraints.c500,
+            height: AppConstraints.c500,
           ),
           child: Form(
             key: _formKey,

@@ -47,7 +47,7 @@ List<TextInputFormatter>? getInputFormatters(TextFieldType fieldType) {
 ///
 /// Returns null if valid, else returns a String.
 String? validateCheckboxFormField(bool? value) {
-  if (value == null) return ErrorString.invalidValue;
+  if (value == null) return ErrorStrings.invalidValue;
 
   return null;
 }
@@ -56,8 +56,8 @@ String? validateCheckboxFormField(bool? value) {
 ///
 /// Returns null if valid, else returns a String.
 String? validateConfirmNewPassword(String? value, String? confirmValue) {
-  if (value == null || value.isEmpty) return ErrorString.invalidValue;
-  if (value != confirmValue) return ErrorString.passwordMismatch;
+  if (value == null || value.isEmpty) return ErrorStrings.invalidValue;
+  if (value != confirmValue) return ErrorStrings.passwordMismatch;
 
   return null;
 }
@@ -66,7 +66,7 @@ String? validateConfirmNewPassword(String? value, String? confirmValue) {
 ///
 /// Returns null if valid, else returns a String.
 String? validateDatePickerFormField(String? value) {
-  if (value == null) return ErrorString.invalidValue;
+  if (value == null) return ErrorStrings.invalidValue;
 
   return null;
 }
@@ -75,7 +75,7 @@ String? validateDatePickerFormField(String? value) {
 ///
 /// Returns null if valid, else returns a String.
 String? validateEmail(String? value) {
-  if (value == null || value.isEmpty) return ErrorString.invalidValue;
+  if (value == null || value.isEmpty) return ErrorStrings.invalidValue;
 
   return null;
 }
@@ -84,7 +84,7 @@ String? validateEmail(String? value) {
 ///
 /// Returns null if valid, else returns a String.
 String? validateNewPassword(String? value) {
-  if (value == null || value.isEmpty) return ErrorString.invalidValue;
+  if (value == null || value.isEmpty) return ErrorStrings.invalidValue;
 
   return null;
 }
@@ -93,7 +93,7 @@ String? validateNewPassword(String? value) {
 ///
 /// Returns null if valid, else returns a String.
 String? validateTextFormField(String? value) {
-  if (value == null || value.isEmpty) return ErrorString.invalidValue;
+  if (value == null || value.isEmpty) return ErrorStrings.invalidValue;
 
   return null;
 }
@@ -102,7 +102,7 @@ String? validateTextFormField(String? value) {
 ///
 /// Returns null if valid, else returns a String.
 String? validateUsernameOrEmail(String? value) {
-  if (value == null || value.isEmpty) return ErrorString.invalidValue;
+  if (value == null || value.isEmpty) return ErrorStrings.invalidValue;
 
   return null;
 }

@@ -77,7 +77,6 @@ class SignUpTab extends StatelessWidget {
           paddingTop: AppPaddings.p5,
         ),
         CreatePasswordFormField(
-          maxLength: AppMaxLengthValues.max50,
           modelMap: signUpMap,
           paddingBottom: AppPaddings.p5,
           paddingTop: AppPaddings.p5,

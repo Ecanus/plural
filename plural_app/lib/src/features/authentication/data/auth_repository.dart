@@ -240,3 +240,16 @@ Future<bool> signup(
     return false;
   }
 }
+
+Future<bool> sendPasswordResetCode(String email) async {
+  // TODO: Change url dynamically by env
+  var pb = PocketBase("http://127.0.0.1:8090");
+
+  try {
+    // TODO: Uncomment once final theme is done.
+    // await pb.collection(Collection.users).requestPasswordReset(email);
+    return true;
+  } on ClientException {
+    return false;
+  }
+}
