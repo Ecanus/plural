@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+// Common Classes
+import 'package:plural_app/src/common_classes/app_form.dart';
+
 // Common Methods
 import 'package:plural_app/src/common_methods/form_validators.dart';
 
@@ -17,16 +20,16 @@ import 'package:plural_app/src/features/authentication/presentation/forgot_passw
 class LogInPasswordFormField extends StatefulWidget {
   const LogInPasswordFormField({
     super.key,
+    required this.appForm,
     this.maxLength = AppMaxLengthValues.max20,
     this.maxLines = AppMaxLinesValues.max1,
-    required this.modelMap,
     this.paddingBottom,
     this.paddingTop,
   });
 
+  final AppForm appForm;
   final int maxLength;
   final int? maxLines;
-  final Map modelMap;
   final double? paddingBottom;
   final double? paddingTop;
 
@@ -77,7 +80,8 @@ class _LogInPasswordFormFieldState extends State<LogInPasswordFormField> {
           child: TextFormField(
             controller: _controller,
             decoration: InputDecoration(
-              errorText: widget.modelMap[ModelMapKeys.errorTextKey],
+              errorText: widget.appForm.getError(
+                fieldName: UserField.password),
               label: Text(Labels.password),
               suffixIcon: ShowHidePasswordButton(
                 isPasswordVisible: getPasswordVisibility,
@@ -88,11 +92,9 @@ class _LogInPasswordFormFieldState extends State<LogInPasswordFormField> {
             maxLength: widget.maxLength,
             maxLines: widget.maxLines,
             obscureText: !_isPasswordVisible,
-            onSaved: (value) => saveToMap(
-              SignInField.password,
-              widget.modelMap,
-              value,
-              formFieldType: FormFieldType.string,
+            onSaved: (value) => widget.appForm.save(
+              fieldName: UserField.password,
+              value: value,
             ),
             validator:(value) => validateTextFormField(value),
           ),

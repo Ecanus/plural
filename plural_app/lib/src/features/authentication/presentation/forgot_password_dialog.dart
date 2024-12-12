@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+// Common Classes
+import 'package:plural_app/src/common_classes/app_form.dart';
+
 // Common Methods
 import 'package:plural_app/src/common_methods/form_validators.dart';
 
@@ -29,14 +32,14 @@ class ForgotPasswordDialog extends StatefulWidget {
 
 class _ForgotPasswordDialogState extends State<ForgotPasswordDialog> {
   late GlobalKey<FormState> _formKey;
-  late Map _forgotPasswordMap;
+  late AppForm _appForm;
 
   @override
   void initState() {
     super.initState();
 
     _formKey = GlobalKey<FormState>();
-    _forgotPasswordMap = {};
+    _appForm = AppForm();
   }
 
   @override
@@ -60,15 +63,15 @@ class _ForgotPasswordDialogState extends State<ForgotPasswordDialog> {
               children: [
                 Text(Headers.enterEmail),
                 AppTextFormField(
+                  appForm: _appForm,
                   fieldName: UserField.email,
                   label: Labels.email,
                   maxLength: FormValues.emailMaxLength,
-                  modelMap: _forgotPasswordMap,
                   validator: validateEmail,
                 ),
                 ElevatedButton(
                   onPressed: () => submitForgotPassword(
-                    context, _formKey, _forgotPasswordMap),
+                    context, _formKey, _appForm),
                   child: Text(Labels.sendEmail),
                 ),
               ],

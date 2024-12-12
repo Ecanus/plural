@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
+// Common Classes
+import 'package:plural_app/src/common_classes/app_form.dart';
+
 // Common Methods
 import 'package:plural_app/src/common_methods/form_validators.dart';
 
@@ -93,7 +96,7 @@ class _UserSettingsDialogState extends State<UserSettingsDialog> {
                 key: _formKey,
                 child: Column(
                   children: [
-                    AppTextFormField(
+                    AppTextFormFieldDeprecated(
                       fieldName: UserSettingsField.textSize,
                       formFieldType: FormFieldType.int,
                       initialValue: widget.userSettings.textSize.toString(),

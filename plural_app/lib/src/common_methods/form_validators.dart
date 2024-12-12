@@ -1,21 +1,19 @@
 import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
 
+// Common Classes
+import 'package:plural_app/src/common_classes/app_form.dart';
+
 // Constants
 import 'package:plural_app/src/constants/form_values.dart';
 import 'package:plural_app/src/constants/strings.dart';
-
-enum FormFieldType {
-  datetimeNow,
-  int,
-  string,
-}
 
 enum TextFieldType {
   text,
   digitsOnly
 }
 
+// TODO: Deprecate this (and use AppForm.save() instead)
 void saveToMap(
   fieldName,
   modelMap,
@@ -33,6 +31,11 @@ void saveToMap(
     }
 }
 
+/// Checks on the given [fieldType] to determine which
+/// [FilteringTextInputFormatter] to retrieve.
+///
+/// Returns a list with the correct [FilteringTextInputFormatter] if one is found,
+/// or null if none is found/needed.
 List<TextInputFormatter>? getInputFormatters(TextFieldType fieldType) {
   switch (fieldType) {
     case TextFieldType.text:
@@ -86,6 +89,17 @@ String? validateEmail(String? value) {
 String? validateNewPassword(String? value) {
   if (value == null || value.isEmpty) return ErrorStrings.invalidValue;
 
+  var allChecks = [
+    checkHasLowercase(value),
+    checkHasNumber(value),
+    checkHasSpecialCharacter(value),
+    checkHasUppercase(value),
+    checkPasswordLength(value)
+  ];
+
+  if (!allChecks.every((returnVal) => returnVal == true)) {
+    return ErrorStrings.invalidPassword;
+  }
   return null;
 }
 
@@ -141,6 +155,17 @@ bool checkHasUppercase(String? value) {
   if (value == null || value.isEmpty) return false;
 
   return value.contains(RegExp(r'[A-Z]'));
+}
+
+/// Checks that the given [valueA] is equivalent to [valueB].
+///
+/// Returns true if valid, else false.
+bool checkPasswordsMatch(String? valueA, String? valueB) {
+  if (valueA == null || valueB == null || valueA.isEmpty || valueB.isEmpty) {
+    return false;
+  }
+
+  return valueA == valueB;
 }
 
 /// Checks that the given [value] has value within the minimum and maximum

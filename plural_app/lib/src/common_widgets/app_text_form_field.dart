@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+// Common Classes
+import 'package:plural_app/src/common_classes/app_form.dart';
+
 // Common Methods
 import 'package:plural_app/src/common_methods/form_validators.dart';
 
@@ -10,31 +13,29 @@ import 'package:plural_app/src/constants/app_values.dart';
 
 class AppTextFormField extends StatefulWidget {
   const AppTextFormField({
+    required this.appForm,
     super.key,
     required this.fieldName,
     this.formFieldType = FormFieldType.string,
     this.hintText = "",
-    this.isPassword = false,
     this.initialValue = "",
     this.label = "",
     this.maxLength = AppMaxLengthValues.max20,
     this.maxLines = AppMaxLinesValues.max1,
-    required this.modelMap,
     this.paddingBottom,
     this.paddingTop,
     this.textFieldType = TextFieldType.text,
     this.validator,
   });
 
+  final AppForm appForm;
   final String fieldName;
   final FormFieldType formFieldType;
   final String hintText;
   final String initialValue;
-  final bool isPassword;
   final String label;
   final int maxLength;
   final int? maxLines;
-  final Map modelMap;
   final double? paddingBottom;
   final double? paddingTop;
   final TextFieldType textFieldType;
@@ -50,7 +51,6 @@ class _AppTextFormFieldState extends State<AppTextFormField> {
   late double _paddingBottom;
   late double _paddingTop;
   late Function _validator;
-  late bool _isPasswordVisible;
 
   @override
   void dispose() {
@@ -65,19 +65,7 @@ class _AppTextFormFieldState extends State<AppTextFormField> {
 
     _paddingBottom = widget.paddingBottom ?? AppPaddings.p20;
     _paddingTop = widget.paddingTop ?? AppPaddings.p20;
-    _isPasswordVisible = false;
     _validator = widget.validator ?? validateTextFormField;
-  }
-
-  // Password
-  void togglePasswordVisibility() {
-    setState(() {
-      _isPasswordVisible = !_isPasswordVisible;
-    });
-  }
-
-  bool getPasswordVisibility() {
-    return _isPasswordVisible;
   }
 
   @override
@@ -90,19 +78,99 @@ class _AppTextFormFieldState extends State<AppTextFormField> {
       child: TextFormField(
         controller: _controller,
         decoration: InputDecoration(
-          errorText: widget.modelMap[ModelMapKeys.errorTextKey],
+          errorText: widget.appForm.getError(
+            fieldName: ModelMapKeys.error),
           hintText: widget.hintText,
           label: Text(widget.label),
-          suffixIcon: widget.isPassword ?
-            ShowHidePasswordButton(
-              isPasswordVisible: getPasswordVisibility,
-              onPressed: togglePasswordVisibility,
-            ) : null,
         ),
         inputFormatters: getInputFormatters(widget.textFieldType),
         maxLength: widget.maxLength,
         maxLines: widget.maxLines,
-        obscureText: (widget.isPassword && !_isPasswordVisible),
+        onSaved: (value) => widget.appForm.save(
+          fieldName: widget.fieldName,
+          value: value,
+          formFieldType: widget.formFieldType,
+        ),
+        validator:(value) => _validator(value),
+      ),
+    );
+  }
+}
+
+class AppTextFormFieldDeprecated extends StatefulWidget {
+  const AppTextFormFieldDeprecated({
+    super.key,
+    required this.fieldName,
+    this.formFieldType = FormFieldType.string,
+    this.hintText = "",
+    this.initialValue = "",
+    this.label = "",
+    this.maxLength = AppMaxLengthValues.max20,
+    this.maxLines = AppMaxLinesValues.max1,
+    required this.modelMap,
+    this.paddingBottom,
+    this.paddingTop,
+    this.textFieldType = TextFieldType.text,
+    this.validator,
+  });
+
+  final String fieldName;
+  final FormFieldType formFieldType;
+  final String hintText;
+  final String initialValue;
+  final String label;
+  final int maxLength;
+  final int? maxLines;
+  final Map modelMap;
+  final double? paddingBottom;
+  final double? paddingTop;
+  final TextFieldType textFieldType;
+  final Function? validator;
+
+  @override
+  State<AppTextFormFieldDeprecated> createState() => _AppTextFormFieldDeprecatedState();
+}
+
+class _AppTextFormFieldDeprecatedState extends State<AppTextFormFieldDeprecated> {
+  final _controller = TextEditingController();
+
+  late double _paddingBottom;
+  late double _paddingTop;
+  late Function _validator;
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override void initState() {
+    super.initState();
+
+    _controller.text = widget.initialValue;
+
+    _paddingBottom = widget.paddingBottom ?? AppPaddings.p20;
+    _paddingTop = widget.paddingTop ?? AppPaddings.p20;
+    _validator = widget.validator ?? validateTextFormField;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.only(
+        top: _paddingTop,
+        bottom: _paddingBottom,
+      ),
+      child: TextFormField(
+        controller: _controller,
+        decoration: InputDecoration(
+          errorText: widget.modelMap[ModelMapKeys.error],
+          hintText: widget.hintText,
+          label: Text(widget.label),
+        ),
+        inputFormatters: getInputFormatters(widget.textFieldType),
+        maxLength: widget.maxLength,
+        maxLines: widget.maxLines,
         onSaved: (value) => saveToMap(
           widget.fieldName,
           widget.modelMap,

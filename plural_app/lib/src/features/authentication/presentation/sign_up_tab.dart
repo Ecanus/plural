@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+// Common Classes
+import 'package:plural_app/src/common_classes/app_form.dart';
+
 // Common Methods
 import 'package:plural_app/src/common_methods/form_validators.dart';
 
@@ -18,12 +21,12 @@ import 'package:plural_app/src/features/authentication/presentation/create_passw
 class SignUpTab extends StatelessWidget {
   const SignUpTab({
     super.key,
+    required this.appForm,
     required this.formKey,
-    required this.signUpMap,
   });
 
+  final AppForm appForm;
   final GlobalKey<FormState> formKey;
-  final Map signUpMap;
 
   @override
   Widget build(BuildContext context) {
@@ -38,10 +41,10 @@ class SignUpTab extends StatelessWidget {
           children: [
             Expanded(
               child: AppTextFormField(
+                appForm: appForm,
                 fieldName: UserField.firstName,
                 label: Labels.firstName,
                 maxLength: AppMaxLengthValues.max50,
-                modelMap: signUpMap,
                 paddingBottom: AppPaddings.p5,
                 paddingTop: AppPaddings.p5,
               ),
@@ -49,10 +52,10 @@ class SignUpTab extends StatelessWidget {
             gapW20,
             Expanded(
               child: AppTextFormField(
+                appForm: appForm,
                 fieldName: UserField.lastName,
                 label: Labels.lastName,
                 maxLength: AppMaxLengthValues.max50,
-                modelMap: signUpMap,
                 paddingBottom: AppPaddings.p5,
                 paddingTop: AppPaddings.p5,
               ),
@@ -60,24 +63,24 @@ class SignUpTab extends StatelessWidget {
           ],
         ),
         AppTextFormField(
+          appForm: appForm,
           fieldName: UserField.email,
           label: Labels.email,
           maxLength: AppMaxLengthValues.max50,
-          modelMap: signUpMap,
           paddingBottom: AppPaddings.p5,
           paddingTop: AppPaddings.p5,
           validator: validateEmail,
         ),
         AppTextFormField(
+          appForm: appForm,
           fieldName: UserField.username,
           label: Labels.username,
           maxLength: AppMaxLengthValues.max50,
-          modelMap: signUpMap,
           paddingBottom: AppPaddings.p5,
           paddingTop: AppPaddings.p5,
         ),
         CreatePasswordFormField(
-          modelMap: signUpMap,
+          appForm: appForm,
           paddingBottom: AppPaddings.p5,
           paddingTop: AppPaddings.p5,
         ),
@@ -86,7 +89,7 @@ class SignUpTab extends StatelessWidget {
           child: IconButton(
             icon: Icon(Icons.arrow_forward_ios_rounded),
             color: Colors.white,
-            onPressed: () => submitSignUp(context, formKey, signUpMap),
+            onPressed: () => submitSignUp(context, formKey, appForm),
             style: IconButton.styleFrom(backgroundColor: Colors.black),
             tooltip: Strings.signupTooltip,
           ),

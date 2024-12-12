@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+// Common Classes
+import 'package:plural_app/src/common_classes/app_form.dart';
+
 // Common Methods
 import 'package:plural_app/src/common_methods/form_validators.dart';
 
@@ -89,7 +92,7 @@ class _AskDialogCreateFormState extends State<AskDialogCreateForm> {
                         ),
                         gapW20,
                         Expanded(
-                          child: AppTextFormField(
+                          child: AppTextFormFieldDeprecated(
                             fieldName: AskField.targetDonationSum,
                             formFieldType: FormFieldType.int,
                             label: Strings.askTargetDonationSumLabel,
@@ -100,7 +103,7 @@ class _AskDialogCreateFormState extends State<AskDialogCreateForm> {
                         ),
                       ],
                     ),
-                    AppTextFormField(
+                    AppTextFormFieldDeprecated(
                       fieldName: AskField.description,
                       label: Strings.askDescriptionLabel,
                       maxLength: AppMaxLengthValues.max250,

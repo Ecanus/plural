@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:plural_app/src/constants/app_sizes.dart';
 import 'package:plural_app/src/constants/app_values.dart';
 
-void showSuccessSnackBar(BuildContext context, String message, String email) {
-  SnackBar snackBar = SnackBar(
+class AppSnackbars {
+  static SnackBar successSnackbar(String mainMessage, String boldMessage) {
+    return SnackBar(
       backgroundColor: Colors.green[400],
       behavior: SnackBarBehavior.floating,
       content: Row(
@@ -21,10 +22,9 @@ void showSuccessSnackBar(BuildContext context, String message, String email) {
               TextSpan(
                 style: TextStyle(color: Colors.black),
                 children: [
-                  TextSpan(text: message),
-                  TextSpan(text: " "),
+                  TextSpan(text: mainMessage),
                   TextSpan(
-                    text: email,
+                    text: boldMessage,
                     style: TextStyle(
                       fontWeight: FontWeight.bold
                     )
@@ -40,6 +40,5 @@ void showSuccessSnackBar(BuildContext context, String message, String email) {
       closeIconColor: Colors.black,
       width: AppWidths.w600
     );
-
-  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
 }

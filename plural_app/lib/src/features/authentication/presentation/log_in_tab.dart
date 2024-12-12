@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+// Common Classes
+import 'package:plural_app/src/common_classes/app_form.dart';
+
 // Common Methods
 import 'package:plural_app/src/common_methods/form_validators.dart';
 
@@ -18,12 +21,12 @@ import 'package:plural_app/src/features/authentication/presentation/log_in_passw
 class LogInTab extends StatelessWidget {
   const LogInTab({
     super.key,
+    required this.appForm,
     required this.formKey,
-    required this.logInMap,
   });
 
+  final AppForm appForm;
   final GlobalKey<FormState> formKey;
-  final Map logInMap;
 
   @override
   Widget build(BuildContext context) {
@@ -32,17 +35,17 @@ class LogInTab extends StatelessWidget {
       child: Column(
         children: [
           AppTextFormField(
+            appForm: appForm,
             fieldName: SignInField.usernameOrEmail,
             label: Labels.email,
             maxLength: FormValues.emailMaxLength,
-            modelMap: logInMap,
             paddingBottom: AppPaddings.p5,
             paddingTop: AppPaddings.p5,
             validator: validateUsernameOrEmail,
           ),
           LogInPasswordFormField(
+            appForm: appForm,
             maxLength: FormValues.passwordMaxLength,
-            modelMap: logInMap,
             paddingBottom: AppPaddings.p5,
             paddingTop: AppPaddings.p5,
           ),
@@ -50,7 +53,7 @@ class LogInTab extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.arrow_forward_ios_rounded),
             color: Colors.white,
-            onPressed: () => submitLogIn(context, formKey, logInMap),
+            onPressed: () => submitLogIn(context, formKey, appForm),
             style: IconButton.styleFrom(backgroundColor: Colors.black),
             tooltip: Strings.loginTooltip,
           ),

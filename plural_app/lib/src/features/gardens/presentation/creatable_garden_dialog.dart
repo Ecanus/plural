@@ -59,7 +59,7 @@ class _GardenDialogCreateFormState extends State<GardenDialogCreateForm> {
                 key: _formKey,
                 child: Column(
                   children: [
-                    AppTextFormField(
+                    AppTextFormFieldDeprecated(
                       fieldName: GardenField.name,
                       label: Strings.gardenNameLabel,
                       modelMap: _gardenMap,

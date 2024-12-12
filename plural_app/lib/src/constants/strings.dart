@@ -22,8 +22,6 @@ class GardenField {
 }
 
 class SignInField {
-  static const confirmPassword = "confirmPassword";
-  static const password = "password";
   static const usernameOrEmail = "usernameOrEmail";
 }
 
@@ -33,6 +31,8 @@ class UserField {
   static const lastName = "lastName";
   static const latestGardenRecordID = "latestGardenRecord";
   static const username = "username";
+  static const password = "password";
+  static const passwordConfirm = "passwordConfirm";
 }
 
 class UserGardenRecordField {
@@ -56,9 +56,9 @@ class PBKey {
 }
 
 class ModelMapKeys {
-  static const errorTextKey = "errorText";
-  static const rebuildKey = "rebuild";
-  static const successTextKey = "successText";
+  static const error = "error";
+  static const rebuild = "rebuild";
+  static const value = "value";
 }
 
 // Headers
@@ -68,7 +68,7 @@ class Headers {
 
 // Labels
 class Labels {
-  static const confirmPassword = "Confirm Password";
+  static const passwordConfirm = "Confirm Password";
   static const email = "Email";
   static const firstName = "First Name";
   static const forgotPassword = "Forgot Password";
@@ -151,17 +151,20 @@ class SignInStrings {
   static const passwordNumber = "A number";
   static const passwordSpecial = "A special character";
   static const passwordUppercase = "An uppercase character";
+  static const passwordMatch = "Passwords match";
 }
 
 // Notifications
 class ErrorStrings {
   static const invalidValue = "A valid value is required";
   static const invalidEmailOrPassword = "Invalid username/email or password";
-  static const passwordMismatch = "Password values do not match";
+  static const invalidPassword = "Password does not meet all requirements";
+  static const passwordMismatch = "Passwords do not match";
 }
 
 class SnackBarStrings {
-  static const sentPasswordResetEmail = "Password reset instructions were sent to";
+  static const sentPasswordResetEmail = "A password reset email has been sent to ";
+  static const sentUserVerificationEmail = "A verification email has been sent to ";
 }
 
 // Other

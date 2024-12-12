@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
-import 'package:plural_app/src/common_methods/snackbars.dart';
+
+// Common Classes
+import 'package:plural_app/src/common_classes/app_form.dart';
 
 // Common Widgets
 import 'package:plural_app/src/common_widgets/app_dialog_manager.dart';
+import 'package:plural_app/src/common_widgets/app_snackbars.dart';
 
 // Constants
 import 'package:plural_app/src/constants/routes.dart';
@@ -12,6 +15,7 @@ import 'package:plural_app/src/constants/strings.dart';
 
 // Auth
 import "package:plural_app/src/features/authentication/data/auth_repository.dart";
+import 'package:plural_app/src/features/authentication/domain/constants.dart';
 
 // Gardens
 import 'package:plural_app/src/features/gardens/domain/garden_manager.dart';
@@ -47,23 +51,33 @@ Future<void> submitUpdate(
 Future<void> submitLogIn(
   BuildContext context,
   GlobalKey<FormState> formKey,
-  Map map,
+  AppForm appForm,
 ) async {
   if (formKey.currentState!.validate()) {
     // Save form
     formKey.currentState!.save();
 
     var isValid = await login(
-      map[SignInField.usernameOrEmail],
-      map[SignInField.password]);
+      appForm.getValue(fieldName: SignInField.usernameOrEmail),
+      appForm.getValue(fieldName: UserField.password)
+    );
 
     if (isValid && context.mounted) {
-      // Log In Successful
+      // Route to the home page
       GoRouter.of(context).go(Routes.home);
     } else {
-      // Log In Failed
-      map[ModelMapKeys.errorTextKey] = ErrorStrings.invalidEmailOrPassword;
-      map[ModelMapKeys.rebuildKey]();
+      // Add error to fields
+      appForm.setError(
+        fieldName: SignInField.usernameOrEmail,
+        error: ErrorStrings.invalidEmailOrPassword
+      );
+      appForm.setError(
+        fieldName: UserField.password,
+        error: ErrorStrings.invalidEmailOrPassword
+      );
+
+      // Rebuild widget
+      appForm.getValue(fieldName: ModelMapKeys.rebuild)();
     }
   }
 }
@@ -73,29 +87,34 @@ Future<void> submitLogIn(
 Future<void> submitSignUp(
   BuildContext context,
   GlobalKey<FormState> formKey,
-  Map map,
+  AppForm appForm,
 ) async {
   if (formKey.currentState!.validate()) {
     // Save form
     formKey.currentState!.save();
 
     var isValid = await signup(
-      map[UserField.firstName],
-      map[UserField.lastName],
-      map[UserField.username],
-      map[UserField.email],
-      map[SignInField.password]);
+      appForm.getValue(fieldName: UserField.firstName),
+      appForm.getValue(fieldName: UserField.lastName),
+      appForm.getValue(fieldName: UserField.username),
+      appForm.getValue(fieldName: UserField.email),
+      appForm.getValue(fieldName: UserField.password),
+      appForm.getValue(fieldName: UserField.passwordConfirm),
+    );
 
     if (isValid && context.mounted) {
-      // Sign Up Successful
-      // Go to Log In Tab
-      // DefaultTabController.of(context).animateTo(1);
+      // Go to log in tab
+      DefaultTabController.of(context).animateTo(AuthConstants.logInTabIndex);
+
       // Display Success Snackbar
-      // ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      var snackBar = AppSnackbars.successSnackbar(
+          SnackBarStrings.sentUserVerificationEmail,
+          appForm.getValue(fieldName: UserField.email)
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
     } else {
       // Sign Up Failed
-      map[ModelMapKeys.errorTextKey] = "Unimplemented Error Message";
-      map[ModelMapKeys.rebuildKey]();
+      appForm.getValue(fieldName: ModelMapKeys.rebuild)();
     }
   }
 }
@@ -105,24 +124,27 @@ Future<void> submitSignUp(
 Future<void> submitForgotPassword(
   BuildContext context,
   GlobalKey<FormState> formKey,
-  Map map,
+  AppForm appForm,
 ) async {
   if (formKey.currentState!.validate()) {
     // Save form
     formKey.currentState!.save();
 
-    var email = map[UserField.email];
+    var email = appForm.getValue(fieldName: UserField.email);
     var isValid = await sendPasswordResetCode(email);
 
     if (context.mounted) {
+      // Close dialog
       Navigator.pop(context);
 
-      // Display SnackBar confirmation
+      // Display snackBar confirmation
       if (isValid) {
-        showSuccessSnackBar(
-          context,
+        var snackBar = AppSnackbars.successSnackbar(
           SnackBarStrings.sentPasswordResetEmail,
-          email);
+          email
+        );
+
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
       }
     }
   }

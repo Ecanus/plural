@@ -66,7 +66,7 @@ class _GardenDialogEditFormState extends State<GardenDialogEditForm> {
                 key: _formKey,
                 child: Column(
                   children: [
-                    AppTextFormField(
+                    AppTextFormFieldDeprecated(
                       fieldName: GardenField.name,
                       initialValue: widget.garden.name,
                       maxLength: AppMaxLengthValues.max75,

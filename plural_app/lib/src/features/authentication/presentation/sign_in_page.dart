@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+// Common Classes
+import 'package:plural_app/src/common_classes/app_form.dart';
+
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
 import 'package:plural_app/src/constants/strings.dart';
@@ -20,7 +23,7 @@ class SignInPage extends StatefulWidget {
 class _SignInPageState extends State<SignInPage> {
   late GlobalKey<FormState> _formKey;
 
-  late Map _formMap;
+  late AppForm _appForm;
   late List<Tab> _tabs;
 
   @override
@@ -35,11 +38,12 @@ class _SignInPageState extends State<SignInPage> {
       Tab(text: Labels.signup),
     ];
 
-    // Map
-    _formMap = {
-      ModelMapKeys.errorTextKey: null,
-      ModelMapKeys.rebuildKey: () {setState(() {});},
-    };
+    // AppForm
+    _appForm = AppForm();
+    _appForm.setValue(
+      fieldName: ModelMapKeys.rebuild,
+      value: () {setState(() {});}
+    );
   }
 
   @override
@@ -63,10 +67,10 @@ class _SignInPageState extends State<SignInPage> {
                   children: [
                     LogInTab(
                       formKey: _formKey,
-                      logInMap: _formMap),
+                      appForm: _appForm),
                     SignUpTab(
                       formKey: _formKey,
-                      signUpMap: _formMap),
+                      appForm: _appForm),
                   ],
                 ),
               ),

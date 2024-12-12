@@ -224,19 +224,32 @@ Future<bool> signup(
   String username,
   String email,
   String password,
+  String passwordConfirm,
 ) async {
   // TODO: Change url dynamically by env
   var pb = PocketBase("http://127.0.0.1:8090");
 
   try {
-    // TODO: Implement Sign Up, and Confirmation Email sending
-    // await pb.collection(Collection.users).authWithPassword(
-    // usernameOrEmail, password);
+    // Create User
+    await pb.collection(Collection.users).create(
+      body: {
+        UserField.email: email,
+        UserField.firstName: firstName,
+        UserField.lastName: lastName,
+        UserField.password: password,
+        UserField.passwordConfirm: passwordConfirm,
+        UserField.username: username
+      }
+    );
 
-    // await registerGetItInstances(pb);
+    // Send verification email
+    // await pb.collection(Collection.users).requestVerification(email);
+
+    // Return
     return true;
-  } on ClientException {
+  } on ClientException catch(e) {
     // TODO: Handle Already Existing User, and all other errors.
+    print("Error Caught: $e");
     return false;
   }
 }
@@ -246,10 +259,13 @@ Future<bool> sendPasswordResetCode(String email) async {
   var pb = PocketBase("http://127.0.0.1:8090");
 
   try {
-    // TODO: Uncomment once final theme is done.
+    // Send password reset email
     // await pb.collection(Collection.users).requestPasswordReset(email);
+
+    // Return
     return true;
-  } on ClientException {
+  } on ClientException catch(e) {
+    print("Error Caught: $e");
     return false;
   }
 }
