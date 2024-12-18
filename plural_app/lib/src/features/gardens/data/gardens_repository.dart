@@ -66,10 +66,14 @@ class GardensRepository {
     return instances;
   }
 
-  /// Uses the given [map] parameter to create a corresponding Garden
+  /// Uses the given [map] parameter to create a corresponding [Garden]
   /// record in the database.
+  ///
+  /// Creates a corresponding [UserGardenRecord] record that points to both
+  /// the current user and the newly created [Garden].
   Future<void> create(Map map) async {
-    var currentUserID = GetIt.instance<AuthRepository>().getCurrentUserID();
+    final authRepository = GetIt.instance<AuthRepository>();
+    var currentUserID = authRepository.getCurrentUserID();
 
     // Create Garden
     var createdGarden = await pb.collection(Collection.gardens).create(
@@ -80,12 +84,9 @@ class GardensRepository {
     );
 
     // Create User Garden Record
-    await pb.collection(Collection.userGardenRecords).create(
-      body: {
-        UserGardenRecordField.user: currentUserID,
-        UserGardenRecordField.gardenID: createdGarden.toJson()[GenericField.id]
-      }
-    );
+    authRepository.createUserGardenRecord(
+      currentUserID,
+      createdGarden.toJson()[GenericField.id]);
   }
 
   Future<Garden> update(Map map) async {

@@ -82,7 +82,7 @@ class _LogInPasswordFormFieldState extends State<LogInPasswordFormField> {
             decoration: InputDecoration(
               errorText: widget.appForm.getError(
                 fieldName: UserField.password),
-              label: Text(Labels.password),
+              label: Text(SignInLabels.password),
               suffixIcon: ShowHidePasswordButton(
                 isPasswordVisible: getPasswordVisibility,
                 onPressed: togglePasswordVisibility
@@ -107,7 +107,7 @@ class _LogInPasswordFormFieldState extends State<LogInPasswordFormField> {
               padding: EdgeInsets.zero,
               overlayColor: Colors.transparent
             ),
-            child: Text(Labels.forgotPassword),
+            child: Text(SignInLabels.forgotPassword),
           ),
         ),
       ],

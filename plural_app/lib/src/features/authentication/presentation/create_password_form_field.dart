@@ -136,7 +136,7 @@ class _CreatePasswordFormFieldState extends State<CreatePasswordFormField> {
             decoration: InputDecoration(
               errorText: widget.appForm.getError(
                 fieldName: _passwordFieldName),
-              label: Text(Labels.password),
+              label: Text(SignInLabels.password),
               suffixIcon: ShowHidePasswordButton(
                 isPasswordVisible: _getPasswordVisibility,
                 onPressed: _togglePasswordVisibility,
@@ -205,7 +205,7 @@ class _CreatePasswordFormFieldState extends State<CreatePasswordFormField> {
             decoration: InputDecoration(
               errorText: widget.appForm.getError(
                 fieldName: _passwordConfirmFieldName),
-              label: Text(Labels.passwordConfirm),
+              label: Text(SignInLabels.passwordConfirm),
               suffixIcon: ShowHidePasswordButton(
                 isPasswordVisible: _getConfirmPasswordVisibility,
                 onPressed: _toggleConfirmPasswordVisibility,

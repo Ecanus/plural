@@ -28,7 +28,7 @@ class AppForm {
   String? getError({
     required String fieldName
   }) {
-    if (!errors.containsValue(fieldName)) return null;
+    if (!errors.containsKey(fieldName)) return null;
 
     return errors[fieldName];
   }
@@ -41,9 +41,17 @@ class AppForm {
 
   void setError({
     required String fieldName,
-    required String error,
+    required String errorMessage,
   }) {
-    errors[fieldName] = error;
+    errors[fieldName] = errorMessage;
+  }
+
+  void setErrors({
+    required Map errorsMap
+  }) {
+    for (var key in errorsMap.keys) {
+      setError(fieldName: key, errorMessage: errorsMap[key]);
+    }
   }
 
   void setValue({

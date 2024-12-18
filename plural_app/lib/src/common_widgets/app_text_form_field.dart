@@ -79,7 +79,7 @@ class _AppTextFormFieldState extends State<AppTextFormField> {
         controller: _controller,
         decoration: InputDecoration(
           errorText: widget.appForm.getError(
-            fieldName: ModelMapKeys.error),
+            fieldName: widget.fieldName),
           hintText: widget.hintText,
           label: Text(widget.label),
         ),
@@ -164,7 +164,7 @@ class _AppTextFormFieldDeprecatedState extends State<AppTextFormFieldDeprecated>
       child: TextFormField(
         controller: _controller,
         decoration: InputDecoration(
-          errorText: widget.modelMap[ModelMapKeys.error],
+          errorText: widget.modelMap[AppFormFields.error],
           hintText: widget.hintText,
           label: Text(widget.label),
         ),

@@ -16,49 +16,57 @@ import 'package:plural_app/src/features/gardens/domain/garden_timeline_notifier.
 Future<void> registerGetItInstances(PocketBase pb) async {
   final getIt = GetIt.instance;
 
-  // Always clear before creating anew
-  getIt<PocketBase>().authStore.clear();
-  await getIt.reset();
-
   // Database
   getIt.registerLazySingleton<PocketBase>(
     () => pb
   );
 
-  // Auth
+  // AppDialogManager
   getIt.registerLazySingleton<AppDialogManager>(
     () => AppDialogManager()
   );
 
-  // Gardens
+  // GardenTimelineNotifier
   getIt.registerSingleton<GardenTimelineNotifier>(GardenTimelineNotifier());
 
+  // Garden Manager
   getIt.registerLazySingleton<GardenManager>(
     () => GardenManager(
       timelineNotifier: getIt<GardenTimelineNotifier>()
     )
   );
 
-  // Gardens
+  // GardensRepository
   getIt.registerLazySingleton<GardensRepository>(
     () => GardensRepository(
       pb: getIt<PocketBase>(),
     )
   );
 
-  // Asks
+  // AsksRepository
   getIt.registerLazySingleton<AsksRepository>(
     () => AsksRepository(
       pb: getIt<PocketBase>(),
     )
   );
 
-  // Auth
+  // AuthRepository
   getIt.registerLazySingleton<AuthRepository>(
     () => AuthRepository(
       pb: getIt<PocketBase>(),
     )
   );
 
+  // Set current user's latestGardenRecord value
   await getIt<AuthRepository>().setCurrentUserLatestGardenRecord();
+}
+
+/// Resets the [GetIt] instance used in the application.
+/// If [logout] is true, will also clear the database authentication tokens.
+Future<void> clearGetItInstances({bool logout = false}) async {
+  final getIt = GetIt.instance;
+
+  if (logout) getIt<PocketBase>().authStore.clear();
+
+  await getIt.reset();
 }

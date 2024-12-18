@@ -58,7 +58,11 @@ class AuthRepository {
       filter: "user = '${currentUser!.id}'"
     );
 
-    var record = result.toJson()[PBKey.items][0];
+    // Return immediately if no UserGardenRecord is found
+    var items = result.toJson()[PBKey.items];
+    if (items.isEmpty) return;
+
+    var record = items[0];
     String gardenID = record[UserGardenRecordField.gardenID];
 
     final gardensRepository = GetIt.instance<GardensRepository>();
@@ -72,7 +76,7 @@ class AuthRepository {
   }
 
   /// Queries on the [UserGardenRecord] collection to retrieve all [User]s
-  /// with the same [Garden] as the current [Garden].
+  /// with the same [Garden] as the currentGarden.
   ///
   /// Returns the list of retrieved [User]s.
   Future<List<AppUser>> getCurrentGardenUsers() async {
@@ -136,10 +140,22 @@ class AuthRepository {
 
     var userGardenRecord = result.toJson();
 
+    // Update
     await pb.collection(Collection.userGardenRecords).update(
       userGardenRecord[GenericField.id],
       body: {
         GenericField.updated: DateFormat(Strings.dateformatYMMdd).format(DateTime.now()),
+      }
+    );
+  }
+
+  /// Creates a new [UserGardenRecord] record using the given
+  /// [userID] and [gardenID] parameters.
+  Future<void> createUserGardenRecord(String userID, String gardenID) async {
+    await pb.collection(Collection.userGardenRecords).create(
+      body: {
+        UserGardenRecordField.user: userID,
+        UserGardenRecordField.gardenID: gardenID
       }
     );
   }
@@ -197,7 +213,9 @@ Future<bool> login(String usernameOrEmail, String password) async {
     await pb.collection(Collection.users).authWithPassword(
     usernameOrEmail, password);
 
+    await clearGetItInstances();
     await registerGetItInstances(pb);
+
     return true;
   } on ClientException {
     return false;
@@ -206,10 +224,7 @@ Future<bool> login(String usernameOrEmail, String password) async {
 
 /// Logs out of the database and clears all [GetIt] instances.
 Future<void> logout(context) async {
-  final getIt = GetIt.instance;
-
-  getIt<PocketBase>().authStore.clear();
-  await getIt.reset();
+  clearGetItInstances(logout: true);
 
   if (context.mounted) GoRouter.of(context).go(Routes.signIn);
 }
@@ -217,8 +232,8 @@ Future<void> logout(context) async {
 /// Attempts to create a new [User] record in the database with the given
 /// [firstName], [lastName], [username], [email], and [password] parameters.
 ///
-/// Returns true if sign up is successful, else false.
-Future<bool> signup(
+/// Returns a record of (true, {}) if sign up is successful, else (false, errorsMap)
+Future<(bool, Map)> signup(
   String firstName,
   String lastName,
   String username,
@@ -246,14 +261,32 @@ Future<bool> signup(
     // await pb.collection(Collection.users).requestVerification(email);
 
     // Return
-    return true;
+    return (true, {});
   } on ClientException catch(e) {
-    // TODO: Handle Already Existing User, and all other errors.
+    var innerMap = e.response[ExceptionStrings.data];
+    var errorsMap = {};
+
+    // Create map of fields and corresponding error messages
+    for (var key in e.response[ExceptionStrings.data].keys) {
+      var fieldName = key;
+      var errorMessage = innerMap[key][ExceptionStrings.message];
+
+      // Remove trailing period
+      errorsMap[fieldName] = errorMessage.replaceAll(
+        RegExp(r'.'),
+        "");
+    }
+
+    // Return
     print("Error Caught: $e");
-    return false;
+    return (false, errorsMap);
   }
 }
 
+/// Attempts to send an email to the given [email] containing instructions
+/// to reset the account password corresponding to [email].
+///
+/// Returns true if the email is successfully sent, else false.
 Future<bool> sendPasswordResetCode(String email) async {
   // TODO: Change url dynamically by env
   var pb = PocketBase("http://127.0.0.1:8090");

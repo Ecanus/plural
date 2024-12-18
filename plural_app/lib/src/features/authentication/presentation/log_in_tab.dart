@@ -37,7 +37,7 @@ class LogInTab extends StatelessWidget {
           AppTextFormField(
             appForm: appForm,
             fieldName: SignInField.usernameOrEmail,
-            label: Labels.email,
+            label: SignInLabels.email,
             maxLength: FormValues.emailMaxLength,
             paddingBottom: AppPaddings.p5,
             paddingTop: AppPaddings.p5,

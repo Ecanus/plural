@@ -63,21 +63,28 @@ Future<void> submitLogIn(
     );
 
     if (isValid && context.mounted) {
-      // Route to the home page
-      GoRouter.of(context).go(Routes.home);
+      var getIt = GetIt.instance;
+      var authRespository = getIt<AuthRepository>();
+
+      // Check if current user has a latestGardenRecord
+      var routeString = authRespository.currentUser!.latestGardenRecord == null ?
+        Routes.landing : Routes.home;
+
+      // Route to the routeString value
+      GoRouter.of(context).go(routeString);
     } else {
-      // Add error to fields
+      // Add errors to corresponding fields
       appForm.setError(
         fieldName: SignInField.usernameOrEmail,
-        error: ErrorStrings.invalidEmailOrPassword
+        errorMessage: ErrorStrings.invalidEmailOrPassword
       );
       appForm.setError(
         fieldName: UserField.password,
-        error: ErrorStrings.invalidEmailOrPassword
+        errorMessage: ErrorStrings.invalidEmailOrPassword
       );
 
       // Rebuild widget
-      appForm.getValue(fieldName: ModelMapKeys.rebuild)();
+      appForm.getValue(fieldName: AppFormFields.rebuild)();
     }
   }
 }
@@ -93,7 +100,7 @@ Future<void> submitSignUp(
     // Save form
     formKey.currentState!.save();
 
-    var isValid = await signup(
+    var (isValid, errorsMap) = await signup(
       appForm.getValue(fieldName: UserField.firstName),
       appForm.getValue(fieldName: UserField.lastName),
       appForm.getValue(fieldName: UserField.username),
@@ -113,8 +120,11 @@ Future<void> submitSignUp(
         );
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
     } else {
-      // Sign Up Failed
-      appForm.getValue(fieldName: ModelMapKeys.rebuild)();
+      // Add errors to corresponding fields
+      appForm.setErrors(errorsMap: errorsMap);
+
+      // Rebuild widget
+      appForm.getValue(fieldName: AppFormFields.rebuild)();
     }
   }
 }

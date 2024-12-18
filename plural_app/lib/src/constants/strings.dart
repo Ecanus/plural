@@ -49,16 +49,16 @@ class UserSettingsField {
   static const textSize = "textSize";
 }
 
+class AppFormFields {
+  static const error = "error";
+  static const rebuild = "rebuild";
+  static const value = "value";
+}
+
 // Keys
 class PBKey {
   static const expand = "expand";
   static const items = "items";
-}
-
-class ModelMapKeys {
-  static const error = "error";
-  static const rebuild = "rebuild";
-  static const value = "value";
 }
 
 // Headers
@@ -67,7 +67,7 @@ class Headers {
 }
 
 // Labels
-class Labels {
+class SignInLabels {
   static const passwordConfirm = "Confirm Password";
   static const email = "Email";
   static const firstName = "First Name";
@@ -81,6 +81,12 @@ class Labels {
   static const submit = "Submit";
   static const username = "Username";
   static const usernameOrEmail = "Username or Email";
+}
+
+class LandingPageLabels {
+  static const createGarden = "Create Garden";
+  static const seeInvites = "See Invitations";
+  static const welcome = "Welcome";
 }
 
 // Strings
@@ -165,6 +171,12 @@ class ErrorStrings {
 class SnackBarStrings {
   static const sentPasswordResetEmail = "A password reset email has been sent to ";
   static const sentUserVerificationEmail = "A verification email has been sent to ";
+}
+
+// Exceptions
+class ExceptionStrings {
+  static const data = "data";
+  static const message = "message";
 }
 
 // Other

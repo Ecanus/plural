@@ -43,7 +43,7 @@ class SignUpTab extends StatelessWidget {
               child: AppTextFormField(
                 appForm: appForm,
                 fieldName: UserField.firstName,
-                label: Labels.firstName,
+                label: SignInLabels.firstName,
                 maxLength: AppMaxLengthValues.max50,
                 paddingBottom: AppPaddings.p5,
                 paddingTop: AppPaddings.p5,
@@ -54,7 +54,7 @@ class SignUpTab extends StatelessWidget {
               child: AppTextFormField(
                 appForm: appForm,
                 fieldName: UserField.lastName,
-                label: Labels.lastName,
+                label: SignInLabels.lastName,
                 maxLength: AppMaxLengthValues.max50,
                 paddingBottom: AppPaddings.p5,
                 paddingTop: AppPaddings.p5,
@@ -65,7 +65,7 @@ class SignUpTab extends StatelessWidget {
         AppTextFormField(
           appForm: appForm,
           fieldName: UserField.email,
-          label: Labels.email,
+          label: SignInLabels.email,
           maxLength: AppMaxLengthValues.max50,
           paddingBottom: AppPaddings.p5,
           paddingTop: AppPaddings.p5,
@@ -74,7 +74,7 @@ class SignUpTab extends StatelessWidget {
         AppTextFormField(
           appForm: appForm,
           fieldName: UserField.username,
-          label: Labels.username,
+          label: SignInLabels.username,
           maxLength: AppMaxLengthValues.max50,
           paddingBottom: AppPaddings.p5,
           paddingTop: AppPaddings.p5,

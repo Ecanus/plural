@@ -19,18 +19,23 @@ class GardenManager {
   Garden? currentGarden;
   GardenTimelineNotifier timelineNotifier;
 
+  /// Updates the current user's latest [UserGardenRecord] to now point to [garden].
+  ///
+  /// Reloads the GardenTimeline widget to display the most recently created
+  /// [Ask]s in the passed [garden].
   Future<void> goToGarden(BuildContext context, Garden garden) async {
     final authRepository = GetIt.instance<AuthRepository>();
     final user = authRepository.currentUser!;
 
     Navigator.pop(context);
 
-    currentGarden = garden;
-    await authRepository.updateUserGardenRecord(user, garden);
+    updateCurrentGarden(garden);
+    await authRepository.updateUserGardenRecord(user, currentGarden!);
+
     timelineNotifier.updateValue();
   }
 
-  void updateGarden(Garden garden) {
+  void updateCurrentGarden(Garden garden) {
     currentGarden = garden;
   }
 }

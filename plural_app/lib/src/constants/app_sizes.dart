@@ -9,6 +9,8 @@ class AppBorderRadii {
 
 class AppButtonSizes {
   static const s31 = 31.0;
+  static const s50 = 50.0;
+  static const s300 = 300.0;
 }
 
 class AppConstraints {

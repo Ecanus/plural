@@ -34,14 +34,14 @@ class _SignInPageState extends State<SignInPage> {
 
     // Tabs
     _tabs = <Tab>[
-      Tab(text: Labels.login),
-      Tab(text: Labels.signup),
+      Tab(text: SignInLabels.login),
+      Tab(text: SignInLabels.signup),
     ];
 
     // AppForm
     _appForm = AppForm();
     _appForm.setValue(
-      fieldName: ModelMapKeys.rebuild,
+      fieldName: AppFormFields.rebuild,
       value: () {setState(() {});}
     );
   }

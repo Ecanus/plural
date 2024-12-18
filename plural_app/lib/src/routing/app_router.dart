@@ -8,15 +8,20 @@ import 'package:plural_app/src/features/authentication/presentation/sign_in_page
 
 // Garden
 import 'package:plural_app/src/features/gardens/presentation/garden_page.dart';
+import 'package:plural_app/src/features/gardens/presentation/landing_page.dart';
 
 class AppRouter {
   AppRouter() {
     router = GoRouter(
-      initialLocation: Routes.signIn,
+      initialLocation: Routes.landing,
       routes: [
         GoRoute(
           path: Routes.home,
           builder: (context, state) => GardenPage()
+        ),
+        GoRoute(
+          path: Routes.landing,
+          builder: (context, state) => LandingPage(),
         ),
         GoRoute(
           path: Routes.signIn,

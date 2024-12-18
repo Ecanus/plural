@@ -44,7 +44,7 @@ Future <void> submitUpdate(
 
     // Rebuild the Garden Timeline
     await gardenStateManager.timelineNotifier.updateValue();
-    gardenStateManager.updateGarden(updatedGarden);
+    gardenStateManager.updateCurrentGarden(updatedGarden);
 
     // Rebuild Editable Garden Dialog
     appDialogManager.showEditableGardenDialogView(updatedGarden);

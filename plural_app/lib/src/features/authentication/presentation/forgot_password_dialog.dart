@@ -65,14 +65,14 @@ class _ForgotPasswordDialogState extends State<ForgotPasswordDialog> {
                 AppTextFormField(
                   appForm: _appForm,
                   fieldName: UserField.email,
-                  label: Labels.email,
+                  label: SignInLabels.email,
                   maxLength: FormValues.emailMaxLength,
                   validator: validateEmail,
                 ),
                 ElevatedButton(
                   onPressed: () => submitForgotPassword(
                     context, _formKey, _appForm),
-                  child: Text(Labels.sendEmail),
+                  child: Text(SignInLabels.sendEmail),
                 ),
               ],
             ),
