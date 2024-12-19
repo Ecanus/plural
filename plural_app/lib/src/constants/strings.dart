@@ -183,3 +183,7 @@ class ExceptionStrings {
 class ListedAskTileText {
   static const title = "Ask";
 }
+
+class Titles {
+  static const pluralApp = "Plural App";
+}

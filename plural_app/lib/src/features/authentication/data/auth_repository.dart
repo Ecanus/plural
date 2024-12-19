@@ -272,9 +272,11 @@ Future<(bool, Map)> signup(
       var errorMessage = innerMap[key][ExceptionStrings.message];
 
       // Remove trailing period
-      errorsMap[fieldName] = errorMessage.replaceAll(
+      errorMessage.replaceAll(
         RegExp(r'.'),
         "");
+
+      errorsMap[fieldName] = errorMessage;
     }
 
     // Return

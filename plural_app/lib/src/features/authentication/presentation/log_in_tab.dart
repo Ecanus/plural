@@ -39,15 +39,13 @@ class LogInTab extends StatelessWidget {
             fieldName: SignInField.usernameOrEmail,
             label: SignInLabels.email,
             maxLength: FormValues.emailMaxLength,
-            paddingBottom: AppPaddings.p5,
-            paddingTop: AppPaddings.p5,
+            paddingTop: AppPaddings.p0,
             validator: validateUsernameOrEmail,
           ),
           LogInPasswordFormField(
             appForm: appForm,
             maxLength: FormValues.passwordMaxLength,
-            paddingBottom: AppPaddings.p5,
-            paddingTop: AppPaddings.p5,
+            paddingTop: AppPaddings.p0,
           ),
           gapH30,
           IconButton(

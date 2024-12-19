@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:plural_app/src/constants/themes.dart';
 
 class AppIcons {
-  static const isValid = Icon(
+  static Icon isValid = Icon(
     Icons.check,
-    color: Colors.green
+    color: AppThemes.successColor
   );
 
-  static const isInvalid = Icon(Icons.close);
+  static Icon isInvalid = Icon(
+    Icons.close,
+    color: AppThemes.colorScheme.onPrimary,
+  );
 }

@@ -15,6 +15,8 @@ import 'package:plural_app/src/constants/app_sizes.dart';
 import 'package:plural_app/src/constants/app_values.dart';
 import 'package:plural_app/src/constants/form_values.dart';
 import 'package:plural_app/src/constants/strings.dart';
+import 'package:plural_app/src/constants/styles.dart';
+import 'package:plural_app/src/constants/themes.dart';
 
 class CreatePasswordFormField extends StatefulWidget {
   const CreatePasswordFormField({
@@ -134,8 +136,14 @@ class _CreatePasswordFormFieldState extends State<CreatePasswordFormField> {
           child: TextFormField(
             controller: _passwordController,
             decoration: InputDecoration(
+              border: AppStyles.textFieldBorder,
+              enabledBorder: AppStyles.textFieldBorder,
               errorText: widget.appForm.getError(
-                fieldName: _passwordFieldName),
+                fieldName: _passwordFieldName
+              ),
+              floatingLabelStyle: AppStyles.floatingLabelStyle,
+              focusedBorder: AppStyles.textFieldFocusedBorder,
+              focusedErrorBorder: AppStyles.textFieldFocusedErrorBorder,
               label: Text(SignInLabels.password),
               suffixIcon: ShowHidePasswordButton(
                 isPasswordVisible: _getPasswordVisibility,
@@ -143,8 +151,10 @@ class _CreatePasswordFormFieldState extends State<CreatePasswordFormField> {
               ),
             ),
             focusNode: _passwordFieldFocusNode,
-            inputFormatters: getInputFormatters(TextFieldType.text),
-            maxLength: FormValues.passwordMaxLength,
+            inputFormatters: getInputFormatters(
+              TextFieldType.text,
+              FormValues.passwordMaxLength
+            ),
             maxLines: widget.maxLines,
             obscureText: !_isPasswordVisible,
             onSaved: (value) => widget.appForm.save(
@@ -198,13 +208,18 @@ class _CreatePasswordFormFieldState extends State<CreatePasswordFormField> {
         ),
         Container(
           padding: EdgeInsets.only(
-            top: _paddingTop,
+            top: AppPaddings.p20,
           ),
           child: TextFormField(
             controller: _confirmPasswordController,
             decoration: InputDecoration(
+              border: AppStyles.textFieldBorder,
+              enabledBorder: AppStyles.textFieldBorder,
               errorText: widget.appForm.getError(
                 fieldName: _passwordConfirmFieldName),
+              floatingLabelStyle: AppStyles.floatingLabelStyle,
+              focusedBorder: AppStyles.textFieldFocusedBorder,
+              focusedErrorBorder: AppStyles.textFieldFocusedErrorBorder,
               label: Text(SignInLabels.passwordConfirm),
               suffixIcon: ShowHidePasswordButton(
                 isPasswordVisible: _getConfirmPasswordVisibility,
@@ -212,8 +227,10 @@ class _CreatePasswordFormFieldState extends State<CreatePasswordFormField> {
               ),
             ),
             focusNode: _confirmPasswordFieldFocusNode,
-            inputFormatters: getInputFormatters(TextFieldType.text),
-            maxLength: FormValues.passwordMaxLength,
+            inputFormatters: getInputFormatters(
+              TextFieldType.text,
+              FormValues.passwordMaxLength
+            ),
             maxLines: widget.maxLines,
             obscureText: !_isConfirmPasswordVisible,
             onSaved: (value) => widget.appForm.save(
@@ -328,7 +345,9 @@ class PasswordTextRow extends StatelessWidget {
           child: Text(
             isValid ? isValidText : (isInvalidText ?? isValidText),
             style: TextStyle(
-              color: isValid ? Colors.green : Colors.black
+              color: isValid ?
+                AppThemes.successColor
+                : Theme.of(context).colorScheme.onPrimary
             )
           ),
         ),

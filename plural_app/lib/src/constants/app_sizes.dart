@@ -29,10 +29,14 @@ class AppConstraints {
   static const c500 = 500.0;
   static const c600 = 600.0;
   static const c650 = 650.0;
+  static const c700 = 700.0;
   static const c800 = 800.0;
 }
 
 class AppWidths {
+  static const w1point5 = 1.5;
+  static const w2 = 2.0;
+  static const w3 = 3.0;
   static const w25 = 25.0;
   static const w150 = 150.0;
   static const w175 = 175.0;

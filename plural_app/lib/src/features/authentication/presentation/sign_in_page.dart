@@ -20,11 +20,20 @@ class SignInPage extends StatefulWidget {
   State<SignInPage> createState() => _SignInPageState();
 }
 
-class _SignInPageState extends State<SignInPage> {
+class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateMixin {
   late GlobalKey<FormState> _formKey;
+
+  late TabController _tabController;
 
   late AppForm _appForm;
   late List<Tab> _tabs;
+
+  @override
+  void dispose() {
+    _tabController.removeListener(_clearAppForm);
+
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -38,12 +47,22 @@ class _SignInPageState extends State<SignInPage> {
       Tab(text: SignInLabels.signup),
     ];
 
+    // Tab Controller
+    _tabController = TabController(length: _tabs.length, vsync: this);
+    _tabController.addListener(_clearAppForm);
+
     // AppForm
     _appForm = AppForm();
     _appForm.setValue(
       fieldName: AppFormFields.rebuild,
       value: () {setState(() {});}
     );
+  }
+
+  void _clearAppForm() {
+    setState(() {
+      _appForm.clearErrors();
+    });
   }
 
   @override
@@ -53,26 +72,26 @@ class _SignInPageState extends State<SignInPage> {
         child: Container(
           constraints: BoxConstraints.expand(
             width: AppConstraints.c500,
-            height: AppConstraints.c500,
+            height: AppConstraints.c800,
           ),
           child: Form(
             key: _formKey,
-            child: DefaultTabController(
-              length: _tabs.length,
-              child: Scaffold(
-                appBar: AppBar(
-                  bottom: TabBar(tabs: _tabs),
-                ),
-                body: TabBarView(
-                  children: [
-                    LogInTab(
-                      formKey: _formKey,
-                      appForm: _appForm),
-                    SignUpTab(
-                      formKey: _formKey,
-                      appForm: _appForm),
-                  ],
-                ),
+            child: Scaffold(
+              appBar: AppBar(
+                bottom: TabBar(
+                  controller: _tabController,
+                  tabs: _tabs),
+              ),
+              body: TabBarView(
+                controller: _tabController,
+                children: [
+                  LogInTab(
+                    formKey: _formKey,
+                    appForm: _appForm),
+                  SignUpTab(
+                    formKey: _formKey,
+                    appForm: _appForm),
+                ],
               ),
             ),
           ),

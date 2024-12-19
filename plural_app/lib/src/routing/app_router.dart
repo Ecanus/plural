@@ -13,7 +13,7 @@ import 'package:plural_app/src/features/gardens/presentation/landing_page.dart';
 class AppRouter {
   AppRouter() {
     router = GoRouter(
-      initialLocation: Routes.landing,
+      initialLocation: Routes.signIn,
       routes: [
         GoRoute(
           path: Routes.home,
