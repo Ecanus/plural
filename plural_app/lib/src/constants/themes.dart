@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+// Constants
+import 'package:plural_app/src/constants/text_themes.dart';
+
 class AppThemes {
 
   static Color successColor = Color(0xff43BD47);
@@ -7,14 +10,14 @@ class AppThemes {
 
   static ColorScheme colorScheme = ColorScheme(
     brightness: Brightness.light,
-    primary: Color(0xff7482DD),
-    onPrimary: Color(0xffC7C7C7),
+    primary: Color(0xff6572C5),
+    onPrimary: Color(0xffD8D8D8),
     secondary: Color(0xff232531),
     onSecondary: Color(0xffC7C7C7),
     error: Color(0xffB94B58),
     onError: Color(0xffC7C7C7),
-    surface: Color(0xff1D232B),
-    onSurface: Color(0xff939393),
+    surface: Color(0xff1C2229),
+    onSurface: Color(0xffD8D8D8),
   );
 
   static ThemeData standard = ThemeData(
@@ -28,11 +31,7 @@ class AppThemes {
     //dialogBackgroundColor: null,
     //disabledColor: null,
     //datePickerTheme: DatePickerThemeData(),
-    //elevatedButtonTheme: ElevatedButtonThemeData(
-    //  style: ButtonStyle(
-     //   backgroundColor: null,
-    //  )
-    //),
+    //elevatedButtonTheme: elevatedButtonTheme,
     //focusColor: null,
     //highlightColor: Color(0xff333D7B),
     //hoverColor: null,
@@ -48,6 +47,6 @@ class AppThemes {
       indicatorColor: colorScheme.onPrimary,
       indicatorSize: TabBarIndicatorSize.tab
     ),
-    //textTheme: TextTheme(),
+    textTheme: appTextTheme,
   );
 }

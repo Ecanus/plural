@@ -69,15 +69,15 @@ class Headers {
 // Labels
 class SignInLabels {
   static const passwordConfirm = "Confirm Password";
-  static const email = "Email";
+  static const email = "Email Address";
   static const firstName = "First Name";
   static const forgotPassword = "Forgot Password";
   static const lastName = "Last Name";
-  static const login = "Log In";
-  static const logout = "Log Out";
+  static const logIn = "Log In";
+  static const logOut = "Log Out";
   static const password = "Password";
   static const sendEmail = "Send Email";
-  static const signup = "Sign Up";
+  static const signUp = "Sign Up";
   static const submit = "Submit";
   static const username = "Username";
   static const usernameOrEmail = "Username or Email";
@@ -151,7 +151,8 @@ class Strings {
   static const userLastNameLabel = "Last Name";
 }
 
-class SignInStrings {
+// Messages
+class SignInMessages {
   static const passwordLength = "Between 9 and 64 characters";
   static const passwordLowercase = "A lowercase character";
   static const passwordNumber = "A number";
@@ -160,17 +161,22 @@ class SignInStrings {
   static const passwordMatch = "Passwords match";
 }
 
-// Notifications
-class ErrorStrings {
+class ErrorMessages {
   static const invalidValue = "A valid value is required";
   static const invalidEmailOrPassword = "Invalid username/email or password";
   static const invalidPassword = "Password does not meet all requirements";
   static const passwordMismatch = "Passwords do not match";
 }
 
-class SnackBarStrings {
-  static const sentPasswordResetEmail = "A password reset email has been sent to ";
+class SnackBarMessages {
+  static const sentPasswordResetEmail = "Password reset instructions have been sent to ";
   static const sentUserVerificationEmail = "A verification email has been sent to ";
+}
+
+// Instructions
+class SignInInstructions {
+  static const forgotPassword = (
+    "Please enter the email address to send password reset instructions to.");
 }
 
 // Exceptions

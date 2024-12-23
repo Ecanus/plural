@@ -19,7 +19,7 @@ class LogOutButton extends StatelessWidget {
       height: AppHeights.h40,
       child: ElevatedButton.icon(
         onPressed: () => logout(context),
-        label: Text(SignInLabels.logout),
+        label: Text(SignInLabels.logOut),
         icon: Icon(Icons.login_outlined)
       ),
     );

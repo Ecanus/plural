@@ -5,6 +5,7 @@ import 'package:plural_app/src/common_classes/app_form.dart';
 
 // Common Methods
 import 'package:plural_app/src/common_methods/form_validators.dart';
+import 'package:plural_app/src/common_widgets/app_elevated_button.dart';
 
 // Common Widgets
 import 'package:plural_app/src/common_widgets/app_text_form_field.dart';
@@ -32,7 +33,7 @@ class SignUpTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView(
       padding: const EdgeInsets.only(
-        top: AppPaddings.p35,
+        top: AppPaddings.p50,
         left: AppPaddings.p50,
         right: AppPaddings.p50,
       ),
@@ -80,14 +81,10 @@ class SignUpTab extends StatelessWidget {
           paddingTop: AppPaddings.p0,
         ),
         gapH30,
-        UnconstrainedBox(
-          child: IconButton(
-            icon: Icon(Icons.arrow_forward_ios_rounded),
-            color: Colors.white,
-            onPressed: () => submitSignUp(context, formKey, appForm),
-            style: IconButton.styleFrom(backgroundColor: Colors.black),
-            tooltip: Strings.signupTooltip,
-          ),
+        AppElevatedButton(
+          callback: submitSignUp,
+          label: SignInLabels.signUp,
+          positionalArguments: [context, formKey, appForm],
         ),
       ],
     );

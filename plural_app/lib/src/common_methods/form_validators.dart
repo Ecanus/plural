@@ -50,7 +50,7 @@ List<TextInputFormatter>? getInputFormatters(TextFieldType fieldType, int maxLen
 ///
 /// Returns null if valid, else returns a String.
 String? validateCheckboxFormField(bool? value) {
-  if (value == null) return ErrorStrings.invalidValue;
+  if (value == null) return ErrorMessages.invalidValue;
 
   return null;
 }
@@ -59,8 +59,8 @@ String? validateCheckboxFormField(bool? value) {
 ///
 /// Returns null if valid, else returns a String.
 String? validateConfirmNewPassword(String? value, String? confirmValue) {
-  if (value == null || value.isEmpty) return ErrorStrings.invalidValue;
-  if (value != confirmValue) return ErrorStrings.passwordMismatch;
+  if (value == null || value.isEmpty) return ErrorMessages.invalidValue;
+  if (value != confirmValue) return ErrorMessages.passwordMismatch;
 
   return null;
 }
@@ -69,7 +69,7 @@ String? validateConfirmNewPassword(String? value, String? confirmValue) {
 ///
 /// Returns null if valid, else returns a String.
 String? validateDatePickerFormField(String? value) {
-  if (value == null) return ErrorStrings.invalidValue;
+  if (value == null) return ErrorMessages.invalidValue;
 
   return null;
 }
@@ -78,7 +78,7 @@ String? validateDatePickerFormField(String? value) {
 ///
 /// Returns null if valid, else returns a String.
 String? validateEmail(String? value) {
-  if (value == null || value.isEmpty) return ErrorStrings.invalidValue;
+  if (value == null || value.isEmpty) return ErrorMessages.invalidValue;
 
   return null;
 }
@@ -87,7 +87,7 @@ String? validateEmail(String? value) {
 ///
 /// Returns null if valid, else returns a String.
 String? validateNewPassword(String? value) {
-  if (value == null || value.isEmpty) return ErrorStrings.invalidValue;
+  if (value == null || value.isEmpty) return ErrorMessages.invalidValue;
 
   var allChecks = [
     checkHasLowercase(value),
@@ -98,7 +98,7 @@ String? validateNewPassword(String? value) {
   ];
 
   if (!allChecks.every((returnVal) => returnVal == true)) {
-    return ErrorStrings.invalidPassword;
+    return ErrorMessages.invalidPassword;
   }
   return null;
 }
@@ -107,7 +107,7 @@ String? validateNewPassword(String? value) {
 ///
 /// Returns null if valid, else returns a String.
 String? validateTextFormField(String? value) {
-  if (value == null || value.isEmpty) return ErrorStrings.invalidValue;
+  if (value == null || value.isEmpty) return ErrorMessages.invalidValue;
 
   return null;
 }
@@ -116,7 +116,7 @@ String? validateTextFormField(String? value) {
 ///
 /// Returns null if valid, else returns a String.
 String? validateUsernameOrEmail(String? value) {
-  if (value == null || value.isEmpty) return ErrorStrings.invalidValue;
+  if (value == null || value.isEmpty) return ErrorMessages.invalidValue;
 
   return null;
 }

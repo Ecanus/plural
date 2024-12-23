@@ -25,8 +25,10 @@ class AppConstraints {
   static const c230 = 230.0;
   static const c350 = 350.0;
   static const c375 = 375.0;
+  static const c400 = 400.0;
   static const c450 = 450.0;
   static const c500 = 500.0;
+  static const c525 = 525.0;
   static const c600 = 600.0;
   static const c650 = 650.0;
   static const c700 = 700.0;
@@ -47,6 +49,7 @@ class AppWidths {
 class AppHeights {
   static const h25 = 25.0;
   static const h40 = 40.0;
+  static const h500 = 500;
 }
 
 class AppElevations {
@@ -72,6 +75,7 @@ class AppIconSizes {
 
 class AppPaddings {
   static const p0 = 0.0;
+  static const p2 = 2.0;
   static const p5 = 5.0;
   static const p8 = 8.0;
   static const p10 = 10.0;
@@ -81,6 +85,7 @@ class AppPaddings {
   static const p25 = 25.0;
   static const p30 = 30.0;
   static const p35 = 35.0;
+  static const p40 = 40.0;
   static const p50 = 50.0;
   static const p60 = 60.0;
   static const p80 = 80.0;
@@ -101,11 +106,13 @@ const gapW15 = SizedBox(width: AppPaddings.p15);
 const gapW20 = SizedBox(width: AppPaddings.p20);
 
 // Constant gap heights
+const gapH5 = SizedBox(height: AppPaddings.p5);
 const gapH10 = SizedBox(height: AppPaddings.p10);
 const gapH20 = SizedBox(height: AppPaddings.p20);
 const gapH25 = SizedBox(height: AppPaddings.p25);
 const gapH30 = SizedBox(height: AppPaddings.p30);
 const gapH35 = SizedBox(height: AppPaddings.p35);
+const gapH40 = SizedBox(height: AppPaddings.p40);
 const gapH50 = SizedBox(height: AppPaddings.p50);
 const gapH60 = SizedBox(height: AppPaddings.p60);
 

@@ -107,15 +107,19 @@ class _LogInPasswordFormFieldState extends State<LogInPasswordFormField> {
             validator:(value) => validateTextFormField(value),
           ),
         ),
+        gapH5,
         Align(
           alignment: Alignment.centerLeft,
-          child: TextButton(
-            onPressed: () => createForgotPasswordDialog(context),
-            style: TextButton.styleFrom(
-              padding: EdgeInsets.zero,
-              overlayColor: Colors.transparent
+          child: Padding(
+            padding: const EdgeInsets.only(left: AppPaddings.p2),
+            child: TextButton(
+              onPressed: () => createForgotPasswordDialog(context),
+              style: TextButton.styleFrom(
+                padding: EdgeInsets.zero,
+                overlayColor: Colors.transparent
+              ),
+              child: Text(SignInLabels.forgotPassword),
             ),
-            child: Text(SignInLabels.forgotPassword),
           ),
         ),
       ],

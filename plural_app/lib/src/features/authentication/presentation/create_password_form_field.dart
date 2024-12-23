@@ -179,27 +179,27 @@ class _CreatePasswordFormFieldState extends State<CreatePasswordFormField> {
                   PasswordRequirementText(
                     notifier: _passwordValuesNotifier,
                     requirement: checkPasswordLength,
-                    text: SignInStrings.passwordLength
+                    text: SignInMessages.passwordLength
                   ),
                   PasswordRequirementText(
                     notifier: _passwordValuesNotifier,
                     requirement: checkHasLowercase,
-                    text: SignInStrings.passwordLowercase
+                    text: SignInMessages.passwordLowercase
                   ),
                   PasswordRequirementText(
                     notifier: _passwordValuesNotifier,
                     requirement: checkHasUppercase,
-                    text: SignInStrings.passwordUppercase
+                    text: SignInMessages.passwordUppercase
                   ),
                   PasswordRequirementText(
                     notifier: _passwordValuesNotifier,
                     requirement: checkHasNumber,
-                    text: SignInStrings.passwordNumber
+                    text: SignInMessages.passwordNumber
                   ),
                   PasswordRequirementText(
                     notifier: _passwordValuesNotifier,
                     requirement: checkHasSpecialCharacter,
-                    text: SignInStrings.passwordSpecial
+                    text: SignInMessages.passwordSpecial
                   ),
                 ],
               ),
@@ -316,8 +316,8 @@ class PasswordsMatchText extends StatelessWidget {
 
         return PasswordTextRow(
           isValid: isValid,
-          isInvalidText: ErrorStrings.passwordMismatch,
-          isValidText: SignInStrings.passwordMatch
+          isInvalidText: ErrorMessages.passwordMismatch,
+          isValidText: SignInMessages.passwordMatch
         );
       });
   }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 // Common Classes
 import 'package:plural_app/src/common_classes/app_form.dart';
+import 'package:plural_app/src/common_widgets/app_logo.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
@@ -43,8 +44,8 @@ class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateM
 
     // Tabs
     _tabs = <Tab>[
-      Tab(text: SignInLabels.login),
-      Tab(text: SignInLabels.signup),
+      Tab(text: SignInLabels.logIn),
+      Tab(text: SignInLabels.signUp),
     ];
 
     // Tab Controller
@@ -87,16 +88,21 @@ class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateM
                 children: [
                   LogInTab(
                     formKey: _formKey,
-                    appForm: _appForm),
+                    appForm: _appForm
+                  ),
                   SignUpTab(
                     formKey: _formKey,
-                    appForm: _appForm),
+                    appForm: _appForm
+                  ),
                 ],
               ),
             ),
           ),
         ),
       ),
+      bottomSheet: MediaQuery.sizeOf(context).height > AppHeights.h500 ?
+        AppLogo()
+        : null,
     );
   }
 }
