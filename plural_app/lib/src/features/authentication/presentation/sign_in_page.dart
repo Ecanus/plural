@@ -31,7 +31,7 @@ class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateM
 
   @override
   void dispose() {
-    _tabController.removeListener(_clearAppForm);
+    _tabController.removeListener(_clearAppFormErrors);
 
     super.dispose();
   }
@@ -50,7 +50,7 @@ class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateM
 
     // Tab Controller
     _tabController = TabController(length: _tabs.length, vsync: this);
-    _tabController.addListener(_clearAppForm);
+    _tabController.addListener(_clearAppFormErrors);
 
     // AppForm
     _appForm = AppForm();
@@ -60,7 +60,7 @@ class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateM
     );
   }
 
-  void _clearAppForm() {
+  void _clearAppFormErrors() {
     setState(() {
       _appForm.clearErrors();
     });

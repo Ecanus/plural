@@ -66,7 +66,13 @@ class AppFlexes {
 
 class AppFontSizes {
   static const s10 = 10.0;
+  static const s12 = 12.0;
+  static const s13 = 13.0;
   static const s25 = 25.0;
+}
+
+class AppFontLetterSpacing {
+  static const s0p5 = 0.5;
 }
 
 class AppIconSizes {

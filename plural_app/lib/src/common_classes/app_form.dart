@@ -28,7 +28,7 @@ class AppForm {
   /// Retrieves the value in [errors] associated with the given
   /// [fieldName] if one exists.
   ///
-  /// Returns the retrieved value is a matching key is found, else null.
+  /// Returns the retrieved value if a matching key is found, else null.
   String? getError({
     required String fieldName
   }) {

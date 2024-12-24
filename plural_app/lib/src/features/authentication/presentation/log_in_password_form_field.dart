@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:plural_app/src/common_classes/app_form.dart';
 
 // Common Methods
+import 'package:plural_app/src/common_widgets/app_text_button.dart';
 import 'package:plural_app/src/common_methods/form_validators.dart';
 
 // Common Widgets
@@ -112,13 +113,10 @@ class _LogInPasswordFormFieldState extends State<LogInPasswordFormField> {
           alignment: Alignment.centerLeft,
           child: Padding(
             padding: const EdgeInsets.only(left: AppPaddings.p2),
-            child: TextButton(
-              onPressed: () => createForgotPasswordDialog(context),
-              style: TextButton.styleFrom(
-                padding: EdgeInsets.zero,
-                overlayColor: Colors.transparent
-              ),
-              child: Text(SignInLabels.forgotPassword),
+            child: AppTextButton(
+              callback: createForgotPasswordDialog,
+              positionalArguments: [context],
+              label: SignInLabels.forgotPassword,
             ),
           ),
         ),

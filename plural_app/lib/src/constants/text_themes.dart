@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 const fontWeightMedium = FontWeight.w500;
-const regular = FontWeight.w400;
+const fontWeightRegular = FontWeight.w400;
 
 const appTextTheme = TextTheme(
   // displayLarge: TextStyle(
@@ -81,8 +81,7 @@ const appTextTheme = TextTheme(
   ),
   // labelMedium: TextStyle(
   //   fontSize: 12.0,
-  //   fontWeight: medium,
-  //   height: 5.0,
+  //   fontWeight: fontWeightRegular,
   //   letterSpacing: 0.5,
   // ),
   // labelSmall: TextStyle(
