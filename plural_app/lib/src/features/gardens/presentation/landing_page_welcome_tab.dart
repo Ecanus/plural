@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:plural_app/src/common_widgets/app_elevated_button.dart';
+import 'package:plural_app/src/common_widgets/app_text_button.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
@@ -8,38 +10,24 @@ class LandingPageWelcomeTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(AppPaddings.p50),
+      padding: const EdgeInsets.only(
+        top: AppPaddings.p80,
+        left: AppPaddings.p50,
+        right: AppPaddings.p50,
+      ),
       child: Column(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(
-                width: AppButtonSizes.s300,
-                height: AppButtonSizes.s50,
-                child: ElevatedButton.icon(
-                  icon: Icon(Icons.grass),
-                  label: Text(LandingPageLabels.createGarden),
-                  onPressed: () {},
-                ),
-              ),
-            ],
+          AppElevatedButton(
+            callback: () {},
+            icon: Icons.mail,
+            label: LandingPageLabels.seeInvites
           ),
-          gapH30,
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(
-                width: AppButtonSizes.s300,
-                height: AppButtonSizes.s50,
-                child: ElevatedButton.icon(
-                  icon: Icon(Icons.mail),
-                  label: Text(LandingPageLabels.seeInvites),
-                  onPressed: () {},
-                ),
-              ),
-            ],
-          ),
+          gapH10,
+          AppTextButton(
+            callback: () {},
+            fontSize: AppFontSizes.s14,
+            label: LandingPageLabels.createGarden
+          )
         ]
       ),
     );

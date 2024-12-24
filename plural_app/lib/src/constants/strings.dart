@@ -85,7 +85,9 @@ class SignInLabels {
 
 class LandingPageLabels {
   static const createGarden = "Create Garden";
+  static const saveChanges = "Save Changes";
   static const seeInvites = "See Invitations";
+  static const settings = "Settings";
   static const welcome = "Welcome";
 }
 

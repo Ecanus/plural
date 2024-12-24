@@ -5,6 +5,7 @@ import 'package:plural_app/src/constants/app_sizes.dart';
 import 'package:plural_app/src/constants/strings.dart';
 
 // Gardens
+import 'package:plural_app/src/features/gardens/presentation/landing_page_settings_tab.dart';
 import 'package:plural_app/src/features/gardens/presentation/landing_page_welcome_tab.dart';
 
 class LandingPage extends StatefulWidget {
@@ -20,7 +21,8 @@ class _LandingPageState extends State<LandingPage> {
     super.initState();
 
     _tabs = <Tab>[
-      Tab(text: LandingPageLabels.welcome)
+      Tab(text: LandingPageLabels.welcome),
+      Tab(text: LandingPageLabels.settings)
     ];
   }
 
@@ -30,8 +32,8 @@ class _LandingPageState extends State<LandingPage> {
       body: Center(
         child: Container(
           constraints: BoxConstraints.expand(
-            width: AppConstraints.c500,
-            height: AppConstraints.c500,
+            width: AppConstraints.c600,
+            height: AppConstraints.c600,
           ),
           child: DefaultTabController(
             length: _tabs.length,
@@ -42,6 +44,7 @@ class _LandingPageState extends State<LandingPage> {
               body: TabBarView(
                 children: [
                   LandingPageWelcomeTab(),
+                  LandingPageSettingsTab(),
                 ]),
             )
           ),

@@ -7,15 +7,19 @@ import 'package:plural_app/src/constants/text_themes.dart';
 class AppTextButton extends StatelessWidget {
   const AppTextButton({
     required this.callback,
+    this.fontSize,
+    this.fontWeight,
     required this.label,
-    this.positionalArguments,
     this.namedArguments,
+    this.positionalArguments,
   });
 
   final Function callback;
+  final double? fontSize;
+  final FontWeight? fontWeight;
   final String label;
-  final List<dynamic>? positionalArguments;
   final Map<Symbol, dynamic>? namedArguments;
+  final List<dynamic>? positionalArguments;
 
   @override
   Widget build(BuildContext context) {
@@ -29,8 +33,8 @@ class AppTextButton extends StatelessWidget {
         label,
         style: TextStyle(
           color: Theme.of(context).colorScheme.primary,
-          fontSize: AppFontSizes.s13,
-          fontWeight: fontWeightRegular,
+          fontSize: fontSize ?? AppFontSizes.s13,
+          fontWeight: fontWeight ?? fontWeightMedium,
           letterSpacing: AppFontLetterSpacing.s0p5
         ),
       ),
