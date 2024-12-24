@@ -7,6 +7,7 @@ import 'package:plural_app/src/common_classes/app_form.dart';
 import 'package:plural_app/src/common_methods/form_validators.dart';
 
 // Common Widgets
+import 'package:plural_app/src/common_widgets/app_elevated_button.dart';
 import 'package:plural_app/src/common_widgets/app_text_form_field.dart';
 
 // Constants
@@ -39,23 +40,19 @@ class LogInTab extends StatelessWidget {
             fieldName: SignInField.usernameOrEmail,
             label: SignInLabels.email,
             maxLength: FormValues.emailMaxLength,
-            paddingBottom: AppPaddings.p5,
-            paddingTop: AppPaddings.p5,
+            paddingTop: AppPaddings.p0,
             validator: validateUsernameOrEmail,
           ),
           LogInPasswordFormField(
             appForm: appForm,
             maxLength: FormValues.passwordMaxLength,
-            paddingBottom: AppPaddings.p5,
-            paddingTop: AppPaddings.p5,
+            paddingTop: AppPaddings.p0,
           ),
           gapH30,
-          IconButton(
-            icon: Icon(Icons.arrow_forward_ios_rounded),
-            color: Colors.white,
-            onPressed: () => submitLogIn(context, formKey, appForm),
-            style: IconButton.styleFrom(backgroundColor: Colors.black),
-            tooltip: Strings.loginTooltip,
+          AppElevatedButton(
+            callback: submitLogIn,
+            label: SignInLabels.logIn,
+            positionalArguments: [context, formKey, appForm],
           ),
         ],
       ),

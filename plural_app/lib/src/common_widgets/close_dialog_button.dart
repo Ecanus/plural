@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 
-// Constants
-import 'package:plural_app/src/constants/app_values.dart';
-
 class CloseDialogButton extends StatelessWidget {
   const CloseDialogButton({
     super.key,
@@ -11,14 +8,14 @@ class CloseDialogButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Ink(
-      decoration: const ShapeDecoration(
-        color: AppColors.darkGrey1,
+      decoration: ShapeDecoration(
+        color: Theme.of(context).colorScheme.primary,
         shape: CircleBorder()
       ),
       child: IconButton(
         onPressed: () => Navigator.pop(context),
         icon: Icon(Icons.close),
-        color: AppColors.secondaryColor,
+        color: Theme.of(context).colorScheme.onPrimary,
       ),
     );
   }

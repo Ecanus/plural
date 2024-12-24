@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:plural_app/src/common_classes/app_form.dart';
 
 // Common Methods
+import 'package:plural_app/src/common_widgets/app_text_button.dart';
 import 'package:plural_app/src/common_methods/form_validators.dart';
 
 // Common Widgets
@@ -11,8 +12,9 @@ import 'package:plural_app/src/common_widgets/show_hide_password_button.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
-import 'package:plural_app/src/constants/strings.dart';
 import 'package:plural_app/src/constants/app_values.dart';
+import 'package:plural_app/src/constants/strings.dart';
+import 'package:plural_app/src/constants/styles.dart';
 
 // Authentication
 import 'package:plural_app/src/features/authentication/presentation/forgot_password_dialog.dart';
@@ -80,16 +82,23 @@ class _LogInPasswordFormFieldState extends State<LogInPasswordFormField> {
           child: TextFormField(
             controller: _controller,
             decoration: InputDecoration(
+              border: AppStyles.textFieldBorder,
+              enabledBorder: AppStyles.textFieldBorder,
               errorText: widget.appForm.getError(
                 fieldName: UserField.password),
+              floatingLabelStyle: AppStyles.floatingLabelStyle,
+              focusedBorder: AppStyles.textFieldFocusedBorder,
+              focusedErrorBorder: AppStyles.textFieldFocusedErrorBorder,
               label: Text(SignInLabels.password),
               suffixIcon: ShowHidePasswordButton(
                 isPasswordVisible: getPasswordVisibility,
                 onPressed: togglePasswordVisibility
               ),
             ),
-            inputFormatters: getInputFormatters(TextFieldType.text),
-            maxLength: widget.maxLength,
+            inputFormatters: getInputFormatters(
+              TextFieldType.text,
+              widget.maxLength
+            ),
             maxLines: widget.maxLines,
             obscureText: !_isPasswordVisible,
             onSaved: (value) => widget.appForm.save(
@@ -99,15 +108,16 @@ class _LogInPasswordFormFieldState extends State<LogInPasswordFormField> {
             validator:(value) => validateTextFormField(value),
           ),
         ),
+        gapH5,
         Align(
           alignment: Alignment.centerLeft,
-          child: TextButton(
-            onPressed: () => createForgotPasswordDialog(context),
-            style: TextButton.styleFrom(
-              padding: EdgeInsets.zero,
-              overlayColor: Colors.transparent
+          child: Padding(
+            padding: const EdgeInsets.only(left: AppPaddings.p2),
+            child: AppTextButton(
+              callback: createForgotPasswordDialog,
+              positionalArguments: [context],
+              label: SignInLabels.forgotPassword,
             ),
-            child: Text(SignInLabels.forgotPassword),
           ),
         ),
       ],

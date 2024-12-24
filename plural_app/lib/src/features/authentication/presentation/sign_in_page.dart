@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 // Common Classes
 import 'package:plural_app/src/common_classes/app_form.dart';
+import 'package:plural_app/src/common_widgets/app_logo.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
@@ -20,11 +21,20 @@ class SignInPage extends StatefulWidget {
   State<SignInPage> createState() => _SignInPageState();
 }
 
-class _SignInPageState extends State<SignInPage> {
+class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateMixin {
   late GlobalKey<FormState> _formKey;
+
+  late TabController _tabController;
 
   late AppForm _appForm;
   late List<Tab> _tabs;
+
+  @override
+  void dispose() {
+    _tabController.removeListener(_clearAppFormErrors);
+
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -34,9 +44,13 @@ class _SignInPageState extends State<SignInPage> {
 
     // Tabs
     _tabs = <Tab>[
-      Tab(text: SignInLabels.login),
-      Tab(text: SignInLabels.signup),
+      Tab(text: SignInLabels.logIn),
+      Tab(text: SignInLabels.signUp),
     ];
+
+    // Tab Controller
+    _tabController = TabController(length: _tabs.length, vsync: this);
+    _tabController.addListener(_clearAppFormErrors);
 
     // AppForm
     _appForm = AppForm();
@@ -46,6 +60,12 @@ class _SignInPageState extends State<SignInPage> {
     );
   }
 
+  void _clearAppFormErrors() {
+    setState(() {
+      _appForm.clearErrors();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -53,31 +73,36 @@ class _SignInPageState extends State<SignInPage> {
         child: Container(
           constraints: BoxConstraints.expand(
             width: AppConstraints.c500,
-            height: AppConstraints.c500,
+            height: AppConstraints.c800,
           ),
           child: Form(
             key: _formKey,
-            child: DefaultTabController(
-              length: _tabs.length,
-              child: Scaffold(
-                appBar: AppBar(
-                  bottom: TabBar(tabs: _tabs),
-                ),
-                body: TabBarView(
-                  children: [
-                    LogInTab(
-                      formKey: _formKey,
-                      appForm: _appForm),
-                    SignUpTab(
-                      formKey: _formKey,
-                      appForm: _appForm),
-                  ],
-                ),
+            child: Scaffold(
+              appBar: AppBar(
+                bottom: TabBar(
+                  controller: _tabController,
+                  tabs: _tabs),
+              ),
+              body: TabBarView(
+                controller: _tabController,
+                children: [
+                  LogInTab(
+                    formKey: _formKey,
+                    appForm: _appForm
+                  ),
+                  SignUpTab(
+                    formKey: _formKey,
+                    appForm: _appForm
+                  ),
+                ],
               ),
             ),
           ),
         ),
       ),
+      bottomSheet: MediaQuery.sizeOf(context).height > AppHeights.h500 ?
+        AppLogo()
+        : null,
     );
   }
 }

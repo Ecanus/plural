@@ -7,7 +7,9 @@ import 'package:plural_app/src/common_classes/app_form.dart';
 import 'package:plural_app/src/common_methods/form_validators.dart';
 
 // Common Widgets
+import 'package:plural_app/src/common_widgets/app_elevated_button.dart';
 import 'package:plural_app/src/common_widgets/app_text_form_field.dart';
+import 'package:plural_app/src/common_widgets/close_dialog_button.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
@@ -45,39 +47,62 @@ class _ForgotPasswordDialogState extends State<ForgotPasswordDialog> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      child: Container(
-        clipBehavior: Clip.antiAlias,
-        constraints: BoxConstraints.expand(
-          width: AppConstraints.c600,
-          height: AppConstraints.c350,
-        ),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(AppBorderRadii.r15)
-        ),
-        child: Form(
-          key: _formKey,
-          child: Padding(
-            padding: const EdgeInsets.all(AppPaddings.p80),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Text(Headers.enterEmail),
-                AppTextFormField(
-                  appForm: _appForm,
-                  fieldName: UserField.email,
-                  label: SignInLabels.email,
-                  maxLength: FormValues.emailMaxLength,
-                  validator: validateEmail,
+      backgroundColor: Colors.transparent,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            constraints: BoxConstraints.expand(
+              width: AppConstraints.c500,
+              height: AppConstraints.c400,
+            ),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surface,
+              borderRadius: BorderRadius.circular(AppBorderRadii.r15),
+            ),
+            child: Form(
+              key: _formKey,
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  top: AppPaddings.p40,
+                  left: AppPaddings.p40,
+                  right: AppPaddings.p40
                 ),
-                ElevatedButton(
-                  onPressed: () => submitForgotPassword(
-                    context, _formKey, _appForm),
-                  child: Text(SignInLabels.sendEmail),
+                child: Column(
+                  children: [
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        Headers.enterEmail,
+                        style: Theme.of(context).textTheme.headlineMedium,
+                      ),
+                    ),
+                    gapH20,
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(SignInInstructions.forgotPassword),
+                    ),
+                    gapH60,
+                    AppTextFormField(
+                      appForm: _appForm,
+                      fieldName: UserField.email,
+                      label: SignInLabels.email,
+                      maxLength: FormValues.emailMaxLength,
+                      validator: validateEmail,
+                    ),
+                    AppElevatedButton(
+                      callback: submitForgotPassword,
+                      label: SignInLabels.sendEmail,
+                      positionalArguments: [context, _formKey, _appForm],
+                    )
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
-        ),
+          gapH30,
+          CloseDialogButton()
+        ],
       ),
     );
   }

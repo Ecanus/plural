@@ -15,6 +15,8 @@ import 'package:plural_app/src/constants/app_sizes.dart';
 import 'package:plural_app/src/constants/app_values.dart';
 import 'package:plural_app/src/constants/form_values.dart';
 import 'package:plural_app/src/constants/strings.dart';
+import 'package:plural_app/src/constants/styles.dart';
+import 'package:plural_app/src/constants/themes.dart';
 
 class CreatePasswordFormField extends StatefulWidget {
   const CreatePasswordFormField({
@@ -39,26 +41,26 @@ class _CreatePasswordFormFieldState extends State<CreatePasswordFormField> {
   final String _passwordConfirmFieldName = UserField.passwordConfirm;
 
   final _passwordController = TextEditingController();
-  final _confirmPasswordController = TextEditingController();
+  final _passwordConfirmController = TextEditingController();
 
   late FocusNode _passwordFieldFocusNode;
-  late FocusNode _confirmPasswordFieldFocusNode;
+  late FocusNode _passwordConfirmFieldFocusNode;
   late ValueNotifier<Map> _passwordValuesNotifier;
 
   late double _paddingTop;
   late bool _isPasswordVisible;
-  late bool _isConfirmPasswordVisible;
+  late bool _isPasswordConfirmVisible;
 
   @override
   void dispose() {
     _passwordController.dispose();
     _passwordController.removeListener(_updatePasswordValuesNotifier);
-    _confirmPasswordController.dispose();
+    _passwordConfirmController.dispose();
 
     _passwordFieldFocusNode.dispose();
     _passwordFieldFocusNode.removeListener(_rebuild);
-    _confirmPasswordFieldFocusNode.dispose();
-    _confirmPasswordFieldFocusNode.removeListener(_rebuild);
+    _passwordConfirmFieldFocusNode.dispose();
+    _passwordConfirmFieldFocusNode.removeListener(_rebuild);
 
     super.dispose();
   }
@@ -69,25 +71,25 @@ class _CreatePasswordFormFieldState extends State<CreatePasswordFormField> {
 
     _passwordController.text = "";
     _passwordController.addListener(_updatePasswordValuesNotifier);
-    _confirmPasswordController.text = "";
-    _confirmPasswordController.addListener(_updatePasswordValuesNotifier);
+    _passwordConfirmController.text = "";
+    _passwordConfirmController.addListener(_updatePasswordValuesNotifier);
 
     _passwordFieldFocusNode = FocusNode();
     _passwordFieldFocusNode.addListener(_rebuild);
 
-    _confirmPasswordFieldFocusNode = FocusNode();
-    _confirmPasswordFieldFocusNode.addListener(_rebuild);
+    _passwordConfirmFieldFocusNode = FocusNode();
+    _passwordConfirmFieldFocusNode.addListener(_rebuild);
 
     Map passwordValues = {
       UserField.password: _passwordController.text,
-      UserField.passwordConfirm: _confirmPasswordController.text
+      UserField.passwordConfirm: _passwordConfirmController.text
     };
 
     _passwordValuesNotifier = ValueNotifier<Map>(passwordValues);
 
     _paddingTop = widget.paddingTop ?? AppPaddings.p20;
     _isPasswordVisible = false;
-    _isConfirmPasswordVisible = false;
+    _isPasswordConfirmVisible = false;
   }
 
   void _rebuild() {
@@ -108,19 +110,19 @@ class _CreatePasswordFormFieldState extends State<CreatePasswordFormField> {
   void _updatePasswordValuesNotifier() {
     _passwordValuesNotifier.value = {
       UserField.password: _passwordController.text,
-      UserField.passwordConfirm: _confirmPasswordController.text
+      UserField.passwordConfirm: _passwordConfirmController.text
     };
   }
 
   // Confirm Password
-  void _toggleConfirmPasswordVisibility() {
+  void _togglePasswordConfirmVisibility() {
     setState(() {
-      _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
+      _isPasswordConfirmVisible = !_isPasswordConfirmVisible;
     });
   }
 
-  bool _getConfirmPasswordVisibility() {
-    return _isConfirmPasswordVisible;
+  bool _getPasswordConfirmVisibility() {
+    return _isPasswordConfirmVisible;
   }
 
   @override
@@ -134,8 +136,14 @@ class _CreatePasswordFormFieldState extends State<CreatePasswordFormField> {
           child: TextFormField(
             controller: _passwordController,
             decoration: InputDecoration(
+              border: AppStyles.textFieldBorder,
+              enabledBorder: AppStyles.textFieldBorder,
               errorText: widget.appForm.getError(
-                fieldName: _passwordFieldName),
+                fieldName: _passwordFieldName
+              ),
+              floatingLabelStyle: AppStyles.floatingLabelStyle,
+              focusedBorder: AppStyles.textFieldFocusedBorder,
+              focusedErrorBorder: AppStyles.textFieldFocusedErrorBorder,
               label: Text(SignInLabels.password),
               suffixIcon: ShowHidePasswordButton(
                 isPasswordVisible: _getPasswordVisibility,
@@ -143,8 +151,10 @@ class _CreatePasswordFormFieldState extends State<CreatePasswordFormField> {
               ),
             ),
             focusNode: _passwordFieldFocusNode,
-            inputFormatters: getInputFormatters(TextFieldType.text),
-            maxLength: FormValues.passwordMaxLength,
+            inputFormatters: getInputFormatters(
+              TextFieldType.text,
+              FormValues.passwordMaxLength
+            ),
             maxLines: widget.maxLines,
             obscureText: !_isPasswordVisible,
             onSaved: (value) => widget.appForm.save(
@@ -169,27 +179,27 @@ class _CreatePasswordFormFieldState extends State<CreatePasswordFormField> {
                   PasswordRequirementText(
                     notifier: _passwordValuesNotifier,
                     requirement: checkPasswordLength,
-                    text: SignInStrings.passwordLength
+                    text: SignInMessages.passwordLength
                   ),
                   PasswordRequirementText(
                     notifier: _passwordValuesNotifier,
                     requirement: checkHasLowercase,
-                    text: SignInStrings.passwordLowercase
+                    text: SignInMessages.passwordLowercase
                   ),
                   PasswordRequirementText(
                     notifier: _passwordValuesNotifier,
                     requirement: checkHasUppercase,
-                    text: SignInStrings.passwordUppercase
+                    text: SignInMessages.passwordUppercase
                   ),
                   PasswordRequirementText(
                     notifier: _passwordValuesNotifier,
                     requirement: checkHasNumber,
-                    text: SignInStrings.passwordNumber
+                    text: SignInMessages.passwordNumber
                   ),
                   PasswordRequirementText(
                     notifier: _passwordValuesNotifier,
                     requirement: checkHasSpecialCharacter,
-                    text: SignInStrings.passwordSpecial
+                    text: SignInMessages.passwordSpecial
                   ),
                 ],
               ),
@@ -198,24 +208,31 @@ class _CreatePasswordFormFieldState extends State<CreatePasswordFormField> {
         ),
         Container(
           padding: EdgeInsets.only(
-            top: _paddingTop,
+            top: AppPaddings.p20,
           ),
           child: TextFormField(
-            controller: _confirmPasswordController,
+            controller: _passwordConfirmController,
             decoration: InputDecoration(
+              border: AppStyles.textFieldBorder,
+              enabledBorder: AppStyles.textFieldBorder,
               errorText: widget.appForm.getError(
                 fieldName: _passwordConfirmFieldName),
+              floatingLabelStyle: AppStyles.floatingLabelStyle,
+              focusedBorder: AppStyles.textFieldFocusedBorder,
+              focusedErrorBorder: AppStyles.textFieldFocusedErrorBorder,
               label: Text(SignInLabels.passwordConfirm),
               suffixIcon: ShowHidePasswordButton(
-                isPasswordVisible: _getConfirmPasswordVisibility,
-                onPressed: _toggleConfirmPasswordVisibility,
+                isPasswordVisible: _getPasswordConfirmVisibility,
+                onPressed: _togglePasswordConfirmVisibility,
               ),
             ),
-            focusNode: _confirmPasswordFieldFocusNode,
-            inputFormatters: getInputFormatters(TextFieldType.text),
-            maxLength: FormValues.passwordMaxLength,
+            focusNode: _passwordConfirmFieldFocusNode,
+            inputFormatters: getInputFormatters(
+              TextFieldType.text,
+              FormValues.passwordMaxLength
+            ),
             maxLines: widget.maxLines,
-            obscureText: !_isConfirmPasswordVisible,
+            obscureText: !_isPasswordConfirmVisible,
             onSaved: (value) => widget.appForm.save(
               fieldName: _passwordConfirmFieldName,
               value: value,
@@ -229,7 +246,7 @@ class _CreatePasswordFormFieldState extends State<CreatePasswordFormField> {
         AnimatedSize(
           duration: FormValues.passwordTextRowRevealDuration,
           child: Container(
-            height: _confirmPasswordFieldFocusNode.hasFocus ? null : 0.0,
+            height: _passwordConfirmFieldFocusNode.hasFocus ? null : 0.0,
             padding: EdgeInsets.only(
               top: AppPaddings.p5,
               bottom: AppPaddings.p25
@@ -299,8 +316,8 @@ class PasswordsMatchText extends StatelessWidget {
 
         return PasswordTextRow(
           isValid: isValid,
-          isInvalidText: ErrorStrings.passwordMismatch,
-          isValidText: SignInStrings.passwordMatch
+          isInvalidText: ErrorMessages.passwordMismatch,
+          isValidText: SignInMessages.passwordMatch
         );
       });
   }
@@ -328,7 +345,9 @@ class PasswordTextRow extends StatelessWidget {
           child: Text(
             isValid ? isValidText : (isInvalidText ?? isValidText),
             style: TextStyle(
-              color: isValid ? Colors.green : Colors.black
+              color: isValid ?
+                AppThemes.successColor
+                : Theme.of(context).colorScheme.onPrimary
             )
           ),
         ),

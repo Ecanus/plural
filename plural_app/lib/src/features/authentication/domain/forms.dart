@@ -76,11 +76,11 @@ Future<void> submitLogIn(
       // Add errors to corresponding fields
       appForm.setError(
         fieldName: SignInField.usernameOrEmail,
-        errorMessage: ErrorStrings.invalidEmailOrPassword
+        errorMessage: ErrorMessages.invalidEmailOrPassword
       );
       appForm.setError(
         fieldName: UserField.password,
-        errorMessage: ErrorStrings.invalidEmailOrPassword
+        errorMessage: ErrorMessages.invalidEmailOrPassword
       );
 
       // Rebuild widget
@@ -115,7 +115,7 @@ Future<void> submitSignUp(
 
       // Display Success Snackbar
       var snackBar = AppSnackbars.successSnackbar(
-          SnackBarStrings.sentUserVerificationEmail,
+          SnackBarMessages.sentUserVerificationEmail,
           appForm.getValue(fieldName: UserField.email)
         );
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -150,7 +150,7 @@ Future<void> submitForgotPassword(
       // Display snackBar confirmation
       if (isValid) {
         var snackBar = AppSnackbars.successSnackbar(
-          SnackBarStrings.sentPasswordResetEmail,
+          SnackBarMessages.sentPasswordResetEmail,
           email
         );
 

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+// Constants
+import 'package:plural_app/src/constants/app_sizes.dart';
+
 class ShowHidePasswordButton extends StatelessWidget {
   const ShowHidePasswordButton({
     super.key,
@@ -12,13 +15,18 @@ class ShowHidePasswordButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(
-      onPressed: () => onPressed(),
-      icon: Icon(
-        isPasswordVisible()
-        ? Icons.visibility
-        : Icons.visibility_off_rounded
-      )
+    return Padding(
+      padding: const EdgeInsets.only(
+        right: AppPaddings.p15
+      ),
+      child: IconButton(
+        onPressed: () => onPressed(),
+        icon: Icon(
+          isPasswordVisible()
+          ? Icons.visibility
+          : Icons.visibility_off_rounded
+        )
+      ),
     );
   }
 }

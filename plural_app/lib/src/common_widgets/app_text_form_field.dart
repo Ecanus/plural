@@ -8,8 +8,9 @@ import 'package:plural_app/src/common_methods/form_validators.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
-import 'package:plural_app/src/constants/strings.dart';
 import 'package:plural_app/src/constants/app_values.dart';
+import 'package:plural_app/src/constants/strings.dart';
+import 'package:plural_app/src/constants/styles.dart';
 
 class AppTextFormField extends StatefulWidget {
   const AppTextFormField({
@@ -78,13 +79,19 @@ class _AppTextFormFieldState extends State<AppTextFormField> {
       child: TextFormField(
         controller: _controller,
         decoration: InputDecoration(
-          errorText: widget.appForm.getError(
-            fieldName: widget.fieldName),
+          border: AppStyles.textFieldBorder,
+          enabledBorder: AppStyles.textFieldBorder,
+          errorText: widget.appForm.getError(fieldName: widget.fieldName),
+          floatingLabelStyle: AppStyles.floatingLabelStyle,
           hintText: widget.hintText,
+          focusedBorder: AppStyles.textFieldFocusedBorder,
+          focusedErrorBorder: AppStyles.textFieldFocusedErrorBorder,
           label: Text(widget.label),
         ),
-        inputFormatters: getInputFormatters(widget.textFieldType),
-        maxLength: widget.maxLength,
+        inputFormatters: getInputFormatters(
+          widget.textFieldType,
+          widget.maxLength
+        ),
         maxLines: widget.maxLines,
         onSaved: (value) => widget.appForm.save(
           fieldName: widget.fieldName,
@@ -168,8 +175,10 @@ class _AppTextFormFieldDeprecatedState extends State<AppTextFormFieldDeprecated>
           hintText: widget.hintText,
           label: Text(widget.label),
         ),
-        inputFormatters: getInputFormatters(widget.textFieldType),
-        maxLength: widget.maxLength,
+        inputFormatters: getInputFormatters(
+          widget.textFieldType,
+          widget.maxLength
+        ),
         maxLines: widget.maxLines,
         onSaved: (value) => saveToMap(
           widget.fieldName,
