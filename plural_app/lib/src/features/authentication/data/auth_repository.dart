@@ -19,58 +19,45 @@ import 'package:plural_app/src/features/authentication/domain/app_user_garden_re
 // Gardens
 import 'package:plural_app/src/features/gardens/data/gardens_repository.dart';
 import "package:plural_app/src/features/gardens/domain/garden.dart";
-import 'package:plural_app/src/features/gardens/domain/garden_manager.dart';
 
-// Service Locator
+// Utils
+import 'package:plural_app/src/utils/app_state.dart';
 import 'package:plural_app/src/utils/service_locator.dart';
 
 class AuthRepository {
   AuthRepository({
     required this.pb,
-  }) {
-    var user = pb.authStore.model;
-    user = user.toJson();
-
-    currentUser = AppUser(
-      id: user[GenericField.id],
-      email: user[UserField.email],
-      firstName: user[UserField.firstName],
-      lastName: user[UserField.lastName],
-    );
-  }
+  });
 
   final PocketBase pb;
 
-  AppUser? currentUser;
-
-  String getCurrentUserID() {
-    return currentUser!.id;
-  }
-
-  /// Sets the [currentUser]'s [latestGardenRecord] to their most recently
-  /// updated [UserGardenRecord].
-  Future<void> setCurrentUserLatestGardenRecord() async {
-    var user = pb.authStore.model;
-    user = user.toJson();
-
+  /// Queries on the [UserGardenRecord] collection, sorted by the [sort] value,
+  /// to retrieve a UserGardenRecord corresponding to the given [userID].
+  ///
+  /// Returns an [AppUserGardenRecord] instance corresponding to the retrieved
+  /// UserGardenRecord if one is found. Else, returns null.
+  Future<AppUserGardenRecord?> getUserGardenRecordByUserID({
+    required String userID,
+    sort = "-updated"
+  }) async {
     var result = await pb.collection(Collection.userGardenRecords).getList(
-      sort: "-updated",
-      filter: "user = '${currentUser!.id}'"
+      sort: sort,
+      filter: "user = '$userID'"
     );
 
-    // Return immediately if no UserGardenRecord is found
+    // Return null if no UserGardenRecord is found
     var items = result.toJson()[PBKey.items];
-    if (items.isEmpty) return;
+    if (items.isEmpty) return null;
 
     var record = items[0];
     String gardenID = record[UserGardenRecordField.gardenID];
 
-    final gardensRepository = GetIt.instance<GardensRepository>();
-    var garden = await gardensRepository.getGardenByID(gardenID);
+    var garden = await GetIt.instance<GardensRepository>().getGardenByID(gardenID);
+    var user = await getUserByID(userID);
 
-    currentUser!.latestGardenRecord = AppUserGardenRecord(
+    return AppUserGardenRecord(
       id: record[GenericField.id],
-      user: currentUser!,
+      user: user,
       garden: garden
     );
   }
@@ -80,7 +67,7 @@ class AuthRepository {
   ///
   /// Returns the list of retrieved [User]s.
   Future<List<AppUser>> getCurrentGardenUsers() async {
-    String currentGardenID = GetIt.instance<GardenManager>().currentGarden!.id;
+    String currentGardenID = GetIt.instance<AppState>().currentGarden!.id;
     List<AppUser> instances = [];
 
     var result = await pb.collection(Collection.userGardenRecords).getList(
@@ -129,12 +116,12 @@ class AuthRepository {
   }
 
   /// Queries on the [UserGardenRecord] collection to update the date of the
-  /// the record which corresponds to the given [user] and [garden] parameters.
-  Future<void> updateUserGardenRecord(AppUser user, Garden garden) async {
+  /// the record which corresponds to the given [userID] and [gardenID] parameters.
+  Future<void> updateUserGardenRecord(String userID, String gardenID) async {
     var result = await pb.collection(Collection.userGardenRecords).getFirstListItem(
       """
-      ${UserGardenRecordField.userID} = '${user.id}' &&
-      ${UserGardenRecordField.gardenID} = '${garden.id}'
+      ${UserGardenRecordField.userID} = '$userID' &&
+      ${UserGardenRecordField.gardenID} = '$gardenID'
       """
     );
 
@@ -165,6 +152,8 @@ class AuthRepository {
   ///
   /// Returns an [AppUserSettings] instance.
   Future<AppUserSettings> getCurrentUserSettings() async {
+    final currentUser = GetIt.instance<AppState>().currentUser;
+
     var result = await pb.collection(Collection.userSettings).getFirstListItem(
       "${UserSettingsField.userID} = '${currentUser!.id}'"
     );
@@ -173,7 +162,7 @@ class AuthRepository {
 
     return AppUserSettings(
       id: record[GenericField.id],
-      user: currentUser!,
+      user: currentUser,
       textSize: record[UserSettingsField.textSize]
     );
   }
@@ -183,10 +172,12 @@ class AuthRepository {
   ///
   /// Returns an [AppUserSettings] instance.
   Future<AppUserSettings> updateUserSettings(Map map) async {
+    final currentUser = GetIt.instance<AppState>().currentUser;
+
     var result = await pb.collection(Collection.userSettings).update(
       map[GenericField.id],
       body: {
-        UserSettingsField.userID: getCurrentUserID(),
+        UserSettingsField.userID: currentUser!.id,
         UserSettingsField.textSize: map[UserSettingsField.textSize],
       }
     );
@@ -195,7 +186,7 @@ class AuthRepository {
 
     return AppUserSettings(
       id: record[GenericField.id],
-      user: currentUser!,
+      user: currentUser,
       textSize: record[UserSettingsField.textSize]
     );
   }

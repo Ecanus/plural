@@ -20,6 +20,9 @@ import 'package:plural_app/src/features/authentication/domain/constants.dart';
 // Gardens
 import 'package:plural_app/src/features/gardens/domain/garden_manager.dart';
 
+// Utils
+import 'package:plural_app/src/utils/app_state.dart';
+
 /// Validates the given [formKey] to update corresponding data
 /// in the [map] parameter.
 Future<void> submitUpdate(
@@ -37,8 +40,11 @@ Future<void> submitUpdate(
     // Update DB
     var updatedUserSettings = await authRepository.updateUserSettings(map);
 
+    // TODO: Remove all instances of timelineNotifier
     // Rebuild the Garden Timeline
-    await gardenStateManager.timelineNotifier.updateValue();
+    await gardenStateManager.timelineNotifier.updateValue(
+      GetIt.instance<AppState>().currentGarden!.id
+    );
 
     // Rebuild User Settings Dialog
     await appDialogManager.showUserSettingsDialogView(
@@ -63,12 +69,10 @@ Future<void> submitLogIn(
     );
 
     if (isValid && context.mounted) {
-      var getIt = GetIt.instance;
-      var authRespository = getIt<AuthRepository>();
-
       // Check if current user has a latestGardenRecord
-      var routeString = authRespository.currentUser!.latestGardenRecord == null ?
-        Routes.landing : Routes.home;
+      var routeString =
+        GetIt.instance<AppState>().currentUser!.latestGardenRecord == null ?
+          Routes.landing : Routes.home;
 
       // Route to the routeString value
       GoRouter.of(context).go(routeString);

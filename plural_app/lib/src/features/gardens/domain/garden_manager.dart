@@ -5,37 +5,36 @@ import 'package:get_it/get_it.dart';
 import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
 
 // Gardens
+import 'package:plural_app/src/features/gardens/data/gardens_repository.dart';
 import 'package:plural_app/src/features/gardens/domain/garden.dart';
 import 'package:plural_app/src/features/gardens/domain/garden_timeline_notifier.dart';
+
+// Utils
+import 'package:plural_app/src/utils/app_state.dart';
 
 class GardenManager {
   GardenManager({
     required this.timelineNotifier,
-  }) {
-    final authRepository = GetIt.instance<AuthRepository>();
-    currentGarden = authRepository.currentUser!.latestGardenRecord!.garden;
-  }
+  });
 
-  Garden? currentGarden;
   GardenTimelineNotifier timelineNotifier;
 
-  /// Updates the current user's latest [UserGardenRecord] to now point to [garden].
+  /// Updates the current user's latest [UserGardenRecord] to now point to the [Garden]
+  /// with the corresponding [gardenID].
   ///
   /// Reloads the GardenTimeline widget to display the most recently created
-  /// [Ask]s in the passed [garden].
-  Future<void> goToGarden(BuildContext context, Garden garden) async {
-    final authRepository = GetIt.instance<AuthRepository>();
-    final user = authRepository.currentUser!;
+  /// [Ask]s associated with the passed [gardenID].
+  Future<void> retrieveNewGarden(BuildContext context, String gardenID) async {
+    var appState = GetIt.instance<AppState>();
 
-    Navigator.pop(context);
+    await GetIt.instance<AuthRepository>().updateUserGardenRecord(
+      appState.currentUser!.id, gardenID);
 
-    updateCurrentGarden(garden);
-    await authRepository.updateUserGardenRecord(user, currentGarden!);
+    timelineNotifier.updateValue(gardenID);
+    appState.currentGarden = await GetIt.instance<GardensRepository>()
+      .getGardenByID(gardenID);
 
-    timelineNotifier.updateValue();
-  }
 
-  void updateCurrentGarden(Garden garden) {
-    currentGarden = garden;
+    if (context.mounted) Navigator.pop(context);
   }
 }

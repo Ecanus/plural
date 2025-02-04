@@ -82,7 +82,7 @@ class LandingPageSettingsTab extends StatelessWidget {
               ],
             )
           ),
-          gapH20,
+          gapH30,
           AppElevatedButton(
             callback: () {},
             label: LandingPageLabels.saveChanges,

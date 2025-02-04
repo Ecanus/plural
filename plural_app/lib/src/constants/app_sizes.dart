@@ -40,6 +40,7 @@ class AppWidths {
   static const w2 = 2.0;
   static const w3 = 3.0;
   static const w25 = 25.0;
+  static const w60 = 60.0;
   static const w150 = 150.0;
   static const w175 = 175.0;
   static const w200 = 200.0;
@@ -49,6 +50,7 @@ class AppWidths {
 class AppHeights {
   static const h25 = 25.0;
   static const h40 = 40.0;
+  static const h60 = 60.0;
   static const h500 = 500;
 }
 
@@ -78,6 +80,11 @@ class AppFontLetterSpacing {
 
 class AppIconSizes {
   static const s30 = 30.0;
+  static const s35 = 35.0;
+}
+
+class AppMargins {
+  static const m7 = 7.0;
 }
 
 class AppPaddings {
@@ -87,6 +94,7 @@ class AppPaddings {
   static const p5 = 5.0;
   static const p8 = 8.0;
   static const p10 = 10.0;
+  static const p12 = 12.0;
   static const p15 = 15.0;
   static const p18 = 18.0;
   static const p20 = 20.0;
@@ -117,6 +125,7 @@ const gapW20 = SizedBox(width: AppPaddings.p20);
 const gapH4 = SizedBox(height: AppPaddings.p4);
 const gapH5 = SizedBox(height: AppPaddings.p5);
 const gapH10 = SizedBox(height: AppPaddings.p10);
+const gapH15 = SizedBox(height: AppPaddings.p15);
 const gapH20 = SizedBox(height: AppPaddings.p20);
 const gapH25 = SizedBox(height: AppPaddings.p25);
 const gapH30 = SizedBox(height: AppPaddings.p30);

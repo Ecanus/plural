@@ -8,11 +8,8 @@ import 'package:plural_app/src/constants/strings.dart';
 // Asks
 import 'package:plural_app/src/features/asks/domain/ask.dart';
 
-// Auth
-import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
-
-// Gardens
-import 'package:plural_app/src/features/gardens/domain/garden_manager.dart';
+// Utils
+import 'package:plural_app/src/utils/app_state.dart';
 
 class AsksRepository {
   AsksRepository({
@@ -25,13 +22,15 @@ class AsksRepository {
   /// with values matching the [filterString].
   ///
   /// Returns the list of retrieved [Ask]s.
-  Future<List<Ask>> get({
+  Future<List<Ask>> getAsksByGardenID({
+    required String gardenID,
     int? count,
     String filterString = "",
     String sortString = "created",
     }) async {
-      var currentGardenID = GetIt.instance<GardenManager>().currentGarden!.id;
-      filterString = filterString == "" ? "garden = '$currentGardenID'" : filterString;
+      filterString = filterString == "" ?
+        "garden = '$gardenID'"
+        : filterString;
 
       var result = await pb.collection(Collection.asks).getList(
         filter: filterString,
@@ -45,10 +44,8 @@ class AsksRepository {
   /// to the given [userID] and the current [Garden].
   ///
   /// Returns the list of retrieved [Ask]s
-  Future<List<Ask>> getAsksByUserID({String? userID}) async {
-    final currentGarden = GetIt.instance<GardenManager>().currentGarden!;
-
-    userID = userID ?? GetIt.instance<AuthRepository>().getCurrentUserID();
+  Future<List<Ask>> getAsksByUserID({required String userID}) async {
+    final currentGarden = GetIt.instance<AppState>().currentGarden!;
 
     var result = await pb.collection(Collection.asks).getList(
       sort: GenericField.created,
@@ -80,12 +77,32 @@ class AsksRepository {
   Future<void> create(Map map) async {
     await pb.collection(Collection.asks).create(
       body: {
-        AskField.creator: GetIt.instance<AuthRepository>().getCurrentUserID(),
+        AskField.creator: GetIt.instance<AppState>().currentUserID!,
         AskField.description: map[AskField.description],
         AskField.deadlineDate: map[AskField.deadlineDate],
         AskField.targetDonationSum: map[AskField.targetDonationSum],
-        AskField.garden: GetIt.instance<GardenManager>().currentGarden!.id,
+        AskField.garden: GetIt.instance<AppState>().currentGarden!.id,
       }
     );
+  }
+
+  /// Subscribes to any changes made in the [Ask] collection to any [Ask] record
+  /// associated to the [Garden] with the given [gardenID].
+  ///
+  /// Calls the given [callback] method whenever a change is made.
+  Future<Function> subscribeTo(String gardenID, Function callback) {
+    Future<Function> unsubscribeFunc = pb.collection(Collection.asks)
+      .subscribe(Subscribe.all, (e) async {
+        if (e.record?.data[AskField.garden] != gardenID) return;
+
+        switch (e.action) {
+          case EventAction.create:
+             callback();
+          case EventAction.update:
+            callback();
+        }
+      });
+
+    return unsubscribeFunc;
   }
 }

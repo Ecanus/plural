@@ -24,7 +24,9 @@ import 'package:plural_app/src/features/gardens/presentation/creatable_garden_di
 import 'package:plural_app/src/features/gardens/presentation/editable_garden_dialog.dart';
 import 'package:plural_app/src/features/gardens/presentation/viewable_garden_dialog.dart';
 import 'package:plural_app/src/features/gardens/presentation/listed_gardens_dialog.dart';
-import 'package:plural_app/src/features/gardens/domain/garden_manager.dart';
+
+// Utils
+import 'package:plural_app/src/utils/app_state.dart';
 
 class AppDialogManager {
 
@@ -77,10 +79,10 @@ class AppDialogManager {
   }
 
   Future<void> showGardenSettingsDialogView() async {
-    var currentGarden = GetIt.instance<GardenManager>().currentGarden;
-    var currentUser = GetIt.instance<AuthRepository>().currentUser!;
+    var appState = GetIt.instance<AppState>();
+    var currentGarden = appState.currentGarden!;
 
-    if (currentGarden!.creator == currentUser) {
+    if (currentGarden.creator == appState.currentUser!) {
       showEditableGardenDialogView(currentGarden);
     } else {
       showViewableGardenDialogView(currentGarden);

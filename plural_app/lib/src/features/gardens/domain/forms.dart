@@ -8,6 +8,9 @@ import 'package:plural_app/src/common_widgets/app_dialog_manager.dart';
 import 'package:plural_app/src/features/gardens/data/gardens_repository.dart';
 import 'package:plural_app/src/features/gardens/domain/garden_manager.dart';
 
+// Utils
+import 'package:plural_app/src/utils/app_state.dart';
+
 Future<void> submitCreate(
   GlobalKey<FormState> formKey,
   Map map
@@ -42,9 +45,10 @@ Future <void> submitUpdate(
     // Update DB
     var updatedGarden = await gardensRepository.update(map);
 
+    // TODO: Remove all instances of timelineNotifier
     // Rebuild the Garden Timeline
-    await gardenStateManager.timelineNotifier.updateValue();
-    gardenStateManager.updateCurrentGarden(updatedGarden);
+    GetIt.instance<AppState>().currentGarden = updatedGarden;
+    await gardenStateManager.timelineNotifier.updateValue(updatedGarden.id);
 
     // Rebuild Editable Garden Dialog
     appDialogManager.showEditableGardenDialogView(updatedGarden);

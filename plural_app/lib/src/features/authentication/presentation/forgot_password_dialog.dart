@@ -82,7 +82,7 @@ class _ForgotPasswordDialogState extends State<ForgotPasswordDialog> {
                       alignment: Alignment.centerLeft,
                       child: Text(SignInInstructions.forgotPassword),
                     ),
-                    gapH60,
+                    gapH40,
                     AppTextFormField(
                       appForm: _appForm,
                       fieldName: UserField.email,

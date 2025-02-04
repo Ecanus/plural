@@ -33,7 +33,7 @@ class _LandingPageState extends State<LandingPage> {
         child: Container(
           constraints: BoxConstraints.expand(
             width: AppConstraints.c600,
-            height: AppConstraints.c600,
+            height: AppConstraints.c700,
           ),
           child: DefaultTabController(
             length: _tabs.length,

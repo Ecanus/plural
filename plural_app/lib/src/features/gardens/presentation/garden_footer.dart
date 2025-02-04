@@ -48,13 +48,15 @@ class GardenFooter extends StatelessWidget {
       child: Icon(Icons.close, size: AppIconSizes.s30),
     );
 
-    return ValueListenableBuilder(
-      valueListenable: _isFooterCollapsed,
-      builder: (BuildContext context, bool value, Widget? child) {
-        return value ?
-          Center(child: showActionsButton) :
-          AppBottomBar(hideActionsButton: hideActionsButton,);
-      }
+    return Expanded(
+      child: ValueListenableBuilder(
+        valueListenable: _isFooterCollapsed,
+        builder: (BuildContext context, bool value, Widget? child) {
+          return value ?
+            Center(child: showActionsButton) :
+            AppBottomBar(hideActionsButton: hideActionsButton,);
+        }
+      ),
     );
   }
 }

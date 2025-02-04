@@ -1,42 +1,95 @@
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
+import 'package:provider/provider.dart';
 
 // Asks
 import 'package:plural_app/src/features/asks/domain/ask.dart';
 
 // Gardens
 import 'package:plural_app/src/features/gardens/presentation/garden_timeline_tile.dart';
-import 'package:plural_app/src/features/gardens/domain/garden_manager.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
 
-class GardenTimeline extends StatefulWidget {
+// Utils
+import 'package:plural_app/src/utils/app_state.dart';
 
-  @override
-  State<GardenTimeline> createState() => _GardenTimelineState();
-}
-
-class _GardenTimelineState extends State<GardenTimeline> {
-  final stateManager = GetIt.instance<GardenManager>();
-
-  @override
-  void initState() {
-    super.initState();
-    stateManager.timelineNotifier.updateValue();
-  }
+class GardenTimeline extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: stateManager.timelineNotifier,
-      builder: (BuildContext context, List<Ask> value, Widget? child) {
-        return Expanded(
-          child: ListView(
-            padding: const EdgeInsets.all(AppPaddings.p8),
-            children: [ for (Ask ask in value) GardenTimelineTile(ask: ask) ],
+    return Expanded(
+      child: Row(
+        children: [
+          Consumer<AppState>(
+            builder: (_, appState, __) {
+              return FutureBuilder<List<Ask>>(
+                future: appState.getTimelineAsks(),
+                builder: (BuildContext context, AsyncSnapshot<List<Ask>> snapshot) {
+                  if (snapshot.hasData) {
+                    return GardenTimelineList(asks: snapshot.data!);
+                  } else if (snapshot.hasError) {
+                    return GardenTimelineError(error: snapshot.error);
+                  } else {
+                    return GardenTimelineLoading();
+                  }
+                }
+              );
+            }
           ),
-        );
-      });
+        ],
+      ),
+    );
+  }
+}
+
+class GardenTimelineList extends StatelessWidget {
+  const GardenTimelineList({
+    super.key,
+    required this.asks,
+  });
+
+  final List<Ask> asks;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: ListView(
+        padding: const EdgeInsets.all(AppPaddings.p8),
+        children: [
+          for (Ask ask in asks) GardenTimelineTile(ask: ask)
+        ],
+      ),
+    );
+  }
+}
+
+class GardenTimelineError extends StatelessWidget {
+  const GardenTimelineError({
+    this.error,
+  });
+
+  final Object? error;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Center(child: Text("$error")),
+    );
+  }
+}
+
+class GardenTimelineLoading extends StatelessWidget {
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Center(
+        child: SizedBox(
+          width: AppWidths.w60,
+          height: AppHeights.h60,
+          child: CircularProgressIndicator()
+        ),
+      ),
+    );
   }
 }

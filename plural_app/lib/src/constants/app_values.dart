@@ -1,7 +1,4 @@
 import "package:flutter/material.dart";
-import "package:timeline_tile/timeline_tile.dart";
-
-import 'package:plural_app/src/constants/app_sizes.dart';
 
 class AppColors {
   static const primaryColor = Colors.grey; // Use theme finally
@@ -43,8 +40,13 @@ class AppMaxLinesValues {
   static const max1 = 1;
 }
 
+class AppOpacities {
+  static const point3 = 0.3;
+}
+
 class GardenValues {
   static const numTimelineAsks = 3;
+  static const clockRefreshRate = 60;
 }
 
 class SnackBarDurations {
@@ -55,13 +57,3 @@ class UserSettingsValues {
   static const textSizeMin = 1;
   static const textSizeMax = 5;
 }
-
-const appIndicatorStyle = IndicatorStyle(
-  width: AppTimelineSizes.indicatorWidth,
-  color: AppColors.primaryColor,
-);
-
-const appLineStyle = LineStyle(
-  color: AppColors.primaryColor,
-  thickness: AppTimelineSizes.timelineThickness,
-);

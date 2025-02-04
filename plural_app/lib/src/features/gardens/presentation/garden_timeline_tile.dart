@@ -4,15 +4,15 @@ import 'package:timeline_tile/timeline_tile.dart';
 
 // Asks
 import 'package:plural_app/src/features/asks/domain/ask.dart';
-import 'package:plural_app/src/features/asks/presentation/viewable_ask_dialog.dart';
+import 'package:plural_app/src/features/asks/presentation/non_editable_ask_dialog.dart';
 import 'package:plural_app/src/features/asks/presentation/editable_ask_dialog.dart';
-
-// Auth
-import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
 import 'package:plural_app/src/constants/app_values.dart';
+
+// Utils
+import 'package:plural_app/src/utils/app_state.dart';
 
 class GardenTimelineTile extends StatelessWidget {
   const GardenTimelineTile({
@@ -24,46 +24,65 @@ class GardenTimelineTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final getIt = GetIt.instance;
-    final authRespository = getIt<AuthRepository>();
-    final currentUserID = authRespository.getCurrentUserID();
+    final currentUserID = GetIt.instance<AppState>().currentUserID!;
+    final isAskSponsoredByCurrentUser = ask.isSponsoredByUser(currentUserID);
+
+    var timelineTileLineStyle = LineStyle(
+      color: Theme.of(context).colorScheme.tertiaryFixed,
+      thickness: AppTimelineSizes.timelineThickness,
+    );
+
+    var appIndicatorStyle = IndicatorStyle(
+      color: Theme.of(context).colorScheme.tertiaryFixed,
+      width: AppTimelineSizes.indicatorWidth,
+    );
+
 
     return ask.creatorID == currentUserID ?
-      EditableGardenTimelineTile(ask: ask) :
-      ViewableGardenTimelineTile(ask: ask, currentUserID: currentUserID,);
+      EditableGardenTimelineTile(
+        appIndicatorStyle: appIndicatorStyle,
+        ask: ask,
+        timelineTileLineStyle: timelineTileLineStyle
+      )
+      : NonEditableGardenTimelineTile(
+        appIndicatorStyle: appIndicatorStyle,
+        ask: ask,
+        isAskSponsoredByCurrentUser: isAskSponsoredByCurrentUser,
+        timelineTileLineStyle: timelineTileLineStyle
+      );
   }
 }
 
-class ViewableGardenTimelineTile extends StatelessWidget {
-  const ViewableGardenTimelineTile({
+class NonEditableGardenTimelineTile extends StatelessWidget {
+  const NonEditableGardenTimelineTile({
     super.key,
+    required this.appIndicatorStyle,
     required this.ask,
-    required this.currentUserID,
+    required this.isAskSponsoredByCurrentUser,
+    required this.timelineTileLineStyle,
   });
 
+  final IndicatorStyle appIndicatorStyle;
   final Ask ask;
-  final String currentUserID;
+  final bool isAskSponsoredByCurrentUser;
+  final LineStyle timelineTileLineStyle;
 
   @override
   Widget build(BuildContext context) {
     return TimelineTile(
       alignment: TimelineAlign.center,
       indicatorStyle: appIndicatorStyle,
-      beforeLineStyle: appLineStyle,
+      beforeLineStyle: timelineTileLineStyle,
       startChild: BaseGardenTimelineTile(
         ask: ask,
         alignment: Alignment.centerRight,
       ),
-      endChild: ask.isSponsoredByUser(currentUserID) ?
+      endChild: isAskSponsoredByCurrentUser ?
         Container(
           padding: const EdgeInsets.all(AppPaddings.p5),
           child: Align(
             alignment: Alignment.centerLeft,
-            child: Icon(
-              Icons.check_circle,
-              color: AppColors.primaryColor,
-              size: AppIconSizes.s30
-            ),
+            child: IsSponsoredIcon(),
           ),
         ) : null,
     );
@@ -73,32 +92,26 @@ class ViewableGardenTimelineTile extends StatelessWidget {
 class EditableGardenTimelineTile extends StatelessWidget {
   const EditableGardenTimelineTile({
     super.key,
+    required this.appIndicatorStyle,
     required this.ask,
+    required this.timelineTileLineStyle,
   });
 
+  final IndicatorStyle appIndicatorStyle;
   final Ask ask;
+  final LineStyle timelineTileLineStyle;
 
   @override
   Widget build(BuildContext context) {
     return TimelineTile(
       alignment: TimelineAlign.center,
       indicatorStyle: appIndicatorStyle,
-      beforeLineStyle: appLineStyle,
-      startChild: Align(
-        alignment: Alignment.centerRight,
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            elevation: AppElevations.e5,
-            padding: const EdgeInsets.all(AppPaddings.p15),
-            shape: CircleBorder(),
-            iconColor: AppColors.secondaryColor,
-            backgroundColor: AppColors.primaryColor
-          ),
-          onPressed: () => createEditableAskDialog(
-            context: context,
-            ask: ask
-          ),
-          child: Icon(Icons.mode_edit_outlined)
+      beforeLineStyle: timelineTileLineStyle,
+      startChild: Container(
+        padding: const EdgeInsets.all(AppPaddings.p8),
+        child: Align(
+          alignment: Alignment.centerRight,
+          child: TimelineAskEditButton(ask: ask),
         ),
       ),
       endChild: BaseGardenTimelineTile(
@@ -139,7 +152,7 @@ class BaseGardenTimelineTile extends StatelessWidget {
         ),
         child: Card(
           elevation: AppElevations.e7,
-          color: AppColors.secondaryColor,
+          color: Theme.of(context).colorScheme.secondary,
           child: Padding(
             padding: EdgeInsets.all(AppPaddings.p10),
             child: Column(
@@ -206,7 +219,7 @@ class BaseGardenTimelineTile extends StatelessWidget {
         color: AppColors.primaryColor,
         icon: const Icon(Icons.arrow_drop_down_circle_rounded),
         padding: const EdgeInsets.all(AppPaddings.p0),
-        onPressed: () => createViewableAskDialog(
+        onPressed: () => createNonEditableAskDialog(
           context: context,
           ask: ask
         ),
@@ -219,5 +232,64 @@ class BaseGardenTimelineTile extends StatelessWidget {
     }
 
     return widgets;
+  }
+}
+
+class IsSponsoredIcon extends StatelessWidget {
+  const IsSponsoredIcon({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        Positioned.fill(
+          child: Container(
+            margin: EdgeInsets.all(AppMargins.m7),
+            color: Theme.of(context).colorScheme.onSecondary
+          )
+        ),
+        Icon(
+          Icons.check_circle,
+          color: Theme.of(context).colorScheme.secondaryFixed,
+          size: AppIconSizes.s30,
+        ),
+      ],
+    );
+  }
+}
+
+class TimelineAskEditButton extends StatelessWidget {
+  const TimelineAskEditButton({
+    super.key,
+    required this.ask,
+  });
+
+  final Ask ask;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: AppIconSizes.s35,
+      height: AppIconSizes.s35,
+      child: Ink(
+        decoration: ShapeDecoration(
+          color: Theme.of(context).colorScheme.primary,
+          shape: CircleBorder()
+        ),
+        child: IconButton(
+          padding: EdgeInsets.zero,
+          icon: Icon(Icons.mode_edit_outlined),
+          color: Theme.of(context).colorScheme.onPrimary,
+          hoverColor: Theme.of(context).colorScheme.onPrimary
+            .withOpacity(AppOpacities.point3),
+          onPressed: () => createEditableAskDialog(
+            context: context,
+            ask: ask
+          ),
+        ),
+      ),
+    );
   }
 }

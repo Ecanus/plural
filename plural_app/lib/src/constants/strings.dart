@@ -120,9 +120,6 @@ class Strings {
   // Date Formatting
   static const dateformatYMMdd = "y-MM-dd";
 
-  // Garden
-  static const gardenHeaderText1 = "Hi, ";
-
   // Garden Dialog
   static const gardensViewTitle = "Gardens";
   static const newGardenLabel = "New Garden";
