@@ -4,6 +4,8 @@ class AppBorderRadii {
   static const r5 = 5.0;
   static const r10 = 10.0;
   static const r15 = 15.0;
+  static const r25 = 25.0;
+  static const r30 = 30.0;
   static const r50 = 50.0;
 }
 
@@ -33,6 +35,7 @@ class AppConstraints {
   static const c650 = 650.0;
   static const c700 = 700.0;
   static const c800 = 800.0;
+  static const c1000 = 1000.0;
 }
 
 class AppWidths {
@@ -57,6 +60,7 @@ class AppHeights {
 class AppElevations {
   static const e5 = 5.0;
   static const e7 = 7.0;
+  static const e10 = 10.0;
 }
 
 class AppFlexes {
@@ -79,6 +83,7 @@ class AppFontLetterSpacing {
 }
 
 class AppIconSizes {
+  static const s15 = 15.0;
   static const s30 = 30.0;
   static const s35 = 35.0;
 }

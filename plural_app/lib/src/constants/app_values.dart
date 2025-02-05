@@ -33,6 +33,7 @@ class AppMaxLengthValues {
   static const max30 = 30;
   static const max50 = 50;
   static const max75 = 75;
+  static const max200 = 200;
   static const max250 = 250;
 }
 

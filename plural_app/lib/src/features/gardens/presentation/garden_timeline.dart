@@ -18,25 +18,28 @@ class GardenTimeline extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: Row(
-        children: [
-          Consumer<AppState>(
-            builder: (_, appState, __) {
-              return FutureBuilder<List<Ask>>(
-                future: appState.getTimelineAsks(),
-                builder: (BuildContext context, AsyncSnapshot<List<Ask>> snapshot) {
-                  if (snapshot.hasData) {
-                    return GardenTimelineList(asks: snapshot.data!);
-                  } else if (snapshot.hasError) {
-                    return GardenTimelineError(error: snapshot.error);
-                  } else {
-                    return GardenTimelineLoading();
+      child: Container(
+        constraints: BoxConstraints(maxWidth: AppConstraints.c1000),
+        child: Row(
+          children: [
+            Consumer<AppState>(
+              builder: (_, appState, __) {
+                return FutureBuilder<List<Ask>>(
+                  future: appState.getTimelineAsks(),
+                  builder: (BuildContext context, AsyncSnapshot<List<Ask>> snapshot) {
+                    if (snapshot.hasData) {
+                      return GardenTimelineList(asks: snapshot.data!);
+                    } else if (snapshot.hasError) {
+                      return GardenTimelineError(error: snapshot.error);
+                    } else {
+                      return GardenTimelineLoading();
+                    }
                   }
-                }
-              );
-            }
-          ),
-        ],
+                );
+              }
+            ),
+          ],
+        ),
       ),
     );
   }

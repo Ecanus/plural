@@ -67,6 +67,18 @@ class Headers {
 }
 
 // Labels
+class GardenPageLabels {
+  static const tileTimeLeftBrace = "—";
+}
+
+class LandingPageLabels {
+  static const createGarden = "Create Garden";
+  static const saveChanges = "Save Changes";
+  static const seeInvites = "See Invitations";
+  static const settings = "Settings";
+  static const welcome = "Welcome";
+}
+
 class SignInLabels {
   static const passwordConfirm = "Confirm Password";
   static const email = "Email Address";
@@ -81,14 +93,6 @@ class SignInLabels {
   static const submit = "Submit";
   static const username = "Username";
   static const usernameOrEmail = "Username or Email";
-}
-
-class LandingPageLabels {
-  static const createGarden = "Create Garden";
-  static const saveChanges = "Save Changes";
-  static const seeInvites = "See Invitations";
-  static const settings = "Settings";
-  static const welcome = "Welcome";
 }
 
 // Strings
