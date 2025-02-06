@@ -45,6 +45,10 @@ class AppOpacities {
   static const point3 = 0.3;
 }
 
+class AppRotations {
+  static const degrees10 = 10/360;
+}
+
 class GardenValues {
   static const numTimelineAsks = 3;
   static const clockRefreshRate = 60;

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 import 'package:plural_app/src/constants/strings.dart';
 import 'package:timeline_tile/timeline_tile.dart';
 
@@ -120,8 +119,11 @@ class BaseGardenTimelineTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TileForeground(
-      ask: ask,
+    return Stack(
+      children: [
+        TileBackground(ask: ask,),
+        TileForeground(ask: ask,),
+      ],
     );
   }
 }
@@ -135,8 +137,6 @@ class TileForeground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isSponsoredByCurrentUser = ask.isSponsoredByCurrentUser;
-
     return Container(
       padding: const EdgeInsets.all(AppPaddings.p10,),
       child: Card(
@@ -145,49 +145,108 @@ class TileForeground extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppBorderRadii.r25)
         ),
-        child: Column(
-          children: [
-            Padding(
-              padding: EdgeInsets.only(
-                left: AppPaddings.p25,
-                top: AppPaddings.p25,
-                right: AppPaddings.p25,
-                bottom: isSponsoredByCurrentUser ? AppPaddings.p10 : AppPaddings.p25,
-              ),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text.rich(
-                        TextSpan(
-                          children: [
-                            TextSpan(text: "${GardenPageLabels.tileTimeLeftBrace} "),
-                            TextSpan(
-                              text: ask.timeRemainingString,
-                              style: TextStyle(fontWeight: FontWeight.bold)
-                            ),
-                            TextSpan(text: " ${GardenPageLabels.tileTimeLeftBrace}"),
-                          ]
-                        )
-                      ),
-                    ],
-                  ),
-                  gapH10,
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Flexible(child: Text(ask.truncatedDescription))
-                    ]
-                  ),
-                  gapH10,
-                  isSponsoredByCurrentUser ? TileIsSponsoredIcon() : SizedBox(),
-                ]
-              ),
-            ),
-          ],
+        child: TileContents(ask: ask),
+      ),
+    );
+  }
+}
+
+class TileBackground extends StatelessWidget {
+  const TileBackground({
+    required this.ask,
+  });
+
+  final Ask ask;
+
+  @override
+  Widget build(BuildContext context) {
+    return RotationTransition(
+      turns: AlwaysStoppedAnimation(AppRotations.degrees10),
+      child: Container(
+        padding: const EdgeInsets.all(AppPaddings.p20),
+        child: Card.filled(
+          color: Theme.of(context).colorScheme.tertiary,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppBorderRadii.r25),
+          ),
+          child: TileContents(ask: ask, hideContent: true)
         ),
       ),
+    );
+  }
+}
+
+class TileContents extends StatelessWidget {
+  const TileContents({
+    required this.ask,
+    this.hideContent = false,
+  });
+
+  final Ask ask;
+  final bool hideContent;
+
+  @override
+  Widget build(BuildContext context) {
+    final isSponsoredByCurrentUser = ask.isSponsoredByCurrentUser;
+    final textColor = hideContent ?
+      Colors.transparent : Theme.of(context).colorScheme.onPrimary;
+
+    return Column(
+      children: [
+        Padding(
+          padding: EdgeInsets.only(
+            left: AppPaddings.p25,
+            top: AppPaddings.p25,
+            right: AppPaddings.p25,
+          ),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text.rich(
+                    TextSpan(
+                      children: [
+                        TextSpan(
+                          style: TextStyle(color: textColor),
+                          text: "${GardenPageLabels.tileTimeLeftBrace} "
+                        ),
+                        TextSpan(
+                          style: TextStyle(
+                            color: textColor,
+                            fontWeight: FontWeight.bold
+                          ),
+                          text: ask.timeRemainingString,
+                        ),
+                        TextSpan(
+                          style: TextStyle(color: textColor),
+                          text: " ${GardenPageLabels.tileTimeLeftBrace}"
+                        ),
+                      ]
+                    )
+                  ),
+                ],
+              ),
+              gapH10,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Flexible(
+                    child: Text(
+                      ask.truncatedDescription,
+                      style: TextStyle(color: textColor),
+                    )
+                  )
+                ]
+              ),
+              gapH20,
+              isSponsoredByCurrentUser ?
+                TileIsSponsoredIcon(hideContent: hideContent,)
+                : SizedBox(),
+            ]
+          ),
+        ),
+      ],
     );
   }
 }
@@ -254,12 +313,20 @@ class TileEditAskButton extends StatelessWidget {
 }
 
 class TileIsSponsoredIcon extends StatelessWidget {
+  const TileIsSponsoredIcon({
+    this.hideContent = false,
+  });
+
+  final bool hideContent;
 
   @override
   Widget build(BuildContext context) {
+    final textColor = hideContent ?
+      Colors.transparent : Theme.of(context).colorScheme.onSecondary;
+
     return Icon(
       Icons.check,
-      color: Theme.of(context).colorScheme.onSecondary,
+      color: textColor,
       size: AppIconSizes.s15,
     );
   }
