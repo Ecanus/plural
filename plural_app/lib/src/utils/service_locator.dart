@@ -13,8 +13,6 @@ import 'package:plural_app/src/constants/strings.dart';
 
 // Gardens
 import 'package:plural_app/src/features/gardens/data/gardens_repository.dart';
-import 'package:plural_app/src/features/gardens/domain/garden_manager.dart';
-import 'package:plural_app/src/features/gardens/domain/garden_timeline_notifier.dart';
 
 // Utils
 import 'package:plural_app/src/utils/app_state.dart';
@@ -54,18 +52,6 @@ Future<void> registerGetItInstances(PocketBase pb) async {
       pb: getIt<PocketBase>(),
     )
   );
-
-  // ------------
-  // GardenTimelineNotifier
-  getIt.registerSingleton<GardenTimelineNotifier>(GardenTimelineNotifier());
-
-  // Garden Manager
-  getIt.registerLazySingleton<GardenManager>(
-    () => GardenManager(
-      timelineNotifier: getIt<GardenTimelineNotifier>()
-    )
-  );
-  // ------------
 
   // AppState
   getIt.registerLazySingleton<AppState>(

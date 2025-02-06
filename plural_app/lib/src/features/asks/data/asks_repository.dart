@@ -75,13 +75,15 @@ class AsksRepository {
   /// Queries on the [Ask] collection to create a record corresponding
   /// to information in the [map] parameter.
   Future<void> create(Map map) async {
+    var appState = GetIt.instance<AppState>();
+
     await pb.collection(Collection.asks).create(
       body: {
-        AskField.creator: GetIt.instance<AppState>().currentUserID!,
+        AskField.creator: appState.currentUserID!,
         AskField.description: map[AskField.description],
         AskField.deadlineDate: map[AskField.deadlineDate],
         AskField.targetDonationSum: map[AskField.targetDonationSum],
-        AskField.garden: GetIt.instance<AppState>().currentGarden!.id,
+        AskField.garden: appState.currentGarden!.id,
       }
     );
   }

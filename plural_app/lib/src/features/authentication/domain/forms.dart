@@ -17,9 +17,6 @@ import 'package:plural_app/src/constants/strings.dart';
 import "package:plural_app/src/features/authentication/data/auth_repository.dart";
 import 'package:plural_app/src/features/authentication/domain/constants.dart';
 
-// Gardens
-import 'package:plural_app/src/features/gardens/domain/garden_manager.dart';
-
 // Utils
 import 'package:plural_app/src/utils/app_state.dart';
 
@@ -31,7 +28,6 @@ Future<void> submitUpdate(
 ) async {
   if (formKey.currentState!.validate()) {
     final authRepository = GetIt.instance<AuthRepository>();
-    final gardenStateManager = GetIt.instance<GardenManager>();
     final appDialogManager = GetIt.instance<AppDialogManager>();
 
     // Save form
@@ -40,11 +36,9 @@ Future<void> submitUpdate(
     // Update DB
     var updatedUserSettings = await authRepository.updateUserSettings(map);
 
-    // TODO: Remove all instances of timelineNotifier
+    // TODO: Subscribe to changes to the UserSettings collection, and remove notifyAllListeners() call.
     // Rebuild the Garden Timeline
-    await gardenStateManager.timelineNotifier.updateValue(
-      GetIt.instance<AppState>().currentGarden!.id
-    );
+    GetIt.instance<AppState>().notifyAllListeners();
 
     // Rebuild User Settings Dialog
     await appDialogManager.showUserSettingsDialogView(
