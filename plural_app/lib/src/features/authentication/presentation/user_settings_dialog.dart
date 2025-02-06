@@ -11,6 +11,7 @@ import 'package:plural_app/src/common_methods/form_validators.dart';
 import 'package:plural_app/src/common_widgets/app_dialog.dart';
 import 'package:plural_app/src/common_widgets/app_dialog_header.dart';
 import 'package:plural_app/src/common_widgets/app_dialog_header_button.dart';
+import 'package:plural_app/src/common_widgets/app_text_button.dart';
 import 'package:plural_app/src/common_widgets/app_text_form_field.dart';
 import 'package:plural_app/src/common_widgets/close_dialog_button.dart';
 
@@ -23,7 +24,6 @@ import 'package:plural_app/src/constants/app_values.dart';
 import 'package:plural_app/src/features/authentication/domain/app_user_settings.dart';
 import 'package:plural_app/src/features/authentication/domain/forms.dart';
 import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
-import 'package:plural_app/src/features/authentication/presentation/log_out_button.dart';
 
 // Gardens
 import 'package:plural_app/src/features/gardens/presentation/garden_settings_button.dart';
@@ -90,7 +90,11 @@ class _UserSettingsDialogState extends State<UserSettingsDialog> {
             padding: const EdgeInsets.all(AppPaddings.p35),
             children: [
               Center(
-                child: LogOutButton()
+                child: AppTextButton(
+                  callback: logout,
+                  label: SignInLabels.logOut,
+                  positionalArguments: [context],
+                )
               ),
               Form(
                 key: _formKey,

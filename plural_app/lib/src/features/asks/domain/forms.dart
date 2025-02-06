@@ -4,9 +4,6 @@ import 'package:get_it/get_it.dart';
 // Ask
 import "package:plural_app/src/features/asks/data/asks_repository.dart";
 
-// Gardens
-import 'package:plural_app/src/features/gardens/domain/garden_manager.dart';
-
 Future<void> submitUpdate(
   BuildContext context,
   GlobalKey<FormState> formKey,
@@ -14,16 +11,12 @@ Future<void> submitUpdate(
   ) async {
   if (formKey.currentState!.validate()) {
     final asksRepository = GetIt.instance<AsksRepository>();
-    final gardenStateManager = GetIt.instance<GardenManager>();
 
     // Save form
     formKey.currentState!.save();
 
-    // Update DB
+    // Update DB (should also rebuild Garden Timeline via SubscribeTo)
     await asksRepository.update(map);
-
-    // Rebuild the Garden Timeline
-    await gardenStateManager.timelineNotifier.updateValue();
 
     // TODO: Wrap this method in a method that will either Close Dialog OR Reroute to Listed Asks Dialog
     // Close the Dialog
@@ -38,16 +31,12 @@ Future<void> submitCreate(
   ) async {
   if (formKey.currentState!.validate()) {
     final asksRepository = GetIt.instance<AsksRepository>();
-    final gardenStateManager = GetIt.instance<GardenManager>();
 
     // Save form
     formKey.currentState!.save();
 
-    // Update DB
+    // Update DB (should also rebuild Garden Timeline via SubscribeTo)
     await asksRepository.create(map);
-
-    // Rebuild the Garden Timeline
-    await gardenStateManager.timelineNotifier.updateValue();
 
     // TODO: Wrap this method in a method that will either Close Dialog OR Reroute to Listed Asks Dialog
     // Close the Dialog

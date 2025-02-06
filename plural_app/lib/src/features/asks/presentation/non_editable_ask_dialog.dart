@@ -15,10 +15,10 @@ import 'package:plural_app/src/constants/strings.dart';
 // Ask
 import 'package:plural_app/src/features/asks/domain/ask.dart';
 
-// Auth
-import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
+// Utils
+import 'package:plural_app/src/utils/app_state.dart';
 
-Future createViewableAskDialog({
+Future createNonEditableAskDialog({
   required BuildContext context,
   required Ask ask
   }) async {
@@ -43,8 +43,6 @@ class AskDialogViewForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final currentUserID = GetIt.instance<AuthRepository>().getCurrentUserID();
-
     return Column(
       children: [
         AppDialogHeader(firstHeaderButton: CloseDialogButton(),),
@@ -67,7 +65,7 @@ class AskDialogViewForm extends StatelessWidget {
                           child: AppCheckboxFormFieldFilled(
                             mainAxisAlignment: MainAxisAlignment.center,
                             text: Strings.isAskSponsoredLabel,
-                            value: ask.isSponsoredByUser(currentUserID),
+                            value: ask.isSponsoredByCurrentUser,
                           ),
                         ),
                       ],

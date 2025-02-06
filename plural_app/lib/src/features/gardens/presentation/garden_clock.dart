@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 // Constants
+import 'package:plural_app/src/constants/app_values.dart';
 import 'package:plural_app/src/constants/strings.dart';
 
 /// Widget for displaying today's date. Updates every 60 seconds.
@@ -19,7 +20,11 @@ class _GardenClockState extends State<GardenClock> {
   @override
   void initState() {
     super.initState();
-    _timer = Timer.periodic(const Duration(seconds: 60), (timer) => _update(timer));
+
+    _timer = Timer.periodic(
+      const Duration(seconds: GardenValues.clockRefreshRate),
+      (timer) => _update(timer)
+    );
   }
 
   void _update(Timer timer) {

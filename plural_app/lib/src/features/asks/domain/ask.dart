@@ -10,6 +10,9 @@ import "package:plural_app/src/features/authentication/data/auth_repository.dart
 import 'package:plural_app/src/constants/strings.dart';
 import 'package:plural_app/src/constants/app_values.dart';
 
+// Utils
+import 'package:plural_app/src/utils/app_state.dart';
+
 class Ask with LogData{
   Ask({
     required this.id,
@@ -42,8 +45,10 @@ class Ask with LogData{
   }
 
   String get truncatedDescription {
-    if (description.length > AppMaxLengthValues.max50) {
-      return "${description.substring(0, AppMaxLengthValues.max50)}...";
+    var limit = AppMaxLengthValues.max200;
+
+    if (description.length > limit) {
+      return "${description.substring(0, limit)}...";
     } else {
       return description;
     }
@@ -69,10 +74,17 @@ class Ask with LogData{
     if (hoursLeft > 0) return "$hoursLeft hours left";
 
     // Minutes
-    if (minutesLeft == 1) return "$minutesLeft minute left";
     if (minutesLeft > 0) return "$minutesLeft minutes left";
 
-    return "< $minutesLeft minutes left";
+    return "$minutesLeft minute left";
+  }
+
+  bool get isCreatedByCurrentUser {
+    return creatorID == GetIt.instance<AppState>().currentUserID!;
+  }
+
+  bool get isSponsoredByCurrentUser {
+    return sponsorIDS.contains(GetIt.instance<AppState>().currentUserID!);
   }
 
   bool isSponsoredByUser(String userID) {

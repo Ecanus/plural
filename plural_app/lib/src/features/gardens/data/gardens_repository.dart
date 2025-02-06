@@ -12,6 +12,9 @@ import 'package:plural_app/src/features/authentication/data/auth_repository.dart
 // Gardens
 import 'package:plural_app/src/features/gardens/domain/garden.dart';
 
+// Utils
+import 'package:plural_app/src/utils/app_state.dart';
+
 class GardensRepository {
   GardensRepository({
     required this.pb,
@@ -66,29 +69,33 @@ class GardensRepository {
     return instances;
   }
 
-  /// Uses the given [map] parameter to create a corresponding [Garden]
+  /// Uses the given [map] value to create a corresponding [Garden]
   /// record in the database.
   ///
   /// Creates a corresponding [UserGardenRecord] record that points to both
   /// the current user and the newly created [Garden].
   Future<void> create(Map map) async {
     final authRepository = GetIt.instance<AuthRepository>();
-    var currentUserID = authRepository.getCurrentUserID();
+    final currentUser = GetIt.instance<AppState>().currentUser;
 
     // Create Garden
     var createdGarden = await pb.collection(Collection.gardens).create(
       body: {
-        GardenField.creator: currentUserID,
+        GardenField.creator: currentUser!.id,
         GardenField.name: map[GardenField.name],
       }
     );
 
     // Create User Garden Record
     authRepository.createUserGardenRecord(
-      currentUserID,
+      currentUser.id,
       createdGarden.toJson()[GenericField.id]);
   }
 
+  /// Uses the given [map] value to update a [Garden] record with the corresponding
+  /// map.id value.
+  ///
+  /// Returns a [Garden] instance with the updated values.
   Future<Garden> update(Map map) async {
     var result = await pb.collection(Collection.gardens).update(
       map[GenericField.id],
@@ -106,5 +113,20 @@ class GardensRepository {
       creator: creator,
       name: record[GardenField.name]
     );
+  }
+
+  /// Subscribes to any changes made in the [Garden] collection to the [Garden] record
+  /// with the corresponding [gardenID].
+  ///
+  /// Updates the value of [AppState].currentGarden whenever a change is made.
+  Future<Function> subscribeTo(String gardenID) {
+    Future<Function> unsubscribeFunc = pb.collection(Collection.gardens)
+      .subscribe(gardenID, (e) async {
+        if (e.action == EventAction.update) {
+          GetIt.instance<AppState>().currentGarden = await getGardenByID(gardenID);
+        }
+      });
+
+    return unsubscribeFunc;
   }
 }

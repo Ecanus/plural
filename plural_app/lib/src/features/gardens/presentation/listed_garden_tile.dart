@@ -6,7 +6,9 @@ import 'package:plural_app/src/constants/app_sizes.dart';
 
 // Gardens
 import 'package:plural_app/src/features/gardens/domain/garden.dart';
-import 'package:plural_app/src/features/gardens/domain/garden_manager.dart';
+
+// Utils
+import 'package:plural_app/src/utils/app_state.dart';
 
 class ListedGardenTile extends StatelessWidget {
   const ListedGardenTile({
@@ -18,8 +20,6 @@ class ListedGardenTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final gardenStateManager = GetIt.instance<GardenManager>();
-
     return Card(
       elevation: AppElevations.e7,
       child: ListTile(
@@ -29,7 +29,11 @@ class ListedGardenTile extends StatelessWidget {
         ),
         subtitle: Text(""),
         trailing: Icon(Icons.arrow_forward_ios),
-        onTap: () => gardenStateManager.goToGarden(context, garden),
+        onTap: () {
+          // Update AppState.currentGarden (should also rebuild Garden Timeline via notifyListeners())
+          GetIt.instance<AppState>().currentGarden = garden;
+          Navigator.pop(context);
+        }
       ),
     );
   }
