@@ -37,7 +37,7 @@ Future <void> submitUpdate(
     // Save form
     formKey.currentState!.save();
 
-    // Update DB (should rebuild Garden Timeline via SubscribeTo)
+    // Update DB (should also rebuild Garden Timeline via SubscribeTo)
     var updatedGarden = await gardensRepository.update(map);
 
     // Rebuild Editable Garden Dialog

@@ -128,29 +128,6 @@ class BaseGardenTimelineTile extends StatelessWidget {
   }
 }
 
-class TileForeground extends StatelessWidget {
-  const TileForeground({
-    required this.ask,
-  });
-
-  final Ask ask;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(AppPaddings.p10,),
-      child: Card(
-        color: Theme.of(context).colorScheme.secondary,
-        elevation: AppElevations.e10,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppBorderRadii.r25)
-        ),
-        child: TileContents(ask: ask),
-      ),
-    );
-  }
-}
-
 class TileBackground extends StatelessWidget {
   const TileBackground({
     required this.ask,
@@ -171,6 +148,29 @@ class TileBackground extends StatelessWidget {
           ),
           child: TileContents(ask: ask, hideContent: true)
         ),
+      ),
+    );
+  }
+}
+
+class TileForeground extends StatelessWidget {
+  const TileForeground({
+    required this.ask,
+  });
+
+  final Ask ask;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(AppPaddings.p10,),
+      child: Card(
+        color: Theme.of(context).colorScheme.secondary,
+        elevation: AppElevations.e10,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppBorderRadii.r25)
+        ),
+        child: TileContents(ask: ask),
       ),
     );
   }
@@ -301,10 +301,7 @@ class TileEditAskButton extends StatelessWidget {
           icon: Icon(Icons.mode_edit_outlined),
           hoverColor: Theme.of(context).colorScheme.onPrimary
             .withOpacity(AppOpacities.point3),
-          onPressed: () => createEditableAskDialog(
-            context: context,
-            ask: ask
-          ),
+          onPressed: () => createEditableAskDialog(context: context, ask: ask),
           padding: EdgeInsets.zero,
         ),
       ),

@@ -15,7 +15,7 @@ Future<void> submitUpdate(
     // Save form
     formKey.currentState!.save();
 
-    // Update DB (should rebuild Garden Timeline via SubscribeTo)
+    // Update DB (should also rebuild Garden Timeline via SubscribeTo)
     await asksRepository.update(map);
 
     // TODO: Wrap this method in a method that will either Close Dialog OR Reroute to Listed Asks Dialog
@@ -35,7 +35,7 @@ Future<void> submitCreate(
     // Save form
     formKey.currentState!.save();
 
-    // Update DB (should rebuild Garden Timeline via SubscribeTo)
+    // Update DB (should also rebuild Garden Timeline via SubscribeTo)
     await asksRepository.create(map);
 
     // TODO: Wrap this method in a method that will either Close Dialog OR Reroute to Listed Asks Dialog

@@ -65,9 +65,7 @@ class AskDialogViewForm extends StatelessWidget {
                           child: AppCheckboxFormFieldFilled(
                             mainAxisAlignment: MainAxisAlignment.center,
                             text: Strings.isAskSponsoredLabel,
-                            value: ask.isSponsoredByUser(
-                              GetIt.instance<AppState>().currentUserID!
-                            ),
+                            value: ask.isSponsoredByCurrentUser,
                           ),
                         ),
                       ],

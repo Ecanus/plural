@@ -6,6 +6,8 @@ import 'package:plural_app/src/constants/app_sizes.dart';
 
 // Gardens
 import 'package:plural_app/src/features/gardens/domain/garden.dart';
+
+// Utils
 import 'package:plural_app/src/utils/app_state.dart';
 
 class ListedGardenTile extends StatelessWidget {
@@ -28,6 +30,7 @@ class ListedGardenTile extends StatelessWidget {
         subtitle: Text(""),
         trailing: Icon(Icons.arrow_forward_ios),
         onTap: () {
+          // Update AppState.currentGarden (should also rebuild Garden Timeline via notifyListeners())
           GetIt.instance<AppState>().currentGarden = garden;
           Navigator.pop(context);
         }

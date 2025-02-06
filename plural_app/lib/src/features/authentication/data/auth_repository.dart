@@ -152,10 +152,10 @@ class AuthRepository {
   ///
   /// Returns an [AppUserSettings] instance.
   Future<AppUserSettings> getCurrentUserSettings() async {
-    final currentUser = GetIt.instance<AppState>().currentUser;
+    final currentUser = GetIt.instance<AppState>().currentUser!;
 
     var result = await pb.collection(Collection.userSettings).getFirstListItem(
-      "${UserSettingsField.userID} = '${currentUser!.id}'"
+      "${UserSettingsField.userID} = '${currentUser.id}'"
     );
 
     var record = result.toJson();
@@ -172,12 +172,12 @@ class AuthRepository {
   ///
   /// Returns an [AppUserSettings] instance.
   Future<AppUserSettings> updateUserSettings(Map map) async {
-    final currentUser = GetIt.instance<AppState>().currentUser;
+    final currentUser = GetIt.instance<AppState>().currentUser!;
 
     var result = await pb.collection(Collection.userSettings).update(
       map[GenericField.id],
       body: {
-        UserSettingsField.userID: currentUser!.id,
+        UserSettingsField.userID: currentUser.id,
         UserSettingsField.textSize: map[UserSettingsField.textSize],
       }
     );
