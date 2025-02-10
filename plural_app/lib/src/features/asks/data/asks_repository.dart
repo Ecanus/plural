@@ -26,17 +26,16 @@ class AsksRepository {
     required String gardenID,
     int? count,
     String filterString = "",
-    String sortString = "created",
+    String sortString = "deadlineDate,created",
     }) async {
-      filterString = filterString == "" ?
-        "garden = '$gardenID'"
-        : filterString;
+      filterString = filterString == "" ? "garden = '$gardenID'" : filterString;
 
       var result = await pb.collection(Collection.asks).getList(
         filter: filterString,
         sort: sortString
       );
 
+      // Sorting from query is maintained for returned List<Ask>
       return await Ask.createInstancesFromQuery(result, count: count);
   }
 
@@ -64,10 +63,13 @@ class AsksRepository {
     await pb.collection(Collection.asks).update(
       map[GenericField.id],
       body: {
+        AskField.boon: map[AskField.boon],
+        AskField.currency: map[AskField.currency],
         AskField.description: map[AskField.description],
         AskField.deadlineDate: map[AskField.deadlineDate],
-        AskField.targetDonationSum: map[AskField.targetDonationSum],
-        AskField.fullySponsoredDate: map[AskField.fullySponsoredDate]
+        AskField.targetSum: map[AskField.targetSum],
+        AskField.targetMetDate: map[AskField.targetMetDate],
+        AskField.type: map[AskField.type]
       }
     );
   }
@@ -79,11 +81,14 @@ class AsksRepository {
 
     await pb.collection(Collection.asks).create(
       body: {
+        AskField.boon: map[AskField.boon],
         AskField.creator: appState.currentUserID!,
+        AskField.currency: map[AskField.currency],
         AskField.description: map[AskField.description],
         AskField.deadlineDate: map[AskField.deadlineDate],
-        AskField.targetDonationSum: map[AskField.targetDonationSum],
         AskField.garden: appState.currentGarden!.id,
+        AskField.targetSum: map[AskField.targetSum],
+        AskField.type: map[AskField.type],
       }
     );
   }
@@ -99,7 +104,9 @@ class AsksRepository {
 
         switch (e.action) {
           case EventAction.create:
-             callback();
+            callback();
+          case EventAction.delete:
+            callback();
           case EventAction.update:
             callback();
         }

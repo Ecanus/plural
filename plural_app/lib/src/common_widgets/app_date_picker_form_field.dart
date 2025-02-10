@@ -79,9 +79,9 @@ Future<void> selectDate(
   String dateString,
   Function setTextCallback,
   ) async {
-    var today = DateTime.now();
+    var today = DateTime.now().toLocal();
     var dateThreshold = today.add(AppDateValues.datePickerThreshold);
-    var initialDate = dateString == "" ? null : DateTime.parse(dateString);
+    var initialDate = dateString == "" ? null : DateTime.parse(dateString).toLocal();
 
     final DateTime? datePicked = await showDatePicker(
       context: context,

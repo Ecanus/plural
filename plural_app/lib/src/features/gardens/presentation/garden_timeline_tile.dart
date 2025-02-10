@@ -137,8 +137,10 @@ class TileBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var sign = ask.isCreatedByCurrentUser ? -1 : 1;
+
     return RotationTransition(
-      turns: AlwaysStoppedAnimation(AppRotations.degrees10),
+      turns: AlwaysStoppedAnimation(sign * AppRotations.degrees10),
       child: Container(
         padding: const EdgeInsets.all(AppPaddings.p20),
         child: Card.filled(

@@ -8,6 +8,7 @@ class Collection {
 
 class EventAction {
   static const create = "create";
+  static const delete = "delete";
   static const update = "update";
 }
 

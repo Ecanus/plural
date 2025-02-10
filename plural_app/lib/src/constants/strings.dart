@@ -1,13 +1,16 @@
 // Fields
 class AskField {
+  static const boon = "boon";
   static const creator = "creator";
   static const creatorID = "creatorID";
+  static const currency = "currency";
   static const description = "description";
   static const deadlineDate = "deadlineDate";
-  static const fullySponsoredDate = "fullySponsoredDate";
   static const garden = "garden";
-  static const targetDonationSum = "targetDonationSum";
   static const sponsors = "sponsors";
+  static const targetMetDate = "targetMetDate";
+  static const targetSum = "targetSum";
+  static const type = "type";
 }
 
 class GenericField {
@@ -46,6 +49,7 @@ class UserGardenRecordField {
 class UserSettingsField {
   static const user = "user";
   static const userID = "user";
+  static const instructions = "instructions";
   static const textSize = "textSize";
 }
 
@@ -107,7 +111,7 @@ class Strings {
   static const creatableAskDialogTitle = "Create Ask";
 
   static const isAskSponsoredLabel = "Is Sponsored";
-  static const isAskFullySponsoredLabel = "Is Fully Sponsored";
+  static const isTargetMetLabel = "Is Target Met";
 
   static const selectDateLabel = "Select Date";
 
@@ -116,7 +120,7 @@ class Strings {
   static const createLabel = "Create";
   static const updateLabel = "Update";
 
-  static const askTargetDonationSumLabel = "Target Donation Sum";
+  static const askTargetSumLabel = "Target Sum";
   static const askDescriptionLabel = "Description";
   static const askDeadlineDateLabel = "Deadline Date";
   static const askCreatorLabel = "Creator";

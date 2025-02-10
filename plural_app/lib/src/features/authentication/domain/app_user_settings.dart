@@ -10,11 +10,13 @@ class AppUserSettings {
     required this.id,
     required this.user,
     required this.textSize,
+    required this.instructions
   });
 
   final String id;
   final AppUser user;
 
+  final String instructions;
   final int textSize;
 
   set textSize(value) {
@@ -27,6 +29,7 @@ class AppUserSettings {
     return {
       GenericField.id: id,
       UserSettingsField.userID: user,
+      UserSettingsField.instructions: instructions,
       UserSettingsField.textSize: textSize,
     };
   }

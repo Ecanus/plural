@@ -2,7 +2,6 @@ import 'package:intl/intl.dart';
 import 'package:get_it/get_it.dart';
 
 // Auth
-import 'package:plural_app/src/features/authentication/domain/log_data.dart';
 import "package:plural_app/src/features/authentication/domain/app_user.dart";
 import "package:plural_app/src/features/authentication/data/auth_repository.dart";
 
@@ -13,28 +12,32 @@ import 'package:plural_app/src/constants/app_values.dart';
 // Utils
 import 'package:plural_app/src/utils/app_state.dart';
 
-class Ask with LogData{
+enum AskType { monetary, }
+
+class Ask {
   Ask({
     required this.id,
+    this.boon,
     required this.creatorID,
+    required this.creationDate,
+    this.currency,
     required this.description,
     required this.deadlineDate,
-    required this.targetDonationSum,
-    this.fullySponsoredDate,
+    this.targetMetDate,
+    required this.targetSum,
+    required this.type,
   });
 
-  // Log Data
-  @override
-  DateTime get logCreationDate {
-    return DateTime.now();
-  }
-
   final String id;
+  int? boon;
   final String creatorID;
+  DateTime creationDate;
+  String? currency;
   String description;
   DateTime deadlineDate;
-  DateTime? fullySponsoredDate;
-  int targetDonationSum;
+  DateTime? targetMetDate;
+  int targetSum;
+  AskType type;
 
   List<String> sponsorIDS = [];
 
@@ -54,8 +57,8 @@ class Ask with LogData{
     }
   }
 
-  bool get isFullySponsored {
-    return fullySponsoredDate != null;
+  bool get isTargetMet {
+    return targetMetDate != null;
   }
 
   String get timeRemainingString {
@@ -96,10 +99,10 @@ class Ask with LogData{
 
   int compareTo(Ask other) {
     // Compare on logCreationDate first
-    var creationCompare = logCreationDate.compareTo(other.logCreationDate);
+    var creationCompare = creationDate.compareTo(other.creationDate);
     if (creationCompare != 0) return creationCompare;
 
-    // If equal on logCreationDate, compare on deadlineDate
+    // If equal on creationDate, compare on deadlineDate
     return deadlineDate.compareTo(other.deadlineDate);
   }
 
@@ -120,21 +123,31 @@ class Ask with LogData{
       for (var record in records) {
         var creatorID = record[AskField.creator];
 
-        // Format fullySponsoredDate if non-null
-        var fullySponsoredDate = record[AskField.fullySponsoredDate];
-        var formattedFullySponsoredDate = fullySponsoredDate != "" ?
-          DateTime.parse(fullySponsoredDate) : null;
+        // Format targetMetDate if non-null
+        var targetMetDateString = record[AskField.targetMetDate];
+        var formattedTargetMetDate = targetMetDateString != "" ?
+          DateTime.parse(targetMetDateString) : null;
 
         // Get AppUser that created the Ask
         var creator = await authRepository.getUserByID(creatorID);
 
+        // Get type enum from the record (a string)
+        var askTypeFromString = AskType.values.firstWhere(
+          (a) => a.name == "AskType.${record[AskField.type]}",
+          orElse: () => AskType.monetary
+        );
+
         var newAsk = Ask(
           id: record[GenericField.id],
+          boon: record[AskField.boon],
           creatorID: creatorID,
+          creationDate: DateTime.parse(record[GenericField.created]),
+          currency: record[AskField.currency],
           description: record[AskField.description],
           deadlineDate: DateTime.parse(record[AskField.deadlineDate]),
-          targetDonationSum: record[AskField.targetDonationSum],
-          fullySponsoredDate: formattedFullySponsoredDate,
+          targetSum: record[AskField.targetSum],
+          targetMetDate: formattedTargetMetDate,
+          type: askTypeFromString
         );
 
         newAsk.sponsorIDS = List<String>.from(record[AskField.sponsors]);
@@ -149,21 +162,27 @@ class Ask with LogData{
   Map toMap() {
     return {
       GenericField.id: id,
+      AskField.boon: boon,
       AskField.creatorID: creatorID,
+      AskField.currency: currency,
       AskField.description: description,
       AskField.deadlineDate: deadlineDate,
-      AskField.targetDonationSum: targetDonationSum,
-      AskField.fullySponsoredDate: fullySponsoredDate,
+      AskField.targetSum: targetSum,
+      AskField.targetMetDate: targetMetDate,
+      AskField.type: type.name, //TODO: Remove ".name" once a FormField is made for this
     };
   }
 
   static Map emptyMap() {
     return {
       GenericField.id: null,
+      AskField.boon: null,
+      AskField.currency: null,
       AskField.description: null,
       AskField.deadlineDate: null,
-      AskField.targetDonationSum: null,
-      AskField.fullySponsoredDate: null,
+      AskField.targetSum: null,
+      AskField.targetMetDate: null,
+      AskField.type: AskType.monetary.name, // TODO: Remove ".name", Currently all Asks are monetary
     };
   }
 }

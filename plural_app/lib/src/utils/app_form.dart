@@ -29,9 +29,7 @@ class AppForm {
   /// [fieldName] if one exists.
   ///
   /// Returns the retrieved value if a matching key is found, else null.
-  String? getError({
-    required String fieldName
-  }) {
+  String? getError({required String fieldName}) {
     if (!errors.containsKey(fieldName)) return null;
 
     return errors[fieldName];
@@ -39,9 +37,7 @@ class AppForm {
 
   /// Retrieves the value in [fields] associated with the given
   /// [fieldName].
-  dynamic getValue({
-    required String fieldName
-  }) {
+  dynamic getValue({required String fieldName}) {
     return fields[fieldName];
   }
 
@@ -57,9 +53,7 @@ class AppForm {
   /// Iterates over the given [errorsMap], where its keys are field names
   /// and its values are the corresponding error messages, and creates
   /// new key-value pairings within [errors].
-  void setErrors({
-    required Map errorsMap
-  }) {
+  void setErrors({required Map errorsMap}) {
     for (var key in errorsMap.keys) {
       setError(fieldName: key, errorMessage: errorsMap[key]);
     }

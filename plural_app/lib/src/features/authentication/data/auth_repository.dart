@@ -73,7 +73,7 @@ class AuthRepository {
     var result = await pb.collection(Collection.userGardenRecords).getList(
       expand: UserGardenRecordField.user,
       filter: "${UserGardenRecordField.garden} = '$currentGardenID'",
-      sort: "user.lastName, user.firstName"
+      sort: "user.lastName,user.firstName"
     );
 
     // TODO: Raise error if result is empty
@@ -163,6 +163,7 @@ class AuthRepository {
     return AppUserSettings(
       id: record[GenericField.id],
       user: currentUser,
+      instructions: record[UserSettingsField.instructions],
       textSize: record[UserSettingsField.textSize]
     );
   }
@@ -187,6 +188,7 @@ class AuthRepository {
     return AppUserSettings(
       id: record[GenericField.id],
       user: currentUser,
+      instructions: record[UserSettingsField.instructions],
       textSize: record[UserSettingsField.textSize]
     );
   }

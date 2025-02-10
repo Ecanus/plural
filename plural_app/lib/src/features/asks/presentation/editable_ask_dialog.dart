@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 // Common Classes
-import 'package:plural_app/src/common_classes/app_form.dart';
+import 'package:plural_app/src/utils/app_form.dart';
 
 // Common Methods
 import 'package:plural_app/src/common_methods/form_validators.dart';
@@ -98,11 +98,11 @@ class _AskDialogEditFormState extends State<AskDialogEditForm> {
                 child: Column(
                   children: [
                     AppCheckboxFormField(
-                      fieldName: AskField.fullySponsoredDate,
+                      fieldName: AskField.targetMetDate,
                       formFieldType: FormFieldType.datetimeNow,
                       modelMap: _askMap,
-                      text: Strings.isAskFullySponsoredLabel,
-                      value: widget.ask.isFullySponsored,
+                      text: Strings.isTargetMetLabel,
+                      value: widget.ask.isTargetMet,
                     ),
                     Row(
                       children: [
@@ -117,10 +117,10 @@ class _AskDialogEditFormState extends State<AskDialogEditForm> {
                         gapW20,
                         Expanded(
                           child: AppTextFormFieldDeprecated(
-                            fieldName: AskField.targetDonationSum,
+                            fieldName: AskField.targetSum,
                             formFieldType: FormFieldType.int,
-                            initialValue: widget.ask.targetDonationSum.toString(),
-                            label: Strings.askTargetDonationSumLabel,
+                            initialValue: widget.ask.targetSum.toString(),
+                            label: Strings.askTargetSumLabel,
                             maxLength: AppMaxLengthValues.max4,
                             modelMap: _askMap,
                             textFieldType: TextFieldType.digitsOnly,

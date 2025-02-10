@@ -3,7 +3,7 @@ import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 
 // Common Classes
-import 'package:plural_app/src/common_classes/app_form.dart';
+import 'package:plural_app/src/utils/app_form.dart';
 
 // Common Widgets
 import 'package:plural_app/src/common_widgets/app_dialog_manager.dart';

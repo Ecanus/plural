@@ -2,7 +2,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
 
 // Common Classes
-import 'package:plural_app/src/common_classes/app_form.dart';
+import 'package:plural_app/src/utils/app_form.dart';
 
 // Constants
 import 'package:plural_app/src/constants/form_values.dart';

@@ -15,9 +15,6 @@ import 'package:plural_app/src/constants/strings.dart';
 // Ask
 import 'package:plural_app/src/features/asks/domain/ask.dart';
 
-// Utils
-import 'package:plural_app/src/utils/app_state.dart';
-
 Future createNonEditableAskDialog({
   required BuildContext context,
   required Ask ask
@@ -80,8 +77,8 @@ class AskDialogViewForm extends StatelessWidget {
                       value: ask.description,
                     ),
                     AppTextFormFieldFilled(
-                      label: Strings.askTargetDonationSumLabel,
-                      value: ask.targetDonationSum.toString(),
+                      label: Strings.askTargetSumLabel,
+                      value: ask.targetSum.toString(),
                     ),
                   ],
                 ),

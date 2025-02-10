@@ -6,7 +6,6 @@ import 'package:plural_app/src/constants/text_themes.dart';
 class AppThemes {
 
   static Color successColor = Color(0xff43BD47);
-  static Color transparentColor = Colors.transparent;
 
   static ColorScheme colorScheme = ColorScheme(
     brightness: Brightness.light,
