@@ -17,10 +17,10 @@ enum AskType { monetary, }
 class Ask {
   Ask({
     required this.id,
-    this.boon,
+    required this.boon,
     required this.creatorID,
     required this.creationDate,
-    this.currency,
+    required this.currency,
     required this.description,
     required this.deadlineDate,
     this.targetMetDate,
@@ -29,10 +29,10 @@ class Ask {
   });
 
   final String id;
-  int? boon;
+  int boon;
   final String creatorID;
   DateTime creationDate;
-  String? currency;
+  String currency;
   String description;
   DateTime deadlineDate;
   DateTime? targetMetDate;
@@ -108,8 +108,7 @@ class Ask {
 
   static Future<List<Ask>> createInstancesFromQuery(
     query,
-    { int? count
-    }) async {
+    { int? count }) async {
       final authRepository = GetIt.instance<AuthRepository>();
 
       var records = query.toJson()[PBKey.items];

@@ -3,24 +3,25 @@ import 'package:flutter/material.dart';
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
 import 'package:plural_app/src/constants/app_values.dart';
+import 'package:plural_app/src/constants/themes.dart';
 
 class AppSnackbars {
   static SnackBar successSnackbar(String mainMessage, String boldMessage) {
     return SnackBar(
-      backgroundColor: Colors.green[400],
+      backgroundColor: AppThemes.snackbarBackgroundColor,
       behavior: SnackBarBehavior.floating,
       content: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           Icon(
             Icons.check,
-            color: Colors.green[900],
+            color: AppThemes.snackbarIconColor,
           ),
           Expanded(
             child: Text.rich(
               textAlign: TextAlign.center,
               TextSpan(
-                style: TextStyle(color: Colors.black),
+                style: TextStyle(color: AppThemes.snackbarTextColor),
                 children: [
                   TextSpan(text: mainMessage),
                   TextSpan(
@@ -37,7 +38,7 @@ class AppSnackbars {
       ),
       duration: Duration(seconds: SnackBarDurations.s9),
       showCloseIcon: true,
-      closeIconColor: Colors.black,
+      closeIconColor: AppThemes.snackbarCloseIconColor,
       width: AppWidths.w600
     );
   }

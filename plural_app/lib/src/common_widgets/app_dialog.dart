@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
+// Common Widgets
+import 'package:plural_app/src/common_widgets/close_dialog_button.dart';
+
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
 import 'package:plural_app/src/constants/app_values.dart';
@@ -37,58 +40,67 @@ class _AppDialogState extends State<AppDialog> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      child: Container(
-        clipBehavior: Clip.antiAlias,
-        constraints: BoxConstraints.expand(
-          width: AppConstraints.c600,
-          height: AppConstraints.c650,
-        ),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(AppBorderRadii.r15),
-        ),
-        child: Column(
-          children: [
-            Expanded(
-              child: ValueListenableBuilder(
-                valueListenable: stateManager.dialogViewNotifier,
-                builder: (BuildContext context, Widget view, Widget? _) {
-                  return view;
-                }
-              )
+      backgroundColor: Colors.transparent,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            constraints: BoxConstraints.expand(
+              width: AppConstraints.c600,
+              height: AppConstraints.c800,
             ),
-            Container(
-              constraints: BoxConstraints.expand(
-                height: AppConstraints.c100,
-                width: AppConstraints.c800,
-              ),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  bottomRight: Radius.circular(AppBorderRadii.r15),
-                  bottomLeft: Radius.circular(AppBorderRadii.r15),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(AppBorderRadii.r15),
+              color: Theme.of(context).colorScheme.surface.withOpacity(
+                AppOpacities.point9),
+            ),
+            child: Column(
+              children: [
+                Expanded(
+                  child: ValueListenableBuilder(
+                    valueListenable: stateManager.dialogViewNotifier,
+                    builder: (BuildContext context, Widget view, Widget? _) {
+                      return view;
+                    }
+                  )
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.onPrimaryColor,
-                    blurRadius: AppDialogValues.blurRadius,
-                    spreadRadius: AppDialogValues.spreadRadius,
-                    offset: AppDialogValues.offset,
+                Container(
+                  constraints: BoxConstraints.expand(
+                    height: AppConstraints.c100,
+                    width: AppConstraints.c800,
                   ),
-                ],
-                color: AppColors.darkGrey2,
-              ),
-              child: Center(
-                child: Text(
-                  widget.viewTitle,
-                  style: TextStyle(
-                    color: AppColors.secondaryColor,
-                    fontSize: AppFontSizes.s25,
-                    fontWeight: FontWeight.bold,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                      bottomRight: Radius.circular(AppBorderRadii.r15),
+                      bottomLeft: Radius.circular(AppBorderRadii.r15),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Theme.of(context).shadowColor,
+                        blurRadius: AppDialogValues.blurRadius,
+                        spreadRadius: AppDialogValues.spreadRadius,
+                        offset: AppDialogValues.offset,
+                      ),
+                    ],
+                    color: Theme.of(context).colorScheme.primaryContainer,
                   ),
-                )
-              )
-            )
-          ],
-        ),
+                  child: Center(
+                    child: Text(
+                      widget.viewTitle,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onPrimary,
+                        fontSize: AppFontSizes.s25,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    )
+                  )
+                ),
+              ],
+            ),
+          ),
+          gapH40,
+          CloseDialogButton()
+        ],
       ),
     );
   }

@@ -32,16 +32,45 @@ class AuthRepository {
   final PocketBase pb;
 
   /// Queries on the [UserGardenRecord] collection, sorted by the [sort] value,
-  /// to retrieve a UserGardenRecord corresponding to the given [userID].
+  /// to retrieve a UserGardenRecord corresponding to the given [userID] and [gardenID].
   ///
   /// Returns an [AppUserGardenRecord] instance corresponding to the retrieved
   /// UserGardenRecord if one is found. Else, returns null.
-  Future<AppUserGardenRecord?> getUserGardenRecordByUserID({
+  Future<AppUserGardenRecord?> getGardenRecord({
     required String userID,
+    required String gardenID,
     sort = "-updated"
   }) async {
     var result = await pb.collection(Collection.userGardenRecords).getList(
       sort: sort,
+      filter: "user = '$userID' && garden = '$gardenID'"
+    );
+
+    // Return null if no UserGardenRecord is found
+    var items = result.toJson()[PBKey.items];
+    if (items.isEmpty) return null;
+    var record = items[0];
+
+    var garden = await GetIt.instance<GardensRepository>().getGardenByID(gardenID);
+    var user = await getUserByID(userID);
+
+    return AppUserGardenRecord(
+      id: record[GenericField.id],
+      user: user,
+      garden: garden
+    );
+  }
+
+  /// Queries on the [UserGardenRecord] collection to retrieve the most recently
+  /// updated UserGardenRecord corresponding to the given [userID].
+  ///
+  /// Returns an [AppUserGardenRecord] instance corresponding to the retrieved
+  /// UserGardenRecord if one is found. Else, returns null.
+  Future<AppUserGardenRecord?> getMostRecentGardenRecordByUserID({
+    required String userID,
+  }) async {
+    var result = await pb.collection(Collection.userGardenRecords).getList(
+      sort: "-updated",
       filter: "user = '$userID'"
     );
 
@@ -50,8 +79,8 @@ class AuthRepository {
     if (items.isEmpty) return null;
 
     var record = items[0];
-    String gardenID = record[UserGardenRecordField.gardenID];
 
+    var gardenID = record[UserGardenRecordField.gardenID];
     var garden = await GetIt.instance<GardensRepository>().getGardenByID(gardenID);
     var user = await getUserByID(userID);
 
@@ -73,7 +102,7 @@ class AuthRepository {
     var result = await pb.collection(Collection.userGardenRecords).getList(
       expand: UserGardenRecordField.user,
       filter: "${UserGardenRecordField.garden} = '$currentGardenID'",
-      sort: "user.lastName,user.firstName"
+      sort: "user.username"
     );
 
     // TODO: Raise error if result is empty
@@ -85,8 +114,8 @@ class AuthRepository {
       var userInstance = AppUser(
         id: record[UserGardenRecordField.userID],
         email: userRecord[UserField.email],
-        firstName: userRecord[UserField.firstName],
-        lastName: userRecord[UserField.lastName]
+        instructions: userRecord[UserField.instructions],
+        username: userRecord[UserField.username],
       );
 
       instances.add(userInstance);
@@ -101,7 +130,7 @@ class AuthRepository {
   /// Returns an [AppUser] instance.
   Future<AppUser> getUserByID(String id) async {
     var result = await pb.collection(Collection.users).getFirstListItem(
-      "${GenericField.id} = '$id'"
+      "${GenericField.id} = '$id'",
     );
 
     // TODO: Raise error if result is empty
@@ -110,8 +139,8 @@ class AuthRepository {
     return AppUser(
       id: record[GenericField.id],
       email: record[UserField.email],
-      firstName: record[UserField.firstName],
-      lastName: record[UserField.lastName]
+      username: record[UserField.username],
+      instructions: record[UserField.instructions]
     );
   }
 
@@ -163,7 +192,6 @@ class AuthRepository {
     return AppUserSettings(
       id: record[GenericField.id],
       user: currentUser,
-      instructions: record[UserSettingsField.instructions],
       textSize: record[UserSettingsField.textSize]
     );
   }
@@ -188,9 +216,38 @@ class AuthRepository {
     return AppUserSettings(
       id: record[GenericField.id],
       user: currentUser,
-      instructions: record[UserSettingsField.instructions],
       textSize: record[UserSettingsField.textSize]
     );
+  }
+
+  /// Subscribes to any changes made in the [User] collection to any [User] record
+  /// associated with the [Garden] with the given [gardenID].
+  ///
+  /// Calls the given [callback] method whenever a change is made.
+  Future<Function> subscribeTo(String gardenID, Function callback) {
+    Future<Function> unsubscribeFunc = pb.collection(Collection.users)
+      .subscribe(Subscribe.all, (e) async {
+        var user = e.record!.toJson();
+
+        // Only respond to changes to users in the given gardenID
+        var gardenRecord = await getGardenRecord(
+          userID: user[GenericField.id],
+          gardenID: gardenID,
+        );
+
+        if (gardenRecord == null) return;
+
+        switch (e.action) {
+          case EventAction.create:
+            callback();
+          case EventAction.delete:
+            callback();
+          case EventAction.update:
+            callback();
+        }
+      });
+
+    return unsubscribeFunc;
   }
 }
 

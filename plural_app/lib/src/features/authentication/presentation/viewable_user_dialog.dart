@@ -29,14 +29,14 @@ class UserDialogViewForm extends StatelessWidget {
           child: ListView(
             padding: const EdgeInsets.all(AppPaddings.p35),
             children: [
-              AppTextFormFieldFilled(
-                label: Strings.userFirstNameLabel,
-                value: user.firstName
-              ),
-              AppTextFormFieldFilled(
-                label: Strings.userLastNameLabel,
-                value: user.lastName
-              ),
+              // AppTextFormFieldFilled(
+              //   label: Strings.userFirstNameLabel,
+              //   value: user.firstName
+              // ),
+              // AppTextFormFieldFilled(
+              //   label: Strings.userLastNameLabel,
+              //   value: user.lastName
+              // ),
             ],
           ),
         ),

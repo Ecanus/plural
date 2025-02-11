@@ -72,16 +72,10 @@ Future<void> setInitialAppStateValues(userID) async {
   // User
   appState.currentUser = user;
 
-  var latestGardenRecord = await GetIt.instance<AuthRepository>()
-      .getUserGardenRecordByUserID(userID: user.id);
+  var mostRecentGardenRecord = await GetIt.instance<AuthRepository>()
+      .getMostRecentGardenRecordByUserID(userID: user.id);
 
-  if (latestGardenRecord != null) {
-    // Latest Garden Record
-    appState.currentUserLatestGardenRecord = latestGardenRecord;
-
-    // Garden
-    appState.currentGarden = latestGardenRecord.garden;
-  }
+  appState.currentGarden = mostRecentGardenRecord?.garden;
 }
 
 /// Resets the [GetIt] instance used in the application.

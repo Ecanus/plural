@@ -5,20 +5,16 @@ class AppUser {
   AppUser({
     required this.id,
     required this.email,
-    required this.firstName,
-    required this.lastName,
+    required this.instructions,
+    required this.username,
   });
 
   final String id;
   final String email;
-  final String firstName;
-  final String lastName;
+  String instructions;
+  final String username;
 
   AppUserGardenRecord? latestGardenRecord;
-
-  String get fullName {
-    return "$firstName $lastName";
-  }
 
   @override
   bool operator ==(Object other) {

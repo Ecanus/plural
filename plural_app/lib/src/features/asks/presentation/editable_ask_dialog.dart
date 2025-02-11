@@ -132,7 +132,7 @@ class _AskDialogEditFormState extends State<AskDialogEditForm> {
                       fieldName: AskField.description,
                       initialValue: widget.ask.description,
                       label: Strings.askDescriptionLabel,
-                      maxLength: AppMaxLengthValues.max250,
+                      maxLength: AppMaxLengthValues.max400,
                       maxLines: null,
                       modelMap: _askMap,
                     ),

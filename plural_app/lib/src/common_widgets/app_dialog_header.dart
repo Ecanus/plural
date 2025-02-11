@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 
-// Constants
-import 'package:plural_app/src/constants/app_sizes.dart';
-
 class AppDialogHeader extends StatelessWidget {
   const AppDialogHeader({
     super.key,
     this.firstHeaderButton,
     this.secondHeaderButton,
     this.thirdHeaderButton,
+    this.widget,
   });
+
+  final Widget? widget;
 
   final Widget? firstHeaderButton;
   final Widget? secondHeaderButton;
@@ -19,26 +19,16 @@ class AppDialogHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     List<Widget> buttons = [];
 
+    // TODO: Remove all buttonWidgets from this app
     if (firstHeaderButton != null) buttons.add(firstHeaderButton!);
     if (secondHeaderButton != null) buttons.add(secondHeaderButton!);
     if (thirdHeaderButton != null) buttons.add(thirdHeaderButton!);
 
     return Container(
-      clipBehavior: Clip.antiAlias,
-      constraints: BoxConstraints.expand(
-        height: AppConstraints.c100,
-        width: AppConstraints.c800,
-      ),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.only(
-          bottomRight: Radius.circular(AppBorderRadii.r15),
-          bottomLeft: Radius.circular(AppBorderRadii.r15),
-        ),
-      ),
       child: Center(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: buttons,
+          children: [widget!],
         )
       ),
     );

@@ -57,8 +57,8 @@ class _ForgotPasswordDialogState extends State<ForgotPasswordDialog> {
               height: AppConstraints.c400,
             ),
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(AppBorderRadii.r15),
+              color: Theme.of(context).colorScheme.surface,
             ),
             child: Form(
               key: _formKey,

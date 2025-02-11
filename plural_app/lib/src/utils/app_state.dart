@@ -8,7 +8,6 @@ import 'package:plural_app/src/features/asks/domain/ask.dart';
 
 // Auth
 import "package:plural_app/src/features/authentication/domain/app_user.dart";
-import 'package:plural_app/src/features/authentication/domain/app_user_garden_record.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_values.dart';
@@ -21,7 +20,6 @@ class AppState with ChangeNotifier {
 
   Garden? _currentGarden;
   AppUser? _currentUser;
-  AppUserGardenRecord? _currentUserLatestGardenRecord;
 
   // _currentGarden
   Garden? get currentGarden => _currentGarden;
@@ -34,15 +32,6 @@ class AppState with ChangeNotifier {
   AppUser? get currentUser => _currentUser;
   set currentUser(AppUser? newUser) {
     _currentUser = newUser;
-    notifyListeners();
-  }
-
-  // _currentUserLatestGardenRecord
-  AppUserGardenRecord? get currentUserLatestGardenRecord {
-    return _currentUserLatestGardenRecord;
-  }
-  set currentUserLatestGardenRecord(AppUserGardenRecord? newRecord) {
-    _currentUserLatestGardenRecord = newRecord;
     notifyListeners();
   }
 

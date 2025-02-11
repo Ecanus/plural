@@ -38,25 +38,6 @@ class AppConstraints {
   static const c1000 = 1000.0;
 }
 
-class AppWidths {
-  static const w1point5 = 1.5;
-  static const w2 = 2.0;
-  static const w3 = 3.0;
-  static const w25 = 25.0;
-  static const w60 = 60.0;
-  static const w150 = 150.0;
-  static const w175 = 175.0;
-  static const w200 = 200.0;
-  static const w600 = 600.0;
-}
-
-class AppHeights {
-  static const h25 = 25.0;
-  static const h40 = 40.0;
-  static const h60 = 60.0;
-  static const h500 = 500;
-}
-
 class AppElevations {
   static const e5 = 5.0;
   static const e7 = 7.0;
@@ -70,22 +51,38 @@ class AppFlexes {
   static const f6 = 6;
 }
 
+class AppFontLetterSpacing {
+  static const s0p5 = 0.5;
+}
+
 class AppFontSizes {
   static const s10 = 10.0;
   static const s12 = 12.0;
   static const s13 = 13.0;
   static const s14 = 14.0;
+  static const s15 = 15.0;
+  static const s16 = 16.0;
+  static const s20 = 20.0;
   static const s25 = 25.0;
+  static const s30 = 30.0;
 }
 
-class AppFontLetterSpacing {
-  static const s0p5 = 0.5;
+class AppHeights {
+  static const h25 = 25.0;
+  static const h40 = 40.0;
+  static const h60 = 60.0;
+  static const h500 = 500;
 }
 
 class AppIconSizes {
   static const s15 = 15.0;
+  static const s25 = 25.0;
   static const s30 = 30.0;
   static const s35 = 35.0;
+}
+
+class AppIndents {
+  static const i200 = 200.0;
 }
 
 class AppMargins {
@@ -107,6 +104,7 @@ class AppPaddings {
   static const p30 = 30.0;
   static const p35 = 35.0;
   static const p40 = 40.0;
+  static const p45 = 45.0;
   static const p50 = 50.0;
   static const p60 = 60.0;
   static const p80 = 80.0;
@@ -118,6 +116,24 @@ class AppPositions {
 
 class AppRunSpacings {
   static const rs20 = 20.0;
+}
+
+// Timeline Tile Values
+class AppTimelineSizes {
+  static const indicatorWidth = 15.0;
+  static const timelineThickness = 4.0;
+}
+
+class AppWidths {
+  static const w1point5 = 1.5;
+  static const w2 = 2.0;
+  static const w3 = 3.0;
+  static const w25 = 25.0;
+  static const w60 = 60.0;
+  static const w150 = 150.0;
+  static const w175 = 175.0;
+  static const w200 = 200.0;
+  static const w600 = 600.0;
 }
 
 // Constant gap widths
@@ -144,9 +160,3 @@ const flex2 = Expanded(flex: AppFlexes.f2, child: SizedBox());
 const flex3 = Expanded(flex: AppFlexes.f3, child: SizedBox());
 const flex4 = Expanded(flex: AppFlexes.f4, child: SizedBox());
 const flex6 = Expanded(flex: AppFlexes.f6, child: SizedBox());
-
-// Timeline Tile Values
-class AppTimelineSizes {
-  static const indicatorWidth = 15.0;
-  static const timelineThickness = 4.0;
-}

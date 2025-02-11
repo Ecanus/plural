@@ -3,6 +3,7 @@ import 'package:get_it/get_it.dart';
 
 // Asks
 import 'package:plural_app/src/features/asks/data/asks_repository.dart';
+import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
 
 // Garden
 import 'package:plural_app/src/features/gardens/data/gardens_repository.dart';
@@ -21,8 +22,9 @@ class GardenPage extends StatefulWidget {
 }
 
 class _GardenPageState extends State<GardenPage> {
-  late Future<Function> gardenUnsubscribe;
-  late Future<Function> askUnsubscribe;
+  late Future<Function> asksUnsubscribe;
+  late Future<Function> gardensUnsubscribe;
+  late Future<Function> usersUnsubscribe;
 
   @override
   void initState() {
@@ -31,10 +33,15 @@ class _GardenPageState extends State<GardenPage> {
     var appState = GetIt.instance<AppState>();
     var currentGarden = appState.currentGarden!;
 
-    gardenUnsubscribe = GetIt.instance<GardensRepository>().subscribeTo(
+    asksUnsubscribe = GetIt.instance<AsksRepository>().subscribeTo(
+      currentGarden.id,
+      appState.notifyAllListeners
+    );
+
+    gardensUnsubscribe = GetIt.instance<GardensRepository>().subscribeTo(
       currentGarden.id);
 
-    askUnsubscribe = GetIt.instance<AsksRepository>().subscribeTo(
+    usersUnsubscribe = GetIt.instance<AuthRepository>().subscribeTo(
       currentGarden.id,
       appState.notifyAllListeners
     );

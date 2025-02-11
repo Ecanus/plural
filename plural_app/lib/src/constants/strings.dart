@@ -31,11 +31,11 @@ class SignInField {
 class UserField {
   static const email = "email";
   static const firstName = "firstName";
+  static const instructions = "instructions";
   static const lastName = "lastName";
-  static const latestGardenRecordID = "latestGardenRecord";
-  static const username = "username";
   static const password = "password";
   static const passwordConfirm = "passwordConfirm";
+  static const username = "username";
 }
 
 class UserGardenRecordField {
@@ -49,7 +49,6 @@ class UserGardenRecordField {
 class UserSettingsField {
   static const user = "user";
   static const userID = "user";
-  static const instructions = "instructions";
   static const textSize = "textSize";
 }
 
@@ -120,10 +119,14 @@ class Strings {
   static const createLabel = "Create";
   static const updateLabel = "Update";
 
-  static const askTargetSumLabel = "Target Sum";
+  static const askBoonLabel = "Boon";
+  static const askCreatorLabel = "Creator";
   static const askDescriptionLabel = "Description";
   static const askDeadlineDateLabel = "Deadline Date";
-  static const askCreatorLabel = "Creator";
+  static const askTargetSumLabel = "Target Sum";
+  static const askUsernameLabel = "Username";
+
+  static const userInstructionsLabel = "Instructions";
 
   // Date Formatting
   static const dateformatYMMdd = "y-MM-dd";
@@ -183,7 +186,7 @@ class SnackBarMessages {
 // Instructions
 class SignInInstructions {
   static const forgotPassword = (
-    "Please enter the email address to send password reset instructions to.");
+    "Please enter the email address to send password reset instructions to");
 }
 
 // Exceptions
@@ -199,4 +202,10 @@ class ListedAskTileText {
 
 class Titles {
   static const pluralApp = "Plural App";
+}
+
+class Tooltips {
+  static const boon = "The user's ideal donation amount";
+  static const markAsSponsored = "Click to mark as sponsored";
+  static const unmarkAsSponsored = "Click to unmark as sponsored";
 }

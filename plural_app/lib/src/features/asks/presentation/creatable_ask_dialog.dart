@@ -106,7 +106,7 @@ class _AskDialogCreateFormState extends State<AskDialogCreateForm> {
                     AppTextFormFieldDeprecated(
                       fieldName: AskField.description,
                       label: Strings.askDescriptionLabel,
-                      maxLength: AppMaxLengthValues.max250,
+                      maxLength: AppMaxLengthValues.max400,
                       maxLines: null,
                       modelMap: _askMap,
                     ),

@@ -34,7 +34,7 @@ class AppMaxLengthValues {
   static const max50 = 50;
   static const max75 = 75;
   static const max200 = 200;
-  static const max250 = 250;
+  static const max400 = 400;
 }
 
 class AppMaxLinesValues {
@@ -43,6 +43,8 @@ class AppMaxLinesValues {
 
 class AppOpacities {
   static const point3 = 0.3;
+  static const point6 = 0.6;
+  static const point9 = 0.9;
 }
 
 class AppRotations {

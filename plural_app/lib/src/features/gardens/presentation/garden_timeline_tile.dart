@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:plural_app/src/constants/strings.dart';
 import 'package:timeline_tile/timeline_tile.dart';
 
 // Asks
 import 'package:plural_app/src/features/asks/domain/ask.dart';
 import 'package:plural_app/src/features/asks/presentation/non_editable_ask_dialog.dart';
 import 'package:plural_app/src/features/asks/presentation/editable_ask_dialog.dart';
+import 'package:plural_app/src/features/asks/presentation/ask_time_left_text.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
@@ -206,27 +206,7 @@ class TileContents extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text.rich(
-                    TextSpan(
-                      children: [
-                        TextSpan(
-                          style: TextStyle(color: textColor),
-                          text: "${GardenPageLabels.tileTimeLeftBrace} "
-                        ),
-                        TextSpan(
-                          style: TextStyle(
-                            color: textColor,
-                            fontWeight: FontWeight.bold
-                          ),
-                          text: ask.timeRemainingString,
-                        ),
-                        TextSpan(
-                          style: TextStyle(color: textColor),
-                          text: " ${GardenPageLabels.tileTimeLeftBrace}"
-                        ),
-                      ]
-                    )
-                  ),
+                  AskTimeLeftText(textColor: textColor, ask: ask),
                 ],
               ),
               gapH10,
@@ -242,9 +222,7 @@ class TileContents extends StatelessWidget {
                 ]
               ),
               gapH20,
-              isSponsoredByCurrentUser ?
-                TileIsSponsoredIcon(hideContent: hideContent,)
-                : SizedBox(),
+              TileIsSponsoredIcon(hideContent: !isSponsoredByCurrentUser || hideContent,) // Always "show" the icon else the icon in the TileViewButton will misalign on redraws of the GardenTimeline
             ]
           ),
         ),

@@ -57,6 +57,50 @@ class AsksRepository {
     return await Ask.createInstancesFromQuery(result);
   }
 
+  /// Appends the [User] record which corresponds to the given [userID] to the list
+  /// of sponsors of the [Ask] record which corresponds to the given [askID].
+  Future addSponsor(String askID, String userID) async {
+    var result = await pb.collection(Collection.asks).getList(
+      filter: "${GenericField.id}='$askID'"
+    );
+
+    // If ask already contains sponsor, return
+    var record = result.toJson()[PBKey.items][0];
+    var currentSponsors = List<String>.from(record[AskField.sponsors]);
+    if (currentSponsors.contains(userID)) return;
+
+    // Else update
+    currentSponsors.add(userID);
+    var body = { AskField.sponsors: currentSponsors};
+
+    await pb.collection(Collection.asks).update(
+      askID,
+      body: body,
+    );
+  }
+
+  /// Appends the [User] record which corresponds to the given [userID] to the list
+  /// of sponsors of the [Ask] record which corresponds to the given [askID].
+  Future removeSponsor(String askID, String userID) async {
+    var result = await pb.collection(Collection.asks).getList(
+      filter: "${GenericField.id}='$askID'"
+    );
+
+    // If ask does not contain sponsor, return
+    var record = result.toJson()[PBKey.items][0];
+    var currentSponsors = List<String>.from(record[AskField.sponsors]);
+    if (!currentSponsors.contains(userID)) return;
+
+    // Else update
+    currentSponsors.remove(userID);
+    var body = { AskField.sponsors: currentSponsors};
+
+    await pb.collection(Collection.asks).update(
+      askID,
+      body: body,
+    );
+  }
+
   /// Queries on the [Ask] collection to update the record corresponding
   /// to information in the [map] parameter.
   Future update(Map map) async {
@@ -94,7 +138,7 @@ class AsksRepository {
   }
 
   /// Subscribes to any changes made in the [Ask] collection to any [Ask] record
-  /// associated to the [Garden] with the given [gardenID].
+  /// associated with the [Garden] with the given [gardenID].
   ///
   /// Calls the given [callback] method whenever a change is made.
   Future<Function> subscribeTo(String gardenID, Function callback) {

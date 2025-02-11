@@ -26,7 +26,7 @@ class ListedUserTile extends StatelessWidget {
       elevation: AppElevations.e7,
       child: ListTile(
         title: Text(
-          user.fullName,
+          user.username,
           style: TextStyle(fontWeight: FontWeight.w500),
         ),
         subtitle: Text(""),
