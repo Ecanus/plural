@@ -10,7 +10,6 @@ import 'package:plural_app/src/common_methods/form_validators.dart';
 import 'package:plural_app/src/common_widgets/app_text_form_field.dart';
 import 'package:plural_app/src/common_widgets/app_date_picker_form_field.dart';
 import 'package:plural_app/src/common_widgets/app_dialog.dart';
-import 'package:plural_app/src/common_widgets/app_dialog_header.dart';
 import 'package:plural_app/src/common_widgets/app_dialog_header_button.dart';
 
 // Constants
@@ -69,10 +68,6 @@ class _AskDialogCreateFormState extends State<AskDialogCreateForm> {
 
     return Column(
       children: [
-        AppDialogHeader(
-          firstHeaderButton: ListedAsksButton(),
-          secondHeaderButton: submitFormButton
-        ),
         Expanded(
           child: ListView(
             padding: const EdgeInsets.all(AppPaddings.p35),
@@ -83,13 +78,13 @@ class _AskDialogCreateFormState extends State<AskDialogCreateForm> {
                   children: [
                     Row(
                       children: [
-                        Expanded(
-                          child: AppDatePickerFormField(
-                            fieldName: AskField.deadlineDate,
-                            label: Strings.askDeadlineDateLabel,
-                            modelMap: _askMap,
-                          ),
-                        ),
+                        // Expanded(
+                        //   child: AppDatePickerFormField(
+                        //     fieldName: AskField.deadlineDate,
+                        //     label: Strings.askDeadlineDateLabel,
+                        //     modelMap: _askMap,
+                        //   ),
+                        // ),
                         gapW20,
                         Expanded(
                           child: AppTextFormFieldDeprecated(

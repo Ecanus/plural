@@ -7,8 +7,7 @@ import 'package:plural_app/src/constants/app_values.dart';
 class AppThemes {
 
   static Color successColor = Color(0xff43BD47);
-
-  static Color askTargetSumColor = Color(0xff77BB7A);
+  static Color positiveColor = Color(0xff77BB7A);
 
   // Snackbar
   static Color snackbarBackgroundColor = Colors.green[400]!;
@@ -22,6 +21,8 @@ class AppThemes {
     primary: Color(0xff6572C5),
     primaryContainer: Color(0xff495394),
     onPrimary: Color(0xffD8D8D8),
+    onPrimaryContainer: Colors.white,
+    onPrimaryFixed: Colors.grey,
     secondary: Color(0xff232531),
     secondaryFixed: Color(0xff292B38),
     onSecondary: Color(0xffC7C7C7),
@@ -32,6 +33,7 @@ class AppThemes {
     onError: Color(0xffC7C7C7),
     surface: Color(0xff1C2229),
     onSurface: Color(0xffD8D8D8),
+    surfaceBright: Color(0xff2E324A)
   );
 
   static ThemeData standard = ThemeData(

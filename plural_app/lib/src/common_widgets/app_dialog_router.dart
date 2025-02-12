@@ -28,54 +28,54 @@ import 'package:plural_app/src/features/gardens/presentation/listed_gardens_dial
 // Utils
 import 'package:plural_app/src/utils/app_state.dart';
 
-class AppDialogManager {
+class AppDialogRouter {
 
   Widget? view;
-  ValueNotifier<Widget> dialogViewNotifier = ValueNotifier<Widget>(Container());
+  ValueNotifier<Widget> viewNotifier = ValueNotifier<Widget>(SizedBox());
+  ValueNotifier<List<Widget>> viewFooterBufferNotifier = ValueNotifier<List<Widget>>([]);
+  ValueNotifier<String> viewFooterNotifier = ValueNotifier<String>("");
 
   /// Asks
   void showCreatableAskDialogView() {
-    dialogViewNotifier.value = AskDialogCreateForm();
+    viewNotifier.value = AskDialogCreateForm();
   }
 
   void showEditableAskDialogView(Ask ask, {Widget? firstHeaderButton}) {
-    dialogViewNotifier.value =
-      AskDialogEditForm(
-        ask: ask,
-        firstHeaderButton: firstHeaderButton,
-      );
+    viewNotifier.value = AskDialogEditForm(ask: ask);
+    viewFooterBufferNotifier.value = [];
+    viewFooterNotifier.value = "";
   }
 
   Future<void> showAskDialogListView() async {
     final listedAskTiles = await getListedAskTilesByAsks();
-    dialogViewNotifier.value = AskDialogList(listedAskTiles: listedAskTiles);
+    viewNotifier.value = AskDialogList(listedAskTiles: listedAskTiles);
   }
 
   /// Auth
   void showViewableUserDialogView(AppUser user) {
-    dialogViewNotifier.value = UserDialogViewForm(user: user);
+    viewNotifier.value = UserDialogViewForm(user: user);
   }
 
   Future<void> showUserDialogListView() async {
     final listedUserTiles = await getListedUserTilesByUsers();
-    dialogViewNotifier.value = UserDialogList(listedUserTiles: listedUserTiles);
+    viewNotifier.value = UserDialogList(listedUserTiles: listedUserTiles);
   }
 
   Future<void> showUserSettingsDialogView({AppUserSettings? userSettings}) async {
     userSettings = userSettings ??
       await GetIt.instance<AuthRepository>().getCurrentUserSettings();
 
-    dialogViewNotifier.value = UserSettingsDialog(userSettings: userSettings);
+    viewNotifier.value = UserSettingsDialog(userSettings: userSettings);
   }
 
   /// Gardens
   void showCreatableGardenDialogView() {
-    dialogViewNotifier.value = GardenDialogCreateForm();
+    viewNotifier.value = GardenDialogCreateForm();
   }
 
   Future<void> showGardenDialogListView() async {
     final listedGardenTiles = await getListedGardenTilesByUser();
-    dialogViewNotifier.value = GardenDialogList(listedGardenTiles: listedGardenTiles);
+    viewNotifier.value = GardenDialogList(listedGardenTiles: listedGardenTiles);
   }
 
   Future<void> showGardenSettingsDialogView() async {
@@ -90,10 +90,10 @@ class AppDialogManager {
   }
 
   Future<void> showEditableGardenDialogView(Garden garden) async {
-    dialogViewNotifier.value = GardenDialogEditForm(garden: garden);
+    viewNotifier.value = GardenDialogEditForm(garden: garden);
   }
 
   Future<void> showViewableGardenDialogView(Garden garden) async {
-    dialogViewNotifier.value = GardenDialogViewForm(garden: garden);
+    viewNotifier.value = GardenDialogViewForm(garden: garden);
   }
 }

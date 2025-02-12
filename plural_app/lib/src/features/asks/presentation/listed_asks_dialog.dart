@@ -2,11 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
 // Common Widgets
-import 'package:plural_app/src/common_widgets/close_dialog_button.dart';
-import 'package:plural_app/src/common_widgets/app_dialog_manager.dart';
+import 'package:plural_app/src/common_widgets/app_dialog_router.dart';
 import 'package:plural_app/src/common_widgets/app_dialog.dart';
-import 'package:plural_app/src/common_widgets/app_dialog_header.dart';
-import 'package:plural_app/src/common_widgets/app_dialog_header_button.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
@@ -24,6 +21,7 @@ Future createListedAsksDialog(BuildContext context) async {
       context: context,
       builder: (BuildContext context) {
         return AppDialog(
+          buttons: [RouteToCreateAskViewButton()],
           view: AskDialogList(listedAskTiles: listedAskTiles),
           viewTitle: Strings.asksViewTitle,
         );
@@ -42,21 +40,8 @@ class AskDialogList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final stateManager = GetIt.instance<AppDialogManager>();
-
-    final Widget creatableAskViewButton = AppDialogHeaderButton(
-      buttonNotifier: ValueNotifier<bool>(true),
-      onPressed: () { stateManager.showCreatableAskDialogView(); },
-      icon: Icon(Icons.add_comment),
-      label: Strings.newAskLabel
-    );
-
     return Column(
       children: [
-        AppDialogHeader(
-          firstHeaderButton: CloseDialogButton(),
-          secondHeaderButton: creatableAskViewButton,
-        ),
         Expanded(
           child: ListView(
             padding: const EdgeInsets.all(AppPaddings.p35),
@@ -67,3 +52,26 @@ class AskDialogList extends StatelessWidget {
     );
   }
 }
+
+class RouteToCreateAskViewButton extends StatelessWidget {
+
+  @override
+  Widget build(BuildContext context) {
+    final appDialogRouter = GetIt.instance<AppDialogRouter>();
+
+    return Tooltip(
+      message: Strings.createAskLabel,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Theme.of(context).colorScheme.surface,
+          elevation: AppElevations.e0,
+          iconColor: Theme.of(context).colorScheme.onPrimary,
+          shape: CircleBorder(),
+        ),
+        onPressed: () => appDialogRouter.showCreatableAskDialogView(),
+        child: Icon(Icons.add)
+      ),
+    );
+  }
+}
+

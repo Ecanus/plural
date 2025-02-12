@@ -98,6 +98,11 @@ class SignInLabels {
   static const usernameOrEmail = "Username or Email";
 }
 
+class AskDialogLabels {
+  static const isVisibleOnTimeline = "Is visible on timeline";
+  static const isNotVisibleOnTimeline = "Is not visible on timeilne";
+}
+
 // Strings
 class Strings {
 
@@ -105,17 +110,17 @@ class Strings {
   static const asksViewTitle = "Asks";
   static const asksListButtonTooltip = "Asks List";
 
-  static const viewableAskDialogTitle = "View Ask";
+  static const nonEditableAskDialogTitle = "View Ask";
   static const editableAskDialogTitle = "Edit Ask";
   static const creatableAskDialogTitle = "Create Ask";
 
   static const isAskSponsoredLabel = "Is Sponsored";
-  static const isTargetMetLabel = "Is Target Met";
+  static const isTargetMetLabel = "Is Target met";
 
   static const selectDateLabel = "Select Date";
 
   static const closeLabel = "Close Window";
-  static const newAskLabel = "New Ask";
+  static const createAskLabel = "Create New Ask";
   static const createLabel = "Create";
   static const updateLabel = "Update";
 
@@ -179,8 +184,10 @@ class ErrorMessages {
 }
 
 class SnackBarMessages {
-  static const sentPasswordResetEmail = "Password reset instructions have been sent to ";
-  static const sentUserVerificationEmail = "A verification email has been sent to ";
+  static const sentPasswordResetEmail = "Password reset instructions have been sent to";
+  static const sentUserVerificationEmail = "A verification email has been sent to";
+
+  static const askSponsored = "Ask successfully sponsored!";
 }
 
 // Instructions

@@ -47,6 +47,16 @@ class Ask {
     return DateFormat(Strings.dateformatYMMdd).format(deadlineDate);
   }
 
+  String get listedDescription {
+    var limit = AppMaxLengthValues.max30;
+
+    if (description.length > limit) {
+      return "${description.substring(0, limit)}...";
+    } else {
+      return description;
+    }
+  }
+
   String get truncatedDescription {
     var limit = AppMaxLengthValues.max200;
 
@@ -55,6 +65,10 @@ class Ask {
     } else {
       return description;
     }
+  }
+
+  bool get isDeadlinePassed {
+    return deadlineDate.isBefore(DateTime.now());
   }
 
   bool get isTargetMet {
@@ -82,6 +96,9 @@ class Ask {
     return "$minutesLeft minute left";
   }
 
+  bool get isOnTimeline {
+    return GetIt.instance<AppState>().timelineAsks!.contains(this);
+  }
   bool get isCreatedByCurrentUser {
     return creatorID == GetIt.instance<AppState>().currentUserID!;
   }
@@ -108,7 +125,8 @@ class Ask {
 
   static Future<List<Ask>> createInstancesFromQuery(
     query,
-    { int? count }) async {
+    { int? count }
+  ) async {
       final authRepository = GetIt.instance<AuthRepository>();
 
       var records = query.toJson()[PBKey.items];
@@ -184,4 +202,14 @@ class Ask {
       AskField.type: AskType.monetary.name, // TODO: Remove ".name", Currently all Asks are monetary
     };
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is Ask && other.id == id;
+  }
+
+  @override
+  int get hashCode => id.hashCode;
 }

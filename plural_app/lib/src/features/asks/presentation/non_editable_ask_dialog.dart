@@ -3,7 +3,7 @@ import 'package:get_it/get_it.dart';
 
 // Common Widgets
 import 'package:plural_app/src/common_widgets/app_dialog.dart';
-import 'package:plural_app/src/common_widgets/app_dialog_header.dart';
+import 'package:plural_app/src/common_widgets/app_snackbars.dart';
 import 'package:plural_app/src/common_widgets/app_tooltip_icon.dart';
 
 // Constants
@@ -29,7 +29,7 @@ Future createNonEditableAskDialog({
       builder: (BuildContext context) {
         return AppDialog(
           view: AskDialogView(ask: ask),
-          viewTitle: Strings.viewableAskDialogTitle,
+          viewTitle: Strings.nonEditableAskDialogTitle,
         );
       }
     );
@@ -47,9 +47,7 @@ class AskDialogView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        AppDialogHeader(
-          widget: AskDialogViewHeader(ask: ask),
-        ),
+        NonEditableAskHeader(ask: ask),
         Expanded(
           child: ListView(
             padding: const EdgeInsets.all(AppPaddings.p45),
@@ -93,18 +91,18 @@ class AskDialogView extends StatelessWidget {
   }
 }
 
-class AskDialogViewHeader extends StatefulWidget {
-  const AskDialogViewHeader({
+class NonEditableAskHeader extends StatefulWidget {
+  const NonEditableAskHeader({
     required this.ask,
   });
 
   final Ask ask;
 
   @override
-  State<AskDialogViewHeader> createState() => _AskDialogViewHeaderState();
+  State<NonEditableAskHeader> createState() => _NonEditableAskHeaderState();
 }
 
-class _AskDialogViewHeaderState extends State<AskDialogViewHeader> {
+class _NonEditableAskHeaderState extends State<NonEditableAskHeader> {
   late bool isSponsored;
 
   @override
@@ -114,13 +112,22 @@ class _AskDialogViewHeaderState extends State<AskDialogViewHeader> {
     isSponsored = widget.ask.isSponsoredByCurrentUser;
   }
 
-  Future<void> isSponsoredToggle(bool value) async {
+  @override
+  Widget build(BuildContext context) {
+
+    Future<void> isSponsoredToggle(bool value) async {
     var asksRepository = GetIt.instance<AsksRepository>();
     var currentUserID = GetIt.instance<AppState>().currentUserID!;
 
-
     if (value) {
       await asksRepository.addSponsor(widget.ask.id, currentUserID);
+
+      var snackBar = AppSnackbars.getSuccessSnackbar(
+        SnackBarMessages.askSponsored,
+        duration: 3,
+        showCloseIcon: false);
+
+      if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(snackBar);
     } else {
       await asksRepository.removeSponsor(widget.ask.id, currentUserID);
     }
@@ -128,8 +135,6 @@ class _AskDialogViewHeaderState extends State<AskDialogViewHeader> {
     setState(() { isSponsored = value; });
   }
 
-  @override
-  Widget build(BuildContext context) {
     WidgetStateProperty<Icon> thumbIcon =
       WidgetStateProperty.resolveWith<Icon>(
         (Set<WidgetState> states) {
@@ -155,41 +160,44 @@ class _AskDialogViewHeaderState extends State<AskDialogViewHeader> {
         }
       );
 
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        gapH35,
-        Row(
-          children: [
-            Switch(
-              thumbColor: thumbColor,
-              thumbIcon: thumbIcon,
-              value: isSponsored,
-              onChanged: (bool value) { isSponsoredToggle(value); },
-            ),
-            gapW5,
-            Tooltip(
-              message: isSponsored ?
-                Tooltips.unmarkAsSponsored : Tooltips.markAsSponsored,
-              child: AppTooltipIcon()
-            )
-          ],
-        ),
-        gapH20,
-        AskTimeLeftText(
-          ask: widget.ask,
-          fontSize: AppFontSizes.s20,
-          textColor: Theme.of(context).colorScheme.onPrimary,
-        ),
-        Text(
-          "${widget.ask.targetSum.toString()} ${widget.ask.currency}",
-          style: TextStyle(
-            color: AppThemes.askTargetSumColor,
-            fontSize: AppFontSizes.s30,
-            fontWeight: FontWeight.bold,
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          gapH35,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Switch(
+                thumbColor: thumbColor,
+                thumbIcon: thumbIcon,
+                value: isSponsored,
+                onChanged: (bool value) { isSponsoredToggle(value); },
+              ),
+              gapW5,
+              Tooltip(
+                message: isSponsored ?
+                  Tooltips.unmarkAsSponsored : Tooltips.markAsSponsored,
+                child: AppTooltipIcon()
+              )
+            ],
           ),
-        )
-      ],
+          gapH20,
+          AskTimeLeftText(
+            ask: widget.ask,
+            fontSize: AppFontSizes.s20,
+            textColor: Theme.of(context).colorScheme.onPrimary,
+          ),
+          Text(
+            "${widget.ask.targetSum.toString()} ${widget.ask.currency}",
+            style: TextStyle(
+              color: AppThemes.positiveColor,
+              fontSize: AppFontSizes.s30,
+              fontWeight: FontWeight.bold,
+            ),
+          )
+        ],
+      ),
     );
   }
 }

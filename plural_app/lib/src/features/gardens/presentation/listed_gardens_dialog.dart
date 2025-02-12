@@ -3,9 +3,7 @@ import 'package:get_it/get_it.dart';
 
 // Common Widgets
 import 'package:plural_app/src/common_widgets/app_dialog.dart';
-import 'package:plural_app/src/common_widgets/app_dialog_header.dart';
-import 'package:plural_app/src/common_widgets/close_dialog_button.dart';
-import 'package:plural_app/src/common_widgets/app_dialog_manager.dart';
+import 'package:plural_app/src/common_widgets/app_dialog_router.dart';
 import 'package:plural_app/src/common_widgets/app_dialog_header_button.dart';
 
 // Constants
@@ -42,7 +40,7 @@ class GardenDialogList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final stateManager = GetIt.instance<AppDialogManager>();
+    final stateManager = GetIt.instance<AppDialogRouter>();
 
     final Widget creatableGardenViewButton = AppDialogHeaderButton(
       buttonNotifier: ValueNotifier<bool>(true),
@@ -54,10 +52,6 @@ class GardenDialogList extends StatelessWidget {
 
     return Column(
       children: [
-        AppDialogHeader(
-          firstHeaderButton: CloseDialogButton(),
-          secondHeaderButton: creatableGardenViewButton,
-        ),
         Expanded(
           child: ListView(
             padding: const EdgeInsets.all(AppPaddings.p35),

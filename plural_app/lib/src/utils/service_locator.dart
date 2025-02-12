@@ -3,7 +3,7 @@ import 'package:pocketbase/pocketbase.dart';
 
 // Asks
 import 'package:plural_app/src/features/asks/data/asks_repository.dart';
-import 'package:plural_app/src/common_widgets/app_dialog_manager.dart';
+import 'package:plural_app/src/common_widgets/app_dialog_router.dart';
 
 // Auth
 import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
@@ -28,8 +28,8 @@ Future<void> registerGetItInstances(PocketBase pb) async {
   );
 
   // AppDialogManager
-  getIt.registerLazySingleton<AppDialogManager>(
-    () => AppDialogManager()
+  getIt.registerLazySingleton<AppDialogRouter>(
+    () => AppDialogRouter()
   );
 
   // AsksRepository

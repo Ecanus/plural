@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
 // Common Widgets
-import 'package:plural_app/src/common_widgets/app_dialog_manager.dart';
+import 'package:plural_app/src/common_widgets/app_dialog_router.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
@@ -20,7 +20,7 @@ class ListedUserTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final stateManager = GetIt.instance<AppDialogManager>();
+    final appDialogRouter = GetIt.instance<AppDialogRouter>();
 
     return Card(
       elevation: AppElevations.e7,
@@ -32,7 +32,7 @@ class ListedUserTile extends StatelessWidget {
         subtitle: Text(""),
         trailing: Icon(Icons.arrow_forward_ios),
         onTap: () {
-          stateManager.showViewableUserDialogView(user);
+          appDialogRouter.showViewableUserDialogView(user);
         },
       ),
     );

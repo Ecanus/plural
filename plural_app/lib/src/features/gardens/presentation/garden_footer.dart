@@ -22,41 +22,54 @@ import 'package:plural_app/src/features/gardens/presentation/listed_gardens_dial
 class GardenFooter extends StatelessWidget {
   final ValueNotifier<bool> _isFooterCollapsed = ValueNotifier<bool>(true);
 
-  final buttonStyle = ElevatedButton.styleFrom(
-    backgroundColor: AppColors.onPrimaryColor,
-    elevation: AppElevations.e5,
-    iconColor: AppColors.secondaryColor,
-    padding: EdgeInsets.all(AppPaddings.p18),
-    shape: CircleBorder(),
-  );
-
   bool toggleIsFooterCollapsed () {
     return _isFooterCollapsed.value = !_isFooterCollapsed.value;
   }
 
   @override
   Widget build(BuildContext context) {
+
+    final buttonStyle = ElevatedButton.styleFrom(
+      backgroundColor: Theme.of(context).colorScheme.primary,
+      elevation: AppElevations.e5,
+      iconColor: Theme.of(context).colorScheme.onPrimary,
+      padding: EdgeInsets.all(AppPaddings.p18),
+      shape: CircleBorder(),
+    );
+
     final showActionsButton = ElevatedButton(
       style: buttonStyle,
       onPressed: toggleIsFooterCollapsed,
-      child: Icon(Icons.add, size: AppIconSizes.s30),
+      child: Icon(
+        Icons.add,
+        color: Theme.of(context).colorScheme.onPrimaryContainer,
+        size: AppIconSizes.s30
+      ),
     );
 
     final hideActionsButton = ElevatedButton(
       style: buttonStyle,
       onPressed: toggleIsFooterCollapsed,
-      child: Icon(Icons.close, size: AppIconSizes.s30),
+      child: Icon(
+        Icons.close,
+        color: Theme.of(context).colorScheme.onPrimaryContainer,
+        size: AppIconSizes.s30
+      ),
     );
 
-    return Expanded(
-      child: ValueListenableBuilder(
-        valueListenable: _isFooterCollapsed,
-        builder: (BuildContext context, bool value, Widget? child) {
-          return value ?
-            Center(child: showActionsButton) :
-            AppBottomBar(hideActionsButton: hideActionsButton,);
-        }
-      ),
+    return Row(
+      children: [
+        Expanded(
+          child: ValueListenableBuilder(
+            valueListenable: _isFooterCollapsed,
+            builder: (BuildContext context, bool value, Widget? child) {
+              return value ?
+                Center(child: showActionsButton) :
+                AppBottomBar(hideActionsButton: hideActionsButton,);
+            }
+          ),
+        ),
+      ],
     );
   }
 }
@@ -71,6 +84,9 @@ class AppBottomBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var iconColor = Theme.of(context).colorScheme.onPrimary;
+    var iconSize = AppButtonSizes.s25;
+
     return Center(
       child: Stack(
         alignment: Alignment.centerLeft,
@@ -79,11 +95,11 @@ class AppBottomBar extends StatelessWidget {
           Container(
             constraints: BoxConstraints.expand(
               width: AppConstraints.c350,
-              height: AppConstraints.c50
+              height: AppConstraints.c40
             ),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(AppBorderRadii.r50),
-              color: AppColors.darkGrey1,
+              color: Theme.of(context).colorScheme.secondary,
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -91,30 +107,30 @@ class AppBottomBar extends StatelessWidget {
               children: [
                 gapW10,
                 IconButton(
-                  color: AppColors.secondaryColor,
+                  color: iconColor,
                   icon: const Icon(Icons.library_add),
-                  iconSize: AppButtonSizes.s31,
+                  iconSize: iconSize,
                   tooltip: Strings.asksTooltip,
                   onPressed: () => createListedAsksDialog(context),
                 ),
                 IconButton(
-                  color: AppColors.secondaryColor,
+                  color: iconColor,
                   icon: const Icon(Icons.settings),
-                  iconSize: AppButtonSizes.s31,
+                  iconSize: iconSize,
                   tooltip: Strings.settingsTooltip,
                   onPressed: () => createUserSettingsDialog(context),
                 ),
                 IconButton(
-                  color: AppColors.secondaryColor,
+                  color: iconColor,
                   icon: const Icon(Icons.people_alt_rounded),
-                  iconSize: AppButtonSizes.s31,
+                  iconSize: iconSize,
                   tooltip: Strings.usersTooltip,
                   onPressed: () => createListedUsersDialog(context),
                 ),
                 IconButton(
-                  color: AppColors.secondaryColor,
-                  icon: const Icon(Icons.grass),
-                  iconSize: AppButtonSizes.s31,
+                  color: iconColor,
+                  icon: const Icon(Icons.local_florist),
+                  iconSize: iconSize,
                   tooltip: Strings.gardensTooltip,
                   onPressed: () => createListedGardensDialog(context),
                 ),

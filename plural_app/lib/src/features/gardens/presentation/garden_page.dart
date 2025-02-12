@@ -59,13 +59,8 @@ class _GardenPageState extends State<GardenPage> {
               GardenHeader(),
               gapH30,
               GardenTimeline(),
-              gapH15,
-              Row(
-                children: [
-                  GardenFooter()
-                ],
-              ),
-              gapH15
+              GardenFooter(),
+              gapH65
             ],
           ),
         ),

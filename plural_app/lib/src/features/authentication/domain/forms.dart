@@ -6,7 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:plural_app/src/utils/app_form.dart';
 
 // Common Widgets
-import 'package:plural_app/src/common_widgets/app_dialog_manager.dart';
+import 'package:plural_app/src/common_widgets/app_dialog_router.dart';
 import 'package:plural_app/src/common_widgets/app_snackbars.dart';
 
 // Constants
@@ -28,7 +28,7 @@ Future<void> submitUpdate(
 ) async {
   if (formKey.currentState!.validate()) {
     final authRepository = GetIt.instance<AuthRepository>();
-    final appDialogManager = GetIt.instance<AppDialogManager>();
+    final appDialogRouter = GetIt.instance<AppDialogRouter>();
 
     // Save form
     formKey.currentState!.save();
@@ -41,7 +41,7 @@ Future<void> submitUpdate(
     GetIt.instance<AppState>().notifyAllListeners();
 
     // Rebuild User Settings Dialog
-    await appDialogManager.showUserSettingsDialogView(
+    await appDialogRouter.showUserSettingsDialogView(
       userSettings: updatedUserSettings);
   }
 }
@@ -112,9 +112,9 @@ Future<void> submitSignUp(
       DefaultTabController.of(context).animateTo(AuthConstants.logInTabIndex);
 
       // Display Success Snackbar
-      var snackBar = AppSnackbars.successSnackbar(
+      var snackBar = AppSnackbars.getSuccessSnackbar(
           SnackBarMessages.sentUserVerificationEmail,
-          appForm.getValue(fieldName: UserField.email)
+          boldMessage: appForm.getValue(fieldName: UserField.email)
         );
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
     } else {
@@ -147,9 +147,9 @@ Future<void> submitForgotPassword(
 
       // Display snackBar confirmation
       if (isValid) {
-        var snackBar = AppSnackbars.successSnackbar(
+        var snackBar = AppSnackbars.getSuccessSnackbar(
           SnackBarMessages.sentPasswordResetEmail,
-          email
+          boldMessage: email
         );
 
         ScaffoldMessenger.of(context).showSnackBar(snackBar);

@@ -47,7 +47,7 @@ class AsksRepository {
     final currentGarden = GetIt.instance<AppState>().currentGarden!;
 
     var result = await pb.collection(Collection.asks).getList(
-      sort: GenericField.created,
+      sort: "${AskField.deadlineDate},${GenericField.created}",
       filter: """
           ${AskField.creator} = '$userID' &&
           ${AskField.garden} = '${currentGarden.id}'

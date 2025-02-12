@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
 // Common Widgets
-import 'package:plural_app/src/common_widgets/app_dialog_manager.dart';
+import 'package:plural_app/src/common_widgets/app_dialog_router.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_values.dart';
@@ -15,17 +15,17 @@ class ListedAsksButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final stateManager = GetIt.instance<AppDialogManager>();
+    final appDialogRouter = GetIt.instance<AppDialogRouter>();
 
     return Ink(
-      decoration: const ShapeDecoration(
-        color: AppColors.darkGrey1,
+      decoration: ShapeDecoration(
+        color: Theme.of(context).colorScheme.surface,
         shape: CircleBorder()
       ),
       child: IconButton(
         icon: Icon(Icons.list),
         color: AppColors.secondaryColor,
-        onPressed: () { stateManager.showAskDialogListView(); },
+        onPressed: () { appDialogRouter.showAskDialogListView(); },
         tooltip: Strings.asksListButtonTooltip,
       ),
     );

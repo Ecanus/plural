@@ -21,6 +21,8 @@ class AppState with ChangeNotifier {
   Garden? _currentGarden;
   AppUser? _currentUser;
 
+  List<Ask>? _timelineAsks;
+
   // _currentGarden
   Garden? get currentGarden => _currentGarden;
   set currentGarden(Garden? newGarden) {
@@ -39,6 +41,11 @@ class AppState with ChangeNotifier {
     return _currentUser?.id;
   }
 
+  // _timelineAsks
+  List<Ask>? get timelineAsks {
+    return _timelineAsks;
+  }
+
   Future<List<Ask>> getTimelineAsks() async {
     // Asks with target met, or deadlineDate passed are filtered out.
     var nowString = DateFormat(Strings.dateformatYMMdd).format(DateTime.now());
@@ -50,6 +57,8 @@ class AppState with ChangeNotifier {
       count: GardenValues.numTimelineAsks,
       filterString: filterString
     );
+
+    _timelineAsks = asks;
 
     return asks;
   }

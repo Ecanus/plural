@@ -10,6 +10,7 @@ class AppBorderRadii {
 }
 
 class AppButtonSizes {
+  static const s25 = 25.0;
   static const s31 = 31.0;
   static const s50 = 50.0;
   static const s300 = 300.0;
@@ -20,6 +21,7 @@ class AppConstraints {
   static const c45 = 45.0;
   static const c50 = 50.0;
   static const c55 = 55.0;
+  static const c60 = 60.0;
   static const c65 = 65.0;
   static const c75 = 75.0;
   static const c80 = 80.0;
@@ -39,6 +41,7 @@ class AppConstraints {
 }
 
 class AppElevations {
+  static const e0 = 0.0;
   static const e5 = 5.0;
   static const e7 = 7.0;
   static const e10 = 10.0;
@@ -103,10 +106,12 @@ class AppPaddings {
   static const p25 = 25.0;
   static const p30 = 30.0;
   static const p35 = 35.0;
+  static const p37 = 37.0;
   static const p40 = 40.0;
   static const p45 = 45.0;
   static const p50 = 50.0;
   static const p60 = 60.0;
+  static const p65 = 65.0;
   static const p80 = 80.0;
 }
 
@@ -151,9 +156,11 @@ const gapH20 = SizedBox(height: AppPaddings.p20);
 const gapH25 = SizedBox(height: AppPaddings.p25);
 const gapH30 = SizedBox(height: AppPaddings.p30);
 const gapH35 = SizedBox(height: AppPaddings.p35);
+const gapH37 = SizedBox(height: AppPaddings.p37);
 const gapH40 = SizedBox(height: AppPaddings.p40);
 const gapH50 = SizedBox(height: AppPaddings.p50);
 const gapH60 = SizedBox(height: AppPaddings.p60);
+const gapH65 = SizedBox(height: AppPaddings.p65);
 
 // Constant flexes
 const flex2 = Expanded(flex: AppFlexes.f2, child: SizedBox());
