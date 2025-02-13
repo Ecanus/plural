@@ -39,7 +39,7 @@ class _GardenDialogCreateFormState extends State<GardenDialogCreateForm> {
     final Widget submitFormButton = AppDialogHeaderButton(
       buttonNotifier: ValueNotifier<bool>(true),
       icon: Icon(Icons.add),
-      label: Strings.createLabel,
+      label: AskDialogLabels.createLabel,
       onPressed: () => submitCreate(_formKey, _gardenMap),
     );
 
@@ -53,11 +53,11 @@ class _GardenDialogCreateFormState extends State<GardenDialogCreateForm> {
                 key: _formKey,
                 child: Column(
                   children: [
-                    AppTextFormFieldDeprecated(
-                      fieldName: GardenField.name,
-                      label: Strings.gardenNameLabel,
-                      modelMap: _gardenMap,
-                    )
+                    // AppTextFormFieldDeprecated(
+                    //   fieldName: GardenField.name,
+                    //   label: Strings.gardenNameLabel,
+                    //   modelMap: _gardenMap,
+                    // )
                   ]
                 ),
               ),

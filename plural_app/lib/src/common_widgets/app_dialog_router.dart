@@ -30,10 +30,7 @@ import 'package:plural_app/src/utils/app_state.dart';
 
 class AppDialogRouter {
 
-  Widget? view;
   ValueNotifier<Widget> viewNotifier = ValueNotifier<Widget>(SizedBox());
-  ValueNotifier<List<Widget>> viewFooterBufferNotifier = ValueNotifier<List<Widget>>([]);
-  ValueNotifier<String> viewFooterNotifier = ValueNotifier<String>("");
 
   /// Asks
   void showCreatableAskDialogView() {
@@ -42,8 +39,6 @@ class AppDialogRouter {
 
   void showEditableAskDialogView(Ask ask, {Widget? firstHeaderButton}) {
     viewNotifier.value = AskDialogEditForm(ask: ask);
-    viewFooterBufferNotifier.value = [];
-    viewFooterNotifier.value = "";
   }
 
   Future<void> showAskDialogListView() async {

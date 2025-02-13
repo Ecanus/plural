@@ -1,12 +1,19 @@
 import 'package:intl/intl.dart';
+import 'package:flutter/services.dart';
 
 // Constants
 import 'package:plural_app/src/constants/strings.dart';
 
 enum FormFieldType {
+  currency,
   datetimeNow,
   int,
   string,
+}
+
+enum TextFieldType {
+  text,
+  digitsOnly
 }
 
 class AppForm {
@@ -21,7 +28,7 @@ class AppForm {
     errors = {};
 
     for (var key in initialMap.keys) {
-      errors[key] = "";
+      errors[key] = null;
     }
   }
 
@@ -81,6 +88,8 @@ class AppForm {
     dynamic newValue;
 
     switch (formFieldType) {
+      case FormFieldType.currency:
+        newValue = value.toString().trim().toUpperCase();
       case FormFieldType.datetimeNow:
         newValue = value == true ?
           DateFormat(Strings.dateformatYMMdd).format(DateTime.now()) : null;
@@ -92,4 +101,21 @@ class AppForm {
 
     fields[fieldName] = newValue;
   }
+}
+
+/// Checks on the given [fieldType] to determine which
+/// [FilteringTextInputFormatter] to retrieve.
+///
+/// Returns a list with the correct [TextInputFormatter] values if one is found,
+/// or null if none is found/needed.
+List<TextInputFormatter>? getInputFormatters(TextFieldType fieldType, int maxLength) {
+  switch (fieldType) {
+    case TextFieldType.text:
+      return [LengthLimitingTextInputFormatter(maxLength)];
+    case TextFieldType.digitsOnly:
+      return [
+        LengthLimitingTextInputFormatter(maxLength),
+        FilteringTextInputFormatter.digitsOnly];
+  }
+
 }

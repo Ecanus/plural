@@ -21,9 +21,7 @@ Future createListedAsksDialog(BuildContext context) async {
       context: context,
       builder: (BuildContext context) {
         return AppDialog(
-          buttons: [RouteToCreateAskViewButton()],
           view: AskDialogList(listedAskTiles: listedAskTiles),
-          viewTitle: Strings.asksViewTitle,
         );
       }
     );
@@ -48,6 +46,8 @@ class AskDialogList extends StatelessWidget {
             children: listedAskTiles,
           ),
         ),
+        AppDialogFooterBuffer(buttons: [RouteToCreateAskViewButton()],),
+        AppDialogFooter(title: AskDialogTitles.asks)
       ],
     );
   }
@@ -60,7 +60,7 @@ class RouteToCreateAskViewButton extends StatelessWidget {
     final appDialogRouter = GetIt.instance<AppDialogRouter>();
 
     return Tooltip(
-      message: Strings.createAskLabel,
+      message: AskDialogLabels.createAsk,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           backgroundColor: Theme.of(context).colorScheme.surface,

@@ -16,14 +16,10 @@ import 'package:plural_app/src/common_widgets/app_dialog_router.dart';
 class AppDialog extends StatefulWidget {
   const AppDialog({
     super.key,
-    this.buttons,
     required this.view,
-    required this.viewTitle,
   });
 
-  final List<Widget>? buttons;
   final Widget view;
-  final String viewTitle;
 
   @override
   State<AppDialog> createState() => _AppDialogState();
@@ -37,8 +33,6 @@ class _AppDialogState extends State<AppDialog> {
     super.initState();
 
     appDialogRouter.viewNotifier.value = widget.view;
-    appDialogRouter.viewFooterBufferNotifier.value = widget.buttons ?? [];
-    appDialogRouter.viewFooterNotifier.value = widget.viewTitle;
   }
 
   @override
@@ -66,18 +60,6 @@ class _AppDialogState extends State<AppDialog> {
                       return view;
                     }
                   )
-                ),
-                ValueListenableBuilder(
-                  valueListenable: appDialogRouter.viewFooterBufferNotifier,
-                  builder: (BuildContext context, List<Widget> buttons, Widget? _) {
-                    return AppDialogFooterBuffer(buttons: buttons);
-                  }
-                ),
-                ValueListenableBuilder(
-                  valueListenable: appDialogRouter.viewFooterNotifier,
-                  builder: (BuildContext context, String footerTitle, Widget? _) {
-                    return AppDialogFooter(title: footerTitle);
-                  }
                 ),
               ],
             ),

@@ -23,7 +23,6 @@ Future createListedGardensDialog(BuildContext context) async {
       builder: (BuildContext context) {
         return AppDialog(
           view: GardenDialogList(listedGardenTiles: listedGardenTiles),
-          viewTitle: Strings.gardensViewTitle,
         );
       }
     );

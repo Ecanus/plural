@@ -56,7 +56,7 @@ class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateM
     _appForm = AppForm();
     _appForm.setValue(
       fieldName: AppFormFields.rebuild,
-      value: () {setState(() {});}
+      value: () {setState( () {}); }
     );
   }
 

@@ -1,50 +1,7 @@
-import 'package:intl/intl.dart';
-import 'package:flutter/services.dart';
-
-// Common Classes
-import 'package:plural_app/src/utils/app_form.dart';
-
 // Constants
+import 'package:plural_app/src/constants/currencies.dart';
 import 'package:plural_app/src/constants/form_values.dart';
 import 'package:plural_app/src/constants/strings.dart';
-
-enum TextFieldType {
-  text,
-  digitsOnly
-}
-
-// TODO: Deprecate this (and use AppForm.save() instead)
-void saveToMap(
-  fieldName,
-  modelMap,
-  value,
-  {FormFieldType formFieldType = FormFieldType.string}
-  ) {
-    switch (formFieldType) {
-      case FormFieldType.datetimeNow:
-        modelMap[fieldName] = value == true ?
-          DateFormat(Strings.dateformatYMMdd).format(DateTime.now()) : null;
-      case FormFieldType.int:
-        modelMap[fieldName] = int.parse(value);
-      case FormFieldType.string:
-        modelMap[fieldName] = value.toString().trim();
-    }
-}
-
-/// Checks on the given [fieldType] to determine which
-/// [FilteringTextInputFormatter] to retrieve.
-///
-/// Returns a list with the correct [TextInputFormatter] values if one is found,
-/// or null if none is found/needed.
-List<TextInputFormatter>? getInputFormatters(TextFieldType fieldType, int maxLength) {
-  switch (fieldType) {
-    case TextFieldType.text:
-      return [LengthLimitingTextInputFormatter(maxLength)];
-    case TextFieldType.digitsOnly:
-      return [FilteringTextInputFormatter.digitsOnly];
-  }
-
-}
 
 /// Checks that the given [value] is valid for a CheckboxFormField.
 ///
@@ -61,6 +18,17 @@ String? validateCheckboxFormField(bool? value) {
 String? validateConfirmNewPassword(String? value, String? confirmValue) {
   if (value == null || value.isEmpty) return ErrorMessages.invalidValue;
   if (value != confirmValue) return ErrorMessages.passwordMismatch;
+
+  return null;
+}
+
+/// Checks that the given [value] is a valid currency code contained in Currencies.
+///
+/// Returns null if valid, else returns a String.
+String? validateCurrency(String? value) {
+  if (value == null || value.isEmpty || !Currencies.all.containsKey(value)) {
+    return ErrorMessages.invalidValue;
+  }
 
   return null;
 }

@@ -8,6 +8,7 @@ import 'package:plural_app/src/common_widgets/app_tooltip_icon.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
+import 'package:plural_app/src/constants/app_values.dart';
 import 'package:plural_app/src/constants/strings.dart';
 import 'package:plural_app/src/constants/themes.dart';
 
@@ -29,7 +30,6 @@ Future createNonEditableAskDialog({
       builder: (BuildContext context) {
         return AppDialog(
           view: AskDialogView(ask: ask),
-          viewTitle: Strings.nonEditableAskDialogTitle,
         );
       }
     );
@@ -73,12 +73,12 @@ class AskDialogView extends StatelessWidget {
                   gapH25,
                   TextColumn(
                     fontWeight: FontWeight.bold,
-                    label: Strings.userInstructionsLabel,
+                    label: AskDialogLabels.instructions,
                     text: ask.creator!.instructions,
                   ),
                   gapH25,
                   TextColumn(
-                    label: Strings.askUsernameLabel,
+                    label: AskDialogLabels.username,
                     text: ask.creator!.username,
                   ),
                 ],
@@ -86,6 +86,7 @@ class AskDialogView extends StatelessWidget {
             ]
           ),
         ),
+        AppDialogFooter(title: AskDialogTitles.viewAsk)
       ],
     );
   }
@@ -124,8 +125,9 @@ class _NonEditableAskHeaderState extends State<NonEditableAskHeader> {
 
       var snackBar = AppSnackbars.getSuccessSnackbar(
         SnackBarMessages.askSponsored,
-        duration: 3,
-        showCloseIcon: false);
+        duration: SnackBarDurations.s3,
+        showCloseIcon: false
+      );
 
       if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(snackBar);
     } else {
@@ -218,7 +220,7 @@ class BoonColumn extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              Strings.askBoonLabel,
+              AskDialogLabels.boon,
               style: TextStyle(color: Theme.of(context).colorScheme.primary)
             ),
             gapW5,

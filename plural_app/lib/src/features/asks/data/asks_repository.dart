@@ -1,6 +1,9 @@
 import 'package:pocketbase/pocketbase.dart';
 import 'package:get_it/get_it.dart';
 
+// Common Methods
+import 'package:plural_app/src/common_methods/errors.dart';
+
 // Constants
 import 'package:plural_app/src/constants/pocketbase.dart';
 import 'package:plural_app/src/constants/strings.dart';
@@ -28,7 +31,7 @@ class AsksRepository {
     String filterString = "",
     String sortString = "deadlineDate,created",
     }) async {
-      filterString = filterString == "" ? "garden = '$gardenID'" : filterString;
+      filterString = filterString.isEmpty ? "garden = '$gardenID'" : filterString;
 
       var result = await pb.collection(Collection.asks).getList(
         filter: filterString,
@@ -47,7 +50,7 @@ class AsksRepository {
     final currentGarden = GetIt.instance<AppState>().currentGarden!;
 
     var result = await pb.collection(Collection.asks).getList(
-      sort: "${AskField.deadlineDate},${GenericField.created}",
+      sort: "${AskField.targetMetDate},${AskField.deadlineDate},${GenericField.created}",
       filter: """
           ${AskField.creator} = '$userID' &&
           ${AskField.garden} = '${currentGarden.id}'
@@ -103,19 +106,30 @@ class AsksRepository {
 
   /// Queries on the [Ask] collection to update the record corresponding
   /// to information in the [map] parameter.
-  Future update(Map map) async {
-    await pb.collection(Collection.asks).update(
-      map[GenericField.id],
-      body: {
-        AskField.boon: map[AskField.boon],
-        AskField.currency: map[AskField.currency],
-        AskField.description: map[AskField.description],
-        AskField.deadlineDate: map[AskField.deadlineDate],
-        AskField.targetSum: map[AskField.targetSum],
-        AskField.targetMetDate: map[AskField.targetMetDate],
-        AskField.type: map[AskField.type]
-      }
-    );
+  Future<(bool, Map)> update(Map map) async {
+    try {
+      // Update Ask
+      await pb.collection(Collection.asks).update(
+        map[GenericField.id],
+        body: {
+          AskField.boon: map[AskField.boon],
+          AskField.currency: map[AskField.currency],
+          AskField.description: map[AskField.description],
+          AskField.deadlineDate: map[AskField.deadlineDate],
+          AskField.targetSum: map[AskField.targetSum],
+          AskField.targetMetDate: map[AskField.targetMetDate],
+          AskField.type: map[AskField.type]
+        }
+      );
+
+      // Return
+      return (true, {});
+    } on ClientException catch(e) {
+      var errorsMap = getErrorsMapFromClientException(e);
+
+      print("Error Caught: $e");
+      return (false, errorsMap);
+    }
   }
 
   /// Queries on the [Ask] collection to create a record corresponding

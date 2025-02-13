@@ -20,14 +20,9 @@ class AppDialogValues {
   static const offset = Offset(0, -1.0); // Top
 }
 
-class AppDialogNavBarValues {
-  static const blurRadius = 6.0;
-  static const spreadRadius = 1.0;
-  static const offset = Offset(0, -1.0); // Top
-}
-
 class AppMaxLengthValues {
   static const max1 = 1;
+  static const max3 = 3;
   static const max4 = 4;
   static const max20 = 20;
   static const max30 = 30;
@@ -58,6 +53,7 @@ class GardenValues {
 }
 
 class SnackBarDurations {
+  static const s3 = 3;
   static const s9 = 9;
 }
 

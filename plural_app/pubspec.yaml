@@ -19,7 +19,6 @@ dependencies:
   pocketbase: ^0.18.1
   get_it: ^8.0.0
   go_router: ^14.3.0
-  currency_picker: ^2.0.21
 
 dev_dependencies:
   flutter_test:

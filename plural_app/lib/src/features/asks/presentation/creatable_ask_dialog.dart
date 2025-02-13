@@ -3,9 +3,6 @@ import 'package:flutter/material.dart';
 // Common Classes
 import 'package:plural_app/src/utils/app_form.dart';
 
-// Common Methods
-import 'package:plural_app/src/common_methods/form_validators.dart';
-
 // Common Widgets
 import 'package:plural_app/src/common_widgets/app_text_form_field.dart';
 import 'package:plural_app/src/common_widgets/app_date_picker_form_field.dart';
@@ -20,7 +17,7 @@ import 'package:plural_app/src/constants/app_values.dart';
 // Asks
 import 'package:plural_app/src/features/asks/domain/ask.dart';
 import 'package:plural_app/src/features/asks/domain/forms.dart';
-import 'package:plural_app/src/features/asks/presentation/listed_asks_button.dart';
+import 'package:plural_app/src/features/asks/presentation/route_to_listed_asks_view_button.dart';
 
 Future createEditableAskDialog(BuildContext context) {
 
@@ -29,7 +26,6 @@ Future createEditableAskDialog(BuildContext context) {
     builder: (BuildContext context) {
       return AppDialog(
         view: AskDialogCreateForm(),
-        viewTitle: Strings.creatableAskDialogTitle
       );
     }
   );
@@ -62,7 +58,7 @@ class _AskDialogCreateFormState extends State<AskDialogCreateForm> {
     final Widget submitFormButton = AppDialogHeaderButton(
       buttonNotifier: ValueNotifier<bool>(true),
       icon: Icon(Icons.add),
-      label: Strings.createLabel,
+      label: AskDialogLabels.createLabel,
       onPressed: () => submitCreate(context, _formKey, _askMap),
     );
 
@@ -85,26 +81,26 @@ class _AskDialogCreateFormState extends State<AskDialogCreateForm> {
                         //     modelMap: _askMap,
                         //   ),
                         // ),
-                        gapW20,
-                        Expanded(
-                          child: AppTextFormFieldDeprecated(
-                            fieldName: AskField.targetSum,
-                            formFieldType: FormFieldType.int,
-                            label: Strings.askTargetSumLabel,
-                            maxLength: AppMaxLengthValues.max4,
-                            modelMap: _askMap,
-                            textFieldType: TextFieldType.digitsOnly,
-                          ),
-                        ),
+                        // gapW20,
+                        // Expanded(
+                        //   child: AppTextFormFieldDeprecated(
+                        //     fieldName: AskField.targetSum,
+                        //     formFieldType: FormFieldType.int,
+                        //     label: Strings.askTargetSumLabel,
+                        //     maxLength: AppMaxLengthValues.max4,
+                        //     modelMap: _askMap,
+                        //     textFieldType: TextFieldType.digitsOnly,
+                        //   ),
+                        // ),
                       ],
                     ),
-                    AppTextFormFieldDeprecated(
-                      fieldName: AskField.description,
-                      label: Strings.askDescriptionLabel,
-                      maxLength: AppMaxLengthValues.max400,
-                      maxLines: null,
-                      modelMap: _askMap,
-                    ),
+                    // AppTextFormFieldDeprecated(
+                    //   fieldName: AskField.description,
+                    //   label: Strings.askDescriptionLabel,
+                    //   maxLength: AppMaxLengthValues.max400,
+                    //   maxLines: null,
+                    //   modelMap: _askMap,
+                    // ),
                   ],
                 ),
               ),

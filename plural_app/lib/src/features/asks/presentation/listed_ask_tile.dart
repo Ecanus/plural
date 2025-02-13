@@ -6,6 +6,7 @@ import 'package:plural_app/src/common_widgets/app_dialog_router.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
+import 'package:plural_app/src/constants/form_values.dart';
 import 'package:plural_app/src/constants/themes.dart';
 
 // Asks
@@ -23,10 +24,12 @@ class ListedAskTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final appDialogRouter = GetIt.instance<AppDialogRouter>();
 
-    final textColor = ask.isDeadlinePassed ?
+    final shouldStrikethrough = ask.isDeadlinePassed || ask.targetMetDate != null;
+
+    final textColor = shouldStrikethrough ?
       Theme.of(context).colorScheme.onPrimaryFixed
       : Theme.of(context).colorScheme.onPrimary;
-    final textDecoration = ask.isDeadlinePassed ? TextDecoration.lineThrough : null;
+    final textDecoration = shouldStrikethrough ? TextDecoration.lineThrough : null;
 
     return Card(
       elevation: AppElevations.e7,
@@ -46,9 +49,11 @@ class ListedAskTile extends StatelessWidget {
             decoration: textDecoration,
           ),
         ),
-        trailing: TileTrailing(ask: ask),
+        trailing: TileTrailing(isOnTimeline: ask.isOnTimeline),
         onTap: () {
-          appDialogRouter.showEditableAskDialogView(ask);
+          Future.delayed(FormValues.listedAskTileClickDelay, () {
+            appDialogRouter.showEditableAskDialogView(ask);
+          });
         },
       ),
     );
@@ -57,17 +62,17 @@ class ListedAskTile extends StatelessWidget {
 
 class TileTrailing extends StatelessWidget {
   const TileTrailing({
-    required this.ask,
+    required this.isOnTimeline,
   });
 
-  final Ask ask;
+  final bool isOnTimeline;
 
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        ask.isOnTimeline ?
+        isOnTimeline ?
         Ink(
           padding: EdgeInsets.all(AppPaddings.p5),
           decoration: ShapeDecoration(
@@ -81,10 +86,12 @@ class TileTrailing extends StatelessWidget {
           ),
         )
         : SizedBox(),
-        gapW20,
+        gapW10,
         Icon(
           Icons.arrow_forward_ios,
-          color: Theme.of(context).colorScheme.onSecondary
+          color: isOnTimeline ?
+          AppThemes.positiveColor
+          : Theme.of(context).colorScheme.onSecondary
         )
       ],
     );

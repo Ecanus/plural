@@ -75,6 +75,12 @@ class Ask {
     return targetMetDate != null;
   }
 
+  String get formattedTargetMetDate {
+    if (targetMetDate == null) return "";
+
+    return DateFormat(Strings.dateformatYMMdd).format(targetMetDate!.toLocal());
+  }
+
   String get timeRemainingString {
     var timeRemaining = deadlineDate.difference(DateTime.now());
 
@@ -140,9 +146,9 @@ class Ask {
       for (var record in records) {
         var creatorID = record[AskField.creator];
 
-        // Format targetMetDate if non-null
-        var targetMetDateString = record[AskField.targetMetDate];
-        var formattedTargetMetDate = targetMetDateString != "" ?
+        // Parse targetMetDate if non-null
+        String targetMetDateString = record[AskField.targetMetDate];
+        DateTime? parsedTargetMetDate = targetMetDateString.isNotEmpty ?
           DateTime.parse(targetMetDateString) : null;
 
         // Get AppUser that created the Ask
@@ -163,7 +169,7 @@ class Ask {
           description: record[AskField.description],
           deadlineDate: DateTime.parse(record[AskField.deadlineDate]),
           targetSum: record[AskField.targetSum],
-          targetMetDate: formattedTargetMetDate,
+          targetMetDate: parsedTargetMetDate,
           type: askTypeFromString
         );
 

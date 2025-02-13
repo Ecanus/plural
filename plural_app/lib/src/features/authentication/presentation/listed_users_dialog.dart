@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:plural_app/src/common_widgets/app_dialog.dart';
 
 // Constants
-import 'package:plural_app/src/constants/strings.dart';
 import 'package:plural_app/src/constants/app_sizes.dart';
 
 // Auth
@@ -20,7 +19,6 @@ Future createListedUsersDialog(BuildContext context) async {
       builder: (BuildContext context) {
         return AppDialog(
           view: UserDialogList(listedUserTiles: listedUserTiles),
-          viewTitle: Strings.usersViewTitle,
         );
       }
     );

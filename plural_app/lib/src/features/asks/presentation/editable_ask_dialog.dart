@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:plural_app/src/common_widgets/app_currency_picker_form_field.dart';
+import 'package:plural_app/src/features/asks/presentation/route_to_listed_asks_view_button.dart';
 
 // Common Classes
 import 'package:plural_app/src/utils/app_form.dart';
 
-// Common Methods
-import 'package:plural_app/src/common_methods/form_validators.dart';
-
 // Common Widgets
-import 'package:plural_app/src/common_widgets/app_text_form_field.dart';
-import 'package:plural_app/src/common_widgets/app_checkbox_form_field.dart';
+import 'package:plural_app/src/common_widgets/app_checkbox_list_tile_form_field.dart';
+import 'package:plural_app/src/common_widgets/app_currency_picker_form_field.dart';
 import 'package:plural_app/src/common_widgets/app_date_picker_form_field.dart';
 import 'package:plural_app/src/common_widgets/app_dialog.dart';
+import 'package:plural_app/src/common_widgets/app_text_form_field.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
@@ -31,8 +29,7 @@ Future createEditableAskDialog({
     context: context,
     builder: (BuildContext context) {
       return AppDialog(
-        view: AskDialogEditForm(ask: ask),
-        viewTitle: Strings.editableAskDialogTitle,
+        view: AskDialogEditForm(ask: ask)
       );
     }
   );
@@ -61,7 +58,12 @@ class _AskDialogEditFormState extends State<AskDialogEditForm> {
     super.initState();
 
     _formKey = GlobalKey<FormState>();
-    _appForm = AppForm();
+
+    _appForm = AppForm.fromMap(widget.ask.toMap());
+    _appForm.setValue(
+      fieldName: AppFormFields.rebuild,
+      value: () { setState(() {}); }
+    );
 
     _buttonNotifier = ValueNotifier<bool>(false);
   }
@@ -72,13 +74,6 @@ class _AskDialogEditFormState extends State<AskDialogEditForm> {
 
   @override
   Widget build(BuildContext context) {
-    // final Widget submitFormButton = AppDialogHeaderButton(
-    //   buttonNotifier: _buttonNotifier,
-    //   icon: Icon(Icons.mode_edit_outlined),
-    //   label: Strings.updateLabel,
-    //   onPressed: () => submitUpdate(context, _formKey, _askMap),
-    // );
-
     return Column(
       children: [
         EditableAskHeader(ask: widget.ask),
@@ -99,20 +94,40 @@ class _AskDialogEditFormState extends State<AskDialogEditForm> {
                             fieldName: AskField.targetSum,
                             formFieldType: FormFieldType.int,
                             initialValue: widget.ask.targetSum.toString(),
-                            label: Strings.askTargetSumLabel,
+                            label: AskDialogLabels.targetSum,
                             maxLength: AppMaxLengthValues.max4,
                             textFieldType: TextFieldType.digitsOnly,
                           ),
                         ),
                         gapW20,
-                        AppCurrencyPickerFormField()
+                        Expanded(
+                          child: AppTextFormField(
+                            appForm: _appForm,
+                            fieldName: AskField.boon,
+                            formFieldType: FormFieldType.int,
+                            initialValue: widget.ask.boon.toString(),
+                            label: AskDialogLabels.boon,
+                            maxLength: AppMaxLengthValues.max4,
+                            textFieldType: TextFieldType.digitsOnly,
+                          ),
+                        ),
+                        gapW20,
+                        Expanded(
+                          flex: 2,
+                          child: AppCurrencyPickerFormField(
+                            appForm: _appForm,
+                            fieldName: AskField.currency,
+                            initialValue: widget.ask.currency,
+                            label: AskDialogLabels.currency,
+                          )
+                        )
                       ],
                     ),
                     AppTextFormField(
                       appForm: _appForm,
                       fieldName: AskField.description,
                       initialValue: widget.ask.description,
-                      label: Strings.askDescriptionLabel,
+                      label: AskDialogLabels.description,
                       maxLength: AppMaxLengthValues.max400,
                       maxLines: null,
                     ),
@@ -120,21 +135,29 @@ class _AskDialogEditFormState extends State<AskDialogEditForm> {
                       appForm: _appForm,
                       fieldName: AskField.deadlineDate,
                       initialValue: widget.ask.deadlineDate,
-                      label: Strings.askDeadlineDateLabel,
+                      label: AskDialogLabels.deadlineDate,
                     ),
-                    AppCheckboxFormField(
-                        appForm: _appForm,
-                        fieldName: AskField.targetMetDate,
-                        formFieldType: FormFieldType.datetimeNow,
-                        text: Strings.isTargetMetLabel,
-                        value: widget.ask.isTargetMet,
-                      ),
+                    gapH50,
+                    AppCheckboxListTileFormField(
+                      appForm: _appForm,
+                      fieldName: AskField.targetMetDate,
+                      formFieldType: FormFieldType.datetimeNow,
+                      text: AskDialogLabels.isTargetMet,
+                      value: widget.ask.isTargetMet,
+                    ),
                   ],
                 ),
               ),
             ]
           ),
         ),
+        AppDialogFooterBuffer(
+          buttons: [
+            RouteToListedAsksViewButton(),
+            SubmitUpdateButton(formKey: _formKey, appForm: _appForm,),
+          ]
+        ),
+        AppDialogFooter(title: AskDialogTitles.editAsk)
       ],
     );
   }
@@ -155,6 +178,8 @@ class EditableAskHeader extends StatelessWidget {
         children: [
           gapH35,
           VisibleOnTimelineLabel(isOnTimeline: ask.isOnTimeline),
+          gapH15,
+          IsTargetMetLabel(targetMetDateString: ask.formattedTargetMetDate,),
         ]
       ),
     );
@@ -191,6 +216,69 @@ class VisibleOnTimelineLabel extends StatelessWidget {
           )
         )
       ],
+    );
+  }
+}
+
+class IsTargetMetLabel extends StatelessWidget {
+  const IsTargetMetLabel({
+    required this.targetMetDateString,
+  });
+
+  final String targetMetDateString;
+
+  @override
+  Widget build(BuildContext context) {
+    var isTargetMet = targetMetDateString.isNotEmpty;
+    var color = isTargetMet ?
+      Theme.of(context).colorScheme.primary
+      : Theme.of(context).colorScheme.onPrimaryFixed;
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Icon(
+          isTargetMet ? Icons.check : Icons.not_interested,
+          size: AppIconSizes.s25,
+          color: color,
+        ),
+        gapW10,
+        Text(
+          isTargetMet ?
+            AskDialogLabels.targetIsMet : AskDialogLabels.targetIsNotMet,
+          style: TextStyle(
+            color: color,
+            fontWeight: FontWeight.w500,
+          )
+        )
+      ],
+    );
+  }
+}
+
+class SubmitUpdateButton extends StatelessWidget {
+  SubmitUpdateButton({
+    required this.appForm,
+    required this.formKey,
+  });
+
+  final AppForm appForm;
+  final GlobalKey<FormState> formKey;
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message: AskDialogTooltips.saveChanges,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Theme.of(context).colorScheme.onPrimary,
+          elevation: AppElevations.e0,
+          iconColor: Theme.of(context).colorScheme.surface,
+          shape: CircleBorder(),
+        ),
+        onPressed: () => submitUpdate(context, formKey, appForm),
+        child: Icon(Icons.save_alt)
+      ),
     );
   }
 }

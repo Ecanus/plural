@@ -4,9 +4,6 @@ import 'package:get_it/get_it.dart';
 // Common Classes
 import 'package:plural_app/src/utils/app_form.dart';
 
-// Common Methods
-import 'package:plural_app/src/common_methods/form_validators.dart';
-
 // Common Widgets
 import 'package:plural_app/src/common_widgets/app_dialog.dart';
 import 'package:plural_app/src/common_widgets/app_dialog_header_button.dart';
@@ -36,7 +33,6 @@ Future createUserSettingsDialog(BuildContext context) async {
       builder: (BuildContext context) {
         return AppDialog(
           view: UserSettingsDialog(userSettings: userSettings),
-          viewTitle: Strings.settingsViewTitle,
         );
       }
     );
@@ -72,7 +68,7 @@ class _UserSettingsDialogState extends State<UserSettingsDialog> {
     final Widget submitFormButton = AppDialogHeaderButton(
       buttonNotifier: ValueNotifier<bool>(true),
       icon: Icon(Icons.mode_edit_outlined),
-      label: Strings.updateLabel,
+      label: AskDialogLabels.updateLabel,
       onPressed: () => submitUpdate(_formKey, _userSettingsMap),
     );
 
@@ -93,15 +89,15 @@ class _UserSettingsDialogState extends State<UserSettingsDialog> {
                 key: _formKey,
                 child: Column(
                   children: [
-                    AppTextFormFieldDeprecated(
-                      fieldName: UserSettingsField.textSize,
-                      formFieldType: FormFieldType.int,
-                      initialValue: widget.userSettings.textSize.toString(),
-                      label: Strings.userSettingsTextSizeLabel,
-                      maxLength: AppMaxLengthValues.max1,
-                      modelMap: _userSettingsMap,
-                      textFieldType: TextFieldType.digitsOnly,
-                    ),
+                    // AppTextFormFieldDeprecated(
+                    //   fieldName: UserSettingsField.textSize,
+                    //   formFieldType: FormFieldType.int,
+                    //   initialValue: widget.userSettings.textSize.toString(),
+                    //   label: Strings.userSettingsTextSizeLabel,
+                    //   maxLength: AppMaxLengthValues.max1,
+                    //   modelMap: _userSettingsMap,
+                    //   textFieldType: TextFieldType.digitsOnly,
+                    // ),
                   ],
                 ),
               ),

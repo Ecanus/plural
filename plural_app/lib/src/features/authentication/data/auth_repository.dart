@@ -7,6 +7,9 @@ import 'package:plural_app/src/constants/routes.dart';
 // Pocketbase
 import 'package:pocketbase/pocketbase.dart';
 
+// Common Methods
+import 'package:plural_app/src/common_methods/errors.dart';
+
 // Constants
 import 'package:plural_app/src/constants/pocketbase.dart';
 import 'package:plural_app/src/constants/strings.dart';
@@ -313,25 +316,10 @@ Future<(bool, Map)> signup(
     // Return
     return (true, {});
   } on ClientException catch(e) {
-    var innerMap = e.response[ExceptionStrings.data];
-    var errorsMap = {};
+    var errorsMap = getErrorsMapFromClientException(e);
 
-    // Create map of fields and corresponding error messages
-    for (var key in e.response[ExceptionStrings.data].keys) {
-      var fieldName = key;
-      var errorMessage = innerMap[key][ExceptionStrings.message];
-
-      // Remove trailing period
-      errorMessage.replaceAll(
-        RegExp(r'.'),
-        "");
-
-      errorsMap[fieldName] = errorMessage;
-    }
-
-    // Return
-    print("Error Caught: $e");
-    return (false, errorsMap);
+      print("Error Caught: $e");
+      return (false, errorsMap);
   }
 }
 

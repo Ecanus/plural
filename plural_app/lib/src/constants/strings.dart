@@ -99,39 +99,53 @@ class SignInLabels {
 }
 
 class AskDialogLabels {
-  static const isVisibleOnTimeline = "Is visible on timeline";
-  static const isNotVisibleOnTimeline = "Is not visible on timeilne";
+  static const closeWindow = "Close window";
+  static const createAsk = "Create new Ask";
+
+  static const isAskSponsored = "Is ponsored";
+  static const isNotVisibleOnTimeline = "Not visible on timeilne";
+  static const isTargetMet = "Target met";
+  static const isVisibleOnTimeline = "Visible on timeline";
+
+  static const selectDateLabel = "Select date";
+
+  static const createLabel = "Create";
+  static const updateLabel = "Update";
+
+  static const boon = "Boon";
+  static const creator = "Creator";
+  static const currency = "Currency";
+  static const description = "Description";
+  static const deadlineDate = "Deadline Date";
+
+  static const targetIsMet = "Target met";
+  static const targetIsNotMet = "Target not met";
+
+  static const targetSum = "Target Sum";
+  static const username = "Username";
+
+  static const instructions = "Instructions";
+}
+
+class AskDialogTitles {
+  static const asks = "Asks";
+  static const editAsk = "Edit Ask";
+  static const viewAsk = "View Ask";
+}
+
+class AskDialogTooltips {
+  static const listedAsks = "Go to Asks";
+  static const saveChanges = "Save changes";
 }
 
 // Strings
 class Strings {
 
   // Ask Dialog
-  static const asksViewTitle = "Asks";
   static const asksListButtonTooltip = "Asks List";
 
   static const nonEditableAskDialogTitle = "View Ask";
-  static const editableAskDialogTitle = "Edit Ask";
   static const creatableAskDialogTitle = "Create Ask";
-
-  static const isAskSponsoredLabel = "Is Sponsored";
-  static const isTargetMetLabel = "Is Target met";
-
-  static const selectDateLabel = "Select Date";
-
-  static const closeLabel = "Close Window";
-  static const createAskLabel = "Create New Ask";
-  static const createLabel = "Create";
-  static const updateLabel = "Update";
-
-  static const askBoonLabel = "Boon";
-  static const askCreatorLabel = "Creator";
-  static const askDescriptionLabel = "Description";
-  static const askDeadlineDateLabel = "Deadline Date";
-  static const askTargetSumLabel = "Target Sum";
-  static const askUsernameLabel = "Username";
-
-  static const userInstructionsLabel = "Instructions";
 
   // Date Formatting
   static const dateformatYMMdd = "y-MM-dd";
@@ -177,7 +191,7 @@ class SignInMessages {
 }
 
 class ErrorMessages {
-  static const invalidValue = "A valid value is required";
+  static const invalidValue = "Valid value required";
   static const invalidEmailOrPassword = "Invalid username/email or password";
   static const invalidPassword = "Password does not meet all requirements";
   static const passwordMismatch = "Passwords do not match";
@@ -188,6 +202,7 @@ class SnackBarMessages {
   static const sentUserVerificationEmail = "A verification email has been sent to";
 
   static const askSponsored = "Ask successfully sponsored!";
+  static const successfullyUpdatedAsk = "Ask successfully updated!";
 }
 
 // Instructions

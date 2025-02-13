@@ -68,9 +68,12 @@ class _AppDatePickerFormFieldState extends State<AppDatePickerFormField> {
       ),
       child: Row(
         children: [
-          IconButton(
-            onPressed: () => selectDate(context, _controller.text, setControllerText),
-            icon: Icon(Icons.edit)
+          CircleAvatar(
+            backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+            child: IconButton(
+              onPressed: () => selectDate(context, _controller.text, setControllerText),
+              icon: Icon(Icons.mode_edit_outlined)
+            ),
           ),
           gapW10,
           Expanded(
@@ -101,7 +104,7 @@ Future<void> selectDate(
   ) async {
     var today = DateTime.now().toLocal();
     var dateThreshold = today.add(AppDateValues.datePickerThreshold);
-    var initialDate = dateString == "" ? null : DateTime.parse(dateString).toLocal();
+    var initialDate = dateString.isEmpty ? null : DateTime.parse(dateString).toLocal();
 
     final DateTime? datePicked = await showDatePicker(
       context: context,

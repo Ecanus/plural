@@ -42,7 +42,7 @@ class _GardenDialogEditFormState extends State<GardenDialogEditForm> {
     final Widget submitFormButton = AppDialogHeaderButton(
       buttonNotifier: ValueNotifier<bool>(true),
       icon: Icon(Icons.mode_edit_outlined),
-      label: Strings.updateLabel,
+      label: AskDialogLabels.updateLabel,
       onPressed: () => submitUpdate(_formKey, _gardenMap),
     );
 
@@ -56,13 +56,13 @@ class _GardenDialogEditFormState extends State<GardenDialogEditForm> {
                 key: _formKey,
                 child: Column(
                   children: [
-                    AppTextFormFieldDeprecated(
-                      fieldName: GardenField.name,
-                      initialValue: widget.garden.name,
-                      maxLength: AppMaxLengthValues.max75,
-                      label: Strings.gardenNameLabel,
-                      modelMap: _gardenMap,
-                    ),
+                    // AppTextFormFieldDeprecated(
+                    //   fieldName: GardenField.name,
+                    //   initialValue: widget.garden.name,
+                    //   maxLength: AppMaxLengthValues.max75,
+                    //   label: Strings.gardenNameLabel,
+                    //   modelMap: _gardenMap,
+                    // ),
                   ]
                 ),
               ),
