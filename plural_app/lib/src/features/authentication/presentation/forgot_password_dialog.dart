@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 // Common Classes
-import 'package:plural_app/src/common_classes/app_form.dart';
+import 'package:plural_app/src/utils/app_form.dart';
 
 // Common Methods
 import 'package:plural_app/src/common_methods/form_validators.dart';
@@ -57,8 +57,8 @@ class _ForgotPasswordDialogState extends State<ForgotPasswordDialog> {
               height: AppConstraints.c400,
             ),
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(AppBorderRadii.r15),
+              color: Theme.of(context).colorScheme.surface,
             ),
             child: Form(
               key: _formKey,

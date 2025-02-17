@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 // Common Classes
-import 'package:plural_app/src/common_classes/app_form.dart';
+import 'package:plural_app/src/utils/app_form.dart';
 import 'package:plural_app/src/common_widgets/app_logo.dart';
 
 // Constants
@@ -56,7 +56,7 @@ class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateM
     _appForm = AppForm();
     _appForm.setValue(
       fieldName: AppFormFields.rebuild,
-      value: () {setState(() {});}
+      value: () {setState( () {}); }
     );
   }
 

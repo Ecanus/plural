@@ -2,17 +2,12 @@ import 'package:flutter/material.dart';
 
 // Common Widgets
 import 'package:plural_app/src/common_widgets/app_text_form_field.dart';
-import 'package:plural_app/src/common_widgets/app_dialog_header.dart';
 import 'package:plural_app/src/common_widgets/app_dialog_header_button.dart';
-import 'package:plural_app/src/common_widgets/close_dialog_button.dart';
 
 // Constants
 import 'package:plural_app/src/constants/strings.dart';
 import 'package:plural_app/src/constants/app_sizes.dart';
 import 'package:plural_app/src/constants/app_values.dart';
-
-// Auth
-import 'package:plural_app/src/features/authentication/presentation/user_settings_button.dart';
 
 // Garden
 import 'package:plural_app/src/features/gardens/domain/garden.dart';
@@ -47,17 +42,12 @@ class _GardenDialogEditFormState extends State<GardenDialogEditForm> {
     final Widget submitFormButton = AppDialogHeaderButton(
       buttonNotifier: ValueNotifier<bool>(true),
       icon: Icon(Icons.mode_edit_outlined),
-      label: Strings.updateLabel,
+      label: AskDialogLabels.updateLabel,
       onPressed: () => submitUpdate(_formKey, _gardenMap),
     );
 
     return Column(
       children: [
-        AppDialogHeader(
-          firstHeaderButton: CloseDialogButton(),
-          secondHeaderButton: UserSettingsButton(),
-          thirdHeaderButton: submitFormButton,
-        ),
         Expanded(
           child: ListView(
             padding: const EdgeInsets.all(AppPaddings.p35),
@@ -66,13 +56,13 @@ class _GardenDialogEditFormState extends State<GardenDialogEditForm> {
                 key: _formKey,
                 child: Column(
                   children: [
-                    AppTextFormFieldDeprecated(
-                      fieldName: GardenField.name,
-                      initialValue: widget.garden.name,
-                      maxLength: AppMaxLengthValues.max75,
-                      label: Strings.gardenNameLabel,
-                      modelMap: _gardenMap,
-                    ),
+                    // AppTextFormFieldDeprecated(
+                    //   fieldName: GardenField.name,
+                    //   initialValue: widget.garden.name,
+                    //   maxLength: AppMaxLengthValues.max75,
+                    //   label: Strings.gardenNameLabel,
+                    //   modelMap: _gardenMap,
+                    // ),
                   ]
                 ),
               ),

@@ -2,18 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
 // Common Classes
-import 'package:plural_app/src/common_classes/app_form.dart';
-
-// Common Methods
-import 'package:plural_app/src/common_methods/form_validators.dart';
+import 'package:plural_app/src/utils/app_form.dart';
 
 // Common Widgets
 import 'package:plural_app/src/common_widgets/app_dialog.dart';
-import 'package:plural_app/src/common_widgets/app_dialog_header.dart';
 import 'package:plural_app/src/common_widgets/app_dialog_header_button.dart';
 import 'package:plural_app/src/common_widgets/app_text_button.dart';
 import 'package:plural_app/src/common_widgets/app_text_form_field.dart';
-import 'package:plural_app/src/common_widgets/close_dialog_button.dart';
 
 // Constants
 import 'package:plural_app/src/constants/strings.dart';
@@ -38,7 +33,6 @@ Future createUserSettingsDialog(BuildContext context) async {
       builder: (BuildContext context) {
         return AppDialog(
           view: UserSettingsDialog(userSettings: userSettings),
-          viewTitle: Strings.settingsViewTitle,
         );
       }
     );
@@ -74,17 +68,12 @@ class _UserSettingsDialogState extends State<UserSettingsDialog> {
     final Widget submitFormButton = AppDialogHeaderButton(
       buttonNotifier: ValueNotifier<bool>(true),
       icon: Icon(Icons.mode_edit_outlined),
-      label: Strings.updateLabel,
+      label: AskDialogLabels.updateLabel,
       onPressed: () => submitUpdate(_formKey, _userSettingsMap),
     );
 
     return Column(
       children: [
-        AppDialogHeader(
-          firstHeaderButton: CloseDialogButton(),
-          secondHeaderButton: GardenSettingsButton(),
-          thirdHeaderButton: submitFormButton,
-        ),
         Expanded(
           child: ListView(
             padding: const EdgeInsets.all(AppPaddings.p35),
@@ -100,15 +89,15 @@ class _UserSettingsDialogState extends State<UserSettingsDialog> {
                 key: _formKey,
                 child: Column(
                   children: [
-                    AppTextFormFieldDeprecated(
-                      fieldName: UserSettingsField.textSize,
-                      formFieldType: FormFieldType.int,
-                      initialValue: widget.userSettings.textSize.toString(),
-                      label: Strings.userSettingsTextSizeLabel,
-                      maxLength: AppMaxLengthValues.max1,
-                      modelMap: _userSettingsMap,
-                      textFieldType: TextFieldType.digitsOnly,
-                    ),
+                    // AppTextFormFieldDeprecated(
+                    //   fieldName: UserSettingsField.textSize,
+                    //   formFieldType: FormFieldType.int,
+                    //   initialValue: widget.userSettings.textSize.toString(),
+                    //   label: Strings.userSettingsTextSizeLabel,
+                    //   maxLength: AppMaxLengthValues.max1,
+                    //   modelMap: _userSettingsMap,
+                    //   textFieldType: TextFieldType.digitsOnly,
+                    // ),
                   ],
                 ),
               ),

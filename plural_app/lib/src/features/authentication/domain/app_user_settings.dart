@@ -9,25 +9,22 @@ class AppUserSettings {
   AppUserSettings({
     required this.id,
     required this.user,
-    required this.textSize,
+    required this.defaultCurrency,
+    required this.defaultInstructions,
   });
 
   final String id;
   final AppUser user;
 
-  final int textSize;
-
-  set textSize(value) {
-    textSize = value.clamp(
-      UserSettingsValues.textSizeMin,
-      UserSettingsValues.textSizeMax);
-  }
+  final String defaultCurrency;
+  final String defaultInstructions;
 
   Map toMap() {
     return {
       GenericField.id: id,
       UserSettingsField.userID: user,
-      UserSettingsField.textSize: textSize,
+      UserSettingsField.defaultCurrency: defaultCurrency,
+      UserSettingsField.defaultInstructions: defaultInstructions
     };
   }
 }

@@ -1,14 +1,17 @@
+import 'dart:developer' as developer;
 import 'package:go_router/go_router.dart';
-
 import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
-import 'package:plural_app/src/constants/routes.dart';
 
 // Pocketbase
 import 'package:pocketbase/pocketbase.dart';
 
+// Common Methods
+import 'package:plural_app/src/common_methods/errors.dart';
+
 // Constants
 import 'package:plural_app/src/constants/pocketbase.dart';
+import 'package:plural_app/src/constants/routes.dart';
 import 'package:plural_app/src/constants/strings.dart';
 
 // Auth
@@ -32,16 +35,45 @@ class AuthRepository {
   final PocketBase pb;
 
   /// Queries on the [UserGardenRecord] collection, sorted by the [sort] value,
-  /// to retrieve a UserGardenRecord corresponding to the given [userID].
+  /// to retrieve a UserGardenRecord corresponding to the given [userID] and [gardenID].
   ///
   /// Returns an [AppUserGardenRecord] instance corresponding to the retrieved
   /// UserGardenRecord if one is found. Else, returns null.
-  Future<AppUserGardenRecord?> getUserGardenRecordByUserID({
+  Future<AppUserGardenRecord?> getGardenRecord({
     required String userID,
+    required String gardenID,
     sort = "-updated"
   }) async {
     var result = await pb.collection(Collection.userGardenRecords).getList(
       sort: sort,
+      filter: "user = '$userID' && garden = '$gardenID'"
+    );
+
+    // Return null if no UserGardenRecord is found
+    var items = result.toJson()[PBKey.items];
+    if (items.isEmpty) return null;
+    var record = items[0];
+
+    var garden = await GetIt.instance<GardensRepository>().getGardenByID(gardenID);
+    var user = await getUserByID(userID);
+
+    return AppUserGardenRecord(
+      id: record[GenericField.id],
+      user: user,
+      garden: garden
+    );
+  }
+
+  /// Queries on the [UserGardenRecord] collection to retrieve the most recently
+  /// updated UserGardenRecord corresponding to the given [userID].
+  ///
+  /// Returns an [AppUserGardenRecord] instance corresponding to the retrieved
+  /// UserGardenRecord if one is found. Else, returns null.
+  Future<AppUserGardenRecord?> getMostRecentGardenRecordByUserID({
+    required String userID,
+  }) async {
+    var result = await pb.collection(Collection.userGardenRecords).getList(
+      sort: "-updated",
       filter: "user = '$userID'"
     );
 
@@ -50,8 +82,8 @@ class AuthRepository {
     if (items.isEmpty) return null;
 
     var record = items[0];
-    String gardenID = record[UserGardenRecordField.gardenID];
 
+    var gardenID = record[UserGardenRecordField.gardenID];
     var garden = await GetIt.instance<GardensRepository>().getGardenByID(gardenID);
     var user = await getUserByID(userID);
 
@@ -73,7 +105,7 @@ class AuthRepository {
     var result = await pb.collection(Collection.userGardenRecords).getList(
       expand: UserGardenRecordField.user,
       filter: "${UserGardenRecordField.garden} = '$currentGardenID'",
-      sort: "user.lastName, user.firstName"
+      sort: "user.username"
     );
 
     // TODO: Raise error if result is empty
@@ -85,8 +117,7 @@ class AuthRepository {
       var userInstance = AppUser(
         id: record[UserGardenRecordField.userID],
         email: userRecord[UserField.email],
-        firstName: userRecord[UserField.firstName],
-        lastName: userRecord[UserField.lastName]
+        username: userRecord[UserField.username],
       );
 
       instances.add(userInstance);
@@ -101,7 +132,7 @@ class AuthRepository {
   /// Returns an [AppUser] instance.
   Future<AppUser> getUserByID(String id) async {
     var result = await pb.collection(Collection.users).getFirstListItem(
-      "${GenericField.id} = '$id'"
+      "${GenericField.id} = '$id'",
     );
 
     // TODO: Raise error if result is empty
@@ -110,8 +141,7 @@ class AuthRepository {
     return AppUser(
       id: record[GenericField.id],
       email: record[UserField.email],
-      firstName: record[UserField.firstName],
-      lastName: record[UserField.lastName]
+      username: record[UserField.username],
     );
   }
 
@@ -163,7 +193,8 @@ class AuthRepository {
     return AppUserSettings(
       id: record[GenericField.id],
       user: currentUser,
-      textSize: record[UserSettingsField.textSize]
+      defaultCurrency: record[UserSettingsField.defaultCurrency],
+      defaultInstructions: record[UserSettingsField.defaultInstructions],
     );
   }
 
@@ -178,7 +209,8 @@ class AuthRepository {
       map[GenericField.id],
       body: {
         UserSettingsField.userID: currentUser.id,
-        UserSettingsField.textSize: map[UserSettingsField.textSize],
+        UserSettingsField.defaultCurrency: map[UserSettingsField.defaultCurrency],
+        UserSettingsField.defaultInstructions: map[UserSettingsField.defaultInstructions],
       }
     );
 
@@ -187,8 +219,39 @@ class AuthRepository {
     return AppUserSettings(
       id: record[GenericField.id],
       user: currentUser,
-      textSize: record[UserSettingsField.textSize]
+      defaultCurrency: record[UserSettingsField.defaultCurrency],
+      defaultInstructions: record[UserSettingsField.defaultInstructions],
     );
+  }
+
+  /// Subscribes to any changes made in the [User] collection to any [User] record
+  /// associated with the [Garden] with the given [gardenID].
+  ///
+  /// Calls the given [callback] method whenever a change is made.
+  Future<Function> subscribeTo(String gardenID, Function callback) {
+    Future<Function> unsubscribeFunc = pb.collection(Collection.users)
+      .subscribe(Subscribe.all, (e) async {
+        var user = e.record!.toJson();
+
+        // Only respond to changes to users in the given gardenID
+        var gardenRecord = await getGardenRecord(
+          userID: user[GenericField.id],
+          gardenID: gardenID,
+        );
+
+        if (gardenRecord == null) return;
+
+        switch (e.action) {
+          case EventAction.create:
+            callback();
+          case EventAction.delete:
+            callback();
+          case EventAction.update:
+            callback();
+        }
+      });
+
+    return unsubscribeFunc;
   }
 }
 
@@ -208,7 +271,12 @@ Future<bool> login(String usernameOrEmail, String password) async {
     await registerGetItInstances(pb);
 
     return true;
-  } on ClientException {
+  } on ClientException catch(e) {
+    // Log error
+    developer.log(
+      "AuthRepository login() error",
+      error: e,
+    );
     return false;
   }
 }
@@ -254,25 +322,15 @@ Future<(bool, Map)> signup(
     // Return
     return (true, {});
   } on ClientException catch(e) {
-    var innerMap = e.response[ExceptionStrings.data];
-    var errorsMap = {};
+    var errorsMap = getErrorsMapFromClientException(e);
 
-    // Create map of fields and corresponding error messages
-    for (var key in e.response[ExceptionStrings.data].keys) {
-      var fieldName = key;
-      var errorMessage = innerMap[key][ExceptionStrings.message];
+      // Log error
+      developer.log(
+      "AuthRepository signup() error",
+      error: e,
+    );
 
-      // Remove trailing period
-      errorMessage.replaceAll(
-        RegExp(r'.'),
-        "");
-
-      errorsMap[fieldName] = errorMessage;
-    }
-
-    // Return
-    print("Error Caught: $e");
-    return (false, errorsMap);
+      return (false, errorsMap);
   }
 }
 
@@ -286,12 +344,17 @@ Future<bool> sendPasswordResetCode(String email) async {
 
   try {
     // Send password reset email
-    // await pb.collection(Collection.users).requestPasswordReset(email);
+    await pb.collection(Collection.users).requestPasswordReset(email);
 
     // Return
     return true;
   } on ClientException catch(e) {
-    print("Error Caught: $e");
+    // Log error
+    developer.log(
+      "AuthRepository sendPasswordResetCode() error",
+      error: e,
+    );
+
     return false;
   }
 }

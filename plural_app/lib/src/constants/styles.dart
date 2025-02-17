@@ -4,7 +4,7 @@ import 'package:plural_app/src/constants/themes.dart';
 
 class AppStyles {
   static OutlineInputBorder textFieldBorder = OutlineInputBorder(
-    borderRadius: BorderRadius.circular(AppBorderRadii.r50),
+    borderRadius: BorderRadius.circular(AppBorderRadii.r5),
     borderSide: BorderSide(
       color: AppThemes.colorScheme.onPrimary,
       width: AppWidths.w1point5,

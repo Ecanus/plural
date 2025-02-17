@@ -3,7 +3,7 @@ import 'package:pocketbase/pocketbase.dart';
 
 // Asks
 import 'package:plural_app/src/features/asks/data/asks_repository.dart';
-import 'package:plural_app/src/common_widgets/app_dialog_manager.dart';
+import 'package:plural_app/src/common_widgets/app_dialog_router.dart';
 
 // Auth
 import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
@@ -28,8 +28,8 @@ Future<void> registerGetItInstances(PocketBase pb) async {
   );
 
   // AppDialogManager
-  getIt.registerLazySingleton<AppDialogManager>(
-    () => AppDialogManager()
+  getIt.registerLazySingleton<AppDialogRouter>(
+    () => AppDialogRouter()
   );
 
   // AsksRepository
@@ -67,21 +67,20 @@ Future<void> registerGetItInstances(PocketBase pb) async {
 /// [userID].
 Future<void> setInitialAppStateValues(userID) async {
   var appState = GetIt.instance<AppState>();
-  var user = await GetIt.instance<AuthRepository>().getUserByID(userID);
 
   // User
+  var user = await GetIt.instance<AuthRepository>().getUserByID(userID);
   appState.currentUser = user;
 
-  var latestGardenRecord = await GetIt.instance<AuthRepository>()
-      .getUserGardenRecordByUserID(userID: user.id);
+  // User Settings
+  var userSettings = await GetIt.instance<AuthRepository>().getCurrentUserSettings();
+  appState.currentUserSettings = userSettings;
 
-  if (latestGardenRecord != null) {
-    // Latest Garden Record
-    appState.currentUserLatestGardenRecord = latestGardenRecord;
 
-    // Garden
-    appState.currentGarden = latestGardenRecord.garden;
-  }
+  // TODO: Remove mostRecentGardenRecord
+  var mostRecentGardenRecord = await GetIt.instance<AuthRepository>()
+      .getMostRecentGardenRecordByUserID(userID: user.id);
+  appState.currentGarden = mostRecentGardenRecord?.garden;
 }
 
 /// Resets the [GetIt] instance used in the application.

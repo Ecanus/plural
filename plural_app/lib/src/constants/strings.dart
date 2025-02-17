@@ -1,13 +1,17 @@
 // Fields
 class AskField {
+  static const boon = "boon";
   static const creator = "creator";
   static const creatorID = "creatorID";
+  static const currency = "currency";
   static const description = "description";
   static const deadlineDate = "deadlineDate";
-  static const fullySponsoredDate = "fullySponsoredDate";
   static const garden = "garden";
-  static const targetDonationSum = "targetDonationSum";
+  static const instructions = "instructions";
   static const sponsors = "sponsors";
+  static const targetMetDate = "targetMetDate";
+  static const targetSum = "targetSum";
+  static const type = "type";
 }
 
 class GenericField {
@@ -28,11 +32,11 @@ class SignInField {
 class UserField {
   static const email = "email";
   static const firstName = "firstName";
+  static const instructions = "instructions";
   static const lastName = "lastName";
-  static const latestGardenRecordID = "latestGardenRecord";
-  static const username = "username";
   static const password = "password";
   static const passwordConfirm = "passwordConfirm";
+  static const username = "username";
 }
 
 class UserGardenRecordField {
@@ -46,7 +50,8 @@ class UserGardenRecordField {
 class UserSettingsField {
   static const user = "user";
   static const userID = "user";
-  static const textSize = "textSize";
+  static const defaultCurrency = "defaultCurrency";
+  static const defaultInstructions = "defaultInstructions";
 }
 
 class AppFormFields {
@@ -63,7 +68,8 @@ class PBKey {
 
 // Headers
 class Headers {
-  static const enterEmail = "Enter Email Address";
+  static const confirmDeleteAsk = "Delete ask?";
+  static const enterEmail = "Enter email address";
 }
 
 // Labels
@@ -95,31 +101,66 @@ class SignInLabels {
   static const usernameOrEmail = "Username or Email";
 }
 
+class AskDialogLabels {
+  static const boon = "Boon";
+
+  static const cancelConfirmDeleteAsk = "Cancel";
+  static const closeWindow = "Close window";
+  static const confirmDeleteAsk = "Delete";
+  static const createAsk = "Create new Ask";
+  static const creator = "Creator";
+  static const currency = "Currency";
+
+  static const deadlineDueBy = "due";
+  static const deleteAsk = "Delete ask";
+
+  static const instructions = "Instructions";
+
+  static const isAskSponsored = "Is ponsored";
+  static const isNotVisibleOnTimeline = "Not visible on timeilne";
+  static const isTargetMet = "Target met";
+  static const isVisibleOnTimeline = "Visible on timeline";
+
+  static const navToGardens = "Gardens";
+  static const navToSettings = "Settings";
+
+  static const selectDateLabel = "Select date";
+
+  static const type = "Type";
+
+  static const createLabel = "Create";
+  static const updateLabel = "Update";
+
+  static const description = "Description";
+  static const deadlineDate = "Deadline date";
+
+  static const targetIsMet = "Target met";
+  static const targetIsNotMet = "Target not met";
+
+  static const targetSum = "Target Sum";
+  static const username = "Username";
+}
+
+class AskDialogTitles {
+  static const asks = "Asks";
+  static const createAsk = "Create Ask";
+  static const editAsk = "Edit Ask";
+  static const viewAsk = "View Ask";
+}
+
+class AskDialogTooltips {
+  static const listedAsks = "Go to Asks";
+  static const saveChanges = "Save changes";
+}
+
 // Strings
 class Strings {
 
   // Ask Dialog
-  static const asksViewTitle = "Asks";
   static const asksListButtonTooltip = "Asks List";
 
-  static const viewableAskDialogTitle = "View Ask";
-  static const editableAskDialogTitle = "Edit Ask";
+  static const nonEditableAskDialogTitle = "View Ask";
   static const creatableAskDialogTitle = "Create Ask";
-
-  static const isAskSponsoredLabel = "Is Sponsored";
-  static const isAskFullySponsoredLabel = "Is Fully Sponsored";
-
-  static const selectDateLabel = "Select Date";
-
-  static const closeLabel = "Close Window";
-  static const newAskLabel = "New Ask";
-  static const createLabel = "Create";
-  static const updateLabel = "Update";
-
-  static const askTargetDonationSumLabel = "Target Donation Sum";
-  static const askDescriptionLabel = "Description";
-  static const askDeadlineDateLabel = "Deadline Date";
-  static const askCreatorLabel = "Creator";
 
   // Date Formatting
   static const dateformatYMMdd = "y-MM-dd";
@@ -165,21 +206,26 @@ class SignInMessages {
 }
 
 class ErrorMessages {
-  static const invalidValue = "A valid value is required";
+  static const invalidValue = "Valid value required";
   static const invalidEmailOrPassword = "Invalid username/email or password";
   static const invalidPassword = "Password does not meet all requirements";
   static const passwordMismatch = "Passwords do not match";
 }
 
 class SnackBarMessages {
-  static const sentPasswordResetEmail = "Password reset instructions have been sent to ";
-  static const sentUserVerificationEmail = "A verification email has been sent to ";
+  static const sentPasswordResetEmail = "Password reset instructions have been sent to";
+  static const sentUserVerificationEmail = "A verification email has been sent to";
+
+  static const askSponsored = "Ask successfully sponsored!";
+  static const createAskSuccess = "Ask successfully created";
+  static const deleteAskSuccess = "Ask successfully deleted";
+  static const updateAskSuccess = "Ask successfully updated!";
 }
 
 // Instructions
 class SignInInstructions {
   static const forgotPassword = (
-    "Please enter the email address to send password reset instructions to.");
+    "Please enter the email address to send password reset instructions to");
 }
 
 // Exceptions
@@ -195,4 +241,11 @@ class ListedAskTileText {
 
 class Titles {
   static const pluralApp = "Plural App";
+}
+
+class Tooltips {
+  static const boon = "The ideal donation amount";
+  static const instructions = "How to sponsor the ask";
+  static const markAsSponsored = "Click to mark as sponsored";
+  static const unmarkAsSponsored = "Click to unmark as sponsored";
 }

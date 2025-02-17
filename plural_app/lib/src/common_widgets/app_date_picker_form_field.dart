@@ -10,19 +10,27 @@ import 'package:plural_app/src/constants/app_sizes.dart';
 // Constants
 import 'package:plural_app/src/constants/strings.dart';
 import 'package:plural_app/src/constants/app_values.dart';
+import 'package:plural_app/src/constants/styles.dart';
+
+// Utils
+import 'package:plural_app/src/utils/app_form.dart';
 
 class AppDatePickerFormField extends StatefulWidget {
   AppDatePickerFormField({
+    required this.appForm,
     required this.fieldName,
     this.initialValue,
     this.label = "",
-    required this.modelMap,
+    this.paddingBottom,
+    this.paddingTop,
   });
 
+  final AppForm appForm;
   final String fieldName;
   final DateTime? initialValue;
   final String label;
-  final Map modelMap;
+  final double? paddingBottom;
+  final double? paddingTop;
 
   @override
   State<AppDatePickerFormField> createState() => _AppDatePickerFormFieldState();
@@ -31,12 +39,18 @@ class AppDatePickerFormField extends StatefulWidget {
 class _AppDatePickerFormFieldState extends State<AppDatePickerFormField> {
   final _controller = TextEditingController();
 
+  late double _paddingBottom;
+  late double _paddingTop;
+
   @override
   void initState() {
     super.initState();
 
     _controller.text = widget.initialValue == null ?
       "" : DateFormat(Strings.dateformatYMMdd).format(widget.initialValue!);
+
+    _paddingBottom = widget.paddingBottom ?? AppPaddings.p20;
+    _paddingTop = widget.paddingTop ?? AppPaddings.p20;
   }
 
   void setControllerText(DateTime newDate) {
@@ -47,29 +61,39 @@ class _AppDatePickerFormFieldState extends State<AppDatePickerFormField> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        IconButton(
-          onPressed: () => selectDate(context, _controller.text, setControllerText),
-          icon: Icon(Icons.edit)
-        ),
-        gapW10,
-        Expanded(
-          child: TextFormField(
-            controller: _controller,
-            decoration: InputDecoration(
-              label: Text(widget.label),
+    return Container(
+      padding: EdgeInsets.only(
+        top: _paddingTop,
+        bottom: _paddingBottom,
+      ),
+      child: Row(
+        children: [
+          CircleAvatar(
+            backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+            child: IconButton(
+              onPressed: () => selectDate(context, _controller.text, setControllerText),
+              icon: Icon(Icons.mode_edit_outlined)
             ),
-            enabled: false,
-            onSaved: (value) => saveToMap(
-              widget.fieldName,
-              widget.modelMap,
-              value,
-            ),
-            validator: (value) => validateDatePickerFormField(value),
-          )
-        ),
-      ],
+          ),
+          gapW10,
+          Expanded(
+            child: TextFormField(
+              controller: _controller,
+              decoration: InputDecoration(
+                border: AppStyles.textFieldBorder,
+                errorText: widget.appForm.getError(fieldName: widget.fieldName),
+                label: Text(widget.label),
+              ),
+              enabled: false,
+              onSaved: (value) => widget.appForm.save(
+                fieldName: widget.fieldName,
+                value: value,
+              ),
+              validator: (value) => validateDatePickerFormField(value),
+            )
+          ),
+        ],
+      ),
     );
   }
 }
@@ -79,9 +103,9 @@ Future<void> selectDate(
   String dateString,
   Function setTextCallback,
   ) async {
-    var today = DateTime.now();
+    var today = DateTime.now().toLocal();
     var dateThreshold = today.add(AppDateValues.datePickerThreshold);
-    var initialDate = dateString == "" ? null : DateTime.parse(dateString);
+    var initialDate = dateString.isEmpty ? null : DateTime.parse(dateString).toLocal();
 
     final DateTime? datePicked = await showDatePicker(
       context: context,
