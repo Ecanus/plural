@@ -12,6 +12,7 @@ import "package:plural_app/src/features/authentication/domain/app_user.dart";
 // Constants
 import 'package:plural_app/src/constants/app_values.dart';
 import 'package:plural_app/src/constants/strings.dart';
+import 'package:plural_app/src/features/authentication/domain/app_user_settings.dart';
 
 // Gardens
 import 'package:plural_app/src/features/gardens/domain/garden.dart';
@@ -19,7 +20,9 @@ import 'package:plural_app/src/features/gardens/domain/garden.dart';
 class AppState with ChangeNotifier {
 
   Garden? _currentGarden;
+
   AppUser? _currentUser;
+  AppUserSettings? _currentUserSettings;
 
   List<Ask>? _timelineAsks;
 
@@ -34,6 +37,13 @@ class AppState with ChangeNotifier {
   AppUser? get currentUser => _currentUser;
   set currentUser(AppUser? newUser) {
     _currentUser = newUser;
+    notifyListeners();
+  }
+
+  // _currentUserSettings
+  AppUserSettings? get currentUserSettings => _currentUserSettings;
+  set currentUserSettings(AppUserSettings? newUserSettings) {
+    _currentUserSettings = newUserSettings;
     notifyListeners();
   }
 

@@ -7,6 +7,7 @@ class AskField {
   static const description = "description";
   static const deadlineDate = "deadlineDate";
   static const garden = "garden";
+  static const instructions = "instructions";
   static const sponsors = "sponsors";
   static const targetMetDate = "targetMetDate";
   static const targetSum = "targetSum";
@@ -49,7 +50,8 @@ class UserGardenRecordField {
 class UserSettingsField {
   static const user = "user";
   static const userID = "user";
-  static const textSize = "textSize";
+  static const defaultCurrency = "defaultCurrency";
+  static const defaultInstructions = "defaultInstructions";
 }
 
 class AppFormFields {
@@ -66,7 +68,8 @@ class PBKey {
 
 // Headers
 class Headers {
-  static const enterEmail = "Enter Email Address";
+  static const confirmDeleteAsk = "Delete ask?";
+  static const enterEmail = "Enter email address";
 }
 
 // Labels
@@ -99,36 +102,48 @@ class SignInLabels {
 }
 
 class AskDialogLabels {
+  static const boon = "Boon";
+
+  static const cancelConfirmDeleteAsk = "Cancel";
   static const closeWindow = "Close window";
+  static const confirmDeleteAsk = "Delete";
   static const createAsk = "Create new Ask";
+  static const creator = "Creator";
+  static const currency = "Currency";
+
+  static const deadlineDueBy = "due";
+  static const deleteAsk = "Delete ask";
+
+  static const instructions = "Instructions";
 
   static const isAskSponsored = "Is ponsored";
   static const isNotVisibleOnTimeline = "Not visible on timeilne";
   static const isTargetMet = "Target met";
   static const isVisibleOnTimeline = "Visible on timeline";
 
+  static const navToGardens = "Gardens";
+  static const navToSettings = "Settings";
+
   static const selectDateLabel = "Select date";
+
+  static const type = "Type";
 
   static const createLabel = "Create";
   static const updateLabel = "Update";
 
-  static const boon = "Boon";
-  static const creator = "Creator";
-  static const currency = "Currency";
   static const description = "Description";
-  static const deadlineDate = "Deadline Date";
+  static const deadlineDate = "Deadline date";
 
   static const targetIsMet = "Target met";
   static const targetIsNotMet = "Target not met";
 
   static const targetSum = "Target Sum";
   static const username = "Username";
-
-  static const instructions = "Instructions";
 }
 
 class AskDialogTitles {
   static const asks = "Asks";
+  static const createAsk = "Create Ask";
   static const editAsk = "Edit Ask";
   static const viewAsk = "View Ask";
 }
@@ -202,7 +217,9 @@ class SnackBarMessages {
   static const sentUserVerificationEmail = "A verification email has been sent to";
 
   static const askSponsored = "Ask successfully sponsored!";
-  static const successfullyUpdatedAsk = "Ask successfully updated!";
+  static const createAskSuccess = "Ask successfully created";
+  static const deleteAskSuccess = "Ask successfully deleted";
+  static const updateAskSuccess = "Ask successfully updated!";
 }
 
 // Instructions
@@ -227,7 +244,8 @@ class Titles {
 }
 
 class Tooltips {
-  static const boon = "The user's ideal donation amount";
+  static const boon = "The ideal donation amount";
+  static const instructions = "How to sponsor the ask";
   static const markAsSponsored = "Click to mark as sponsored";
   static const unmarkAsSponsored = "Click to unmark as sponsored";
 }

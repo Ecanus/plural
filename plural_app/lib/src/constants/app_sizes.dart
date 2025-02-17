@@ -26,6 +26,7 @@ class AppConstraints {
   static const c75 = 75.0;
   static const c80 = 80.0;
   static const c100 = 100.0;
+  static const c180 = 180.0;
   static const c230 = 230.0;
   static const c350 = 350.0;
   static const c375 = 375.0;
@@ -73,6 +74,7 @@ class AppFontSizes {
 class AppHeights {
   static const h25 = 25.0;
   static const h40 = 40.0;
+  static const h50 = 50.0;
   static const h60 = 60.0;
   static const h500 = 500;
 }
@@ -82,6 +84,7 @@ class AppIconSizes {
   static const s25 = 25.0;
   static const s30 = 30.0;
   static const s35 = 35.0;
+  static const s40 = 40.0;
 }
 
 class AppIndents {

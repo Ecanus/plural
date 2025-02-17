@@ -24,6 +24,7 @@ class AppTextFormField extends StatefulWidget {
     this.maxLines = AppMaxLinesValues.max1,
     this.paddingBottom,
     this.paddingTop,
+    this.suffixIcon,
     this.textFieldType = TextFieldType.text,
     this.validator,
   });
@@ -38,6 +39,7 @@ class AppTextFormField extends StatefulWidget {
   final int? maxLines;
   final double? paddingBottom;
   final double? paddingTop;
+  final Widget? suffixIcon;
   final TextFieldType textFieldType;
   final Function? validator;
 
@@ -86,6 +88,7 @@ class _AppTextFormFieldState extends State<AppTextFormField> {
           focusedErrorBorder: AppStyles.textFieldFocusedErrorBorder,
           hintText: widget.hintText,
           label: Text(widget.label),
+          suffixIcon: widget.suffixIcon,
         ),
         inputFormatters: getInputFormatters(
           widget.textFieldType,

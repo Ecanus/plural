@@ -37,7 +37,7 @@ String? validateCurrency(String? value) {
 ///
 /// Returns null if valid, else returns a String.
 String? validateDatePickerFormField(String? value) {
-  if (value == null) return ErrorMessages.invalidValue;
+  if (value == null || value.isEmpty) return ErrorMessages.invalidValue;
 
   return null;
 }

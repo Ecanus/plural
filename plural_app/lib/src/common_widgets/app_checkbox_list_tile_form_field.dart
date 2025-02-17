@@ -52,17 +52,19 @@ class _AppCheckboxListTileFormFieldState extends State<AppCheckboxListTileFormFi
       builder: (BuildContext context, bool checkboxValue, Widget? child) {
         return Container(
           constraints: BoxConstraints(maxWidth: AppWidths.w200),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(AppBorderRadii.r5),
+            color: Theme.of(context).colorScheme.primaryContainer
+          ),
           child: Card(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(AppBorderRadii.r5)
-            ),
+            elevation: AppElevations.e0,
             color: Theme.of(context).colorScheme.primaryContainer,
             child: FormField<bool>(
               builder: (_) {
                 return CheckboxListTile(
+                  activeColor: Theme.of(context).colorScheme.onPrimaryContainer,
                   checkColor: Theme.of(context).colorScheme.primaryContainer,
                   controlAffinity: ListTileControlAffinity.leading,
-                  activeColor: Theme.of(context).colorScheme.onPrimaryContainer,
                   title: Text(
                     widget.text,
                     style: TextStyle(

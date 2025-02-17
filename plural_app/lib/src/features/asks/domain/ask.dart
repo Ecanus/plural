@@ -23,6 +23,7 @@ class Ask {
     required this.currency,
     required this.description,
     required this.deadlineDate,
+    required this.instructions,
     this.targetMetDate,
     required this.targetSum,
     required this.type,
@@ -35,6 +36,7 @@ class Ask {
   String currency;
   String description;
   DateTime deadlineDate;
+  String instructions;
   DateTime? targetMetDate;
   int targetSum;
   AskType type;
@@ -168,6 +170,7 @@ class Ask {
           currency: record[AskField.currency],
           description: record[AskField.description],
           deadlineDate: DateTime.parse(record[AskField.deadlineDate]),
+          instructions: record[AskField.instructions],
           targetSum: record[AskField.targetSum],
           targetMetDate: parsedTargetMetDate,
           type: askTypeFromString
@@ -190,9 +193,10 @@ class Ask {
       AskField.currency: currency,
       AskField.description: description,
       AskField.deadlineDate: deadlineDate,
+      AskField.instructions: instructions,
       AskField.targetSum: targetSum,
       AskField.targetMetDate: targetMetDate,
-      AskField.type: type.name, //TODO: Remove ".name" once a FormField is made for this
+      AskField.type: type.name,
     };
   }
 
@@ -203,9 +207,10 @@ class Ask {
       AskField.currency: null,
       AskField.description: null,
       AskField.deadlineDate: null,
+      AskField.instructions: null,
       AskField.targetSum: null,
       AskField.targetMetDate: null,
-      AskField.type: AskType.monetary.name, // TODO: Remove ".name", Currently all Asks are monetary
+      AskField.type: null,
     };
   }
 

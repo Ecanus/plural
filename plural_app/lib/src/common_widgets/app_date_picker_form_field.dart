@@ -81,6 +81,7 @@ class _AppDatePickerFormFieldState extends State<AppDatePickerFormField> {
               controller: _controller,
               decoration: InputDecoration(
                 border: AppStyles.textFieldBorder,
+                errorText: widget.appForm.getError(fieldName: widget.fieldName),
                 label: Text(widget.label),
               ),
               enabled: false,

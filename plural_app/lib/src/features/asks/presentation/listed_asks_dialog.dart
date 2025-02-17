@@ -38,6 +38,8 @@ class AskDialogList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final appDialogRouter = GetIt.instance<AppDialogRouter>();
+
     return Column(
       children: [
         Expanded(
@@ -47,7 +49,15 @@ class AskDialogList extends StatelessWidget {
           ),
         ),
         AppDialogFooterBuffer(buttons: [RouteToCreateAskViewButton()],),
-        AppDialogFooter(title: AskDialogTitles.asks)
+        AppDialogNavFooter(
+          leftDialogIcon: Icons.local_florist,
+          leftNavCallback: appDialogRouter.showGardenDialogListView,
+          leftTooltipMessage: AskDialogLabels.navToGardens,
+          rightDialogIcon: Icons.settings,
+          rightNavCallback: appDialogRouter.showUserSettingsDialogView,
+          rightTooltipMessage: AskDialogLabels.navToSettings,
+          title: AskDialogTitles.asks
+        )
       ],
     );
   }
@@ -63,9 +73,9 @@ class RouteToCreateAskViewButton extends StatelessWidget {
       message: AskDialogLabels.createAsk,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: Theme.of(context).colorScheme.surface,
+          backgroundColor: Theme.of(context).colorScheme.onPrimary,
           elevation: AppElevations.e0,
-          iconColor: Theme.of(context).colorScheme.onPrimary,
+          iconColor: Theme.of(context).colorScheme.surface,
           shape: CircleBorder(),
         ),
         onPressed: () => appDialogRouter.showCreatableAskDialogView(),

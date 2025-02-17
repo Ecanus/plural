@@ -74,7 +74,7 @@ class AskDialogView extends StatelessWidget {
                   TextColumn(
                     fontWeight: FontWeight.bold,
                     label: AskDialogLabels.instructions,
-                    text: ask.creator!.instructions,
+                    text: ask.instructions,
                   ),
                   gapH25,
                   TextColumn(

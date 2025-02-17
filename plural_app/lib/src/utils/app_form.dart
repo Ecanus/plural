@@ -71,6 +71,8 @@ class AppForm {
     errors.clear();
   }
 
+  /// Assigns the given [value] to the value of the key-value pairing in [fields]
+  /// with a key that matches [fieldName].
   void setValue({
     required String fieldName,
     required dynamic value,

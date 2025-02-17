@@ -51,8 +51,6 @@ class _AskDialogEditFormState extends State<AskDialogEditForm> {
   late GlobalKey<FormState> _formKey;
   late AppForm _appForm;
 
-  late ValueNotifier<bool> _buttonNotifier;
-
   @override
   void initState() {
     super.initState();
@@ -64,12 +62,6 @@ class _AskDialogEditFormState extends State<AskDialogEditForm> {
       fieldName: AppFormFields.rebuild,
       value: () { setState(() {}); }
     );
-
-    _buttonNotifier = ValueNotifier<bool>(false);
-  }
-
-  void onChanged() {
-    _buttonNotifier.value = _formKey.currentState!.validate();
   }
 
   @override
@@ -83,9 +75,14 @@ class _AskDialogEditFormState extends State<AskDialogEditForm> {
             children: [
               Form(
                 key: _formKey,
-                onChanged: () => onChanged(),
                 child: Column(
                   children: [
+                    AppDatePickerFormField(
+                      appForm: _appForm,
+                      fieldName: AskField.deadlineDate,
+                      initialValue: widget.ask.deadlineDate,
+                      label: AskDialogLabels.deadlineDate,
+                    ),
                     Row(
                       children: [
                         Expanded(
@@ -113,7 +110,7 @@ class _AskDialogEditFormState extends State<AskDialogEditForm> {
                         ),
                         gapW20,
                         Expanded(
-                          flex: 2,
+                          flex: AppFlexes.f2,
                           child: AppCurrencyPickerFormField(
                             appForm: _appForm,
                             fieldName: AskField.currency,
@@ -131,20 +128,37 @@ class _AskDialogEditFormState extends State<AskDialogEditForm> {
                       maxLength: AppMaxLengthValues.max400,
                       maxLines: null,
                     ),
-                    AppDatePickerFormField(
+                    AppTextFormField(
                       appForm: _appForm,
-                      fieldName: AskField.deadlineDate,
-                      initialValue: widget.ask.deadlineDate,
-                      label: AskDialogLabels.deadlineDate,
+                      fieldName: AskField.instructions,
+                      initialValue: widget.ask.instructions,
+                      label: AskDialogLabels.instructions,
+                      maxLength: AppMaxLengthValues.max200,
+                      maxLines: null,
                     ),
-                    gapH50,
-                    AppCheckboxListTileFormField(
-                      appForm: _appForm,
-                      fieldName: AskField.targetMetDate,
-                      formFieldType: FormFieldType.datetimeNow,
-                      text: AskDialogLabels.isTargetMet,
-                      value: widget.ask.isTargetMet,
+                    gapH30,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        AppCheckboxListTileFormField(
+                          appForm: _appForm,
+                          fieldName: AskField.targetMetDate,
+                          formFieldType: FormFieldType.datetimeNow,
+                          text: AskDialogLabels.isTargetMet,
+                          value: widget.ask.isTargetMet,
+                        ),
+                      ],
                     ),
+                    Visibility.maintain( // Hidden form field. Always saves type == monetary for now
+                      visible: false,
+                      child: AppTextFormField(
+                        appForm: _appForm,
+                        fieldName: AskField.type,
+                        initialValue: AskType.monetary.name, // Hardcoded value for now
+                        label: AskDialogLabels.type,
+                      ),
+                    ),
+                    DeleteAskButton(appForm: _appForm),
                   ],
                 ),
               ),
@@ -161,6 +175,137 @@ class _AskDialogEditFormState extends State<AskDialogEditForm> {
       ],
     );
   }
+}
+
+class DeleteAskButton extends StatelessWidget {
+  const DeleteAskButton({
+    required this.appForm,
+  });
+
+  final AppForm appForm;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      constraints: BoxConstraints(
+        minWidth: double.infinity,
+        minHeight: AppHeights.h50
+      ),
+      child: FilledButton.icon(
+        icon: Icon(Icons.delete),
+        label: Text(AskDialogLabels.deleteAsk),
+        onPressed: () => showConfirmDeleteAskDialog(context, appForm),
+        style: ButtonStyle(
+          backgroundColor: WidgetStateProperty.all<Color>(
+           Theme.of(context).colorScheme.error
+          ),
+          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(AppBorderRadii.r5)
+            )
+          )
+        ),
+      ),
+    );
+  }
+}
+
+class ConfirmDeleteAskDialog extends StatelessWidget {
+  const ConfirmDeleteAskDialog({
+    required this.appForm
+  });
+
+  final AppForm appForm;
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: AppPaddings.p20,
+        ),
+        constraints: BoxConstraints.expand(
+          width: AppConstraints.c400,
+          height: AppConstraints.c180
+        ),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(AppBorderRadii.r15),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(
+                  Headers.confirmDeleteAsk,
+                  style: Theme.of(context).textTheme.headlineMedium,
+                ),
+              ],
+            ),
+            gapH35,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Container(
+                  constraints: BoxConstraints(minHeight: AppHeights.h40),
+                  child: OutlinedButton(
+                    onPressed: () => Navigator.pop(context),
+                    style: ButtonStyle(
+                      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(AppBorderRadii.r5)
+                        )
+                      ),
+                    ),
+                    child: Text(
+                      AskDialogLabels.cancelConfirmDeleteAsk,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSecondary
+                      ),
+                    )
+                  ),
+                ),
+                gapW15,
+                Container(
+                  constraints: BoxConstraints(minHeight: AppHeights.h40),
+                  child: FilledButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      submitDelete(context, appForm);
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.all<Color>(
+                        Theme.of(context).colorScheme.error
+                      ),
+                      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(AppBorderRadii.r5)
+                        )
+                      ),
+                    ),
+                    child: Text(AskDialogLabels.confirmDeleteAsk)
+                  ),
+                )
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+Future<void> showConfirmDeleteAskDialog(
+  BuildContext context,
+  AppForm appForm
+) async {
+  await showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return ConfirmDeleteAskDialog(appForm: appForm);
+    }
+  );
 }
 
 class EditableAskHeader extends StatelessWidget {

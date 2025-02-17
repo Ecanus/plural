@@ -3,6 +3,7 @@ import 'package:get_it/get_it.dart';
 
 // Common Widgets
 import 'package:plural_app/src/common_widgets/close_dialog_button.dart';
+import 'package:plural_app/src/common_widgets/app_dialog_footer_nav_button.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
@@ -105,6 +106,100 @@ class AppDialogFooterBuffer extends StatelessWidget {
         ),
       )
       : SizedBox();
+  }
+}
+
+class AppDialogNavFooter extends StatefulWidget {
+  const AppDialogNavFooter({
+    super.key,
+    required this.leftDialogIcon,
+    required this.leftNavCallback,
+    required this.leftTooltipMessage,
+    required this.rightDialogIcon,
+    required this.rightNavCallback,
+    required this.rightTooltipMessage,
+    required this.title,
+  });
+
+  final IconData leftDialogIcon;
+  final Function leftNavCallback;
+  final String leftTooltipMessage;
+
+  final IconData rightDialogIcon;
+  final Function rightNavCallback;
+  final String rightTooltipMessage;
+
+  final String title;
+
+  @override
+  State<AppDialogNavFooter> createState() => _AppDialogNavFooterState();
+}
+
+class _AppDialogNavFooterState extends State<AppDialogNavFooter> {
+  bool _isMouseHovered = false;
+
+  void _mouseExit(PointerEvent details) {
+    setState(() { _isMouseHovered = false; });
+  }
+
+  void _mouseEnter(PointerEvent details) {
+    setState(() { _isMouseHovered = true; });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: _mouseEnter,
+      onExit: _mouseExit,
+      child: Container(
+        constraints: BoxConstraints.expand(
+          width: AppConstraints.c800,
+          height: AppConstraints.c100,
+        ),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.only(
+            bottomRight: Radius.circular(AppBorderRadii.r15),
+            bottomLeft: Radius.circular(AppBorderRadii.r15),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Theme.of(context).shadowColor,
+              blurRadius: AppDialogValues.blurRadius,
+              spreadRadius: AppDialogValues.spreadRadius,
+              offset: AppDialogValues.offset,
+            ),
+          ],
+          color: Theme.of(context).colorScheme.primaryContainer,
+        ),
+        padding: EdgeInsets.symmetric(horizontal: AppPaddings.p35),
+        child: Row(
+          children: [
+            AppDialogFooterNavButton(
+              callback: widget.leftNavCallback,
+              dialogIcon: widget.leftDialogIcon,
+              direction: NavButtonDirection.left,
+              isMouseHovered: _isMouseHovered,
+              tooltipMessage: widget.leftTooltipMessage,
+            ),
+            Text(
+              widget.title,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onPrimary,
+                fontSize: AppFontSizes.s25,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            AppDialogFooterNavButton(
+              callback: widget.rightNavCallback,
+              dialogIcon: widget.rightDialogIcon,
+              direction: NavButtonDirection.right,
+              isMouseHovered: _isMouseHovered,
+              tooltipMessage: widget.rightTooltipMessage,
+            ),
+          ],
+        )
+      ),
+    );
   }
 }
 

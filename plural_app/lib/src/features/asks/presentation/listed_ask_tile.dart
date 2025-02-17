@@ -7,6 +7,7 @@ import 'package:plural_app/src/common_widgets/app_dialog_router.dart';
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
 import 'package:plural_app/src/constants/form_values.dart';
+import 'package:plural_app/src/constants/strings.dart';
 import 'package:plural_app/src/constants/themes.dart';
 
 // Asks
@@ -43,10 +44,11 @@ class ListedAskTile extends StatelessWidget {
           ),
         ),
         subtitle: Text(
-          ask.formattedDeadlineDate,
+          "${AskDialogLabels.deadlineDueBy}: ${ask.formattedDeadlineDate}",
           style: TextStyle(
             color: textColor,
             decoration: textDecoration,
+            fontStyle: FontStyle.italic,
           ),
         ),
         trailing: TileTrailing(isOnTimeline: ask.isOnTimeline),

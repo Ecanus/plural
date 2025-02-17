@@ -5,13 +5,11 @@ class AppUser {
   AppUser({
     required this.id,
     required this.email,
-    required this.instructions,
     required this.username,
   });
 
   final String id;
   final String email;
-  String instructions;
   final String username;
 
   AppUserGardenRecord? latestGardenRecord;

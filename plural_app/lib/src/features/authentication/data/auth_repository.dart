@@ -1,8 +1,7 @@
+import 'dart:developer' as developer;
 import 'package:go_router/go_router.dart';
-
 import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
-import 'package:plural_app/src/constants/routes.dart';
 
 // Pocketbase
 import 'package:pocketbase/pocketbase.dart';
@@ -12,6 +11,7 @@ import 'package:plural_app/src/common_methods/errors.dart';
 
 // Constants
 import 'package:plural_app/src/constants/pocketbase.dart';
+import 'package:plural_app/src/constants/routes.dart';
 import 'package:plural_app/src/constants/strings.dart';
 
 // Auth
@@ -117,7 +117,6 @@ class AuthRepository {
       var userInstance = AppUser(
         id: record[UserGardenRecordField.userID],
         email: userRecord[UserField.email],
-        instructions: userRecord[UserField.instructions],
         username: userRecord[UserField.username],
       );
 
@@ -143,7 +142,6 @@ class AuthRepository {
       id: record[GenericField.id],
       email: record[UserField.email],
       username: record[UserField.username],
-      instructions: record[UserField.instructions]
     );
   }
 
@@ -195,7 +193,8 @@ class AuthRepository {
     return AppUserSettings(
       id: record[GenericField.id],
       user: currentUser,
-      textSize: record[UserSettingsField.textSize]
+      defaultCurrency: record[UserSettingsField.defaultCurrency],
+      defaultInstructions: record[UserSettingsField.defaultInstructions],
     );
   }
 
@@ -210,7 +209,8 @@ class AuthRepository {
       map[GenericField.id],
       body: {
         UserSettingsField.userID: currentUser.id,
-        UserSettingsField.textSize: map[UserSettingsField.textSize],
+        UserSettingsField.defaultCurrency: map[UserSettingsField.defaultCurrency],
+        UserSettingsField.defaultInstructions: map[UserSettingsField.defaultInstructions],
       }
     );
 
@@ -219,7 +219,8 @@ class AuthRepository {
     return AppUserSettings(
       id: record[GenericField.id],
       user: currentUser,
-      textSize: record[UserSettingsField.textSize]
+      defaultCurrency: record[UserSettingsField.defaultCurrency],
+      defaultInstructions: record[UserSettingsField.defaultInstructions],
     );
   }
 
@@ -270,7 +271,12 @@ Future<bool> login(String usernameOrEmail, String password) async {
     await registerGetItInstances(pb);
 
     return true;
-  } on ClientException {
+  } on ClientException catch(e) {
+    // Log error
+    developer.log(
+      "AuthRepository login() error",
+      error: e,
+    );
     return false;
   }
 }
@@ -318,7 +324,12 @@ Future<(bool, Map)> signup(
   } on ClientException catch(e) {
     var errorsMap = getErrorsMapFromClientException(e);
 
-      print("Error Caught: $e");
+      // Log error
+      developer.log(
+      "AuthRepository signup() error",
+      error: e,
+    );
+
       return (false, errorsMap);
   }
 }
@@ -333,12 +344,17 @@ Future<bool> sendPasswordResetCode(String email) async {
 
   try {
     // Send password reset email
-    // await pb.collection(Collection.users).requestPasswordReset(email);
+    await pb.collection(Collection.users).requestPasswordReset(email);
 
     // Return
     return true;
   } on ClientException catch(e) {
-    print("Error Caught: $e");
+    // Log error
+    developer.log(
+      "AuthRepository sendPasswordResetCode() error",
+      error: e,
+    );
+
     return false;
   }
 }

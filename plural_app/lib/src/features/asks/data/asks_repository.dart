@@ -1,3 +1,4 @@
+import 'dart:developer' as developer;
 import 'package:pocketbase/pocketbase.dart';
 import 'package:get_it/get_it.dart';
 
@@ -104,6 +105,42 @@ class AsksRepository {
     );
   }
 
+  /// Queries on the [Ask] collection to create a record corresponding
+  /// to information in the [map] parameter.
+  Future<(bool, Map)> create(Map map) async {
+    try {
+      var appState = GetIt.instance<AppState>();
+
+      // Create Ask
+      await pb.collection(Collection.asks).create(
+        body: {
+          AskField.boon: map[AskField.boon],
+          AskField.creator: appState.currentUserID!,
+          AskField.currency: map[AskField.currency],
+          AskField.description: map[AskField.description],
+          AskField.deadlineDate: map[AskField.deadlineDate],
+          AskField.garden: appState.currentGarden!.id,
+          AskField.instructions: map[AskField.instructions],
+          AskField.targetSum: map[AskField.targetSum],
+          AskField.type: map[AskField.type],
+        }
+      );
+
+      // Return
+      return (true, {});
+    } on ClientException catch(e) {
+      var errorsMap = getErrorsMapFromClientException(e);
+
+      // Log error
+      developer.log(
+        "AsksRespository create() error",
+        error: e,
+      );
+
+      return (false, errorsMap);
+    }
+  }
+
   /// Queries on the [Ask] collection to update the record corresponding
   /// to information in the [map] parameter.
   Future<(bool, Map)> update(Map map) async {
@@ -116,6 +153,7 @@ class AsksRepository {
           AskField.currency: map[AskField.currency],
           AskField.description: map[AskField.description],
           AskField.deadlineDate: map[AskField.deadlineDate],
+          AskField.instructions: map[AskField.instructions],
           AskField.targetSum: map[AskField.targetSum],
           AskField.targetMetDate: map[AskField.targetMetDate],
           AskField.type: map[AskField.type]
@@ -127,28 +165,33 @@ class AsksRepository {
     } on ClientException catch(e) {
       var errorsMap = getErrorsMapFromClientException(e);
 
-      print("Error Caught: $e");
+      // Log error
+      developer.log(
+        "AsksRespository update() error",
+        error: e,
+      );
+
       return (false, errorsMap);
     }
   }
 
-  /// Queries on the [Ask] collection to create a record corresponding
+  /// Queries on the [Ask] collection to delete the record corresponding
   /// to information in the [map] parameter.
-  Future<void> create(Map map) async {
-    var appState = GetIt.instance<AppState>();
+  Future<(bool, Map)> delete(Map map) async {
+    try {
+      // Delete Ask
+      await pb.collection(Collection.asks).delete(map[GenericField.id]);
 
-    await pb.collection(Collection.asks).create(
-      body: {
-        AskField.boon: map[AskField.boon],
-        AskField.creator: appState.currentUserID!,
-        AskField.currency: map[AskField.currency],
-        AskField.description: map[AskField.description],
-        AskField.deadlineDate: map[AskField.deadlineDate],
-        AskField.garden: appState.currentGarden!.id,
-        AskField.targetSum: map[AskField.targetSum],
-        AskField.type: map[AskField.type],
-      }
-    );
+      return (true, {});
+    } on ClientException catch(e) {
+      // Log error
+      developer.log(
+        "AsksRespository delete() error",
+        error: e,
+      );
+
+      return (false, {});
+    }
   }
 
   /// Subscribes to any changes made in the [Ask] collection to any [Ask] record
@@ -163,9 +206,9 @@ class AsksRepository {
         switch (e.action) {
           case EventAction.create:
             callback();
-          case EventAction.delete:
-            callback();
           case EventAction.update:
+            callback();
+          case EventAction.delete:
             callback();
         }
       });

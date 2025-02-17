@@ -67,14 +67,19 @@ Future<void> registerGetItInstances(PocketBase pb) async {
 /// [userID].
 Future<void> setInitialAppStateValues(userID) async {
   var appState = GetIt.instance<AppState>();
-  var user = await GetIt.instance<AuthRepository>().getUserByID(userID);
 
   // User
+  var user = await GetIt.instance<AuthRepository>().getUserByID(userID);
   appState.currentUser = user;
 
+  // User Settings
+  var userSettings = await GetIt.instance<AuthRepository>().getCurrentUserSettings();
+  appState.currentUserSettings = userSettings;
+
+
+  // TODO: Remove mostRecentGardenRecord
   var mostRecentGardenRecord = await GetIt.instance<AuthRepository>()
       .getMostRecentGardenRecordByUserID(userID: user.id);
-
   appState.currentGarden = mostRecentGardenRecord?.garden;
 }
 
