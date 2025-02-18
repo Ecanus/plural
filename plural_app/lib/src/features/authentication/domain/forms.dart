@@ -10,6 +10,7 @@ import 'package:plural_app/src/common_widgets/app_dialog_router.dart';
 import 'package:plural_app/src/common_widgets/app_snackbars.dart';
 
 // Constants
+import 'package:plural_app/src/constants/app_values.dart';
 import 'package:plural_app/src/constants/routes.dart';
 import 'package:plural_app/src/constants/strings.dart';
 
@@ -22,27 +23,38 @@ import 'package:plural_app/src/utils/app_state.dart';
 
 /// Validates the given [formKey] to update corresponding data
 /// in the [map] parameter.
-Future<void> submitUpdate(
+Future<void> submitUpdateSettings(
+  BuildContext context,
   GlobalKey<FormState> formKey,
-  Map map,
+  AppForm appForm,
 ) async {
   if (formKey.currentState!.validate()) {
-    final authRepository = GetIt.instance<AuthRepository>();
-    final appDialogRouter = GetIt.instance<AppDialogRouter>();
-
     // Save form
     formKey.currentState!.save();
 
-    // Update DB
-    var updatedUserSettings = await authRepository.updateUserSettings(map);
+    // Update DB (should also rebuild Garden Timeline via SubscribeTo)
+    var (isValid, errorsMap) =
+      await GetIt.instance<AuthRepository>().updateUserSettings(appForm.fields);
 
-    // TODO: Subscribe to changes to the UserSettings collection, and remove notifyAllListeners() call.
-    // Rebuild the Garden Timeline
-    GetIt.instance<AppState>().notifyAllListeners();
+    if (isValid && context.mounted) {
+      // Display Success Snackbar
+      var snackBar = AppSnackbars.getSuccessSnackbar(
+        SnackBarMessages.updateUserSettingsSuccess,
+        duration: SnackBarDurations.s3,
+        showCloseIcon: false
+      );
 
-    // Rebuild User Settings Dialog
-    await appDialogRouter.showUserSettingsDialogView(
-      userSettings: updatedUserSettings);
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+      // Reload Dialog (and reacquire user settings)
+      GetIt.instance<AppDialogRouter>().showUserSettingsDialogView();
+    } else {
+      // Add errors to corresponding fields
+      appForm.setErrors(errorsMap: errorsMap);
+
+      // Reload Dialog (and reacquire user settings)
+      GetIt.instance<AppDialogRouter>().showUserSettingsDialogView();
+    }
   }
 }
 

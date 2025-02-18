@@ -201,34 +201,39 @@ class AuthRepository {
   /// Queries on the [UserSettings] collection to update the record
   /// which corresponds to the [map] parameter.
   ///
-  /// Returns an [AppUserSettings] instance.
-  Future<AppUserSettings> updateUserSettings(Map map) async {
-    final currentUser = GetIt.instance<AppState>().currentUser!;
+  /// Returns true and an empty map if created successfully, else false
+  /// and a map of the errors.
+  Future<(bool, Map)> updateUserSettings(Map map) async {
+    try {
+      // Update User Settings
+      await pb.collection(Collection.userSettings).update(
+        map[GenericField.id],
+        body: {
+          UserSettingsField.defaultCurrency: map[UserSettingsField.defaultCurrency],
+          UserSettingsField.defaultInstructions: map[UserSettingsField.defaultInstructions],
+        }
+      );
 
-    var result = await pb.collection(Collection.userSettings).update(
-      map[GenericField.id],
-      body: {
-        UserSettingsField.userID: currentUser.id,
-        UserSettingsField.defaultCurrency: map[UserSettingsField.defaultCurrency],
-        UserSettingsField.defaultInstructions: map[UserSettingsField.defaultInstructions],
-      }
-    );
+      // Return
+      return (true, {});
+    } on ClientException catch(e) {
+      var errorsMap = getErrorsMapFromClientException(e);
 
-    var record = result.toJson();
+      // Log error
+      developer.log(
+        "AuthRespository updateUserSettings() error",
+        error: e,
+      );
 
-    return AppUserSettings(
-      id: record[GenericField.id],
-      user: currentUser,
-      defaultCurrency: record[UserSettingsField.defaultCurrency],
-      defaultInstructions: record[UserSettingsField.defaultInstructions],
-    );
+      return (false, errorsMap);
+    }
   }
 
   /// Subscribes to any changes made in the [User] collection to any [User] record
   /// associated with the [Garden] with the given [gardenID].
   ///
   /// Calls the given [callback] method whenever a change is made.
-  Future<Function> subscribeTo(String gardenID, Function callback) {
+  Future<Function> subscribeToUsers(String gardenID, Function callback) {
     Future<Function> unsubscribeFunc = pb.collection(Collection.users)
       .subscribe(Subscribe.all, (e) async {
         var user = e.record!.toJson();
@@ -253,7 +258,38 @@ class AuthRepository {
 
     return unsubscribeFunc;
   }
+
+  /// Subscribes to any changes made in the [UserSettings] collection to any
+  /// [UserSettings] record associated with a [User] part of the [Garden] with
+  /// the given [gardenID].
+  ///
+  /// Updates the [AppState]'s currentUserSettings whenever a change is made.
+  Future<Function> subscribeToUserSettings(String gardenID) {
+    Future<Function> unsubscribeFunc = pb.collection(Collection.userSettings)
+      .subscribe(Subscribe.all, (e) async {
+        var userID = e.record!.toJson()[UserSettingsField.userID];
+
+        // Only respond to changes if the userID belongs to a user in the given gardenID
+        var gardenRecord = await getGardenRecord(
+          userID: userID,
+          gardenID: gardenID,
+        );
+
+        if (gardenRecord == null) return;
+
+        switch (e.action) {
+          case EventAction.create:
+          case EventAction.delete:
+          case EventAction.update:
+            GetIt.instance<AppState>().currentUserSettings =
+              await getCurrentUserSettings();
+        }
+      });
+
+    return unsubscribeFunc;
+  }
 }
+
 
 /// Attempts to log into the database with the given [usernameOrEmail]
 /// and [password] parameters. And creates all necessary [GetIt] instances.

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:plural_app/src/features/asks/presentation/route_to_listed_asks_view_button.dart';
 
 // Common Classes
 import 'package:plural_app/src/utils/app_form.dart';
@@ -7,19 +6,21 @@ import 'package:plural_app/src/utils/app_form.dart';
 // Common Widgets
 import 'package:plural_app/src/common_widgets/app_checkbox_list_tile_form_field.dart';
 import 'package:plural_app/src/common_widgets/app_currency_picker_form_field.dart';
+import 'package:plural_app/src/common_widgets/app_dialog_footer_buffer_submit_button.dart';
 import 'package:plural_app/src/common_widgets/app_date_picker_form_field.dart';
 import 'package:plural_app/src/common_widgets/app_dialog.dart';
 import 'package:plural_app/src/common_widgets/app_text_form_field.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
-import 'package:plural_app/src/constants/strings.dart';
 import 'package:plural_app/src/constants/app_values.dart';
+import 'package:plural_app/src/constants/strings.dart';
 import 'package:plural_app/src/constants/themes.dart';
 
 // Ask
 import 'package:plural_app/src/features/asks/domain/ask.dart';
 import 'package:plural_app/src/features/asks/domain/forms.dart';
+import 'package:plural_app/src/features/asks/presentation/route_to_listed_asks_view_button.dart';
 
 Future createEditableAskDialog({
   required BuildContext context,
@@ -168,10 +169,13 @@ class _AskDialogEditFormState extends State<AskDialogEditForm> {
         AppDialogFooterBuffer(
           buttons: [
             RouteToListedAsksViewButton(),
-            SubmitUpdateButton(formKey: _formKey, appForm: _appForm,),
+            AppDialogFooterBufferSubmitButton(
+              callback: submitUpdate,
+              positionalArguments: [context, _formKey, _appForm],
+            ),
           ]
         ),
-        AppDialogFooter(title: AskDialogTitles.editAsk)
+        AppDialogFooter(title: AppDialogTitles.editAsk)
       ],
     );
   }
@@ -397,33 +401,6 @@ class IsTargetMetLabel extends StatelessWidget {
           )
         )
       ],
-    );
-  }
-}
-
-class SubmitUpdateButton extends StatelessWidget {
-  SubmitUpdateButton({
-    required this.appForm,
-    required this.formKey,
-  });
-
-  final AppForm appForm;
-  final GlobalKey<FormState> formKey;
-
-  @override
-  Widget build(BuildContext context) {
-    return Tooltip(
-      message: AskDialogTooltips.saveChanges,
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Theme.of(context).colorScheme.onPrimary,
-          elevation: AppElevations.e0,
-          iconColor: Theme.of(context).colorScheme.surface,
-          shape: CircleBorder(),
-        ),
-        onPressed: () => submitUpdate(context, formKey, appForm),
-        child: Icon(Icons.save_alt)
-      ),
     );
   }
 }

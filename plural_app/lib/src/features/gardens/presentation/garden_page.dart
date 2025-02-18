@@ -25,6 +25,7 @@ class _GardenPageState extends State<GardenPage> {
   late Future<Function> asksUnsubscribe;
   late Future<Function> gardensUnsubscribe;
   late Future<Function> usersUnsubscribe;
+  late Future<Function> userSettingsUnsubscribe;
 
   @override
   void initState() {
@@ -39,11 +40,16 @@ class _GardenPageState extends State<GardenPage> {
     );
 
     gardensUnsubscribe = GetIt.instance<GardensRepository>().subscribeTo(
-      currentGarden.id);
+      currentGarden.id
+    );
 
-    usersUnsubscribe = GetIt.instance<AuthRepository>().subscribeTo(
+    usersUnsubscribe = GetIt.instance<AuthRepository>().subscribeToUsers(
       currentGarden.id,
       appState.notifyAllListeners
+    );
+
+    userSettingsUnsubscribe = GetIt.instance<AuthRepository>().subscribeToUserSettings(
+      currentGarden.id,
     );
   }
 
