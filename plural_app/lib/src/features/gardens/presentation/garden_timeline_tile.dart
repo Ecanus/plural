@@ -243,11 +243,8 @@ class TileViewAskButton extends StatelessWidget {
     return SizedBox(
       width: AppIconSizes.s35,
       height: AppIconSizes.s35,
-      child: Ink(
-        decoration: ShapeDecoration(
-          color: Theme.of(context).colorScheme.secondaryFixed,
-          shape: CircleBorder()
-        ),
+      child: CircleAvatar(
+        backgroundColor: Theme.of(context).colorScheme.secondaryFixed,
         child: IconButton(
           color: Theme.of(context).colorScheme.onSecondary,
           icon: Icon(Icons.more_horiz_rounded,),
@@ -271,11 +268,8 @@ class TileEditAskButton extends StatelessWidget {
     return SizedBox(
       width: AppIconSizes.s35,
       height: AppIconSizes.s35,
-      child: Ink(
-        decoration: ShapeDecoration(
-          color: Theme.of(context).colorScheme.primary,
-          shape: CircleBorder()
-        ),
+      child: CircleAvatar(
+        backgroundColor: Theme.of(context).colorScheme.primary,
         child: IconButton(
           color: Theme.of(context).colorScheme.onPrimary,
           icon: Icon(Icons.mode_edit_outlined),

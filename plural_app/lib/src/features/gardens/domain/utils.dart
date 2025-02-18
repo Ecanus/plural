@@ -15,9 +15,7 @@ Future<List<ListedGardenTile>> getListedGardenTilesByUser(
   { AppUser? user}
 ) async {
   final gardensRepository = GetIt.instance<GardensRepository>();
-
   user = user ?? GetIt.instance<AppState>().currentUser!;
-
   final gardens = await gardensRepository.getGardensByUser(user: user);
 
   return [for (Garden garden in gardens) ListedGardenTile(garden: garden)];

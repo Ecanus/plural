@@ -60,12 +60,7 @@ class _UserSettingsDialogState extends State<UserSettingsDialog> {
     super.initState();
 
     _formKey = GlobalKey<FormState>();
-
     _appForm = AppForm.fromMap(widget.userSettings.toMap());
-    _appForm.setValue(
-      fieldName: AppFormFields.rebuild,
-      value: () { setState(() {}); }
-    );
   }
 
   @override

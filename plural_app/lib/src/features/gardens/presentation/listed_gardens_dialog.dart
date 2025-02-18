@@ -4,7 +4,6 @@ import 'package:get_it/get_it.dart';
 // Common Widgets
 import 'package:plural_app/src/common_widgets/app_dialog.dart';
 import 'package:plural_app/src/common_widgets/app_dialog_router.dart';
-import 'package:plural_app/src/common_widgets/app_dialog_header_button.dart';
 
 // Constants
 import 'package:plural_app/src/constants/strings.dart';
@@ -39,15 +38,7 @@ class GardenDialogList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final stateManager = GetIt.instance<AppDialogRouter>();
-
-    final Widget creatableGardenViewButton = AppDialogHeaderButton(
-      buttonNotifier: ValueNotifier<bool>(true),
-      onPressed: () { stateManager.showCreatableGardenDialogView(); },
-      icon: Icon(Icons.add),
-      label: Strings.newGardenLabel,
-      width: AppWidths.w175,
-    );
+    final appDialogRouter = GetIt.instance<AppDialogRouter>();
 
     return Column(
       children: [
@@ -57,6 +48,15 @@ class GardenDialogList extends StatelessWidget {
             children: listedGardenTiles,
           ),
         ),
+        AppDialogNavFooter(
+          leftDialogIcon: Icons.people_alt_rounded,
+          leftNavCallback: appDialogRouter.showUserDialogListView,
+          leftTooltipMessage: AppDialogTooltips.navToUsers,
+          rightDialogIcon: Icons.library_add,
+          rightNavCallback: appDialogRouter.showAskDialogListView,
+          rightTooltipMessage: AppDialogTooltips.navToAsks,
+          title: AppDialogTitles.gardens
+        )
       ],
     );
   }

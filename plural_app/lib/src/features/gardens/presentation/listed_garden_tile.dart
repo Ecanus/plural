@@ -23,11 +23,11 @@ class ListedGardenTile extends StatelessWidget {
     return Card(
       elevation: AppElevations.e7,
       child: ListTile(
+        tileColor: Theme.of(context).colorScheme.secondary,
         title: Text(
           garden.name,
           style: TextStyle(fontWeight: FontWeight.w500),
         ),
-        subtitle: Text(""),
         trailing: Icon(Icons.arrow_forward_ios),
         onTap: () {
           // Update AppState.currentGarden (should also rebuild Garden Timeline via notifyListeners())

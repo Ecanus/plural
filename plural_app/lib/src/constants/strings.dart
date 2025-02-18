@@ -153,7 +153,9 @@ class AppDialogTitles {
   static const editAsk = "Edit Ask";
   static const viewAsk = "View Ask";
 
+  static const gardens = "Gardens";
   static const settings = "Settings";
+  static const users = "Users";
 }
 
 class AskDialogTooltips {

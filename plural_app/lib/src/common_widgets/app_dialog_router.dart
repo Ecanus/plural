@@ -9,10 +9,8 @@ import 'package:plural_app/src/features/asks/presentation/creatable_ask_dialog.d
 import 'package:plural_app/src/features/asks/presentation/listed_asks_dialog.dart';
 
 // Auth
-import "package:plural_app/src/features/authentication/domain/app_user.dart";
 import 'package:plural_app/src/features/authentication/domain/utils.dart';
 import 'package:plural_app/src/features/authentication/presentation/listed_users_dialog.dart';
-import 'package:plural_app/src/features/authentication/presentation/viewable_user_dialog.dart';
 import 'package:plural_app/src/features/authentication/presentation/user_settings_dialog.dart';
 
 // Gardens
@@ -45,10 +43,6 @@ class AppDialogRouter {
   }
 
   /// Auth
-  void showViewableUserDialogView(AppUser user) {
-    viewNotifier.value = UserDialogViewForm(user: user);
-  }
-
   Future<void> showUserDialogListView() async {
     final listedUserTiles = await getListedUserTilesByUsers();
     viewNotifier.value = UserDialogList(listedUserTiles: listedUserTiles);

@@ -35,6 +35,7 @@ class ListedAskTile extends StatelessWidget {
     return Card(
       elevation: AppElevations.e7,
       child: ListTile(
+        tileColor: Theme.of(context).colorScheme.secondary,
         title: Text(
           ask.listedDescription,
           style: TextStyle(
