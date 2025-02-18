@@ -57,10 +57,13 @@ class AppState with ChangeNotifier {
   }
 
   Future<List<Ask>> getTimelineAsks() async {
-    // Asks with target met, or deadlineDate passed are filtered out.
     var nowString = DateFormat(Strings.dateformatYMMdd).format(DateTime.now());
-    var filterString = "${AskField.targetMetDate} = null && "
-      "${AskField.deadlineDate} > '$nowString'";
+
+    // Asks with target met, or deadlineDate passed are filtered out.
+    var filterString = ""
+    "${AskField.garden} = '${currentGarden!.id}'"
+    "&& ${AskField.targetMetDate} = null"
+    "&& ${AskField.deadlineDate} > '$nowString'";
 
     List<Ask> asks = await GetIt.instance<AsksRepository>().getAsksByGardenID(
       gardenID: currentGarden!.id,
