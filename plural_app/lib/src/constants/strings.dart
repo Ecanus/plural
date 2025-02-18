@@ -101,6 +101,15 @@ class SignInLabels {
   static const usernameOrEmail = "Username or Email";
 }
 
+class AppDialogTooltips {
+  static const navToAsks = "Asks";
+  static const navToGardens = "Gardens";
+  static const navToSettings = "Settings";
+  static const navToUsers = "Users";
+
+  static const saveChanges = "Save changes";
+}
+
 class AskDialogLabels {
   static const boon = "Boon";
 
@@ -121,9 +130,6 @@ class AskDialogLabels {
   static const isTargetMet = "Target met";
   static const isVisibleOnTimeline = "Visible on timeline";
 
-  static const navToGardens = "Gardens";
-  static const navToSettings = "Settings";
-
   static const selectDateLabel = "Select date";
 
   static const type = "Type";
@@ -141,16 +147,22 @@ class AskDialogLabels {
   static const username = "Username";
 }
 
-class AskDialogTitles {
+class AppDialogTitles {
   static const asks = "Asks";
   static const createAsk = "Create Ask";
   static const editAsk = "Edit Ask";
   static const viewAsk = "View Ask";
+
+  static const settings = "Settings";
 }
 
 class AskDialogTooltips {
   static const listedAsks = "Go to Asks";
-  static const saveChanges = "Save changes";
+}
+
+class UserSettingsDialogLabels {
+  static const defaultCurrency = "Default currency";
+  static const defaultInstructions = "Default instructions";
 }
 
 // Strings
@@ -220,6 +232,8 @@ class SnackBarMessages {
   static const createAskSuccess = "Ask successfully created";
   static const deleteAskSuccess = "Ask successfully deleted";
   static const updateAskSuccess = "Ask successfully updated!";
+
+  static const updateUserSettingsSuccess = "Settings updated";
 }
 
 // Instructions

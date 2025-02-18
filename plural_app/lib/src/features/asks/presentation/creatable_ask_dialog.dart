@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
 // Common Widgets
+import 'package:plural_app/src/common_widgets/app_dialog_footer_buffer_submit_button.dart';
 import 'package:plural_app/src/common_widgets/app_text_form_field.dart';
 import 'package:plural_app/src/common_widgets/app_currency_picker_form_field.dart';
 import 'package:plural_app/src/common_widgets/app_date_picker_form_field.dart';
@@ -22,7 +23,7 @@ import 'package:plural_app/src/utils/app_state.dart';
 // Utils
 import 'package:plural_app/src/utils/app_form.dart';
 
-Future createEditableAskDialog(BuildContext context) {
+Future createCreatableAskDialog(BuildContext context) {
 
   return showDialog(
     context: context,
@@ -157,38 +158,14 @@ class _AskDialogCreateFormState extends State<AskDialogCreateForm> {
         AppDialogFooterBuffer(
           buttons: [
             RouteToListedAsksViewButton(),
-            SubmitCreateButton(formKey: _formKey, appForm: _appForm,),
+            AppDialogFooterBufferSubmitButton(
+              callback: submitCreate,
+              positionalArguments: [context, _formKey, _appForm],
+            ),
           ]
         ),
-        AppDialogFooter(title: AskDialogTitles.createAsk)
+        AppDialogFooter(title: AppDialogTitles.createAsk)
       ],
-    );
-  }
-}
-
-class SubmitCreateButton extends StatelessWidget {
-  SubmitCreateButton({
-    required this.appForm,
-    required this.formKey,
-  });
-
-  final AppForm appForm;
-  final GlobalKey<FormState> formKey;
-
-  @override
-  Widget build(BuildContext context) {
-    return Tooltip(
-      message: AskDialogTooltips.saveChanges,
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Theme.of(context).colorScheme.onPrimary,
-          elevation: AppElevations.e0,
-          iconColor: Theme.of(context).colorScheme.surface,
-          shape: CircleBorder(),
-        ),
-        onPressed: () => submitCreate(context, formKey, appForm),
-        child: Icon(Icons.save_alt)
-      ),
     );
   }
 }

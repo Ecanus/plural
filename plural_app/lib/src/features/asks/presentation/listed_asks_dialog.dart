@@ -52,11 +52,11 @@ class AskDialogList extends StatelessWidget {
         AppDialogNavFooter(
           leftDialogIcon: Icons.local_florist,
           leftNavCallback: appDialogRouter.showGardenDialogListView,
-          leftTooltipMessage: AskDialogLabels.navToGardens,
+          leftTooltipMessage: AppDialogTooltips.navToGardens,
           rightDialogIcon: Icons.settings,
           rightNavCallback: appDialogRouter.showUserSettingsDialogView,
-          rightTooltipMessage: AskDialogLabels.navToSettings,
-          title: AskDialogTitles.asks
+          rightTooltipMessage: AppDialogTooltips.navToSettings,
+          title: AppDialogTitles.asks
         )
       ],
     );

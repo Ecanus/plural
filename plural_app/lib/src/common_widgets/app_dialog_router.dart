@@ -10,12 +10,10 @@ import 'package:plural_app/src/features/asks/presentation/listed_asks_dialog.dar
 
 // Auth
 import "package:plural_app/src/features/authentication/domain/app_user.dart";
-import 'package:plural_app/src/features/authentication/domain/app_user_settings.dart';
 import 'package:plural_app/src/features/authentication/domain/utils.dart';
 import 'package:plural_app/src/features/authentication/presentation/listed_users_dialog.dart';
 import 'package:plural_app/src/features/authentication/presentation/viewable_user_dialog.dart';
 import 'package:plural_app/src/features/authentication/presentation/user_settings_dialog.dart';
-import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
 
 // Gardens
 import 'package:plural_app/src/features/gardens/domain/utils.dart';
@@ -37,7 +35,7 @@ class AppDialogRouter {
     viewNotifier.value = AskDialogCreateForm();
   }
 
-  void showEditableAskDialogView(Ask ask, {Widget? firstHeaderButton}) {
+  void showEditableAskDialogView(Ask ask) {
     viewNotifier.value = AskDialogEditForm(ask: ask);
   }
 
@@ -56,11 +54,9 @@ class AppDialogRouter {
     viewNotifier.value = UserDialogList(listedUserTiles: listedUserTiles);
   }
 
-  Future<void> showUserSettingsDialogView({AppUserSettings? userSettings}) async {
-    userSettings = userSettings ??
-      await GetIt.instance<AuthRepository>().getCurrentUserSettings();
-
-    viewNotifier.value = UserSettingsDialog(userSettings: userSettings);
+  Future<void> showUserSettingsDialogView() async {
+    final currentUserSettings = GetIt.instance<AppState>().currentUserSettings!;
+    viewNotifier.value = UserSettingsDialog(userSettings: currentUserSettings);
   }
 
   /// Gardens

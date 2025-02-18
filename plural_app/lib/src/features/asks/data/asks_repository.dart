@@ -107,6 +107,9 @@ class AsksRepository {
 
   /// Queries on the [Ask] collection to create a record corresponding
   /// to information in the [map] parameter.
+  ///
+  /// Returns true and an empty map if created successfully, else false
+  /// and a map of the errors.
   Future<(bool, Map)> create(Map map) async {
     try {
       var appState = GetIt.instance<AppState>();
@@ -143,6 +146,9 @@ class AsksRepository {
 
   /// Queries on the [Ask] collection to update the record corresponding
   /// to information in the [map] parameter.
+  ///
+  /// Returns true and an empty map if created successfully, else false
+  /// and a map of the errors.
   Future<(bool, Map)> update(Map map) async {
     try {
       // Update Ask
@@ -177,6 +183,9 @@ class AsksRepository {
 
   /// Queries on the [Ask] collection to delete the record corresponding
   /// to information in the [map] parameter.
+  ///
+  /// Returns true and an empty map if created successfully, else false
+  /// and a map of the errors.
   Future<(bool, Map)> delete(Map map) async {
     try {
       // Delete Ask

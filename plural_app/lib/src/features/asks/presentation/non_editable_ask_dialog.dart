@@ -86,7 +86,7 @@ class AskDialogView extends StatelessWidget {
             ]
           ),
         ),
-        AppDialogFooter(title: AskDialogTitles.viewAsk)
+        AppDialogFooter(title: AppDialogTitles.viewAsk)
       ],
     );
   }
