@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+// Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
 import 'package:plural_app/src/constants/themes.dart';
 
@@ -7,7 +9,7 @@ class AppStyles {
     borderRadius: BorderRadius.circular(AppBorderRadii.r5),
     borderSide: BorderSide(
       color: AppThemes.colorScheme.onPrimary,
-      width: AppWidths.w1point5,
+      width: AppWidths.w1pt5,
     )
   );
 

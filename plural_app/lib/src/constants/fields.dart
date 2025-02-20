@@ -1,0 +1,59 @@
+class AppFormFields {
+  static const error = "error";
+  static const rebuild = "rebuild";
+}
+
+class AskField {
+  static const boon = "boon";
+  static const creator = "creator";
+  static const creatorID = "creatorID";
+  static const currency = "currency";
+  static const description = "description";
+  static const deadlineDate = "deadlineDate";
+  static const garden = "garden";
+  static const instructions = "instructions";
+  static const sponsors = "sponsors";
+  static const targetMetDate = "targetMetDate";
+  static const targetSum = "targetSum";
+  static const type = "type";
+}
+
+class GardenField {
+  static const creator = "creator";
+  static const name = "name";
+}
+
+class GenericField {
+  static const created = "created";
+  static const id = "id";
+  static const updated = "updated";
+}
+
+class SignInField {
+  static const usernameOrEmail = "usernameOrEmail";
+}
+
+class UserField {
+  static const email = "email";
+  static const firstName = "firstName";
+  static const instructions = "instructions";
+  static const lastName = "lastName";
+  static const password = "password";
+  static const passwordConfirm = "passwordConfirm";
+  static const username = "username";
+}
+
+class UserGardenRecordField {
+  static const garden = "garden";
+  static const gardenID = "garden";
+  static const name = "name";
+  static const userID = "user";
+  static const user = "user";
+}
+
+class UserSettingsField {
+  static const user = "user";
+  static const userID = "user";
+  static const defaultCurrency = "defaultCurrency";
+  static const defaultInstructions = "defaultInstructions";
+}

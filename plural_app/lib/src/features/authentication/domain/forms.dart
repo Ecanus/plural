@@ -8,11 +8,15 @@ import 'package:plural_app/src/common_widgets/app_snackbars.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_values.dart';
+import 'package:plural_app/src/constants/fields.dart';
 import 'package:plural_app/src/constants/routes.dart';
-import 'package:plural_app/src/constants/strings.dart';
 
 // Auth
 import "package:plural_app/src/features/authentication/data/auth_repository.dart";
+import "package:plural_app/src/features/authentication/domain/constants.dart";
+
+// Localization
+import 'package:plural_app/src/localization/lang_en.dart';
 
 // Utils
 import 'package:plural_app/src/utils/app_form.dart';
@@ -35,8 +39,7 @@ Future<void> submitUpdateSettings(
 
     if (isValid && context.mounted) {
       var snackBar = AppSnackbars.getSuccessSnackbar(
-        SnackBarMessages.updateUserSettingsSuccess,
-        duration: SnackBarDurations.s3,
+        SnackbarText.updateUserSettingsSuccess,
         showCloseIcon: false
       );
 
@@ -83,11 +86,11 @@ Future<void> submitLogIn(
       // Add errors to corresponding fields
       appForm.setError(
         fieldName: SignInField.usernameOrEmail,
-        errorMessage: ErrorMessages.invalidEmailOrPassword
+        errorMessage: AppFormText.invalidEmailOrPassword
       );
       appForm.setError(
         fieldName: UserField.password,
-        errorMessage: ErrorMessages.invalidEmailOrPassword
+        errorMessage: AppFormText.invalidEmailOrPassword
       );
 
       // Rebuild widget
@@ -121,8 +124,9 @@ Future<void> submitSignUp(
       DefaultTabController.of(context).animateTo(AuthConstants.logInTabIndex);
 
       var snackBar = AppSnackbars.getSuccessSnackbar(
-        SnackBarMessages.sentUserVerificationEmail,
-        boldMessage: appForm.getValue(fieldName: UserField.email)
+        SnackbarText.sentUserVerificationEmail,
+        boldMessage: appForm.getValue(fieldName: UserField.email),
+        duration: AppDurations.s9,
       );
 
       // Display Success Snackbar
@@ -157,8 +161,9 @@ Future<void> submitForgotPassword(
 
       if (isValid) {
         var snackBar = AppSnackbars.getSuccessSnackbar(
-          SnackBarMessages.sentPasswordResetEmail,
-          boldMessage: email
+          SnackbarText.sentPasswordResetEmail,
+          boldMessage: email,
+          duration: AppDurations.s9
         );
 
         // Display Success Snackbar

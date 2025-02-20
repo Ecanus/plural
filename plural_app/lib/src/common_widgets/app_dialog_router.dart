@@ -24,23 +24,19 @@ import 'package:plural_app/src/features/gardens/presentation/listed_garden_tile.
 import 'package:plural_app/src/utils/app_state.dart';
 
 class AppDialogRouter {
-  ValueNotifier<Widget> _viewNotifier = ValueNotifier<Widget>(SizedBox());
-
-  ValueNotifier<Widget> get viewNotifier {
-    return _viewNotifier;
-  }
+  final ValueNotifier<Widget> viewNotifier = ValueNotifier<Widget>(SizedBox());
 
   void setRouteTo(Widget widget) {
-    _viewNotifier.value = widget;
+    viewNotifier.value = widget;
   }
 
   /// Asks
   void routeToCreatableAskDialogView() {
-    _viewNotifier.value = AskDialogCreateForm();
+    viewNotifier.value = AskDialogCreateForm();
   }
 
   void routeToEditableAskDialogView(Ask ask) {
-    _viewNotifier.value = AskDialogEditForm(ask: ask);
+    viewNotifier.value = AskDialogEditForm(ask: ask);
   }
 
   Future<void> routeToAskDialogListView() async {
@@ -48,7 +44,7 @@ class AppDialogRouter {
     final asks = await GetIt.instance<AsksRepository>().getAsksByUserID(
       userID: currentUserID);
 
-    _viewNotifier.value = AskDialogList(
+    viewNotifier.value = AskDialogList(
       listedAskTiles: [for (Ask ask in asks) ListedAskTile(ask: ask)]
     );
   }
@@ -57,14 +53,14 @@ class AppDialogRouter {
   Future<void> routeToUserDialogListView() async {
     final users = await GetIt.instance<AuthRepository>().getCurrentGardenUsers();
 
-    _viewNotifier.value = UserDialogList(
+    viewNotifier.value = UserDialogList(
       listedUserTiles: [for (var user in users) ListedUserTile(user: user)]
     );
   }
 
   Future<void> routeToUserSettingsDialogView() async {
     final currentUserSettings = GetIt.instance<AppState>().currentUserSettings!;
-    _viewNotifier.value = UserSettingsDialog(userSettings: currentUserSettings);
+    viewNotifier.value = UserSettingsDialog(userSettings: currentUserSettings);
   }
 
   /// Gardens
@@ -73,7 +69,7 @@ class AppDialogRouter {
       GetIt.instance<AppState>().currentUserID!
     );
 
-    _viewNotifier.value = GardenDialogList(
+    viewNotifier.value = GardenDialogList(
       listedGardenTiles: [for (var garden in gardens) ListedGardenTile(garden: garden)]
     );
   }

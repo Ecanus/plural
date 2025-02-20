@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 // Constants
-import 'package:plural_app/src/constants/text_themes.dart';
 import 'package:plural_app/src/constants/app_values.dart';
+import 'package:plural_app/src/constants/text_themes.dart';
 
 class AppThemes {
 

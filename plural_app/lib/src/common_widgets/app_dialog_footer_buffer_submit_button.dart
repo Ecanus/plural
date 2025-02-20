@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
-import 'package:plural_app/src/constants/strings.dart';
+
+// Localization
+import 'package:plural_app/src/localization/lang_en.dart';
 
 class AppDialogFooterBufferSubmitButton extends StatelessWidget {
   AppDialogFooterBufferSubmitButton({
@@ -18,7 +20,7 @@ class AppDialogFooterBufferSubmitButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Tooltip(
-      message: AppDialogTooltips.saveChanges,
+      message: AskDialogText.saveChanges,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           backgroundColor: Theme.of(context).colorScheme.onPrimary,

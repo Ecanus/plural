@@ -7,8 +7,8 @@ import 'package:get_it/get_it.dart';
 import 'package:plural_app/src/common_functions/errors.dart';
 
 // Constants
+import 'package:plural_app/src/constants/fields.dart';
 import 'package:plural_app/src/constants/pocketbase.dart';
-import 'package:plural_app/src/constants/strings.dart';
 
 // Asks
 import 'package:plural_app/src/features/asks/domain/ask.dart';
@@ -28,7 +28,7 @@ Future<List<Ask>> createAskInstancesFromQuery(
 ) async {
     final authRepository = GetIt.instance<AuthRepository>();
 
-    var records = query.toJson()[PBKey.items];
+    var records = query.toJson()[QueryKey.items];
 
     if (count != null && records.length >= count) {
       records = records.sublist(0, count);
@@ -130,7 +130,7 @@ class AsksRepository {
     );
 
     // If ask already contains sponsor, return
-    var record = result.toJson()[PBKey.items][0];
+    var record = result.toJson()[QueryKey.items][0];
     var currentSponsors = List<String>.from(record[AskField.sponsors]);
     if (currentSponsors.contains(userID)) return;
 
@@ -152,7 +152,7 @@ class AsksRepository {
     );
 
     // If ask does not contain sponsor, return
-    var record = result.toJson()[PBKey.items][0];
+    var record = result.toJson()[QueryKey.items][0];
     var currentSponsors = List<String>.from(record[AskField.sponsors]);
     if (!currentSponsors.contains(userID)) return;
 

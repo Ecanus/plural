@@ -10,11 +10,14 @@ import 'package:plural_app/src/common_widgets/close_dialog_button.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
-import 'package:plural_app/src/constants/form_values.dart';
-import 'package:plural_app/src/constants/strings.dart';
+import 'package:plural_app/src/constants/app_values.dart';
+import 'package:plural_app/src/constants/fields.dart';
 
 // Authentication
 import 'package:plural_app/src/features/authentication/domain/forms.dart';
+
+// Localization
+import 'package:plural_app/src/localization/lang_en.dart';
 
 // Utils
 import 'package:plural_app/src/utils/app_form.dart';
@@ -73,26 +76,28 @@ class _ForgotPasswordDialogState extends State<ForgotPasswordDialog> {
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        Headers.enterEmail,
+                        ForgotPasswordDialogText.enterEmail,
                         style: Theme.of(context).textTheme.headlineMedium,
                       ),
                     ),
                     gapH20,
                     Align(
                       alignment: Alignment.centerLeft,
-                      child: Text(SignInInstructions.forgotPassword),
+                      child: const Text(
+                        ForgotPasswordDialogText.enterEmailToSendInstructions
+                      ),
                     ),
                     gapH40,
                     AppTextFormField(
                       appForm: _appForm,
                       fieldName: UserField.email,
-                      label: SignInLabels.email,
-                      maxLength: FormValues.emailMaxLength,
+                      label: SignInPageText.email,
+                      maxLength: AppMaxLengths.max50,
                       validator: validateEmail,
                     ),
                     AppElevatedButton(
                       callback: submitForgotPassword,
-                      label: SignInLabels.sendEmail,
+                      label: SignInPageText.sendEmail,
                       positionalArguments: [context, _formKey, _appForm],
                     )
                   ],

@@ -9,8 +9,8 @@ import 'package:plural_app/src/common_widgets/app_text_form_field.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
-import 'package:plural_app/src/constants/form_values.dart';
-import 'package:plural_app/src/constants/strings.dart';
+import 'package:plural_app/src/constants/app_values.dart';
+import 'package:plural_app/src/constants/fields.dart';
 
 // Authentication
 import 'package:plural_app/src/features/authentication/domain/forms.dart';
@@ -18,6 +18,9 @@ import 'package:plural_app/src/features/authentication/presentation/log_in_passw
 
 // Utils
 import 'package:plural_app/src/utils/app_form.dart';
+
+// Localization
+import 'package:plural_app/src/localization/lang_en.dart';
 
 class LogInTab extends StatelessWidget {
   const LogInTab({
@@ -37,20 +40,20 @@ class LogInTab extends StatelessWidget {
           AppTextFormField(
             appForm: appForm,
             fieldName: SignInField.usernameOrEmail,
-            label: SignInLabels.email,
-            maxLength: FormValues.emailMaxLength,
+            label: SignInPageText.email,
+            maxLength: AppMaxLengths.max50,
             paddingTop: AppPaddings.p0,
             validator: validateUsernameOrEmail,
           ),
           LogInPasswordFormField(
             appForm: appForm,
-            maxLength: FormValues.passwordMaxLength,
+            maxLength: AppMaxLengths.max64,
             paddingTop: AppPaddings.p0,
           ),
           gapH30,
           AppElevatedButton(
             callback: submitLogIn,
-            label: SignInLabels.logIn,
+            label: SignInPageText.logIn,
             positionalArguments: [context, formKey, appForm],
           ),
         ],

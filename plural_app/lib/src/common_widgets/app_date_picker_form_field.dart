@@ -7,7 +7,7 @@ import 'package:plural_app/src/common_functions/form_validators.dart';
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
 import 'package:plural_app/src/constants/app_values.dart';
-import 'package:plural_app/src/constants/strings.dart';
+import 'package:plural_app/src/constants/formats.dart';
 import 'package:plural_app/src/constants/styles.dart';
 
 // Utils
@@ -46,7 +46,7 @@ class _AppDatePickerFormFieldState extends State<AppDatePickerFormField> {
 
     // TextEditingController
     _controller.text = widget.initialValue == null ?
-      "" : DateFormat(Strings.dateformatYMMdd).format(widget.initialValue!);
+      "" : DateFormat(Formats.dateYMMdd).format(widget.initialValue!);
 
     // Padding
     _paddingBottom = widget.paddingBottom ?? AppPaddings.p20;
@@ -55,7 +55,7 @@ class _AppDatePickerFormFieldState extends State<AppDatePickerFormField> {
 
   void _setControllerText(DateTime newDate) {
     setState(() {
-      _controller.text = DateFormat(Strings.dateformatYMMdd).format(newDate);
+      _controller.text = DateFormat(Formats.dateYMMdd).format(newDate);
     });
   }
 

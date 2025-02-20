@@ -35,7 +35,7 @@ class AppTextButton extends StatelessWidget {
           color: Theme.of(context).colorScheme.primary,
           fontSize: fontSize ?? AppFontSizes.s13,
           fontWeight: fontWeight ?? fontWeightMedium,
-          letterSpacing: AppFontLetterSpacing.s0p5
+          letterSpacing: AppFontLetterSpacing.s0pt5
         ),
       ),
     );

@@ -9,10 +9,12 @@ import 'package:plural_app/src/common_widgets/show_hide_password_button.dart';
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
 import 'package:plural_app/src/constants/app_values.dart';
-import 'package:plural_app/src/constants/form_values.dart';
-import 'package:plural_app/src/constants/strings.dart';
+import 'package:plural_app/src/constants/fields.dart';
 import 'package:plural_app/src/constants/styles.dart';
 import 'package:plural_app/src/constants/themes.dart';
+
+// Localization
+import 'package:plural_app/src/localization/lang_en.dart';
 
 // Utils
 import 'package:plural_app/src/utils/app_form.dart';
@@ -20,7 +22,7 @@ import 'package:plural_app/src/utils/app_form.dart';
 class CreatePasswordFormField extends StatefulWidget {
   const CreatePasswordFormField({
     required this.appForm,
-    this.maxLines = AppMaxLinesValues.max1,
+    this.maxLines = AppMaxLines.max1,
     this.paddingBottom,
     this.paddingTop,
   });
@@ -142,7 +144,7 @@ class _CreatePasswordFormFieldState extends State<CreatePasswordFormField> {
               floatingLabelStyle: AppStyles.floatingLabelStyle,
               focusedBorder: AppStyles.textFieldFocusedBorder,
               focusedErrorBorder: AppStyles.textFieldFocusedErrorBorder,
-              label: Text(SignInLabels.password),
+              label: const Text(SignInPageText.password),
               suffixIcon: ShowHidePasswordButton(
                 isPasswordVisible: _getPasswordVisibility,
                 onPressed: _togglePasswordVisibility,
@@ -151,7 +153,7 @@ class _CreatePasswordFormFieldState extends State<CreatePasswordFormField> {
             focusNode: _passwordFieldFocusNode,
             inputFormatters: getInputFormatters(
               TextFieldType.text,
-              FormValues.passwordMaxLength
+              AppMaxLengths.max64
             ),
             maxLines: widget.maxLines,
             obscureText: !_isPasswordVisible,
@@ -163,7 +165,7 @@ class _CreatePasswordFormFieldState extends State<CreatePasswordFormField> {
           ),
         ),
         AnimatedSize(
-          duration: FormValues.passwordTextRowRevealDuration,
+          duration: AppDurations.ms125,
           child: Container(
             height: _passwordFieldFocusNode.hasFocus ? null : 0.0,
             padding: const EdgeInsets.only(
@@ -177,27 +179,27 @@ class _CreatePasswordFormFieldState extends State<CreatePasswordFormField> {
                   PasswordRequirementText(
                     notifier: _passwordValuesNotifier,
                     requirement: checkPasswordLength,
-                    text: SignInMessages.passwordLength
+                    text: SignInPageText.passwordLength
                   ),
                   PasswordRequirementText(
                     notifier: _passwordValuesNotifier,
                     requirement: checkHasLowercase,
-                    text: SignInMessages.passwordLowercase
+                    text: SignInPageText.passwordLowercase
                   ),
                   PasswordRequirementText(
                     notifier: _passwordValuesNotifier,
                     requirement: checkHasUppercase,
-                    text: SignInMessages.passwordUppercase
+                    text: SignInPageText.passwordUppercase
                   ),
                   PasswordRequirementText(
                     notifier: _passwordValuesNotifier,
                     requirement: checkHasNumber,
-                    text: SignInMessages.passwordNumber
+                    text: SignInPageText.passwordNumber
                   ),
                   PasswordRequirementText(
                     notifier: _passwordValuesNotifier,
                     requirement: checkHasSpecialCharacter,
-                    text: SignInMessages.passwordSpecial
+                    text: SignInPageText.passwordSpecial
                   ),
                 ],
               ),
@@ -219,7 +221,7 @@ class _CreatePasswordFormFieldState extends State<CreatePasswordFormField> {
               floatingLabelStyle: AppStyles.floatingLabelStyle,
               focusedBorder: AppStyles.textFieldFocusedBorder,
               focusedErrorBorder: AppStyles.textFieldFocusedErrorBorder,
-              label: Text(SignInLabels.passwordConfirm),
+              label: const Text(SignInPageText.passwordConfirm),
               suffixIcon: ShowHidePasswordButton(
                 isPasswordVisible: _getPasswordConfirmVisibility,
                 onPressed: _togglePasswordConfirmVisibility,
@@ -228,7 +230,7 @@ class _CreatePasswordFormFieldState extends State<CreatePasswordFormField> {
             focusNode: _passwordConfirmFieldFocusNode,
             inputFormatters: getInputFormatters(
               TextFieldType.text,
-              FormValues.passwordMaxLength
+              AppMaxLengths.max64
             ),
             maxLines: widget.maxLines,
             obscureText: !_isPasswordConfirmVisible,
@@ -243,7 +245,7 @@ class _CreatePasswordFormFieldState extends State<CreatePasswordFormField> {
           ),
         ),
         AnimatedSize(
-          duration: FormValues.passwordTextRowRevealDuration,
+          duration: AppDurations.ms125,
           child: Container(
             height: _passwordConfirmFieldFocusNode.hasFocus ? null : 0.0,
             padding: const EdgeInsets.only(
@@ -313,8 +315,8 @@ class PasswordsMatchText extends StatelessWidget {
 
         return PasswordTextRow(
           isValid: isValid,
-          isInvalidText: ErrorMessages.passwordMismatch,
-          isValidText: SignInMessages.passwordMatch
+          isInvalidText: SignInPageText.passwordMismatch,
+          isValidText: SignInPageText.passwordMatch
         );
       });
   }

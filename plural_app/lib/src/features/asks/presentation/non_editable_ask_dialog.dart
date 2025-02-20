@@ -9,14 +9,15 @@ import 'package:plural_app/src/common_widgets/app_tooltip_icon.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
-import 'package:plural_app/src/constants/app_values.dart';
-import 'package:plural_app/src/constants/strings.dart';
 import 'package:plural_app/src/constants/themes.dart';
 
 // Ask
 import 'package:plural_app/src/features/asks/data/asks_repository.dart';
 import 'package:plural_app/src/features/asks/domain/ask.dart';
 import 'package:plural_app/src/features/asks/presentation/ask_time_left_text.dart';
+
+// Localization
+import 'package:plural_app/src/localization/lang_en.dart';
 
 // Utils
 import 'package:plural_app/src/utils/app_state.dart';
@@ -73,12 +74,12 @@ class AskDialogView extends StatelessWidget {
                   gapH25,
                   TextColumn(
                     fontWeight: FontWeight.bold,
-                    label: AskDialogLabels.instructions,
+                    label: AskDialogText.instructions,
                     text: ask.instructions,
                   ),
                   gapH25,
                   TextColumn(
-                    label: AskDialogLabels.username,
+                    label: AskDialogText.username,
                     text: ask.creator!.username,
                   ),
                 ],
@@ -86,7 +87,7 @@ class AskDialogView extends StatelessWidget {
             ]
           ),
         ),
-        AppDialogFooter(title: AppDialogTitles.viewAsk)
+        AppDialogFooter(title: AppDialogFooterText.viewAsk)
       ],
     );
   }
@@ -124,8 +125,7 @@ class _NonEditableAskHeaderState extends State<NonEditableAskHeader> {
         await asksRepository.addSponsor(widget.ask.id, currentUserID);
 
         var snackBar = AppSnackbars.getSuccessSnackbar(
-          SnackBarMessages.askSponsored,
-          duration: SnackBarDurations.s3,
+          SnackbarText.askSponsored,
           showCloseIcon: false
         );
 
@@ -179,7 +179,7 @@ class _NonEditableAskHeaderState extends State<NonEditableAskHeader> {
               gapW5,
               Tooltip(
                 message: _isSponsored ?
-                  Tooltips.unmarkAsSponsored : Tooltips.markAsSponsored,
+                  AskDialogText.unmarkAsSponsored : AskDialogText.markAsSponsored,
                 child: AppTooltipIcon()
               )
             ],
@@ -220,12 +220,12 @@ class BoonColumn extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              AskDialogLabels.boon,
+              AskDialogText.boon,
               style: TextStyle(color: Theme.of(context).colorScheme.primary)
             ),
             gapW5,
             Tooltip(
-              message: Tooltips.boon,
+              message: AskDialogText.tooltipBoon,
               child: AppTooltipIcon()
             )
           ],

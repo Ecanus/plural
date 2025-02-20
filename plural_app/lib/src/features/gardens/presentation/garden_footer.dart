@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
-import 'package:plural_app/src/constants/strings.dart';
 
 // Asks
 import 'package:plural_app/src/features/asks/presentation/listed_asks_dialog.dart';
@@ -15,6 +14,9 @@ package:plural_app/src/features/authentication/presentation/user_settings_dialog
 
 // Gardens
 import 'package:plural_app/src/features/gardens/presentation/listed_gardens_dialog.dart';
+
+// Localization
+import 'package:plural_app/src/localization/lang_en.dart';
 
 class GardenFooter extends StatelessWidget {
   final ValueNotifier<bool> _isFooterCollapsed = ValueNotifier<bool>(true);
@@ -106,35 +108,35 @@ class AppBottomBar extends StatelessWidget {
                   color: iconColor,
                   icon: const Icon(Icons.library_add),
                   iconSize: iconSize,
-                  tooltip: Strings.asksTooltip,
+                  tooltip: GardenFooterText.asksTooltip,
                   onPressed: () => createListedAsksDialog(context),
                 ),
                 IconButton(
                   color: iconColor,
                   icon: const Icon(Icons.settings),
                   iconSize: iconSize,
-                  tooltip: Strings.settingsTooltip,
+                  tooltip: GardenFooterText.settingsTooltip,
                   onPressed: () => createUserSettingsDialog(context),
                 ),
                 IconButton(
                   color: iconColor,
                   icon: const Icon(Icons.people_alt_rounded),
                   iconSize: iconSize,
-                  tooltip: Strings.usersTooltip,
+                  tooltip: GardenFooterText.usersTooltip,
                   onPressed: () => createListedUsersDialog(context),
                 ),
                 IconButton(
                   color: iconColor,
                   icon: const Icon(Icons.local_florist),
                   iconSize: iconSize,
-                  tooltip: Strings.gardensTooltip,
+                  tooltip: GardenFooterText.gardensTooltip,
                   onPressed: () => createListedGardensDialog(context),
                 ),
               ],
             ),
           ),
           Positioned(
-            left: AppPositions.pNeg10,
+            left: AppPositions.pNg10,
             child: hideActionsButton,
           ),
         ],

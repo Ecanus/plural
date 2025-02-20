@@ -2,7 +2,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
 
 // Constants
-import 'package:plural_app/src/constants/strings.dart';
+import 'package:plural_app/src/constants/formats.dart';
 
 enum FormFieldType {
   currency,
@@ -94,7 +94,7 @@ class AppForm {
         newValue = value.toString().trim().toUpperCase();
       case FormFieldType.datetimeNow:
         newValue = value == true ?
-          DateFormat(Strings.dateformatYMMdd).format(DateTime.now()) : null;
+          DateFormat(Formats.dateYMMdd).format(DateTime.now()) : null;
       case FormFieldType.int:
         newValue = int.parse(value);
       case FormFieldType.string:

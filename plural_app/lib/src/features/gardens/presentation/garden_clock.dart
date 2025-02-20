@@ -1,12 +1,14 @@
 import 'dart:async';
 
-import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 // Constants
-import 'package:plural_app/src/constants/app_values.dart';
-import 'package:plural_app/src/constants/strings.dart';
+import 'package:plural_app/src/constants/formats.dart';
+
+// Gardens
+import 'package:plural_app/src/features/gardens/domain/constants.dart';
 
 // Utils
 import 'package:plural_app/src/utils/app_state.dart';
@@ -26,10 +28,10 @@ class _GardenClockState extends State<GardenClock> {
     super.initState();
 
     _currentTime = DateTime.now();
-    _displayedTime = DateFormat(Strings.dateformatYMMdd).format(_currentTime.toLocal());
+    _displayedTime = DateFormat(Formats.dateYMMdd).format(_currentTime.toLocal());
 
     _timer = Timer.periodic(
-      const Duration(seconds: GardenValues.clockRefreshRate),
+      const Duration(seconds: GardenConstants.clockRefreshRate),
       (timer) => _update(timer)
     );
   }
@@ -44,7 +46,7 @@ class _GardenClockState extends State<GardenClock> {
       }
 
       _currentTime = updatedTime;
-      _displayedTime = DateFormat(Strings.dateformatYMMdd).format(_currentTime.toLocal());
+      _displayedTime = DateFormat(Formats.dateYMMdd).format(_currentTime.toLocal());
     });
   }
 

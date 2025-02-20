@@ -6,7 +6,9 @@ import 'package:plural_app/src/common_widgets/app_dialog_router.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
-import 'package:plural_app/src/constants/strings.dart';
+
+// Localization
+import 'package:plural_app/src/localization/lang_en.dart';
 
 class RouteToListedAsksViewButton extends StatelessWidget {
   @override
@@ -14,7 +16,7 @@ class RouteToListedAsksViewButton extends StatelessWidget {
     final appDialogRouter = GetIt.instance<AppDialogRouter>();
 
     return Tooltip(
-      message: AskDialogTooltips.listedAsks,
+      message: AskDialogText.listedAsks,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           backgroundColor: Theme.of(context).colorScheme.surface,

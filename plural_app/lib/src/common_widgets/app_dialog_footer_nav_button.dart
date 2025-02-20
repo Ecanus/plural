@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
-import 'package:plural_app/src/constants/form_values.dart';
+import 'package:plural_app/src/constants/app_values.dart';
 
 enum NavButtonDirection {
   left,
@@ -47,7 +47,7 @@ class AppDialogFooterNavButton extends StatelessWidget {
             )
             : SizedBox(),
             AnimatedOpacity(
-              duration: FormValues.navButtonFadeDuration,
+              duration: AppDurations.ms120,
               opacity: isMouseHovered ? 1.0 : 0.0,
               child: Tooltip(
                 message: tooltipMessage,

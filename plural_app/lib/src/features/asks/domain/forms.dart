@@ -6,11 +6,13 @@ import 'package:plural_app/src/common_widgets/app_dialog_router.dart';
 import 'package:plural_app/src/common_widgets/app_snackbars.dart';
 
 // Constants
-import 'package:plural_app/src/constants/app_values.dart';
-import 'package:plural_app/src/constants/strings.dart';
+import 'package:plural_app/src/constants/fields.dart';
 
 // Ask
 import "package:plural_app/src/features/asks/data/asks_repository.dart";
+
+// Localization
+import 'package:plural_app/src/localization/lang_en.dart';
 
 // Utils
 import 'package:plural_app/src/utils/app_form.dart';
@@ -32,8 +34,7 @@ Future<void> submitCreate(
 
     if (isValid && context.mounted) {
       var snackBar = AppSnackbars.getSuccessSnackbar(
-        SnackBarMessages.createAskSuccess,
-        duration: SnackBarDurations.s3,
+        SnackbarText.createAskSuccess,
         showCloseIcon: false
       );
 
@@ -68,8 +69,7 @@ Future<void> submitUpdate(
 
     if (isValid && context.mounted) {
       var snackBar = AppSnackbars.getSuccessSnackbar(
-        SnackBarMessages.updateAskSuccess,
-        duration: SnackBarDurations.s3,
+        SnackbarText.updateAskSuccess,
         showCloseIcon: false
       );
 
@@ -99,8 +99,7 @@ Future<void> submitDelete(
 
   if (isValid && context.mounted) {
     var snackBar = AppSnackbars.getSuccessSnackbar(
-      SnackBarMessages.deleteAskSuccess,
-      duration: SnackBarDurations.s3,
+      SnackbarText.deleteAskSuccess,
       showCloseIcon: false
     );
 
