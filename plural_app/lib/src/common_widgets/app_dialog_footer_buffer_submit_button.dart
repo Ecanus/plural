@@ -27,7 +27,7 @@ class AppDialogFooterBufferSubmitButton extends StatelessWidget {
           shape: CircleBorder(),
         ),
         onPressed: () => Function.apply(callback, positionalArguments, namedArguments),
-        child: Icon(Icons.save_alt)
+        child: const Icon(Icons.save_alt)
       ),
     );
   }

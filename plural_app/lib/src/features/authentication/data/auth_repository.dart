@@ -1,4 +1,5 @@
 import 'dart:developer' as developer;
+
 import 'package:go_router/go_router.dart';
 import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
@@ -6,8 +7,8 @@ import 'package:intl/intl.dart';
 // Pocketbase
 import 'package:pocketbase/pocketbase.dart';
 
-// Common Methods
-import 'package:plural_app/src/common_methods/errors.dart';
+// Common Functions
+import 'package:plural_app/src/common_functions/errors.dart';
 
 // Constants
 import 'package:plural_app/src/constants/pocketbase.dart';
@@ -16,8 +17,8 @@ import 'package:plural_app/src/constants/strings.dart';
 
 // Auth
 import "package:plural_app/src/features/authentication/domain/app_user.dart";
-import "package:plural_app/src/features/authentication/domain/app_user_settings.dart";
 import 'package:plural_app/src/features/authentication/domain/app_user_garden_record.dart';
+import "package:plural_app/src/features/authentication/domain/app_user_settings.dart";
 
 // Gardens
 import 'package:plural_app/src/features/gardens/data/gardens_repository.dart';
@@ -34,8 +35,10 @@ class AuthRepository {
 
   final PocketBase pb;
 
-  /// Queries on the [UserGardenRecord] collection, sorted by the [sort] value,
-  /// to retrieve a UserGardenRecord corresponding to the given [userID] and [gardenID].
+  /// Queries on the [UserGardenRecord] collection, to retrieve a UserGardenRecord
+  /// corresponding to the given [userID] and [gardenID].
+  ///
+  /// Sorted on the [sort] value.
   ///
   /// Returns an [AppUserGardenRecord] instance corresponding to the retrieved
   /// UserGardenRecord if one is found. Else, returns null.
@@ -97,7 +100,7 @@ class AuthRepository {
   /// Queries on the [UserGardenRecord] collection to retrieve all [User]s
   /// with the same [Garden] as the currentGarden.
   ///
-  /// Returns the list of retrieved [User]s.
+  /// Returns the list of retrieved [AppUser]s.
   Future<List<AppUser>> getCurrentGardenUsers() async {
     String currentGardenID = GetIt.instance<AppState>().currentGarden!.id;
     List<AppUser> instances = [];
@@ -114,25 +117,25 @@ class AuthRepository {
     for (var record in records) {
       var userRecord = record[PBKey.expand][UserGardenRecordField.user];
 
-      var userInstance = AppUser(
+      var appUser = AppUser(
         id: record[UserGardenRecordField.userID],
         email: userRecord[UserField.email],
         username: userRecord[UserField.username],
       );
 
-      instances.add(userInstance);
+      instances.add(appUser);
     }
 
     return instances;
   }
 
   /// Queries on the [User] collection to retrieve the [User] with
-  /// an ID matching the given [id] parameter.
+  /// an ID matching the given [userID] parameter.
   ///
   /// Returns an [AppUser] instance.
-  Future<AppUser> getUserByID(String id) async {
+  Future<AppUser> getUserByID(String userID) async {
     var result = await pb.collection(Collection.users).getFirstListItem(
-      "${GenericField.id} = '$id'",
+      "${GenericField.id} = '$userID'",
     );
 
     // TODO: Raise error if result is empty
@@ -199,7 +202,7 @@ class AuthRepository {
   }
 
   /// Queries on the [UserSettings] collection to update the record
-  /// which corresponds to the [map] parameter.
+  /// with values in the given [map] parameter.
   ///
   /// Returns true and an empty map if created successfully, else false
   /// and a map of the errors.
@@ -229,10 +232,10 @@ class AuthRepository {
     }
   }
 
-  /// Subscribes to any changes made in the [User] collection to any [User] record
-  /// associated with the [Garden] with the given [gardenID].
+  /// Subscribes to any changes made in the [User] collection for any [User] record
+  /// associated with the given [gardenID].
   ///
-  /// Calls the given [callback] method whenever a change is made.
+  /// Calls the [callback] function whenever a change is made.
   Future<Function> subscribeToUsers(String gardenID, Function callback) {
     Future<Function> unsubscribeFunc = pb.collection(Collection.users)
       .subscribe(Subscribe.all, (e) async {
@@ -248,9 +251,7 @@ class AuthRepository {
 
         switch (e.action) {
           case EventAction.create:
-            callback();
           case EventAction.delete:
-            callback();
           case EventAction.update:
             callback();
         }
@@ -260,7 +261,7 @@ class AuthRepository {
   }
 
   /// Subscribes to any changes made in the [UserSettings] collection to any
-  /// [UserSettings] record associated with a [User] part of the [Garden] with
+  /// [UserSettings] record associated with a [User] associated with
   /// the given [gardenID].
   ///
   /// Updates the [AppState]'s currentUserSettings whenever a change is made.
@@ -292,7 +293,7 @@ class AuthRepository {
 
 
 /// Attempts to log into the database with the given [usernameOrEmail]
-/// and [password] parameters. And creates all necessary [GetIt] instances.
+/// and [password] parameters and create all necessary [GetIt] instances.
 ///
 /// Returns true if log in is successful, else false.
 Future<bool> login(String usernameOrEmail, String password) async {
@@ -327,7 +328,7 @@ Future<void> logout(context) async {
 /// Attempts to create a new [User] record in the database with the given
 /// [firstName], [lastName], [username], [email], and [password] parameters.
 ///
-/// Returns a record of (true, {}) if sign up is successful, else (false, errorsMap)
+/// Returns (true, {}) if sign up is successful, else (false, errorsMap)
 Future<(bool, Map)> signup(
   String firstName,
   String lastName,
@@ -353,7 +354,7 @@ Future<(bool, Map)> signup(
     );
 
     // Send verification email
-    // await pb.collection(Collection.users).requestVerification(email);
+    await pb.collection(Collection.users).requestVerification(email);
 
     // Return
     return (true, {});

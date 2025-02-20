@@ -12,7 +12,6 @@ import 'package:plural_app/src/utils/app_state.dart';
 
 class ListedGardenTile extends StatelessWidget {
   const ListedGardenTile({
-    super.key,
     required this.garden,
   });
 
@@ -28,7 +27,7 @@ class ListedGardenTile extends StatelessWidget {
           garden.name,
           style: TextStyle(fontWeight: FontWeight.w500),
         ),
-        trailing: Icon(Icons.arrow_forward_ios),
+        trailing: const Icon(Icons.arrow_forward_ios),
         onTap: () {
           // Update AppState.currentGarden (should also rebuild Garden Timeline via notifyListeners())
           GetIt.instance<AppState>().currentGarden = garden;

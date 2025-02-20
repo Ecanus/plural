@@ -2,29 +2,29 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
 // Common Widgets
-import 'package:plural_app/src/common_widgets/app_dialog_footer_buffer_submit_button.dart';
-import 'package:plural_app/src/common_widgets/app_text_form_field.dart';
 import 'package:plural_app/src/common_widgets/app_currency_picker_form_field.dart';
 import 'package:plural_app/src/common_widgets/app_date_picker_form_field.dart';
 import 'package:plural_app/src/common_widgets/app_dialog.dart';
+import 'package:plural_app/src/common_widgets/app_dialog_footer.dart';
+import 'package:plural_app/src/common_widgets/app_dialog_footer_buffer_submit_button.dart';
+import 'package:plural_app/src/common_widgets/app_text_form_field.dart';
 import 'package:plural_app/src/common_widgets/app_tooltip_icon.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
-import 'package:plural_app/src/constants/strings.dart';
 import 'package:plural_app/src/constants/app_values.dart';
+import 'package:plural_app/src/constants/strings.dart';
 
 // Asks
 import 'package:plural_app/src/features/asks/domain/ask.dart';
 import 'package:plural_app/src/features/asks/domain/forms.dart';
 import 'package:plural_app/src/features/asks/presentation/route_to_listed_asks_view_button.dart';
-import 'package:plural_app/src/utils/app_state.dart';
 
 // Utils
 import 'package:plural_app/src/utils/app_form.dart';
+import 'package:plural_app/src/utils/app_state.dart';
 
 Future createCreatableAskDialog(BuildContext context) {
-
   return showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -36,33 +36,28 @@ Future createCreatableAskDialog(BuildContext context) {
 }
 
 class AskDialogCreateForm extends StatefulWidget {
-  const AskDialogCreateForm({
-    super.key,
-  });
-
   @override
   State<AskDialogCreateForm> createState() => _AskDialogCreateFormState();
 }
 
 class _AskDialogCreateFormState extends State<AskDialogCreateForm> {
-  late AppState _appState;
-
-  late GlobalKey<FormState> _formKey;
   late AppForm _appForm;
+  late AppState _appState;
+  late GlobalKey<FormState> _formKey;
 
   @override
   void initState() {
     super.initState();
-
-    _appState = GetIt.instance<AppState>();
-
-    _formKey = GlobalKey<FormState>();
 
     _appForm = AppForm.fromMap(Ask.emptyMap());
     _appForm.setValue(
       fieldName: AppFormFields.rebuild,
       value: () { setState(() {}); }
     );
+
+    _appState = GetIt.instance<AppState>();
+
+    _formKey = GlobalKey<FormState>();
   }
 
   @override

@@ -3,9 +3,9 @@ import 'package:timeline_tile/timeline_tile.dart';
 
 // Asks
 import 'package:plural_app/src/features/asks/domain/ask.dart';
-import 'package:plural_app/src/features/asks/presentation/non_editable_ask_dialog.dart';
-import 'package:plural_app/src/features/asks/presentation/editable_ask_dialog.dart';
 import 'package:plural_app/src/features/asks/presentation/ask_time_left_text.dart';
+import 'package:plural_app/src/features/asks/presentation/editable_ask_dialog.dart';
+import 'package:plural_app/src/features/asks/presentation/non_editable_ask_dialog.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
@@ -13,7 +13,6 @@ import 'package:plural_app/src/constants/app_values.dart';
 
 class GardenTimelineTile extends StatelessWidget {
   const GardenTimelineTile({
-    super.key,
     required this.ask,
   });
 
@@ -49,7 +48,6 @@ class GardenTimelineTile extends StatelessWidget {
 
 class EditableGardenTimelineTile extends StatelessWidget {
   const EditableGardenTimelineTile({
-    super.key,
     required this.appIndicatorStyle,
     required this.ask,
     required this.timelineTileLineStyle,
@@ -79,7 +77,6 @@ class EditableGardenTimelineTile extends StatelessWidget {
 
 class NonEditableGardenTimelineTile extends StatelessWidget {
   const NonEditableGardenTimelineTile({
-    super.key,
     required this.appIndicatorStyle,
     required this.ask,
     required this.timelineTileLineStyle,
@@ -97,7 +94,7 @@ class NonEditableGardenTimelineTile extends StatelessWidget {
       beforeLineStyle: timelineTileLineStyle,
       startChild: BaseGardenTimelineTile(ask: ask,),
       endChild: ask.isCreatedByCurrentUser ?
-        Container() // Return empty Container because TimelineTile bug adds padding to the card if null is returned,
+        Container() // Return empty Container because TimelineTile bug adds padding inside the card if null is returned,
         : Container(
           padding: const EdgeInsets.all(AppPaddings.p10),
           child: Align(
@@ -111,7 +108,6 @@ class NonEditableGardenTimelineTile extends StatelessWidget {
 
 class BaseGardenTimelineTile extends StatelessWidget {
   const BaseGardenTimelineTile({
-    super.key,
     required this.ask,
   });
 
@@ -196,7 +192,7 @@ class TileContents extends StatelessWidget {
     return Column(
       children: [
         Padding(
-          padding: EdgeInsets.only(
+          padding: const EdgeInsets.only(
             left: AppPaddings.p25,
             top: AppPaddings.p25,
             right: AppPaddings.p25,
@@ -247,7 +243,7 @@ class TileViewAskButton extends StatelessWidget {
         backgroundColor: Theme.of(context).colorScheme.secondaryFixed,
         child: IconButton(
           color: Theme.of(context).colorScheme.onSecondary,
-          icon: Icon(Icons.more_horiz_rounded,),
+          icon: const Icon(Icons.more_horiz_rounded),
           onPressed: () => createNonEditableAskDialog(context: context, ask: ask),
           padding: EdgeInsets.zero
         ),
@@ -272,7 +268,7 @@ class TileEditAskButton extends StatelessWidget {
         backgroundColor: Theme.of(context).colorScheme.primary,
         child: IconButton(
           color: Theme.of(context).colorScheme.onPrimary,
-          icon: Icon(Icons.mode_edit_outlined),
+          icon: const Icon(Icons.mode_edit_outlined),
           hoverColor: Theme.of(context).colorScheme.onPrimary
             .withOpacity(AppOpacities.point3),
           onPressed: () => createEditableAskDialog(context: context, ask: ask),

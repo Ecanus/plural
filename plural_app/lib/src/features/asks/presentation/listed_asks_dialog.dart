@@ -2,26 +2,34 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
 // Common Widgets
-import 'package:plural_app/src/common_widgets/app_dialog_router.dart';
 import 'package:plural_app/src/common_widgets/app_dialog.dart';
+import 'package:plural_app/src/common_widgets/app_dialog_footer.dart';
+import 'package:plural_app/src/common_widgets/app_dialog_router.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
 import 'package:plural_app/src/constants/strings.dart';
 
 // Asks
-import 'package:plural_app/src/features/asks/domain/utils.dart';
+import 'package:plural_app/src/features/asks/data/asks_repository.dart';
 import 'package:plural_app/src/features/asks/presentation/listed_ask_tile.dart';
 
+// Utils
+import 'package:plural_app/src/utils/app_state.dart';
+
 Future createListedAsksDialog(BuildContext context) async {
-  final listedAskTiles = await getListedAskTilesByAsks();
+  final currentUserID = GetIt.instance<AppState>().currentUserID!;
+  final asks = await GetIt.instance<AsksRepository>().getAsksByUserID(
+    userID: currentUserID);
 
   if (context.mounted) {
     return showDialog(
       context: context,
       builder: (BuildContext context) {
         return AppDialog(
-          view: AskDialogList(listedAskTiles: listedAskTiles),
+          view: AskDialogList(
+            listedAskTiles: [for (var ask in asks) ListedAskTile(ask: ask)]
+          ),
         );
       }
     );
@@ -30,7 +38,6 @@ Future createListedAsksDialog(BuildContext context) async {
 
 class AskDialogList extends StatelessWidget {
   const AskDialogList({
-    super.key,
     required this.listedAskTiles,
   });
 
@@ -51,10 +58,10 @@ class AskDialogList extends StatelessWidget {
         AppDialogFooterBuffer(buttons: [RouteToCreateAskViewButton()],),
         AppDialogNavFooter(
           leftDialogIcon: Icons.local_florist,
-          leftNavCallback: appDialogRouter.showGardenDialogListView,
+          leftNavCallback: appDialogRouter.routeToGardenDialogListView,
           leftTooltipMessage: AppDialogTooltips.navToGardens,
           rightDialogIcon: Icons.settings,
-          rightNavCallback: appDialogRouter.showUserSettingsDialogView,
+          rightNavCallback: appDialogRouter.routeToUserSettingsDialogView,
           rightTooltipMessage: AppDialogTooltips.navToSettings,
           title: AppDialogTitles.asks
         )
@@ -78,8 +85,8 @@ class RouteToCreateAskViewButton extends StatelessWidget {
           iconColor: Theme.of(context).colorScheme.surface,
           shape: CircleBorder(),
         ),
-        onPressed: () => appDialogRouter.showCreatableAskDialogView(),
-        child: Icon(Icons.add)
+        onPressed: () => appDialogRouter.routeToCreatableAskDialogView(),
+        child: const Icon(Icons.add)
       ),
     );
   }

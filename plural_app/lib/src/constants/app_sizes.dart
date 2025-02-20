@@ -81,6 +81,7 @@ class AppHeights {
 
 class AppIconSizes {
   static const s15 = 15.0;
+  static const s20 = 20.0;
   static const s25 = 25.0;
   static const s30 = 30.0;
   static const s35 = 35.0;

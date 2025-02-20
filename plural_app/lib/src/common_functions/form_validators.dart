@@ -3,7 +3,7 @@ import 'package:plural_app/src/constants/currencies.dart';
 import 'package:plural_app/src/constants/form_values.dart';
 import 'package:plural_app/src/constants/strings.dart';
 
-/// Checks that the given [value] is valid for a CheckboxFormField.
+/// Validates that the given [value] is valid for a CheckboxFormField.
 ///
 /// Returns null if valid, else returns a String.
 String? validateCheckboxFormField(bool? value) {
@@ -12,7 +12,7 @@ String? validateCheckboxFormField(bool? value) {
   return null;
 }
 
-/// Checks that the given [value] matches the [compareValue].
+/// Validates that the given [value] matches the [compareValue].
 ///
 /// Returns null if valid, else returns a String.
 String? validateConfirmNewPassword(String? value, String? confirmValue) {
@@ -22,7 +22,7 @@ String? validateConfirmNewPassword(String? value, String? confirmValue) {
   return null;
 }
 
-/// Checks that the given [value] is a valid currency code contained in Currencies.
+/// Validates that the given [value] is a valid currency code contained in Currencies.
 ///
 /// Returns null if valid, else returns a String.
 String? validateCurrency(String? value) {
@@ -42,7 +42,7 @@ String? validateDatePickerFormField(String? value) {
   return null;
 }
 
-/// Checks that the given [value] is valid for an Email.
+/// Validates that the given [value] is valid for an Email.
 ///
 /// Returns null if valid, else returns a String.
 String? validateEmail(String? value) {
@@ -51,7 +51,7 @@ String? validateEmail(String? value) {
   return null;
 }
 
-/// Checks that the given [value] is valid for a New Password.
+/// Validates that the given [value] is valid for a New Password.
 ///
 /// Returns null if valid, else returns a String.
 String? validateNewPassword(String? value) {
@@ -71,7 +71,7 @@ String? validateNewPassword(String? value) {
   return null;
 }
 
-/// Checks that the given [value] is valid for a TextFormField.
+/// Validates that the given [value] is valid for a TextFormField.
 ///
 /// Returns null if valid, else returns a String.
 String? validateTextFormField(String? value) {
@@ -80,7 +80,7 @@ String? validateTextFormField(String? value) {
   return null;
 }
 
-/// Checks that the given [value] is valid for a Username or Email.
+/// Validates that the given [value] is valid for a Username or Email.
 ///
 /// Returns null if valid, else returns a String.
 String? validateUsernameOrEmail(String? value) {

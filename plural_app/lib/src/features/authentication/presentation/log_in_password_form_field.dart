@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 
-// Common Classes
-import 'package:plural_app/src/utils/app_form.dart';
-
-// Common Methods
+// Common Functions
 import 'package:plural_app/src/common_widgets/app_text_button.dart';
-import 'package:plural_app/src/common_methods/form_validators.dart';
+import 'package:plural_app/src/common_functions/form_validators.dart';
 
 // Common Widgets
 import 'package:plural_app/src/common_widgets/show_hide_password_button.dart';
@@ -19,9 +16,11 @@ import 'package:plural_app/src/constants/styles.dart';
 // Authentication
 import 'package:plural_app/src/features/authentication/presentation/forgot_password_dialog.dart';
 
+// Utils
+import 'package:plural_app/src/utils/app_form.dart';
+
 class LogInPasswordFormField extends StatefulWidget {
   const LogInPasswordFormField({
-    super.key,
     required this.appForm,
     this.maxLength = AppMaxLengthValues.max20,
     this.maxLines = AppMaxLinesValues.max1,
@@ -42,8 +41,8 @@ class LogInPasswordFormField extends StatefulWidget {
 class _LogInPasswordFormFieldState extends State<LogInPasswordFormField> {
   final _controller = TextEditingController();
 
-  late double _paddingTop;
   late bool _isPasswordVisible;
+  late double _paddingTop;
 
   @override
   void dispose() {
@@ -56,19 +55,19 @@ class _LogInPasswordFormFieldState extends State<LogInPasswordFormField> {
 
     _controller.text = "";
 
-    _paddingTop = widget.paddingTop ?? AppPaddings.p20;
     _isPasswordVisible = false;
+    _paddingTop = widget.paddingTop ?? AppPaddings.p20;
   }
 
   // Password
-  void togglePasswordVisibility() {
+  bool _getPasswordVisibility() {
+    return _isPasswordVisible;
+  }
+
+  void _togglePasswordVisibility() {
     setState(() {
       _isPasswordVisible = !_isPasswordVisible;
     });
-  }
-
-  bool getPasswordVisibility() {
-    return _isPasswordVisible;
   }
 
   @override
@@ -85,14 +84,15 @@ class _LogInPasswordFormFieldState extends State<LogInPasswordFormField> {
               border: AppStyles.textFieldBorder,
               enabledBorder: AppStyles.textFieldBorder,
               errorText: widget.appForm.getError(
-                fieldName: UserField.password),
+                fieldName: UserField.password
+              ),
               floatingLabelStyle: AppStyles.floatingLabelStyle,
               focusedBorder: AppStyles.textFieldFocusedBorder,
               focusedErrorBorder: AppStyles.textFieldFocusedErrorBorder,
               label: Text(SignInLabels.password),
               suffixIcon: ShowHidePasswordButton(
-                isPasswordVisible: getPasswordVisibility,
-                onPressed: togglePasswordVisibility
+                isPasswordVisible: _getPasswordVisibility,
+                onPressed: _togglePasswordVisibility
               ),
             ),
             inputFormatters: getInputFormatters(

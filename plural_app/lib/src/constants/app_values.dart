@@ -61,3 +61,7 @@ class UserSettingsValues {
   static const textSizeMin = 1;
   static const textSizeMax = 5;
 }
+
+class AuthConstants {
+  static const logInTabIndex = 0;
+}

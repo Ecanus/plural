@@ -5,7 +5,6 @@ import 'package:plural_app/src/constants/app_sizes.dart';
 
 class ShowHidePasswordButton extends StatelessWidget {
   const ShowHidePasswordButton({
-    super.key,
     required this.isPasswordVisible,
     required this.onPressed,
   });

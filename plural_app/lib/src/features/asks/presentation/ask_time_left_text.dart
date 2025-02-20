@@ -8,7 +8,6 @@ import 'package:plural_app/src/features/asks/domain/ask.dart';
 
 class AskTimeLeftText extends StatelessWidget {
   const AskTimeLeftText({
-    super.key,
     required this.ask,
     this.fontSize,
     required this.textColor,

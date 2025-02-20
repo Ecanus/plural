@@ -16,12 +16,10 @@ package:plural_app/src/features/authentication/presentation/user_settings_dialog
 // Gardens
 import 'package:plural_app/src/features/gardens/presentation/listed_gardens_dialog.dart';
 
-/// Parent Widget of the AppBottomBar and all widgets
-/// at the bottom of the App.
 class GardenFooter extends StatelessWidget {
   final ValueNotifier<bool> _isFooterCollapsed = ValueNotifier<bool>(true);
 
-  bool toggleIsFooterCollapsed () {
+  bool _toggleIsFooterCollapsed () {
     return _isFooterCollapsed.value = !_isFooterCollapsed.value;
   }
 
@@ -32,13 +30,13 @@ class GardenFooter extends StatelessWidget {
       backgroundColor: Theme.of(context).colorScheme.primary,
       elevation: AppElevations.e5,
       iconColor: Theme.of(context).colorScheme.onPrimary,
-      padding: EdgeInsets.all(AppPaddings.p18),
+      padding: const EdgeInsets.all(AppPaddings.p18),
       shape: CircleBorder(),
     );
 
     final showActionsButton = ElevatedButton(
       style: buttonStyle,
-      onPressed: toggleIsFooterCollapsed,
+      onPressed: _toggleIsFooterCollapsed,
       child: Icon(
         Icons.add,
         color: Theme.of(context).colorScheme.onPrimaryContainer,
@@ -48,7 +46,7 @@ class GardenFooter extends StatelessWidget {
 
     final hideActionsButton = ElevatedButton(
       style: buttonStyle,
-      onPressed: toggleIsFooterCollapsed,
+      onPressed: _toggleIsFooterCollapsed,
       child: Icon(
         Icons.close,
         color: Theme.of(context).colorScheme.onPrimaryContainer,
@@ -75,7 +73,6 @@ class GardenFooter extends StatelessWidget {
 
 class AppBottomBar extends StatelessWidget {
   const AppBottomBar({
-    super.key,
     required this.hideActionsButton
   });
 

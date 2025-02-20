@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+// Constants
+import 'package:plural_app/src/constants/app_sizes.dart';
+
 // Asks
 import 'package:plural_app/src/features/asks/domain/ask.dart';
 
 // Gardens
 import 'package:plural_app/src/features/gardens/presentation/garden_timeline_tile.dart';
-
-// Constants
-import 'package:plural_app/src/constants/app_sizes.dart';
 
 // Utils
 import 'package:plural_app/src/utils/app_state.dart';
@@ -47,7 +47,6 @@ class GardenTimeline extends StatelessWidget {
 
 class GardenTimelineList extends StatelessWidget {
   const GardenTimelineList({
-    super.key,
     required this.asks,
   });
 

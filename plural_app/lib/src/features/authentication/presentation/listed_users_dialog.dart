@@ -3,6 +3,7 @@ import 'package:get_it/get_it.dart';
 
 // Common Widgets
 import 'package:plural_app/src/common_widgets/app_dialog.dart';
+import 'package:plural_app/src/common_widgets/app_dialog_footer.dart';
 import 'package:plural_app/src/common_widgets/app_dialog_router.dart';
 
 // Constants
@@ -10,18 +11,20 @@ import 'package:plural_app/src/constants/app_sizes.dart';
 import 'package:plural_app/src/constants/strings.dart';
 
 // Auth
-import 'package:plural_app/src/features/authentication/domain/utils.dart';
+import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
 import 'package:plural_app/src/features/authentication/presentation/listed_user_tile.dart';
 
 Future createListedUsersDialog(BuildContext context) async {
-  final listedUserTiles = await getListedUserTilesByUsers();
+  final users = await GetIt.instance<AuthRepository>().getCurrentGardenUsers();
 
   if (context.mounted) {
     return showDialog(
       context: context,
       builder: (BuildContext context) {
         return AppDialog(
-          view: UserDialogList(listedUserTiles: listedUserTiles),
+          view: UserDialogList(
+            listedUserTiles: [for (var user in users) ListedUserTile(user: user)]
+          ),
         );
       }
     );
@@ -30,7 +33,6 @@ Future createListedUsersDialog(BuildContext context) async {
 
 class UserDialogList extends StatelessWidget {
   const UserDialogList({
-    super.key,
     required this.listedUserTiles,
   });
 
@@ -51,10 +53,10 @@ class UserDialogList extends StatelessWidget {
         ),
         AppDialogNavFooter(
           leftDialogIcon: Icons.settings,
-          leftNavCallback: appDialogRouter.showUserSettingsDialogView,
+          leftNavCallback: appDialogRouter.routeToUserSettingsDialogView,
           leftTooltipMessage: AppDialogTooltips.navToSettings,
           rightDialogIcon: Icons.local_florist,
-          rightNavCallback: appDialogRouter.showGardenDialogListView,
+          rightNavCallback: appDialogRouter.routeToGardenDialogListView,
           rightTooltipMessage: AppDialogTooltips.navToGardens,
           title: AppDialogTitles.users
         )
@@ -73,7 +75,7 @@ class ListedUsersHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(
+      padding: const EdgeInsets.only(
         left: AppPaddings.p35,
         top: AppPaddings.p35,
         right: AppPaddings.p35,

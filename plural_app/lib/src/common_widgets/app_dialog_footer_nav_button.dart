@@ -11,7 +11,6 @@ enum NavButtonDirection {
 
 class AppDialogFooterNavButton extends StatelessWidget {
   const AppDialogFooterNavButton({
-    super.key,
     required this.callback,
     required this.dialogIcon,
     required this.direction,

@@ -5,7 +5,6 @@ import 'package:plural_app/src/constants/app_sizes.dart';
 
 class AppTooltipIcon extends StatelessWidget {
   const AppTooltipIcon({
-    super.key,
     this.dark = true,
   });
 

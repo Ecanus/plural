@@ -3,6 +3,7 @@ import 'package:get_it/get_it.dart';
 
 // Common Widgets
 import 'package:plural_app/src/common_widgets/app_dialog.dart';
+import 'package:plural_app/src/common_widgets/app_dialog_footer.dart';
 import 'package:plural_app/src/common_widgets/app_snackbars.dart';
 import 'package:plural_app/src/common_widgets/app_tooltip_icon.dart';
 
@@ -13,9 +14,9 @@ import 'package:plural_app/src/constants/strings.dart';
 import 'package:plural_app/src/constants/themes.dart';
 
 // Ask
+import 'package:plural_app/src/features/asks/data/asks_repository.dart';
 import 'package:plural_app/src/features/asks/domain/ask.dart';
 import 'package:plural_app/src/features/asks/presentation/ask_time_left_text.dart';
-import 'package:plural_app/src/features/asks/data/asks_repository.dart';
 
 // Utils
 import 'package:plural_app/src/utils/app_state.dart';
@@ -37,7 +38,6 @@ Future createNonEditableAskDialog({
 
 class AskDialogView extends StatelessWidget {
   const AskDialogView({
-    super.key,
     required this.ask,
   });
 
@@ -104,38 +104,38 @@ class NonEditableAskHeader extends StatefulWidget {
 }
 
 class _NonEditableAskHeaderState extends State<NonEditableAskHeader> {
-  late bool isSponsored;
+  late bool _isSponsored;
 
   @override
   void initState() {
     super.initState();
 
-    isSponsored = widget.ask.isSponsoredByCurrentUser;
+    _isSponsored = widget.ask.isSponsoredByCurrentUser;
   }
 
   @override
   Widget build(BuildContext context) {
 
     Future<void> isSponsoredToggle(bool value) async {
-    var asksRepository = GetIt.instance<AsksRepository>();
-    var currentUserID = GetIt.instance<AppState>().currentUserID!;
+      var asksRepository = GetIt.instance<AsksRepository>();
+      var currentUserID = GetIt.instance<AppState>().currentUserID!;
 
-    if (value) {
-      await asksRepository.addSponsor(widget.ask.id, currentUserID);
+      if (value) {
+        await asksRepository.addSponsor(widget.ask.id, currentUserID);
 
-      var snackBar = AppSnackbars.getSuccessSnackbar(
-        SnackBarMessages.askSponsored,
-        duration: SnackBarDurations.s3,
-        showCloseIcon: false
-      );
+        var snackBar = AppSnackbars.getSuccessSnackbar(
+          SnackBarMessages.askSponsored,
+          duration: SnackBarDurations.s3,
+          showCloseIcon: false
+        );
 
-      if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    } else {
-      await asksRepository.removeSponsor(widget.ask.id, currentUserID);
+        if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      } else {
+        await asksRepository.removeSponsor(widget.ask.id, currentUserID);
+      }
+
+      setState(() { _isSponsored = value; });
     }
-
-    setState(() { isSponsored = value; });
-  }
 
     WidgetStateProperty<Icon> thumbIcon =
       WidgetStateProperty.resolveWith<Icon>(
@@ -173,12 +173,12 @@ class _NonEditableAskHeaderState extends State<NonEditableAskHeader> {
               Switch(
                 thumbColor: thumbColor,
                 thumbIcon: thumbIcon,
-                value: isSponsored,
-                onChanged: (bool value) { isSponsoredToggle(value); },
+                value: _isSponsored,
+                onChanged: (bool value) => isSponsoredToggle(value),
               ),
               gapW5,
               Tooltip(
-                message: isSponsored ?
+                message: _isSponsored ?
                   Tooltips.unmarkAsSponsored : Tooltips.markAsSponsored,
                 child: AppTooltipIcon()
               )
