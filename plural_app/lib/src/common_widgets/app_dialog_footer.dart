@@ -5,7 +5,10 @@ import 'package:plural_app/src/common_widgets/app_dialog_footer_nav_button.dart'
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
-import 'package:plural_app/src/constants/app_values.dart';
+
+const blurRadius = 5.0;
+const spreadRadius = 1.0;
+const offset = Offset(0, -1.0); // Top
 
 class AppDialogFooterBuffer extends StatelessWidget {
   const AppDialogFooterBuffer({
@@ -27,9 +30,9 @@ class AppDialogFooterBuffer extends StatelessWidget {
           boxShadow: [
             BoxShadow(
               color: Theme.of(context).shadowColor,
-              blurRadius: AppDialogValues.blurRadius,
-              spreadRadius: AppDialogValues.spreadRadius,
-              offset: AppDialogValues.offset,
+              blurRadius: blurRadius,
+              spreadRadius: spreadRadius,
+              offset: offset,
             ),
           ],
           color: Theme.of(context).colorScheme.surfaceBright,
@@ -95,9 +98,9 @@ class _AppDialogNavFooterState extends State<AppDialogNavFooter> {
           boxShadow: [
             BoxShadow(
               color: Theme.of(context).shadowColor,
-              blurRadius: AppDialogValues.blurRadius,
-              offset: AppDialogValues.offset,
-              spreadRadius: AppDialogValues.spreadRadius,
+              blurRadius: blurRadius,
+              offset: offset,
+              spreadRadius: spreadRadius,
             ),
           ],
           color: Theme.of(context).colorScheme.primaryContainer,
@@ -155,9 +158,9 @@ class AppDialogFooter extends StatelessWidget {
         boxShadow: [
           BoxShadow(
             color: Theme.of(context).shadowColor,
-            blurRadius: AppDialogValues.blurRadius,
-            offset: AppDialogValues.offset,
-            spreadRadius: AppDialogValues.spreadRadius,
+            blurRadius: blurRadius,
+            offset: offset,
+            spreadRadius: spreadRadius,
           ),
         ],
         color: Theme.of(context).colorScheme.primaryContainer,

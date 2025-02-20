@@ -9,7 +9,7 @@ import 'package:plural_app/src/common_widgets/app_dialog_router.dart';
 import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
 
 // Constants
-import 'package:plural_app/src/constants/strings.dart';
+import 'package:plural_app/src/constants/fields.dart';
 
 // Gardens
 import 'package:plural_app/src/features/gardens/data/gardens_repository.dart';

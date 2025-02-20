@@ -7,12 +7,14 @@ import 'package:plural_app/src/common_widgets/app_dialog_footer.dart';
 import 'package:plural_app/src/common_widgets/app_dialog_router.dart';
 
 // Constants
-import 'package:plural_app/src/constants/strings.dart';
 import 'package:plural_app/src/constants/app_sizes.dart';
 
 // Gardens
 import 'package:plural_app/src/features/gardens/data/gardens_repository.dart';
 import 'package:plural_app/src/features/gardens/presentation/listed_garden_tile.dart';
+
+// Localization
+import 'package:plural_app/src/localization/lang_en.dart';
 
 // Utils
 import 'package:plural_app/src/utils/app_state.dart';
@@ -60,11 +62,11 @@ class GardenDialogList extends StatelessWidget {
         AppDialogNavFooter(
           leftDialogIcon: Icons.people_alt_rounded,
           leftNavCallback: appDialogRouter.routeToUserDialogListView,
-          leftTooltipMessage: AppDialogTooltips.navToUsers,
+          leftTooltipMessage: AppDialogFooterText.navToUsers,
           rightDialogIcon: Icons.library_add,
           rightNavCallback: appDialogRouter.routeToAskDialogListView,
-          rightTooltipMessage: AppDialogTooltips.navToAsks,
-          title: AppDialogTitles.gardens
+          rightTooltipMessage: AppDialogFooterText.navToAsks,
+          title: AppDialogFooterText.gardens
         )
       ],
     );

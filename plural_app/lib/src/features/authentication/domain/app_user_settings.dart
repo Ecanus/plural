@@ -1,5 +1,5 @@
 // Constants
-import 'package:plural_app/src/constants/strings.dart';
+import 'package:plural_app/src/constants/fields.dart';
 
 // Auth
 import 'package:plural_app/src/features/authentication/domain/app_user.dart';

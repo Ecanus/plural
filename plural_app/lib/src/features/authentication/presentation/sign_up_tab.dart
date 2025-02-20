@@ -10,7 +10,7 @@ import 'package:plural_app/src/common_widgets/app_text_form_field.dart';
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
 import 'package:plural_app/src/constants/app_values.dart';
-import 'package:plural_app/src/constants/strings.dart';
+import 'package:plural_app/src/constants/fields.dart';
 
 // Auth
 import 'package:plural_app/src/features/authentication/domain/forms.dart';
@@ -18,6 +18,9 @@ import 'package:plural_app/src/features/authentication/presentation/create_passw
 
 // Utils
 import 'package:plural_app/src/utils/app_form.dart';
+
+// Localization
+import 'package:plural_app/src/localization/lang_en.dart';
 
 class SignUpTab extends StatelessWidget {
   const SignUpTab({
@@ -43,8 +46,8 @@ class SignUpTab extends StatelessWidget {
               child: AppTextFormField(
                 appForm: appForm,
                 fieldName: UserField.firstName,
-                label: SignInLabels.firstName,
-                maxLength: AppMaxLengthValues.max50,
+                label: SignInPageText.firstName,
+                maxLength: AppMaxLengths.max50,
                 paddingTop: AppPaddings.p0,
               ),
             ),
@@ -53,8 +56,8 @@ class SignUpTab extends StatelessWidget {
               child: AppTextFormField(
                 appForm: appForm,
                 fieldName: UserField.lastName,
-                label: SignInLabels.lastName,
-                maxLength: AppMaxLengthValues.max50,
+                label: SignInPageText.lastName,
+                maxLength: AppMaxLengths.max50,
                 paddingTop: AppPaddings.p0,
               ),
             ),
@@ -63,16 +66,16 @@ class SignUpTab extends StatelessWidget {
         AppTextFormField(
           appForm: appForm,
           fieldName: UserField.email,
-          label: SignInLabels.email,
-          maxLength: AppMaxLengthValues.max50,
+          label: SignInPageText.email,
+          maxLength: AppMaxLengths.max50,
           paddingTop: AppPaddings.p0,
           validator: validateEmail,
         ),
         AppTextFormField(
           appForm: appForm,
           fieldName: UserField.username,
-          label: SignInLabels.username,
-          maxLength: AppMaxLengthValues.max50,
+          label: SignInPageText.username,
+          maxLength: AppMaxLengths.max50,
           paddingTop: AppPaddings.p0,
         ),
         CreatePasswordFormField(
@@ -82,7 +85,7 @@ class SignUpTab extends StatelessWidget {
         gapH30,
         AppElevatedButton(
           callback: submitSignUp,
-          label: SignInLabels.signUp,
+          label: SignInPageText.signUp,
           positionalArguments: [context, formKey, appForm],
         ),
       ],

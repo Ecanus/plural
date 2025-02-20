@@ -1,16 +1,16 @@
 import 'package:pocketbase/pocketbase.dart';
 
-// Constants
-import 'package:plural_app/src/constants/strings.dart';
+const dataKey = "data";
+const messageKey = "message";
 
 Map<String, String> getErrorsMapFromClientException(ClientException e) {
   Map<String, String> errorsMap = {};
-  var innerMap = e.response[ExceptionStrings.data];
+  var innerMap = e.response[dataKey];
 
   // Create map of fields and corresponding error messages
-  for (var key in e.response[ExceptionStrings.data].keys) {
+  for (var key in e.response[dataKey].keys) {
     var fieldName = key;
-    var errorMessage = innerMap[key][ExceptionStrings.message];
+    var errorMessage = innerMap[key][messageKey];
 
     // Remove trailing period
     errorMessage.replaceAll(

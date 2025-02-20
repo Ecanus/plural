@@ -12,7 +12,7 @@ import 'package:plural_app/src/common_widgets/app_text_form_field.dart';
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
 import 'package:plural_app/src/constants/app_values.dart';
-import 'package:plural_app/src/constants/strings.dart';
+import 'package:plural_app/src/constants/fields.dart';
 
 // Auth
 import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
@@ -22,6 +22,9 @@ import 'package:plural_app/src/features/authentication/domain/forms.dart';
 // Utils
 import 'package:plural_app/src/utils/app_form.dart';
 import 'package:plural_app/src/utils/app_state.dart';
+
+// Localization
+import 'package:plural_app/src/localization/lang_en.dart';
 
 Future createUserSettingsDialog(BuildContext context) async {
   final userSettings = GetIt.instance<AppState>().currentUserSettings!;
@@ -79,14 +82,14 @@ class _UserSettingsDialogState extends State<UserSettingsDialog> {
                       appForm: _appForm,
                       fieldName: UserSettingsField.defaultCurrency,
                       initialValue: widget.userSettings.defaultCurrency,
-                      label: UserSettingsDialogLabels.defaultCurrency,
+                      label: UserSettingsDialogText.defaultCurrency,
                     ),
                     AppTextFormField(
                       appForm: _appForm,
                       fieldName: UserSettingsField.defaultInstructions,
                       initialValue: widget.userSettings.defaultInstructions,
-                      label: UserSettingsDialogLabels.defaultInstructions,
-                      maxLength: AppMaxLengthValues.max200,
+                      label: UserSettingsDialogText.defaultInstructions,
+                      maxLength: AppMaxLengths.max200,
                       maxLines: null,
                     ),
                     gapH30,
@@ -108,11 +111,11 @@ class _UserSettingsDialogState extends State<UserSettingsDialog> {
         AppDialogNavFooter(
           leftDialogIcon: Icons.library_add,
           leftNavCallback: appDialogRouter.routeToAskDialogListView,
-          leftTooltipMessage: AppDialogTooltips.navToAsks,
+          leftTooltipMessage: AppDialogFooterText.navToAsks,
           rightDialogIcon: Icons.people_alt_rounded,
           rightNavCallback: appDialogRouter.routeToUserDialogListView,
-          rightTooltipMessage: AppDialogTooltips.navToUsers,
-          title: AppDialogTitles.settings
+          rightTooltipMessage: AppDialogFooterText.navToUsers,
+          title: AppDialogFooterText.settings
         )
       ],
     );
@@ -141,7 +144,7 @@ class LogOutButton extends StatelessWidget {
             )
           )
         ),
-        child: Text(SignInLabels.logOut)
+        child: const Text(SignInPageText.logOut)
       ),
     );
   }

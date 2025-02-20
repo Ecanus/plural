@@ -10,7 +10,7 @@ import 'package:plural_app/src/common_widgets/show_hide_password_button.dart';
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
 import 'package:plural_app/src/constants/app_values.dart';
-import 'package:plural_app/src/constants/strings.dart';
+import 'package:plural_app/src/constants/fields.dart';
 import 'package:plural_app/src/constants/styles.dart';
 
 // Authentication
@@ -19,11 +19,14 @@ import 'package:plural_app/src/features/authentication/presentation/forgot_passw
 // Utils
 import 'package:plural_app/src/utils/app_form.dart';
 
+// Localization
+import 'package:plural_app/src/localization/lang_en.dart';
+
 class LogInPasswordFormField extends StatefulWidget {
   const LogInPasswordFormField({
     required this.appForm,
-    this.maxLength = AppMaxLengthValues.max20,
-    this.maxLines = AppMaxLinesValues.max1,
+    this.maxLength = AppMaxLengths.max20,
+    this.maxLines = AppMaxLines.max1,
     this.paddingBottom,
     this.paddingTop,
   });
@@ -89,7 +92,7 @@ class _LogInPasswordFormFieldState extends State<LogInPasswordFormField> {
               floatingLabelStyle: AppStyles.floatingLabelStyle,
               focusedBorder: AppStyles.textFieldFocusedBorder,
               focusedErrorBorder: AppStyles.textFieldFocusedErrorBorder,
-              label: Text(SignInLabels.password),
+              label: const Text(SignInPageText.password),
               suffixIcon: ShowHidePasswordButton(
                 isPasswordVisible: _getPasswordVisibility,
                 onPressed: _togglePasswordVisibility
@@ -116,7 +119,7 @@ class _LogInPasswordFormFieldState extends State<LogInPasswordFormField> {
             child: AppTextButton(
               callback: createForgotPasswordDialog,
               positionalArguments: [context],
-              label: SignInLabels.forgotPassword,
+              label: SignInPageText.forgotPassword,
             ),
           ),
         ),

@@ -18,7 +18,7 @@ class AppCurrencyPickerFormField extends StatefulWidget {
     required this.fieldName,
     this.initialValue,
     this.label = "",
-    this.maxLength = AppMaxLengthValues.max3,
+    this.maxLength = AppMaxLengths.max3,
   });
 
   final AppForm appForm;

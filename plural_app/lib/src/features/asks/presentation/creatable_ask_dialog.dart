@@ -13,12 +13,15 @@ import 'package:plural_app/src/common_widgets/app_tooltip_icon.dart';
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
 import 'package:plural_app/src/constants/app_values.dart';
-import 'package:plural_app/src/constants/strings.dart';
+import 'package:plural_app/src/constants/fields.dart';
 
 // Asks
 import 'package:plural_app/src/features/asks/domain/ask.dart';
 import 'package:plural_app/src/features/asks/domain/forms.dart';
 import 'package:plural_app/src/features/asks/presentation/route_to_listed_asks_view_button.dart';
+
+// Localization
+import 'package:plural_app/src/localization/lang_en.dart';
 
 // Utils
 import 'package:plural_app/src/utils/app_form.dart';
@@ -75,7 +78,7 @@ class _AskDialogCreateFormState extends State<AskDialogCreateForm> {
                     AppDatePickerFormField(
                       appForm: _appForm,
                       fieldName: AskField.deadlineDate,
-                      label: AskDialogLabels.deadlineDate,
+                      label: AskDialogText.deadlineDate,
                     ),
                     Row(
                       children: [
@@ -84,8 +87,8 @@ class _AskDialogCreateFormState extends State<AskDialogCreateForm> {
                             appForm: _appForm,
                             fieldName: AskField.targetSum,
                             formFieldType: FormFieldType.int,
-                            label: AskDialogLabels.targetSum,
-                            maxLength: AppMaxLengthValues.max4,
+                            label: AskDialogText.targetSum,
+                            maxLength: AppMaxLengths.max4,
                             textFieldType: TextFieldType.digitsOnly,
                           ),
                         ),
@@ -95,10 +98,10 @@ class _AskDialogCreateFormState extends State<AskDialogCreateForm> {
                             appForm: _appForm,
                             fieldName: AskField.boon,
                             formFieldType: FormFieldType.int,
-                            label: AskDialogLabels.boon,
-                            maxLength: AppMaxLengthValues.max4,
+                            label: AskDialogText.boon,
+                            maxLength: AppMaxLengths.max4,
                             suffixIcon: Tooltip(
-                              message: Tooltips.boon,
+                              message: AskDialogText.tooltipBoon,
                               child: AppTooltipIcon(dark: false),
                             ),
                             textFieldType: TextFieldType.digitsOnly,
@@ -111,7 +114,7 @@ class _AskDialogCreateFormState extends State<AskDialogCreateForm> {
                             appForm: _appForm,
                             fieldName: AskField.currency,
                             initialValue: _appState.currentUserSettings!.defaultCurrency,
-                            label: AskDialogLabels.currency,
+                            label: AskDialogText.currency,
                           )
                         )
                       ],
@@ -119,19 +122,19 @@ class _AskDialogCreateFormState extends State<AskDialogCreateForm> {
                     AppTextFormField(
                       appForm: _appForm,
                       fieldName: AskField.description,
-                      label: AskDialogLabels.description,
-                      maxLength: AppMaxLengthValues.max400,
+                      label: AskDialogText.description,
+                      maxLength: AppMaxLengths.max400,
                       maxLines: null,
                     ),
                     AppTextFormField(
                       appForm: _appForm,
                       fieldName: AskField.instructions,
                       initialValue: _appState.currentUserSettings!.defaultInstructions,
-                      label: AskDialogLabels.instructions,
-                      maxLength: AppMaxLengthValues.max200,
+                      label: AskDialogText.instructions,
+                      maxLength: AppMaxLengths.max200,
                       maxLines: null,
                       suffixIcon: Tooltip(
-                        message: Tooltips.instructions,
+                        message: AskDialogText.tooltipInstructions,
                         child: AppTooltipIcon(dark: false),
                       ),
                     ),
@@ -141,7 +144,7 @@ class _AskDialogCreateFormState extends State<AskDialogCreateForm> {
                         appForm: _appForm,
                         fieldName: AskField.type,
                         initialValue: AskType.monetary.name, // Hardcoded value for now
-                        label: AskDialogLabels.type,
+                        label: AskDialogText.type,
                       ),
                     ),
                   ],
@@ -159,7 +162,7 @@ class _AskDialogCreateFormState extends State<AskDialogCreateForm> {
             ),
           ]
         ),
-        AppDialogFooter(title: AppDialogTitles.createAsk)
+        AppDialogFooter(title: AppDialogFooterText.createAsk)
       ],
     );
   }

@@ -8,13 +8,14 @@ import 'package:plural_app/src/features/asks/domain/ask.dart';
 
 // Auth
 import "package:plural_app/src/features/authentication/domain/app_user.dart";
-
-// Constants
-import 'package:plural_app/src/constants/app_values.dart';
-import 'package:plural_app/src/constants/strings.dart';
 import 'package:plural_app/src/features/authentication/domain/app_user_settings.dart';
 
+// Constants
+import 'package:plural_app/src/constants/fields.dart';
+import 'package:plural_app/src/constants/formats.dart';
+
 // Gardens
+import 'package:plural_app/src/features/gardens/domain/constants.dart';
 import 'package:plural_app/src/features/gardens/domain/garden.dart';
 
 class AppState with ChangeNotifier {
@@ -57,7 +58,7 @@ class AppState with ChangeNotifier {
   }
 
   Future<List<Ask>> getTimelineAsks() async {
-    var nowString = DateFormat(Strings.dateformatYMMdd).format(DateTime.now());
+    var nowString = DateFormat(Formats.dateYMMdd).format(DateTime.now());
 
     // Asks with target met, or deadlineDate passed are filtered out.
     var filterString = ""
@@ -67,7 +68,7 @@ class AppState with ChangeNotifier {
 
     List<Ask> asks = await GetIt.instance<AsksRepository>().getAsksByGardenID(
       gardenID: currentGarden!.id,
-      count: GardenValues.numTimelineAsks,
+      count: GardenConstants.numTimelineAsks,
       filterString: filterString
     );
 

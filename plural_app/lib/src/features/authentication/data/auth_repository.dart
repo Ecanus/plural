@@ -11,9 +11,10 @@ import 'package:pocketbase/pocketbase.dart';
 import 'package:plural_app/src/common_functions/errors.dart';
 
 // Constants
+import 'package:plural_app/src/constants/fields.dart';
+import 'package:plural_app/src/constants/formats.dart';
 import 'package:plural_app/src/constants/pocketbase.dart';
 import 'package:plural_app/src/constants/routes.dart';
-import 'package:plural_app/src/constants/strings.dart';
 
 // Auth
 import "package:plural_app/src/features/authentication/domain/app_user.dart";
@@ -53,7 +54,7 @@ class AuthRepository {
     );
 
     // Return null if no UserGardenRecord is found
-    var items = result.toJson()[PBKey.items];
+    var items = result.toJson()[QueryKey.items];
     if (items.isEmpty) return null;
     var record = items[0];
 
@@ -81,7 +82,7 @@ class AuthRepository {
     );
 
     // Return null if no UserGardenRecord is found
-    var items = result.toJson()[PBKey.items];
+    var items = result.toJson()[QueryKey.items];
     if (items.isEmpty) return null;
 
     var record = items[0];
@@ -112,10 +113,10 @@ class AuthRepository {
     );
 
     // TODO: Raise error if result is empty
-    var records = result.toJson()[PBKey.items];
+    var records = result.toJson()[QueryKey.items];
 
     for (var record in records) {
-      var userRecord = record[PBKey.expand][UserGardenRecordField.user];
+      var userRecord = record[QueryKey.expand][UserGardenRecordField.user];
 
       var appUser = AppUser(
         id: record[UserGardenRecordField.userID],
@@ -164,7 +165,7 @@ class AuthRepository {
     await pb.collection(Collection.userGardenRecords).update(
       userGardenRecord[GenericField.id],
       body: {
-        GenericField.updated: DateFormat(Strings.dateformatYMMdd).format(DateTime.now()),
+        GenericField.updated: DateFormat(Formats.dateYMMdd).format(DateTime.now()),
       }
     );
   }

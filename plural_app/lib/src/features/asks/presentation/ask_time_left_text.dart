@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-// Constants
-import 'package:plural_app/src/constants/strings.dart';
-
 // Asks
 import 'package:plural_app/src/features/asks/domain/ask.dart';
+
+// Localization
+import 'package:plural_app/src/localization/lang_en.dart';
 
 class AskTimeLeftText extends StatelessWidget {
   const AskTimeLeftText({
@@ -27,7 +27,7 @@ class AskTimeLeftText extends StatelessWidget {
               color: textColor,
               fontSize: fontSize
             ),
-            text: "${GardenPageLabels.tileTimeLeftBrace} "
+            text: "${AskDialogText.askTimeLeftBrace} "
           ),
           TextSpan(
             style: TextStyle(
@@ -42,7 +42,7 @@ class AskTimeLeftText extends StatelessWidget {
               color: textColor,
               fontSize: fontSize
             ),
-            text: " ${GardenPageLabels.tileTimeLeftBrace}"
+            text: " ${AskDialogText.askTimeLeftBrace}"
           ),
         ]
       )

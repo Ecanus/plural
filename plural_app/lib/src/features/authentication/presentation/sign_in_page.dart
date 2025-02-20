@@ -6,11 +6,14 @@ import 'package:plural_app/src/common_widgets/app_logo.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
-import 'package:plural_app/src/constants/strings.dart';
+import 'package:plural_app/src/constants/fields.dart';
 
 // Authentication
 import 'package:plural_app/src/features/authentication/presentation/log_in_tab.dart';
 import 'package:plural_app/src/features/authentication/presentation/sign_up_tab.dart';
+
+// Localization
+import 'package:plural_app/src/localization/lang_en.dart';
 
 class SignInPage extends StatefulWidget {
   @override
@@ -46,8 +49,8 @@ class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateM
 
     // Tabs
     _tabs = <Tab>[
-      Tab(text: SignInLabels.logIn),
-      Tab(text: SignInLabels.signUp),
+      Tab(text: SignInPageText.logIn),
+      Tab(text: SignInPageText.signUp),
     ];
 
     // Tab Controller

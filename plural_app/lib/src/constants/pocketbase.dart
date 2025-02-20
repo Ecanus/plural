@@ -12,6 +12,11 @@ class EventAction {
   static const update = "update";
 }
 
+class QueryKey {
+  static const items = "items";
+  static const expand = "expand";
+}
+
 class Subscribe {
   static const all = "*";
 }

@@ -6,7 +6,8 @@ import "package:plural_app/src/features/authentication/domain/app_user.dart";
 
 // Constants
 import 'package:plural_app/src/constants/app_values.dart';
-import 'package:plural_app/src/constants/strings.dart';
+import 'package:plural_app/src/constants/fields.dart';
+import 'package:plural_app/src/constants/formats.dart';
 
 // Utils
 import 'package:plural_app/src/utils/app_state.dart';
@@ -44,38 +45,29 @@ class Ask {
 
   AppUser? creator;
 
-  String get formattedDeadlineDate {
-    return DateFormat(Strings.dateformatYMMdd).format(deadlineDate);
-  }
+  String get formattedDeadlineDate =>
+    DateFormat(Formats.dateYMMdd).format(deadlineDate);
 
   String get formattedTargetMetDate {
     if (targetMetDate == null) return "";
 
-    return DateFormat(Strings.dateformatYMMdd).format(targetMetDate!.toLocal());
+    return DateFormat(Formats.dateYMMdd).format(targetMetDate!.toLocal());
   }
 
-  bool get isCreatedByCurrentUser {
-    return creatorID == GetIt.instance<AppState>().currentUserID!;
-  }
+  bool get isCreatedByCurrentUser =>
+    creatorID == GetIt.instance<AppState>().currentUserID!;
 
-  bool get isDeadlinePassed {
-    return deadlineDate.isBefore(DateTime.now());
-  }
+  bool get isDeadlinePassed => deadlineDate.isBefore(DateTime.now());
 
-  bool get isOnTimeline {
-    return GetIt.instance<AppState>().timelineAsks!.contains(this);
-  }
+  bool get isOnTimeline => GetIt.instance<AppState>().timelineAsks!.contains(this);
 
-  bool get isSponsoredByCurrentUser {
-    return sponsorIDS.contains(GetIt.instance<AppState>().currentUserID!);
-  }
+  bool get isSponsoredByCurrentUser =>
+    sponsorIDS.contains(GetIt.instance<AppState>().currentUserID!);
 
-  bool get isTargetMet {
-    return targetMetDate != null;
-  }
+  bool get isTargetMet => targetMetDate != null;
 
   String get listTileDescription {
-    var limit = AppMaxLengthValues.max30;
+    var limit = AppMaxLengths.max30;
 
     if (description.length > limit) {
       return "${description.substring(0, limit)}...";
@@ -106,7 +98,7 @@ class Ask {
   }
 
   String get truncatedDescription {
-    var limit = AppMaxLengthValues.max200;
+    var limit = AppMaxLengths.max200;
 
     if (description.length > limit) {
       return "${description.substring(0, limit)}...";

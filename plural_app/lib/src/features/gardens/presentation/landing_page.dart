@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
-import 'package:plural_app/src/constants/strings.dart';
 
 // Gardens
 import 'package:plural_app/src/features/gardens/presentation/landing_page_settings_tab.dart';
 import 'package:plural_app/src/features/gardens/presentation/landing_page_welcome_tab.dart';
+
+// Localization
+import 'package:plural_app/src/localization/lang_en.dart';
 
 class LandingPage extends StatefulWidget {
   @override
@@ -21,8 +23,8 @@ class _LandingPageState extends State<LandingPage> {
     super.initState();
 
     _tabs = <Tab>[
-      Tab(text: LandingPageLabels.welcome),
-      Tab(text: LandingPageLabels.settings)
+      Tab(text: LandingPageText.welcome),
+      Tab(text: LandingPageText.settings)
     ];
   }
 

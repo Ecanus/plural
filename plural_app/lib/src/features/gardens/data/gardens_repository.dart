@@ -2,8 +2,8 @@ import 'package:pocketbase/pocketbase.dart';
 import 'package:get_it/get_it.dart';
 
 // Constants
+import 'package:plural_app/src/constants/fields.dart';
 import 'package:plural_app/src/constants/pocketbase.dart';
-import 'package:plural_app/src/constants/strings.dart';
 
 // Auth
 import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
@@ -58,10 +58,10 @@ class GardensRepository {
     );
 
     // TODO: Raise error if result is empty
-    var records = result.toJson()[PBKey.items];
+    var records = result.toJson()[QueryKey.items];
 
     for (var record in records) {
-      var recordGarden = record[PBKey.expand][UserGardenRecordField.garden];
+      var recordGarden = record[QueryKey.expand][UserGardenRecordField.garden];
       var creator = await authRepository.getUserByID(recordGarden[GardenField.creator]);
 
       var garden = Garden(

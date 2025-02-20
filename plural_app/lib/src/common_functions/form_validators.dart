@@ -1,13 +1,15 @@
 // Constants
+import 'package:plural_app/src/constants/app_values.dart';
 import 'package:plural_app/src/constants/currencies.dart';
-import 'package:plural_app/src/constants/form_values.dart';
-import 'package:plural_app/src/constants/strings.dart';
+
+// Localization
+import 'package:plural_app/src/localization/lang_en.dart';
 
 /// Validates that the given [value] is valid for a CheckboxFormField.
 ///
 /// Returns null if valid, else returns a String.
 String? validateCheckboxFormField(bool? value) {
-  if (value == null) return ErrorMessages.invalidValue;
+  if (value == null) return AppFormText.invalidValue;
 
   return null;
 }
@@ -16,8 +18,8 @@ String? validateCheckboxFormField(bool? value) {
 ///
 /// Returns null if valid, else returns a String.
 String? validateConfirmNewPassword(String? value, String? confirmValue) {
-  if (value == null || value.isEmpty) return ErrorMessages.invalidValue;
-  if (value != confirmValue) return ErrorMessages.passwordMismatch;
+  if (value == null || value.isEmpty) return AppFormText.invalidValue;
+  if (value != confirmValue) return SignInPageText.passwordMismatch;
 
   return null;
 }
@@ -27,7 +29,7 @@ String? validateConfirmNewPassword(String? value, String? confirmValue) {
 /// Returns null if valid, else returns a String.
 String? validateCurrency(String? value) {
   if (value == null || value.isEmpty || !Currencies.all.containsKey(value)) {
-    return ErrorMessages.invalidValue;
+    return AppFormText.invalidValue;
   }
 
   return null;
@@ -37,7 +39,7 @@ String? validateCurrency(String? value) {
 ///
 /// Returns null if valid, else returns a String.
 String? validateDatePickerFormField(String? value) {
-  if (value == null || value.isEmpty) return ErrorMessages.invalidValue;
+  if (value == null || value.isEmpty) return AppFormText.invalidValue;
 
   return null;
 }
@@ -46,7 +48,7 @@ String? validateDatePickerFormField(String? value) {
 ///
 /// Returns null if valid, else returns a String.
 String? validateEmail(String? value) {
-  if (value == null || value.isEmpty) return ErrorMessages.invalidValue;
+  if (value == null || value.isEmpty) return AppFormText.invalidValue;
 
   return null;
 }
@@ -55,7 +57,7 @@ String? validateEmail(String? value) {
 ///
 /// Returns null if valid, else returns a String.
 String? validateNewPassword(String? value) {
-  if (value == null || value.isEmpty) return ErrorMessages.invalidValue;
+  if (value == null || value.isEmpty) return AppFormText.invalidValue;
 
   var allChecks = [
     checkHasLowercase(value),
@@ -66,7 +68,7 @@ String? validateNewPassword(String? value) {
   ];
 
   if (!allChecks.every((returnVal) => returnVal == true)) {
-    return ErrorMessages.invalidPassword;
+    return AppFormText.invalidPassword;
   }
   return null;
 }
@@ -75,7 +77,7 @@ String? validateNewPassword(String? value) {
 ///
 /// Returns null if valid, else returns a String.
 String? validateTextFormField(String? value) {
-  if (value == null || value.isEmpty) return ErrorMessages.invalidValue;
+  if (value == null || value.isEmpty) return AppFormText.invalidValue;
 
   return null;
 }
@@ -84,7 +86,7 @@ String? validateTextFormField(String? value) {
 ///
 /// Returns null if valid, else returns a String.
 String? validateUsernameOrEmail(String? value) {
-  if (value == null || value.isEmpty) return ErrorMessages.invalidValue;
+  if (value == null || value.isEmpty) return AppFormText.invalidValue;
 
   return null;
 }
@@ -144,6 +146,7 @@ bool checkPasswordLength(String? value) {
   if (value == null || value.isEmpty) return false;
 
   return (
-    value.length >= FormValues.passwordMinLength &&
-    value.length <= FormValues.passwordMaxLength);
+    value.length >= AppMaxLengths.max9 &&
+    value.length <= AppMaxLengths.max64
+  );
 }

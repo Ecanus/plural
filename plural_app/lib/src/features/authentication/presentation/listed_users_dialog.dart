@@ -8,11 +8,13 @@ import 'package:plural_app/src/common_widgets/app_dialog_router.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
-import 'package:plural_app/src/constants/strings.dart';
 
 // Auth
 import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
 import 'package:plural_app/src/features/authentication/presentation/listed_user_tile.dart';
+
+// Localization
+import 'package:plural_app/src/localization/lang_en.dart';
 
 Future createListedUsersDialog(BuildContext context) async {
   final users = await GetIt.instance<AuthRepository>().getCurrentGardenUsers();
@@ -54,11 +56,11 @@ class UserDialogList extends StatelessWidget {
         AppDialogNavFooter(
           leftDialogIcon: Icons.settings,
           leftNavCallback: appDialogRouter.routeToUserSettingsDialogView,
-          leftTooltipMessage: AppDialogTooltips.navToSettings,
+          leftTooltipMessage: AppDialogFooterText.navToSettings,
           rightDialogIcon: Icons.local_florist,
           rightNavCallback: appDialogRouter.routeToGardenDialogListView,
-          rightTooltipMessage: AppDialogTooltips.navToGardens,
-          title: AppDialogTitles.users
+          rightTooltipMessage: AppDialogFooterText.navToGardens,
+          title: AppDialogFooterText.users
         )
       ],
     );

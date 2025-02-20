@@ -6,12 +6,14 @@ import 'package:plural_app/src/common_widgets/app_dialog_router.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
-import 'package:plural_app/src/constants/form_values.dart';
-import 'package:plural_app/src/constants/strings.dart';
+import 'package:plural_app/src/constants/app_values.dart';
 import 'package:plural_app/src/constants/themes.dart';
 
 // Asks
 import "package:plural_app/src/features/asks/domain/ask.dart";
+
+// Localization
+import 'package:plural_app/src/localization/lang_en.dart';
 
 class ListedAskTile extends StatelessWidget {
   const ListedAskTile({
@@ -43,7 +45,7 @@ class ListedAskTile extends StatelessWidget {
           ),
         ),
         subtitle: Text(
-          "${AskDialogLabels.deadlineDueBy}: ${ask.formattedDeadlineDate}",
+          "${AskDialogText.deadlineDueBy}: ${ask.formattedDeadlineDate}",
           style: TextStyle(
             color: textColor,
             decoration: textDecoration,
@@ -52,7 +54,7 @@ class ListedAskTile extends StatelessWidget {
         ),
         trailing: TileTrailing(isOnTimeline: ask.isOnTimeline),
         onTap: () {
-          Future.delayed(FormValues.listedAskTileClickDelay, () {
+          Future.delayed(AppDurations.ms80, () {
             appDialogRouter.routeToEditableAskDialogView(ask);
           });
         },

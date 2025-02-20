@@ -10,7 +10,7 @@ class AppSnackbars {
     String mainMessage,
     {
       String boldMessage = "",
-      int duration = SnackBarDurations.s9,
+      Duration duration = AppDurations.s3,
       showCloseIcon = true,
     }
   ) {
@@ -43,7 +43,7 @@ class AppSnackbars {
           ),
         ],
       ),
-      duration: Duration(seconds: duration),
+      duration: duration,
       showCloseIcon: showCloseIcon,
       closeIconColor: AppThemes.snackbarCloseIconColor,
       width: AppWidths.w600
