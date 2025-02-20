@@ -8,7 +8,6 @@ import 'package:plural_app/src/features/authentication/domain/app_user.dart';
 
 class ListedUserTile extends StatelessWidget {
   const ListedUserTile({
-    super.key,
     required this.user,
   });
 

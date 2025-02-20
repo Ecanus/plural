@@ -3,13 +3,13 @@ import 'package:plural_app/src/features/authentication/domain/app_user_garden_re
 
 class AppUser {
   AppUser({
-    required this.id,
     required this.email,
+    required this.id,
     required this.username,
   });
 
-  final String id;
   final String email;
+  final String id;
   final String username;
 
   AppUserGardenRecord? latestGardenRecord;
@@ -25,5 +25,5 @@ class AppUser {
   int get hashCode => id.hashCode ^ email.hashCode;
 
   @override
-  String toString() => 'AppUser(id: $id, email: $email)';
+  String toString() => 'AppUser(id: $id, username: $username, email: $email)';
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-// Common Methods
-import 'package:plural_app/src/common_methods/form_validators.dart';
+// Common Functions
+import 'package:plural_app/src/common_functions/form_validators.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
@@ -58,10 +58,8 @@ class _AppCurrencyPickerFormFieldState extends State<AppCurrencyPickerFormField>
     ).toList();
   }
 
-  void setControllerText(String newCurrencyCode) {
-    setState(() {
-      _controller.text = newCurrencyCode;
-    });
+  void _setControllerText(String newCurrencyCode) {
+    setState(() { _controller.text = newCurrencyCode; });
   }
 
   @override
@@ -69,10 +67,10 @@ class _AppCurrencyPickerFormFieldState extends State<AppCurrencyPickerFormField>
     var showDialogButton = IconButton(
       onPressed: () => showCurrencyPicker(
         context,
-        setControllerText,
+        _setControllerText,
         _sortedCurrencyCards
       ),
-      icon: Icon(Icons.mode_edit_outlined),
+      icon: const Icon(Icons.mode_edit_outlined),
     );
 
     return TextFormField(
@@ -114,7 +112,6 @@ Future<void> showCurrencyPicker(
 
 class CurrencyPickerDialog extends StatelessWidget {
   const CurrencyPickerDialog({
-    super.key,
     required this.currencyCards,
   });
 
@@ -125,7 +122,7 @@ class CurrencyPickerDialog extends StatelessWidget {
     return Dialog(
       shape: RoundedRectangleBorder(),
       child: Container(
-        padding: EdgeInsets.only(
+        padding: const EdgeInsets.only(
           top: AppPaddings.p50,
           bottom: AppPaddings.p20
         ),
@@ -145,7 +142,7 @@ class CurrencyPickerDialog extends StatelessWidget {
             ),
             IconButton(
               onPressed: () => Navigator.pop(context),
-              icon: Icon(Icons.close)
+              icon: const Icon(Icons.close)
             )
           ],
         ),

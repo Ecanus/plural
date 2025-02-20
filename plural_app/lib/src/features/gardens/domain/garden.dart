@@ -6,27 +6,27 @@ import "package:plural_app/src/features/authentication/domain/app_user.dart";
 
 class Garden {
   Garden({
-    required this.id,
     required this.creator,
+    required this.id,
     required this.name,
   });
 
-  final String id;
   final AppUser creator;
+  final String id;
   final String name;
 
   Map toMap() {
     return {
-      GenericField.id: id,
       GardenField.creator: creator,
+      GenericField.id: id,
       GardenField.name: name,
     };
   }
 
   static Map emptyMap() {
     return {
-      GenericField.id: null,
       GardenField.creator: null,
+      GenericField.id: null,
       GardenField.name: null,
     };
   }

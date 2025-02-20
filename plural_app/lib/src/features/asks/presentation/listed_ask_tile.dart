@@ -15,7 +15,6 @@ import "package:plural_app/src/features/asks/domain/ask.dart";
 
 class ListedAskTile extends StatelessWidget {
   const ListedAskTile({
-    super.key,
     required this.ask,
   });
 
@@ -26,18 +25,17 @@ class ListedAskTile extends StatelessWidget {
     final appDialogRouter = GetIt.instance<AppDialogRouter>();
 
     final shouldStrikethrough = ask.isDeadlinePassed || ask.targetMetDate != null;
-
+    final textDecoration = shouldStrikethrough ? TextDecoration.lineThrough : null;
     final textColor = shouldStrikethrough ?
       Theme.of(context).colorScheme.onPrimaryFixed
       : Theme.of(context).colorScheme.onPrimary;
-    final textDecoration = shouldStrikethrough ? TextDecoration.lineThrough : null;
 
     return Card(
       elevation: AppElevations.e7,
       child: ListTile(
         tileColor: Theme.of(context).colorScheme.secondary,
         title: Text(
-          ask.listedDescription,
+          ask.listTileDescription,
           style: TextStyle(
             color: textColor,
             decoration: textDecoration,
@@ -55,7 +53,7 @@ class ListedAskTile extends StatelessWidget {
         trailing: TileTrailing(isOnTimeline: ask.isOnTimeline),
         onTap: () {
           Future.delayed(FormValues.listedAskTileClickDelay, () {
-            appDialogRouter.showEditableAskDialogView(ask);
+            appDialogRouter.routeToEditableAskDialogView(ask);
           });
         },
       ),
@@ -76,15 +74,12 @@ class TileTrailing extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         isOnTimeline ?
-        Ink(
-          padding: EdgeInsets.all(AppPaddings.p5),
-          decoration: ShapeDecoration(
-            color: AppThemes.positiveColor,
-            shape: CircleBorder()
-          ),
+        CircleAvatar(
+          backgroundColor: AppThemes.positiveColor,
+          radius: AppBorderRadii.r15,
           child: Icon(
             Icons.local_florist,
-            size: AppIconSizes.s25,
+            size: AppIconSizes.s20,
             color: Theme.of(context).colorScheme.surface,
           ),
         )

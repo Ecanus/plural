@@ -9,10 +9,6 @@ import 'package:plural_app/src/constants/app_sizes.dart';
 import 'package:plural_app/src/constants/strings.dart';
 
 class RouteToListedAsksViewButton extends StatelessWidget {
-  const RouteToListedAsksViewButton({
-    super.key,
-  });
-
   @override
   Widget build(BuildContext context) {
     final appDialogRouter = GetIt.instance<AppDialogRouter>();
@@ -26,8 +22,8 @@ class RouteToListedAsksViewButton extends StatelessWidget {
           iconColor: Theme.of(context).colorScheme.onPrimary,
           shape: CircleBorder(),
         ),
-        onPressed: () => appDialogRouter.showAskDialogListView(),
-        child: Icon(Icons.reorder)
+        onPressed: () => appDialogRouter.routeToAskDialogListView(),
+        child: const Icon(Icons.reorder)
       ),
     );
   }

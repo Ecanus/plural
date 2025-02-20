@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
 
-// Common Class
-import 'package:plural_app/src/utils/app_form.dart';
-
-// Common Methods
-import 'package:plural_app/src/common_methods/form_validators.dart';
+// Common Functions
+import 'package:plural_app/src/common_functions/form_validators.dart';
 
 // Common Widgets
 import 'package:plural_app/src/common_widgets/show_hide_password_button.dart';
-import 'package:plural_app/src/common_widgets/app_icons.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
@@ -18,17 +14,19 @@ import 'package:plural_app/src/constants/strings.dart';
 import 'package:plural_app/src/constants/styles.dart';
 import 'package:plural_app/src/constants/themes.dart';
 
+// Utils
+import 'package:plural_app/src/utils/app_form.dart';
+
 class CreatePasswordFormField extends StatefulWidget {
   const CreatePasswordFormField({
-    super.key,
-    this.maxLines = AppMaxLinesValues.max1,
     required this.appForm,
+    this.maxLines = AppMaxLinesValues.max1,
     this.paddingBottom,
     this.paddingTop,
   });
 
-  final int? maxLines;
   final AppForm appForm;
+  final int? maxLines;
   final double? paddingBottom;
   final double? paddingTop;
 
@@ -37,11 +35,11 @@ class CreatePasswordFormField extends StatefulWidget {
 }
 
 class _CreatePasswordFormFieldState extends State<CreatePasswordFormField> {
-  final String _passwordFieldName = UserField.password;
-  final String _passwordConfirmFieldName = UserField.passwordConfirm;
-
   final _passwordController = TextEditingController();
   final _passwordConfirmController = TextEditingController();
+
+  final String _passwordFieldName = UserField.password;
+  final String _passwordConfirmFieldName = UserField.passwordConfirm;
 
   late FocusNode _passwordFieldFocusNode;
   late FocusNode _passwordConfirmFieldFocusNode;
@@ -168,7 +166,7 @@ class _CreatePasswordFormFieldState extends State<CreatePasswordFormField> {
           duration: FormValues.passwordTextRowRevealDuration,
           child: Container(
             height: _passwordFieldFocusNode.hasFocus ? null : 0.0,
-            padding: EdgeInsets.only(
+            padding: const EdgeInsets.only(
               top: AppPaddings.p5,
               bottom: AppPaddings.p25
             ),
@@ -207,7 +205,7 @@ class _CreatePasswordFormFieldState extends State<CreatePasswordFormField> {
           ),
         ),
         Container(
-          padding: EdgeInsets.only(
+          padding: const EdgeInsets.only(
             top: AppPaddings.p20,
           ),
           child: TextFormField(
@@ -216,7 +214,8 @@ class _CreatePasswordFormFieldState extends State<CreatePasswordFormField> {
               border: AppStyles.textFieldBorder,
               enabledBorder: AppStyles.textFieldBorder,
               errorText: widget.appForm.getError(
-                fieldName: _passwordConfirmFieldName),
+                fieldName: _passwordConfirmFieldName
+              ),
               floatingLabelStyle: AppStyles.floatingLabelStyle,
               focusedBorder: AppStyles.textFieldFocusedBorder,
               focusedErrorBorder: AppStyles.textFieldFocusedErrorBorder,
@@ -247,7 +246,7 @@ class _CreatePasswordFormFieldState extends State<CreatePasswordFormField> {
           duration: FormValues.passwordTextRowRevealDuration,
           child: Container(
             height: _passwordConfirmFieldFocusNode.hasFocus ? null : 0.0,
-            padding: EdgeInsets.only(
+            padding: const EdgeInsets.only(
               top: AppPaddings.p5,
               bottom: AppPaddings.p25
             ),
@@ -270,7 +269,6 @@ class _CreatePasswordFormFieldState extends State<CreatePasswordFormField> {
 
 class PasswordRequirementText extends StatelessWidget {
   const PasswordRequirementText({
-    super.key,
     required this.notifier,
     required this.requirement,
     required this.text,
@@ -298,7 +296,6 @@ class PasswordRequirementText extends StatelessWidget {
 
 class PasswordsMatchText extends StatelessWidget {
   const PasswordsMatchText({
-    super.key,
     required this.notifier,
   });
 
@@ -325,7 +322,6 @@ class PasswordsMatchText extends StatelessWidget {
 
 class PasswordTextRow extends StatelessWidget {
   const PasswordTextRow({
-    super.key,
     this.isInvalidText,
     required this.isValid,
     required this.isValidText,
@@ -337,9 +333,19 @@ class PasswordTextRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Icon isValidIcon = Icon(
+      Icons.check,
+      color: AppThemes.successColor
+    );
+
+    Icon isInvalidIcon = Icon(
+      Icons.close,
+      color: AppThemes.colorScheme.onPrimary,
+    );
+
     return Row(
       children: [
-        isValid ? AppIcons.isValid : AppIcons.isInvalid,
+        isValid ? isValidIcon : isInvalidIcon,
         gapW5,
         Expanded(
           child: Text(

@@ -8,8 +8,6 @@ import 'package:plural_app/src/constants/themes.dart';
 import 'package:plural_app/src/routing/app_router.dart';
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(

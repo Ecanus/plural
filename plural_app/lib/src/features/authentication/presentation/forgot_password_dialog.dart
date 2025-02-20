@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 
-// Common Classes
-import 'package:plural_app/src/utils/app_form.dart';
-
-// Common Methods
-import 'package:plural_app/src/common_methods/form_validators.dart';
+// Common Functions
+import 'package:plural_app/src/common_functions/form_validators.dart';
 
 // Common Widgets
 import 'package:plural_app/src/common_widgets/app_elevated_button.dart';
@@ -18,6 +15,9 @@ import 'package:plural_app/src/constants/strings.dart';
 
 // Authentication
 import 'package:plural_app/src/features/authentication/domain/forms.dart';
+
+// Utils
+import 'package:plural_app/src/utils/app_form.dart';
 
 Future createForgotPasswordDialog(BuildContext context) {
   return showDialog(
@@ -33,15 +33,15 @@ class ForgotPasswordDialog extends StatefulWidget {
 }
 
 class _ForgotPasswordDialogState extends State<ForgotPasswordDialog> {
-  late GlobalKey<FormState> _formKey;
   late AppForm _appForm;
+  late GlobalKey<FormState> _formKey;
 
   @override
   void initState() {
     super.initState();
 
-    _formKey = GlobalKey<FormState>();
     _appForm = AppForm();
+    _formKey = GlobalKey<FormState>();
   }
 
   @override

@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-// Common Methods
-import 'package:plural_app/src/common_methods/form_validators.dart';
-
-// Common Widgets
-import 'package:plural_app/src/constants/app_sizes.dart';
+// Common Functions
+import 'package:plural_app/src/common_functions/form_validators.dart';
 
 // Constants
-import 'package:plural_app/src/constants/strings.dart';
+import 'package:plural_app/src/constants/app_sizes.dart';
 import 'package:plural_app/src/constants/app_values.dart';
+import 'package:plural_app/src/constants/strings.dart';
 import 'package:plural_app/src/constants/styles.dart';
 
 // Utils
@@ -46,14 +44,16 @@ class _AppDatePickerFormFieldState extends State<AppDatePickerFormField> {
   void initState() {
     super.initState();
 
+    // TextEditingController
     _controller.text = widget.initialValue == null ?
       "" : DateFormat(Strings.dateformatYMMdd).format(widget.initialValue!);
 
+    // Padding
     _paddingBottom = widget.paddingBottom ?? AppPaddings.p20;
     _paddingTop = widget.paddingTop ?? AppPaddings.p20;
   }
 
-  void setControllerText(DateTime newDate) {
+  void _setControllerText(DateTime newDate) {
     setState(() {
       _controller.text = DateFormat(Strings.dateformatYMMdd).format(newDate);
     });
@@ -71,8 +71,8 @@ class _AppDatePickerFormFieldState extends State<AppDatePickerFormField> {
           CircleAvatar(
             backgroundColor: Theme.of(context).colorScheme.primaryContainer,
             child: IconButton(
-              onPressed: () => selectDate(context, _controller.text, setControllerText),
-              icon: Icon(Icons.mode_edit_outlined)
+              onPressed: () => selectDate(context, _controller.text, _setControllerText),
+              icon: const Icon(Icons.mode_edit_outlined)
             ),
           ),
           gapW10,

@@ -45,7 +45,8 @@ class _LandingPageState extends State<LandingPage> {
                 children: [
                   LandingPageWelcomeTab(),
                   LandingPageSettingsTab(),
-                ]),
+                ]
+              ),
             )
           ),
         ),

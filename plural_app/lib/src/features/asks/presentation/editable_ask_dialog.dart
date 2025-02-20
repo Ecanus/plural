@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 
-// Common Classes
-import 'package:plural_app/src/utils/app_form.dart';
-
 // Common Widgets
 import 'package:plural_app/src/common_widgets/app_checkbox_list_tile_form_field.dart';
 import 'package:plural_app/src/common_widgets/app_currency_picker_form_field.dart';
-import 'package:plural_app/src/common_widgets/app_dialog_footer_buffer_submit_button.dart';
 import 'package:plural_app/src/common_widgets/app_date_picker_form_field.dart';
 import 'package:plural_app/src/common_widgets/app_dialog.dart';
+import 'package:plural_app/src/common_widgets/app_dialog_footer.dart';
+import 'package:plural_app/src/common_widgets/app_dialog_footer_buffer_submit_button.dart';
 import 'package:plural_app/src/common_widgets/app_text_form_field.dart';
 
 // Constants
@@ -21,6 +19,9 @@ import 'package:plural_app/src/constants/themes.dart';
 import 'package:plural_app/src/features/asks/domain/ask.dart';
 import 'package:plural_app/src/features/asks/domain/forms.dart';
 import 'package:plural_app/src/features/asks/presentation/route_to_listed_asks_view_button.dart';
+
+// Utils
+import 'package:plural_app/src/utils/app_form.dart';
 
 Future createEditableAskDialog({
   required BuildContext context,
@@ -38,7 +39,6 @@ Future createEditableAskDialog({
 
 class AskDialogEditForm extends StatefulWidget {
   const AskDialogEditForm({
-    super.key,
     required this.ask,
   });
 
@@ -49,20 +49,20 @@ class AskDialogEditForm extends StatefulWidget {
 }
 
 class _AskDialogEditFormState extends State<AskDialogEditForm> {
-  late GlobalKey<FormState> _formKey;
   late AppForm _appForm;
+  late GlobalKey<FormState> _formKey;
 
   @override
   void initState() {
     super.initState();
-
-    _formKey = GlobalKey<FormState>();
 
     _appForm = AppForm.fromMap(widget.ask.toMap());
     _appForm.setValue(
       fieldName: AppFormFields.rebuild,
       value: () { setState(() {}); }
     );
+
+    _formKey = GlobalKey<FormState>();
   }
 
   @override
@@ -196,7 +196,7 @@ class DeleteAskButton extends StatelessWidget {
         minHeight: AppHeights.h50
       ),
       child: FilledButton.icon(
-        icon: Icon(Icons.delete),
+        icon: const Icon(Icons.delete),
         label: Text(AskDialogLabels.deleteAsk),
         onPressed: () => showConfirmDeleteAskDialog(context, appForm),
         style: ButtonStyle(
@@ -225,7 +225,7 @@ class ConfirmDeleteAskDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return Dialog(
       child: Container(
-        padding: EdgeInsets.symmetric(
+        padding: const EdgeInsets.symmetric(
           horizontal: AppPaddings.p20,
         ),
         constraints: BoxConstraints.expand(
@@ -322,7 +322,7 @@ class EditableAskHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: AppPaddings.p35),
+      padding: const EdgeInsets.symmetric(horizontal: AppPaddings.p35),
       child: Column(
         children: [
           gapH35,

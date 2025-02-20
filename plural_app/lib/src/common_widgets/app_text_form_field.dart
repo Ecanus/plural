@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
 
-// Common Classes
-import 'package:plural_app/src/utils/app_form.dart';
-
-// Common Methods
-import 'package:plural_app/src/common_methods/form_validators.dart';
+// Common Functions
+import 'package:plural_app/src/common_functions/form_validators.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
 import 'package:plural_app/src/constants/app_values.dart';
 import 'package:plural_app/src/constants/styles.dart';
 
+// Utils
+import 'package:plural_app/src/utils/app_form.dart';
+
 class AppTextFormField extends StatefulWidget {
   const AppTextFormField({
     required this.appForm,
-    super.key,
     required this.fieldName,
     this.formFieldType = FormFieldType.string,
     this.hintText = "",
@@ -102,59 +101,6 @@ class _AppTextFormFieldState extends State<AppTextFormField> {
         ),
         validator: (value) => _validator(value),
       ),
-    );
-  }
-}
-
-class AppTextFormFieldFilled extends StatelessWidget {
-  const AppTextFormFieldFilled({
-    this.label = "",
-    this.maxLines = AppMaxLinesValues.max1,
-    required this.value,
-  });
-
-  final String label;
-  final int? maxLines;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.only(
-        top: AppPaddings.p20,
-        bottom: AppPaddings.p20
-      ),
-      child: TextFormField(
-        enabled: false,
-        initialValue: value,
-        maxLines: maxLines,
-        decoration: InputDecoration(
-          label: Text(label),
-        ),
-      ),
-    );
-  }
-}
-
-class ShowHidePasswordButton extends StatelessWidget {
-  const ShowHidePasswordButton({
-    super.key,
-    required this.isPasswordVisible,
-    required this.onPressed,
-  });
-
-  final Function isPasswordVisible;
-  final Function onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return IconButton(
-      onPressed: () => onPressed(),
-      icon: Icon(
-        isPasswordVisible()
-        ? Icons.visibility
-        : Icons.visibility_off_rounded
-      )
     );
   }
 }

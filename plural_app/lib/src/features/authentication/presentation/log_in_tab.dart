@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 
-// Common Classes
-import 'package:plural_app/src/utils/app_form.dart';
-
-// Common Methods
-import 'package:plural_app/src/common_methods/form_validators.dart';
+// Common Functions
+import 'package:plural_app/src/common_functions/form_validators.dart';
 
 // Common Widgets
 import 'package:plural_app/src/common_widgets/app_elevated_button.dart';
@@ -19,9 +16,11 @@ import 'package:plural_app/src/constants/strings.dart';
 import 'package:plural_app/src/features/authentication/domain/forms.dart';
 import 'package:plural_app/src/features/authentication/presentation/log_in_password_form_field.dart';
 
+// Utils
+import 'package:plural_app/src/utils/app_form.dart';
+
 class LogInTab extends StatelessWidget {
   const LogInTab({
-    super.key,
     required this.appForm,
     required this.formKey,
   });

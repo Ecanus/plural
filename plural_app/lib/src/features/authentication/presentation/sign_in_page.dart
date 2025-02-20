@@ -13,21 +13,15 @@ import 'package:plural_app/src/features/authentication/presentation/log_in_tab.d
 import 'package:plural_app/src/features/authentication/presentation/sign_up_tab.dart';
 
 class SignInPage extends StatefulWidget {
-  const SignInPage({
-    super.key,
-  });
-
   @override
   State<SignInPage> createState() => _SignInPageState();
 }
 
 class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateMixin {
-  late GlobalKey<FormState> _formKey;
-
-  late TabController _tabController;
-
   late AppForm _appForm;
+  late GlobalKey<FormState> _formKey;
   late List<Tab> _tabs;
+  late TabController _tabController;
 
   @override
   void dispose() {
@@ -40,6 +34,14 @@ class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateM
   void initState() {
     super.initState();
 
+    // AppForm
+    _appForm = AppForm();
+    _appForm.setValue(
+      fieldName: AppFormFields.rebuild,
+      value: () {setState( () {}); }
+    );
+
+    // FormKey
     _formKey = GlobalKey<FormState>();
 
     // Tabs
@@ -51,13 +53,6 @@ class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateM
     // Tab Controller
     _tabController = TabController(length: _tabs.length, vsync: this);
     _tabController.addListener(_clearAppFormErrors);
-
-    // AppForm
-    _appForm = AppForm();
-    _appForm.setValue(
-      fieldName: AppFormFields.rebuild,
-      value: () {setState( () {}); }
-    );
   }
 
   void _clearAppFormErrors() {
@@ -81,7 +76,8 @@ class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateM
               appBar: AppBar(
                 bottom: TabBar(
                   controller: _tabController,
-                  tabs: _tabs),
+                  tabs: _tabs
+                ),
               ),
               body: TabBarView(
                 controller: _tabController,

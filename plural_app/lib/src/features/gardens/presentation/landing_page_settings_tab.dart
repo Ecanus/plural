@@ -8,7 +8,7 @@ import 'package:plural_app/src/common_widgets/app_text_button.dart';
 import 'package:plural_app/src/constants/app_sizes.dart';
 import 'package:plural_app/src/constants/strings.dart';
 
-// Authentication
+// Auth
 import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
 
 class LandingPageSettingsTab extends StatelessWidget {
@@ -22,7 +22,7 @@ class LandingPageSettingsTab extends StatelessWidget {
             child: ListView(
               children: [
                 CheckboxListTile(
-                  secondary: Icon(Icons.assessment_rounded),
+                  secondary: const Icon(Icons.assessment_rounded),
                   title: Text("CheckboxList Tile Test!"),
                   value: false,
                   onChanged: (bool? value) {}
@@ -32,49 +32,49 @@ class LandingPageSettingsTab extends StatelessWidget {
                   onChanged: (double value) {}
                 ),
                 SwitchListTile(
-                  secondary: Icon(Icons.add_alert),
+                  secondary: const Icon(Icons.add_alert),
                   title: Text("SwitchListTile Test"),
                   value: true,
                   onChanged: (bool value) {}
                 ),
                 SwitchListTile(
-                  secondary: Icon(Icons.add_alert),
+                  secondary: const Icon(Icons.add_alert),
                   title: Text("SwitchListTile Test"),
                   value: false,
                   onChanged: (bool value) {}
                 ),
                 CheckboxListTile(
-                  secondary: Icon(Icons.assessment_rounded),
+                  secondary: const Icon(Icons.assessment_rounded),
                   title: Text("CheckboxList Tile Test!"),
                   value: false,
                   onChanged: (bool? value) {}
                 ),
                 SwitchListTile(
-                  secondary: Icon(Icons.add_alert),
+                  secondary: const Icon(Icons.add_alert),
                   title: Text("SwitchListTile Test"),
                   value: true,
                   onChanged: (bool value) {}
                 ),
                 SwitchListTile(
-                  secondary: Icon(Icons.add_alert),
+                  secondary: const Icon(Icons.add_alert),
                   title: Text("SwitchListTile Test"),
                   value: false,
                   onChanged: (bool value) {}
                 ),
                 SwitchListTile(
-                  secondary: Icon(Icons.add_alert),
+                  secondary: const Icon(Icons.add_alert),
                   title: Text("SwitchListTile Test"),
                   value: false,
                   onChanged: (bool value) {}
                 ),
                 CheckboxListTile(
-                  secondary: Icon(Icons.assessment_rounded),
+                  secondary: const Icon(Icons.assessment_rounded),
                   title: Text("CheckboxList Tile Test!"),
                   value: true,
                   onChanged: (bool? value) {}
                 ),
                 CheckboxListTile(
-                  secondary: Icon(Icons.assessment_rounded),
+                  secondary: const Icon(Icons.assessment_rounded),
                   title: Text("CheckboxList Tile Test!"),
                   value: true,
                   onChanged: (bool? value) {}

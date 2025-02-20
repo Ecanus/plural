@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-// Common Methods
-import 'package:plural_app/src/common_methods/form_validators.dart';
+// Common Functions
+import 'package:plural_app/src/common_functions/form_validators.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
@@ -11,7 +11,6 @@ import 'package:plural_app/src/utils/app_form.dart';
 
 class AppCheckboxListTileFormField extends StatefulWidget {
   AppCheckboxListTileFormField({
-    super.key,
     required this.appForm,
     required this.fieldName,
     required this.formFieldType,
@@ -41,7 +40,7 @@ class _AppCheckboxListTileFormFieldState extends State<AppCheckboxListTileFormFi
     _checkboxNotifier.value = widget.value;
   }
 
-  void onChanged(bool value) {
+  void _onChanged(bool value) {
     _checkboxNotifier.value = value;
   }
 
@@ -73,7 +72,7 @@ class _AppCheckboxListTileFormFieldState extends State<AppCheckboxListTileFormFi
                     ),
                   ),
                   value: checkboxValue,
-                  onChanged: (bool? value) => onChanged(value!),
+                  onChanged: (bool? value) => _onChanged(value!),
                 );
               },
               onSaved: (_) => widget.appForm.save(

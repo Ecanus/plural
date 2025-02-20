@@ -1,27 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
-// Common Classes
-import 'package:plural_app/src/utils/app_form.dart';
-
 // Common Widgets
 import 'package:plural_app/src/common_widgets/app_currency_picker_form_field.dart';
 import 'package:plural_app/src/common_widgets/app_dialog.dart';
+import 'package:plural_app/src/common_widgets/app_dialog_footer.dart';
 import 'package:plural_app/src/common_widgets/app_dialog_footer_buffer_submit_button.dart';
 import 'package:plural_app/src/common_widgets/app_dialog_router.dart';
 import 'package:plural_app/src/common_widgets/app_text_form_field.dart';
 
 // Constants
-import 'package:plural_app/src/constants/strings.dart';
 import 'package:plural_app/src/constants/app_sizes.dart';
 import 'package:plural_app/src/constants/app_values.dart';
+import 'package:plural_app/src/constants/strings.dart';
 
 // Auth
+import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
 import 'package:plural_app/src/features/authentication/domain/app_user_settings.dart';
 import 'package:plural_app/src/features/authentication/domain/forms.dart';
-import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
 
 // Utils
+import 'package:plural_app/src/utils/app_form.dart';
 import 'package:plural_app/src/utils/app_state.dart';
 
 Future createUserSettingsDialog(BuildContext context) async {
@@ -41,7 +40,6 @@ Future createUserSettingsDialog(BuildContext context) async {
 
 class UserSettingsDialog extends StatefulWidget {
   const UserSettingsDialog({
-    super.key,
     required this.userSettings,
   });
 
@@ -52,15 +50,15 @@ class UserSettingsDialog extends StatefulWidget {
 }
 
 class _UserSettingsDialogState extends State<UserSettingsDialog> {
-  late GlobalKey<FormState> _formKey;
   late AppForm _appForm;
+  late GlobalKey<FormState> _formKey;
 
   @override
   void initState() {
     super.initState();
 
-    _formKey = GlobalKey<FormState>();
     _appForm = AppForm.fromMap(widget.userSettings.toMap());
+    _formKey = GlobalKey<FormState>();
   }
 
   @override
@@ -109,10 +107,10 @@ class _UserSettingsDialogState extends State<UserSettingsDialog> {
         ),
         AppDialogNavFooter(
           leftDialogIcon: Icons.library_add,
-          leftNavCallback: appDialogRouter.showAskDialogListView,
+          leftNavCallback: appDialogRouter.routeToAskDialogListView,
           leftTooltipMessage: AppDialogTooltips.navToAsks,
           rightDialogIcon: Icons.people_alt_rounded,
-          rightNavCallback: appDialogRouter.showUserDialogListView,
+          rightNavCallback: appDialogRouter.routeToUserDialogListView,
           rightTooltipMessage: AppDialogTooltips.navToUsers,
           title: AppDialogTitles.settings
         )
@@ -122,10 +120,6 @@ class _UserSettingsDialogState extends State<UserSettingsDialog> {
 }
 
 class LogOutButton extends StatelessWidget {
-  const LogOutButton({
-    super.key,
-  });
-
   @override
   Widget build(BuildContext context) {
     return Container(

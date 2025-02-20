@@ -4,17 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:plural_app/src/constants/app_sizes.dart';
 
 class CloseDialogButton extends StatelessWidget {
-  const CloseDialogButton({
-    super.key,
-  });
-
   @override
   Widget build(BuildContext context) {
-    return Ink(
-      decoration: ShapeDecoration(
-        color: Theme.of(context).colorScheme.primary,
-        shape: CircleBorder(),
-      ),
+    return CircleAvatar(
+      backgroundColor: Theme.of(context).colorScheme.primary,
+      radius: AppBorderRadii.r25,
       child: IconButton(
         onPressed: () => Navigator.pop(context),
         icon: Icon(

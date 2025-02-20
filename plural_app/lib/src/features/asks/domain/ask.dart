@@ -3,11 +3,10 @@ import 'package:get_it/get_it.dart';
 
 // Auth
 import "package:plural_app/src/features/authentication/domain/app_user.dart";
-import "package:plural_app/src/features/authentication/data/auth_repository.dart";
 
 // Constants
-import 'package:plural_app/src/constants/strings.dart';
 import 'package:plural_app/src/constants/app_values.dart';
+import 'package:plural_app/src/constants/strings.dart';
 
 // Utils
 import 'package:plural_app/src/utils/app_state.dart';
@@ -49,7 +48,33 @@ class Ask {
     return DateFormat(Strings.dateformatYMMdd).format(deadlineDate);
   }
 
-  String get listedDescription {
+  String get formattedTargetMetDate {
+    if (targetMetDate == null) return "";
+
+    return DateFormat(Strings.dateformatYMMdd).format(targetMetDate!.toLocal());
+  }
+
+  bool get isCreatedByCurrentUser {
+    return creatorID == GetIt.instance<AppState>().currentUserID!;
+  }
+
+  bool get isDeadlinePassed {
+    return deadlineDate.isBefore(DateTime.now());
+  }
+
+  bool get isOnTimeline {
+    return GetIt.instance<AppState>().timelineAsks!.contains(this);
+  }
+
+  bool get isSponsoredByCurrentUser {
+    return sponsorIDS.contains(GetIt.instance<AppState>().currentUserID!);
+  }
+
+  bool get isTargetMet {
+    return targetMetDate != null;
+  }
+
+  String get listTileDescription {
     var limit = AppMaxLengthValues.max30;
 
     if (description.length > limit) {
@@ -57,30 +82,6 @@ class Ask {
     } else {
       return description;
     }
-  }
-
-  String get truncatedDescription {
-    var limit = AppMaxLengthValues.max200;
-
-    if (description.length > limit) {
-      return "${description.substring(0, limit)}...";
-    } else {
-      return description;
-    }
-  }
-
-  bool get isDeadlinePassed {
-    return deadlineDate.isBefore(DateTime.now());
-  }
-
-  bool get isTargetMet {
-    return targetMetDate != null;
-  }
-
-  String get formattedTargetMetDate {
-    if (targetMetDate == null) return "";
-
-    return DateFormat(Strings.dateformatYMMdd).format(targetMetDate!.toLocal());
   }
 
   String get timeRemainingString {
@@ -104,15 +105,14 @@ class Ask {
     return "$minutesLeft minute left";
   }
 
-  bool get isOnTimeline {
-    return GetIt.instance<AppState>().timelineAsks!.contains(this);
-  }
-  bool get isCreatedByCurrentUser {
-    return creatorID == GetIt.instance<AppState>().currentUserID!;
-  }
+  String get truncatedDescription {
+    var limit = AppMaxLengthValues.max200;
 
-  bool get isSponsoredByCurrentUser {
-    return sponsorIDS.contains(GetIt.instance<AppState>().currentUserID!);
+    if (description.length > limit) {
+      return "${description.substring(0, limit)}...";
+    } else {
+      return description;
+    }
   }
 
   bool isSponsoredByUser(String userID) {
@@ -123,66 +123,12 @@ class Ask {
   }
 
   int compareTo(Ask other) {
-    // Compare on logCreationDate first
-    var creationCompare = creationDate.compareTo(other.creationDate);
-    if (creationCompare != 0) return creationCompare;
+    // Compare deadlineDate
+    var deadlineCompare = deadlineDate.compareTo(other.deadlineDate);
+    if (deadlineCompare != 0) return deadlineCompare;
 
-    // If equal on creationDate, compare on deadlineDate
-    return deadlineDate.compareTo(other.deadlineDate);
-  }
-
-  static Future<List<Ask>> createInstancesFromQuery(
-    query,
-    { int? count }
-  ) async {
-      final authRepository = GetIt.instance<AuthRepository>();
-
-      var records = query.toJson()[PBKey.items];
-
-      if (count != null && records.length >= count) {
-        records = records.sublist(0, count);
-      }
-
-      List<Ask> instances = [];
-
-      for (var record in records) {
-        var creatorID = record[AskField.creator];
-
-        // Parse targetMetDate if non-null
-        String targetMetDateString = record[AskField.targetMetDate];
-        DateTime? parsedTargetMetDate = targetMetDateString.isNotEmpty ?
-          DateTime.parse(targetMetDateString) : null;
-
-        // Get AppUser that created the Ask
-        var creator = await authRepository.getUserByID(creatorID);
-
-        // Get type enum from the record (a string)
-        var askTypeFromString = AskType.values.firstWhere(
-          (a) => a.name == "AskType.${record[AskField.type]}",
-          orElse: () => AskType.monetary
-        );
-
-        var newAsk = Ask(
-          id: record[GenericField.id],
-          boon: record[AskField.boon],
-          creatorID: creatorID,
-          creationDate: DateTime.parse(record[GenericField.created]),
-          currency: record[AskField.currency],
-          description: record[AskField.description],
-          deadlineDate: DateTime.parse(record[AskField.deadlineDate]),
-          instructions: record[AskField.instructions],
-          targetSum: record[AskField.targetSum],
-          targetMetDate: parsedTargetMetDate,
-          type: askTypeFromString
-        );
-
-        newAsk.sponsorIDS = List<String>.from(record[AskField.sponsors]);
-        newAsk.creator = creator;
-
-        instances.add(newAsk);
-      }
-
-      return instances;
+    // Compare creationDate
+    return creationDate.compareTo(other.creationDate);
   }
 
   Map toMap() {

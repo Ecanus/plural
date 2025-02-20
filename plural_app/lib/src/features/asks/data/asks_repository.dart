@@ -1,9 +1,10 @@
 import 'dart:developer' as developer;
+
 import 'package:pocketbase/pocketbase.dart';
 import 'package:get_it/get_it.dart';
 
-// Common Methods
-import 'package:plural_app/src/common_methods/errors.dart';
+// Common Functions
+import 'package:plural_app/src/common_functions/errors.dart';
 
 // Constants
 import 'package:plural_app/src/constants/pocketbase.dart';
@@ -12,8 +13,68 @@ import 'package:plural_app/src/constants/strings.dart';
 // Asks
 import 'package:plural_app/src/features/asks/domain/ask.dart';
 
+// Auth
+import "package:plural_app/src/features/authentication/data/auth_repository.dart";
+
 // Utils
 import 'package:plural_app/src/utils/app_state.dart';
+
+/// Iterates over the given [query] to generate a list of [Ask] instances.
+///
+/// Returns a list of the created [Ask] instances.
+Future<List<Ask>> createAskInstancesFromQuery(
+  query,
+  { int? count }
+) async {
+    final authRepository = GetIt.instance<AuthRepository>();
+
+    var records = query.toJson()[PBKey.items];
+
+    if (count != null && records.length >= count) {
+      records = records.sublist(0, count);
+    }
+
+    List<Ask> instances = [];
+
+    for (var record in records) {
+      var creatorID = record[AskField.creator];
+
+      // Parse targetMetDate if non-null
+      String targetMetDateString = record[AskField.targetMetDate];
+      DateTime? parsedTargetMetDate = targetMetDateString.isNotEmpty ?
+        DateTime.parse(targetMetDateString) : null;
+
+      // Get AppUser that created the Ask
+      var creator = await authRepository.getUserByID(creatorID);
+
+      // Get type enum from the record (a string)
+      var askTypeFromString = AskType.values.firstWhere(
+        (a) => a.name == "AskType.${record[AskField.type]}",
+        orElse: () => AskType.monetary
+      );
+
+      var newAsk = Ask(
+        id: record[GenericField.id],
+        boon: record[AskField.boon],
+        creatorID: creatorID,
+        creationDate: DateTime.parse(record[GenericField.created]),
+        currency: record[AskField.currency],
+        description: record[AskField.description],
+        deadlineDate: DateTime.parse(record[AskField.deadlineDate]),
+        instructions: record[AskField.instructions],
+        targetSum: record[AskField.targetSum],
+        targetMetDate: parsedTargetMetDate,
+        type: askTypeFromString
+      );
+
+      newAsk.sponsorIDS = List<String>.from(record[AskField.sponsors]);
+      newAsk.creator = creator;
+
+      instances.add(newAsk);
+    }
+
+    return instances;
+}
 
 class AsksRepository {
   AsksRepository({
@@ -22,8 +83,8 @@ class AsksRepository {
 
   final PocketBase pb;
 
-  /// Queries on the [Ask] collection to retrieve records in the database
-  /// with values matching the [filterString].
+  /// Queries on the [Ask] collection to retrieve records corresponding to the
+  /// given [gardenID] and [filterString].
   ///
   /// Returns the list of retrieved [Ask]s.
   Future<List<Ask>> getAsksByGardenID({
@@ -40,7 +101,7 @@ class AsksRepository {
       );
 
       // Sorting from query is maintained for returned List<Ask>
-      return await Ask.createInstancesFromQuery(result, count: count);
+      return await createAskInstancesFromQuery(result, count: count);
   }
 
   /// Queries on the [Ask] collection to retrieve all records corresponding
@@ -58,7 +119,7 @@ class AsksRepository {
           """
     );
 
-    return await Ask.createInstancesFromQuery(result);
+    return await createAskInstancesFromQuery(result);
   }
 
   /// Appends the [User] record which corresponds to the given [userID] to the list
@@ -83,7 +144,7 @@ class AsksRepository {
     );
   }
 
-  /// Appends the [User] record which corresponds to the given [userID] to the list
+  /// Removes the [User] record which corresponds to the given [userID] from the list
   /// of sponsors of the [Ask] record which corresponds to the given [askID].
   Future removeSponsor(String askID, String userID) async {
     var result = await pb.collection(Collection.asks).getList(
@@ -108,7 +169,7 @@ class AsksRepository {
   /// Queries on the [Ask] collection to create a record corresponding
   /// to information in the [map] parameter.
   ///
-  /// Returns true and an empty map if created successfully, else false
+  /// Returns (true, {}) if created successfully, else false
   /// and a map of the errors.
   Future<(bool, Map)> create(Map map) async {
     try {
@@ -147,7 +208,7 @@ class AsksRepository {
   /// Queries on the [Ask] collection to update the record corresponding
   /// to information in the [map] parameter.
   ///
-  /// Returns true and an empty map if created successfully, else false
+  /// Returns (true, {}) if updated successfully, else false
   /// and a map of the errors.
   Future<(bool, Map)> update(Map map) async {
     try {
@@ -184,7 +245,7 @@ class AsksRepository {
   /// Queries on the [Ask] collection to delete the record corresponding
   /// to information in the [map] parameter.
   ///
-  /// Returns true and an empty map if created successfully, else false
+  /// Returns (true, {}) if deleted successfully, else false
   /// and a map of the errors.
   Future<(bool, Map)> delete(Map map) async {
     try {
@@ -203,8 +264,8 @@ class AsksRepository {
     }
   }
 
-  /// Subscribes to any changes made in the [Ask] collection to any [Ask] record
-  /// associated with the [Garden] with the given [gardenID].
+  /// Subscribes to any changes made in the [Ask] collection for any [Ask] record
+  /// associated with the given [gardenID].
   ///
   /// Calls the given [callback] method whenever a change is made.
   Future<Function> subscribeTo(String gardenID, Function callback) {
@@ -214,9 +275,7 @@ class AsksRepository {
 
         switch (e.action) {
           case EventAction.create:
-            callback();
           case EventAction.update:
-            callback();
           case EventAction.delete:
             callback();
         }
