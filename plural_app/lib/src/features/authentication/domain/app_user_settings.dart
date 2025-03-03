@@ -22,7 +22,7 @@ class AppUserSettings {
       UserSettingsField.defaultCurrency: defaultCurrency,
       UserSettingsField.defaultInstructions: defaultInstructions,
       GenericField.id: id,
-      UserSettingsField.userID: user,
+      UserSettingsField.user: user.id,
     };
   }
 }

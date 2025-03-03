@@ -8,7 +8,7 @@ Map<String, String> getErrorsMapFromClientException(ClientException e) {
   var innerMap = e.response[dataKey];
 
   // Create map of fields and corresponding error messages
-  for (var key in e.response[dataKey].keys) {
+  for (var key in innerMap.keys) {
     var fieldName = key;
     var errorMessage = innerMap[key][messageKey];
 

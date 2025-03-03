@@ -63,6 +63,7 @@ class AskDialogText {
   static const visibleOnTimeline = "Visible on timeline";
 
 }
+
 class AppFormText {
   static const invalidEmailOrPassword = "Invalid username/email or password";
   static const invalidValue = "Valid value required";

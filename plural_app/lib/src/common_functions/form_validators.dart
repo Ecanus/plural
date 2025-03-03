@@ -1,3 +1,5 @@
+import 'package:validators/validators.dart';
+
 // Constants
 import 'package:plural_app/src/constants/app_values.dart';
 import 'package:plural_app/src/constants/currencies.dart';
@@ -39,7 +41,7 @@ String? validateCurrency(String? value) {
 ///
 /// Returns null if valid, else returns a String.
 String? validateDatePickerFormField(String? value) {
-  if (value == null || value.isEmpty) return AppFormText.invalidValue;
+  if (value == null || value.isEmpty || !isDate(value)) return AppFormText.invalidValue;
 
   return null;
 }
@@ -48,7 +50,7 @@ String? validateDatePickerFormField(String? value) {
 ///
 /// Returns null if valid, else returns a String.
 String? validateEmail(String? value) {
-  if (value == null || value.isEmpty) return AppFormText.invalidValue;
+  if (value == null || value.isEmpty || !isEmail(value)) return AppFormText.invalidValue;
 
   return null;
 }

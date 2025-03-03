@@ -18,7 +18,7 @@ class Ask {
   Ask({
     required this.id,
     required this.boon,
-    required this.creatorID,
+    required this.creator,
     required this.creationDate,
     required this.currency,
     required this.description,
@@ -31,8 +31,8 @@ class Ask {
 
   final String id;
   int boon;
-  final String creatorID;
-  DateTime creationDate;
+  final AppUser creator;
+  final DateTime creationDate;
   String currency;
   String description;
   DateTime deadlineDate;
@@ -42,8 +42,6 @@ class Ask {
   AskType type;
 
   List<String> sponsorIDS = [];
-
-  AppUser? creator;
 
   String get formattedDeadlineDate =>
     DateFormat(Formats.dateYMMdd).format(deadlineDate);
@@ -55,7 +53,7 @@ class Ask {
   }
 
   bool get isCreatedByCurrentUser =>
-    creatorID == GetIt.instance<AppState>().currentUserID!;
+    creator.id == GetIt.instance<AppState>().currentUserID!;
 
   bool get isDeadlinePassed => deadlineDate.isBefore(DateTime.now());
 
@@ -70,7 +68,7 @@ class Ask {
     var limit = AppMaxLengths.max30;
 
     if (description.length > limit) {
-      return "${description.substring(0, limit)}...";
+      return "${description.substring(0, limit).trim()}...";
     } else {
       return description;
     }
@@ -92,7 +90,7 @@ class Ask {
     if (hoursLeft > 0) return "$hoursLeft hours left";
 
     // Minutes
-    if (minutesLeft > 0) return "$minutesLeft minutes left";
+    if (minutesLeft > 1) return "$minutesLeft minutes left";
 
     return "$minutesLeft minute left";
   }
@@ -101,7 +99,7 @@ class Ask {
     var limit = AppMaxLengths.max200;
 
     if (description.length > limit) {
-      return "${description.substring(0, limit)}...";
+      return "${description.substring(0, limit).trim()}...";
     } else {
       return description;
     }
@@ -109,31 +107,22 @@ class Ask {
 
   bool isSponsoredByUser(String userID) {
     // The creator of an Ask cannot sponsor that ask
-    if (creatorID == userID) return false;
+    if (creator.id == userID) return false;
 
     return sponsorIDS.contains(userID);
-  }
-
-  int compareTo(Ask other) {
-    // Compare deadlineDate
-    var deadlineCompare = deadlineDate.compareTo(other.deadlineDate);
-    if (deadlineCompare != 0) return deadlineCompare;
-
-    // Compare creationDate
-    return creationDate.compareTo(other.creationDate);
   }
 
   Map toMap() {
     return {
       GenericField.id: id,
       AskField.boon: boon,
-      AskField.creatorID: creatorID,
+      AskField.creator: creator.id,
       AskField.currency: currency,
       AskField.description: description,
       AskField.deadlineDate: deadlineDate,
       AskField.instructions: instructions,
-      AskField.targetSum: targetSum,
       AskField.targetMetDate: targetMetDate,
+      AskField.targetSum: targetSum,
       AskField.type: type.name,
     };
   }
@@ -146,8 +135,8 @@ class Ask {
       AskField.description: null,
       AskField.deadlineDate: null,
       AskField.instructions: null,
-      AskField.targetSum: null,
       AskField.targetMetDate: null,
+      AskField.targetSum: null,
       AskField.type: null,
     };
   }

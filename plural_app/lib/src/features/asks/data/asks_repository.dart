@@ -37,14 +37,13 @@ Future<List<Ask>> createAskInstancesFromQuery(
     List<Ask> instances = [];
 
     for (var record in records) {
-      var creatorID = record[AskField.creator];
-
       // Parse targetMetDate if non-null
       String targetMetDateString = record[AskField.targetMetDate];
       DateTime? parsedTargetMetDate = targetMetDateString.isNotEmpty ?
         DateTime.parse(targetMetDateString) : null;
 
       // Get AppUser that created the Ask
+      var creatorID = record[AskField.creator];
       var creator = await authRepository.getUserByID(creatorID);
 
       // Get type enum from the record (a string)
@@ -56,7 +55,7 @@ Future<List<Ask>> createAskInstancesFromQuery(
       var newAsk = Ask(
         id: record[GenericField.id],
         boon: record[AskField.boon],
-        creatorID: creatorID,
+        creator: creator,
         creationDate: DateTime.parse(record[GenericField.created]),
         currency: record[AskField.currency],
         description: record[AskField.description],
@@ -68,8 +67,6 @@ Future<List<Ask>> createAskInstancesFromQuery(
       );
 
       newAsk.sponsorIDS = List<String>.from(record[AskField.sponsors]);
-      newAsk.creator = creator;
-
       instances.add(newAsk);
     }
 

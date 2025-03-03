@@ -13,7 +13,7 @@ import 'package:plural_app/src/constants/app_values.dart';
 import 'package:plural_app/src/constants/fields.dart';
 
 // Auth
-import 'package:plural_app/src/features/authentication/domain/forms.dart';
+import 'package:plural_app/src/features/authentication/data/forms.dart';
 import 'package:plural_app/src/features/authentication/presentation/create_password_form_field.dart';
 
 // Utils

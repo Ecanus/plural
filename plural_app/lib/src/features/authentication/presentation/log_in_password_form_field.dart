@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 // Common Functions
 import 'package:plural_app/src/common_widgets/app_text_button.dart';
 import 'package:plural_app/src/common_functions/form_validators.dart';
+import 'package:plural_app/src/common_functions/input_formatters.dart';
 
 // Common Widgets
 import 'package:plural_app/src/common_widgets/show_hide_password_button.dart';

@@ -25,7 +25,7 @@ class AppState with ChangeNotifier {
   AppUser? _currentUser;
   AppUserSettings? _currentUserSettings;
 
-  List<Ask>? _timelineAsks;
+  List<Ask> _timelineAsks = [];
 
   // _currentGarden
   Garden? get currentGarden => _currentGarden;

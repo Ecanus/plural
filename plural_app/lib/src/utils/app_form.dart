@@ -1,5 +1,4 @@
 import 'package:intl/intl.dart';
-import 'package:flutter/services.dart';
 
 // Constants
 import 'package:plural_app/src/constants/formats.dart';
@@ -9,11 +8,6 @@ enum FormFieldType {
   datetimeNow,
   int,
   string,
-}
-
-enum TextFieldType {
-  text,
-  digitsOnly
 }
 
 class AppForm {
@@ -66,9 +60,11 @@ class AppForm {
     }
   }
 
-  /// Clears all values in [errors].
+  /// Sets all values in [errors] to null.
   void clearErrors() {
-    errors.clear();
+    for (var key in errors.keys) {
+      errors[key] = null;
+    }
   }
 
   /// Assigns the given [value] to the value of the key-value pairing in [fields]
@@ -103,21 +99,4 @@ class AppForm {
 
     fields[fieldName] = newValue;
   }
-}
-
-/// Checks on the given [fieldType] to determine which
-/// [FilteringTextInputFormatter] to retrieve.
-///
-/// Returns a list with the correct [TextInputFormatter] values if one is found,
-/// or null if none is found/needed.
-List<TextInputFormatter>? getInputFormatters(TextFieldType fieldType, int maxLength) {
-  switch (fieldType) {
-    case TextFieldType.text:
-      return [LengthLimitingTextInputFormatter(maxLength)];
-    case TextFieldType.digitsOnly:
-      return [
-        LengthLimitingTextInputFormatter(maxLength),
-        FilteringTextInputFormatter.digitsOnly];
-  }
-
 }

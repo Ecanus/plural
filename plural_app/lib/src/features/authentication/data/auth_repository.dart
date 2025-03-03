@@ -119,7 +119,7 @@ class AuthRepository {
       var userRecord = record[QueryKey.expand][UserGardenRecordField.user];
 
       var appUser = AppUser(
-        id: record[UserGardenRecordField.userID],
+        id: record[UserGardenRecordField.user],
         email: userRecord[UserField.email],
         username: userRecord[UserField.username],
       );
@@ -154,7 +154,7 @@ class AuthRepository {
   Future<void> updateUserGardenRecord(String userID, String gardenID) async {
     var result = await pb.collection(Collection.userGardenRecords).getFirstListItem(
       """
-      ${UserGardenRecordField.userID} = '$userID' &&
+      ${UserGardenRecordField.user} = '$userID' &&
       ${UserGardenRecordField.gardenID} = '$gardenID'
       """
     );
@@ -189,7 +189,7 @@ class AuthRepository {
     final currentUser = GetIt.instance<AppState>().currentUser!;
 
     var result = await pb.collection(Collection.userSettings).getFirstListItem(
-      "${UserSettingsField.userID} = '${currentUser.id}'"
+      "${UserSettingsField.user} = '${currentUser.id}'"
     );
 
     var record = result.toJson();
@@ -269,7 +269,7 @@ class AuthRepository {
   Future<Function> subscribeToUserSettings(String gardenID) {
     Future<Function> unsubscribeFunc = pb.collection(Collection.userSettings)
       .subscribe(Subscribe.all, (e) async {
-        var userID = e.record!.toJson()[UserSettingsField.userID];
+        var userID = e.record!.toJson()[UserSettingsField.user];
 
         // Only respond to changes if the userID belongs to a user in the given gardenID
         var gardenRecord = await getGardenRecord(

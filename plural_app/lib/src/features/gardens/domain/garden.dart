@@ -17,7 +17,7 @@ class Garden {
 
   Map toMap() {
     return {
-      GardenField.creator: creator,
+      GardenField.creator: creator.id,
       GenericField.id: id,
       GardenField.name: name,
     };

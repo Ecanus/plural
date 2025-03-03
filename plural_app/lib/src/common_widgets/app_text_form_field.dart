@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 // Common Functions
 import 'package:plural_app/src/common_functions/form_validators.dart';
+import 'package:plural_app/src/common_functions/input_formatters.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
