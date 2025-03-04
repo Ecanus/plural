@@ -88,12 +88,12 @@ class AsksRepository {
     required String gardenID,
     int? count,
     String filterString = "",
-    String sortString = "deadlineDate,created",
+    String sortString = "${AskField.deadlineDate},${GenericField.created}",
     }) async {
-      filterString = filterString.isEmpty ? "garden = '$gardenID'" : filterString;
+      var finalFilter = "${AskField.garden} = '$gardenID' $filterString".trim();
 
       var result = await pb.collection(Collection.asks).getList(
-        filter: filterString,
+        filter: finalFilter,
         sort: sortString
       );
 
@@ -109,11 +109,11 @@ class AsksRepository {
     final currentGarden = GetIt.instance<AppState>().currentGarden!;
 
     var result = await pb.collection(Collection.asks).getList(
-      sort: "${AskField.targetMetDate},${AskField.deadlineDate},${GenericField.created}",
       filter: """
-          ${AskField.creator} = '$userID' &&
-          ${AskField.garden} = '${currentGarden.id}'
-          """
+        ${AskField.creator} = '$userID' &&
+        ${AskField.garden} = '${currentGarden.id}'
+        """,
+      sort: "${AskField.targetMetDate},${AskField.deadlineDate},${GenericField.created}",
     );
 
     return await createAskInstancesFromQuery(result);
@@ -126,9 +126,10 @@ class AsksRepository {
       filter: "${GenericField.id}='$askID'"
     );
 
-    // If ask already contains sponsor, return
     var record = result.toJson()[QueryKey.items][0];
     var currentSponsors = List<String>.from(record[AskField.sponsors]);
+
+    // If ask already contains sponsor, return
     if (currentSponsors.contains(userID)) return;
 
     // Else update

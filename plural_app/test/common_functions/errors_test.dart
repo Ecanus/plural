@@ -1,6 +1,6 @@
+import 'package:pocketbase/pocketbase.dart' show ClientException;
 import 'package:plural_app/src/common_functions/errors.dart' as errors;
 
-import 'package:pocketbase/pocketbase.dart';
 import 'package:test/test.dart';
 
 // Constants

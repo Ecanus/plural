@@ -62,7 +62,6 @@ class AppState with ChangeNotifier {
 
     // Asks with target met, or deadlineDate passed are filtered out.
     var filterString = ""
-    "${AskField.garden} = '${currentGarden!.id}'"
     "&& ${AskField.targetMetDate} = null"
     "&& ${AskField.deadlineDate} > '$nowString'";
 
