@@ -25,4 +25,14 @@ class AppUserSettings {
       UserSettingsField.user: user.id,
     };
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is AppUserSettings && other.id == id && other.user == user;
+  }
+
+  @override
+  int get hashCode => id.hashCode;
 }

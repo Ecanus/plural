@@ -91,7 +91,7 @@ class LandingPageText {
   static const saveChanges = "Save changes";
   static const seeInvites = "See invitations";
   static const settings = "Settings";
-  static const welcome = "Welcome";
+  static const gardens = "Gardens";
 }
 
 class SignInPageText {

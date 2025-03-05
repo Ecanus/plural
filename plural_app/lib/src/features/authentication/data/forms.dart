@@ -20,7 +20,6 @@ import 'package:plural_app/src/localization/lang_en.dart';
 
 // Utils
 import 'package:plural_app/src/utils/app_form.dart';
-import 'package:plural_app/src/utils/app_state.dart';
 
 /// Validates and submits form data to update an existing [UserSettings] record
 /// in the database.
@@ -75,13 +74,8 @@ Future<void> submitLogIn(
     );
 
     if (isValid && context.mounted) {
-      // Check if current user has a latestGardenRecord
-      var routeString =
-        GetIt.instance<AppState>().currentUser!.latestGardenRecord == null ?
-          Routes.landing : Routes.home;
-
-      // Route to the routeString value
-      GoRouter.of(context).go(routeString);
+      // Route to Landing Page
+      GoRouter.of(context).go(Routes.landing);
     } else {
       // Add errors to corresponding fields
       appForm.setError(

@@ -1,15 +1,17 @@
 import 'package:get_it/get_it.dart';
 import 'package:pocketbase/pocketbase.dart';
 
-// Asks
-import 'package:plural_app/src/features/asks/data/asks_repository.dart';
+// Common Widgets
 import 'package:plural_app/src/common_widgets/app_dialog_router.dart';
-
-// Auth
-import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
 
 // Constants
 import 'package:plural_app/src/constants/fields.dart';
+
+// Asks
+import 'package:plural_app/src/features/asks/data/asks_repository.dart';
+
+// Auth
+import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
 
 // Gardens
 import 'package:plural_app/src/features/gardens/data/gardens_repository.dart';
@@ -75,12 +77,6 @@ Future<void> setInitialAppStateValues(userID) async {
   // User Settings
   var userSettings = await GetIt.instance<AuthRepository>().getCurrentUserSettings();
   appState.currentUserSettings = userSettings;
-
-
-  // TODO: Remove mostRecentGardenRecord
-  var mostRecentGardenRecord = await GetIt.instance<AuthRepository>()
-      .getMostRecentGardenRecordByUserID(userID: user.id);
-  appState.currentGarden = mostRecentGardenRecord?.garden;
 }
 
 /// Resets the [GetIt] instance used in the application.

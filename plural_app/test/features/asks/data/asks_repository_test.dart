@@ -14,56 +14,25 @@ import 'package:plural_app/src/features/asks/domain/ask.dart';
 
 // Auth
 import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
-import 'package:plural_app/src/features/authentication/domain/app_user.dart';
-
-// Gardens
-import 'package:plural_app/src/features/gardens/domain/garden.dart';
 
 // Utils
 import 'package:plural_app/src/utils/app_state.dart';
 
-class MockAuthRepository extends Mock implements AuthRepository {}
-class MockPocketBase extends Mock implements PocketBase {}
-class MockRecordService extends Mock implements RecordService {}
-
-var user = AppUser(
-  email: "test@user.com",
-  id: "TESTUSER",
-  username: "testuser"
-);
-
-RecordModel getRecordModel({
-  List<String> sponsors = const []
-}) {
-  return RecordModel(
-    id: "TESTASK1",
-    created: "1995-06-13",
-    collectionName: "asks",
-    data: {
-      AskField.boon: 15,
-      AskField.creator: user.id,
-      AskField.currency: "GHS",
-      AskField.description: "Test description of TESTASK1",
-      AskField.deadlineDate: "1995-07-24",
-      AskField.instructions: "Test instructions of TESTASK1",
-      AskField.sponsors: sponsors,
-      AskField.targetSum: 160,
-      AskField.targetMetDate: "",
-      AskField.type: "monetary"
-    }
-  );
-}
+// Tests
+import '../../../test_context.dart';
+import '../../../test_mocks.dart';
 
 void main() {
   group("Ask methods test", () {
     test("createAskInstancesFromQuery", () async {
+      final tc = TestContext();
       final getIt = GetIt.instance;
       final mockRepository = MockAuthRepository();
 
       getIt.registerLazySingleton(() => mockRepository as AuthRepository);
-      when(() => mockRepository.getUserByID(any())).thenAnswer((_) async => user);
+      when(() => mockRepository.getUserByID(any())).thenAnswer((_) async => tc.user);
 
-      var resultList = ResultList(items: [getRecordModel()]);
+      var resultList = ResultList(items: [tc.getAskRecordModel()]);
       var listAsks = await createAskInstancesFromQuery(resultList);
 
       expect(listAsks.length, 1);
@@ -72,7 +41,7 @@ void main() {
       expect(createdAsk, isA<Ask>());
       expect(createdAsk.id, "TESTASK1");
       expect(createdAsk.boon, 15);
-      expect(createdAsk.creator, user);
+      expect(createdAsk.creator, tc.user);
       expect(createdAsk.creationDate, DateTime(1995, 6, 13));
       expect(createdAsk.currency, "GHS");
       expect(createdAsk.description, "Test description of TESTASK1");
@@ -89,6 +58,7 @@ void main() {
 
   group("Asks repository test", () {
     test("getAsksByGardenID", () async {
+      final tc = TestContext();
       final getIt = GetIt.instance;
       final pb = MockPocketBase();
       final mockRepository = MockAuthRepository();
@@ -96,7 +66,7 @@ void main() {
       final asksRepository = AsksRepository(pb: pb);
 
       getIt.registerLazySingleton(() => mockRepository as AuthRepository);
-      when(() => mockRepository.getUserByID(any())).thenAnswer((_) async => user);
+      when(() => mockRepository.getUserByID(any())).thenAnswer((_) async => tc.user);
 
       // pb.collection()
       when(
@@ -110,7 +80,7 @@ void main() {
         () => recordService.getList(
           filter: any(named: "filter"), sort: any(named: "sort"))
       ).thenAnswer(
-        (_) async => ResultList<RecordModel>(items: [getRecordModel()])
+        (_) async => ResultList<RecordModel>(items: [tc.getAskRecordModel()])
       );
 
       var listAsks = await asksRepository.getAsksByGardenID(gardenID: "");
@@ -122,12 +92,7 @@ void main() {
     tearDown(() => GetIt.instance.reset());
 
     test("getAsksByUserID", () async {
-      var garden = Garden(
-        creator: user,
-        id: "TESTGARDEN",
-        name: "Smoked Paprika"
-      );
-
+      final tc = TestContext();
       final getIt = GetIt.instance;
       final pb = MockPocketBase();
       final mockRepository = MockAuthRepository();
@@ -138,9 +103,9 @@ void main() {
       getIt.registerLazySingleton<AppState>(
         () => AppState()
       );
-      GetIt.instance<AppState>().currentGarden = garden;
+      GetIt.instance<AppState>().currentGarden = tc.garden;
       getIt.registerLazySingleton(() => mockRepository as AuthRepository);
-      when(() => mockRepository.getUserByID(any())).thenAnswer((_) async => user);
+      when(() => mockRepository.getUserByID(any())).thenAnswer((_) async => tc.user);
 
       // pb.collection()
       when(
@@ -154,7 +119,7 @@ void main() {
         () => recordService.getList(
           filter: any(named: "filter"), sort: any(named: "sort"))
       ).thenAnswer(
-        (_) async => ResultList<RecordModel>(items: [getRecordModel()])
+        (_) async => ResultList<RecordModel>(items: [tc.getAskRecordModel()])
       );
 
       var listAsks = await asksRepository.getAsksByUserID(userID: "");
@@ -166,12 +131,13 @@ void main() {
     tearDown(() => GetIt.instance.reset());
 
     test("addSponsor", () async {
+      final tc = TestContext();
       final pb = MockPocketBase();
       final recordService = MockRecordService();
       final asksRepository = AsksRepository(pb: pb);
 
       const existingUserID = "EXISTINGUSERID";
-      final recordModel = getRecordModel(sponsors: [existingUserID]);
+      final recordModel = tc.getAskRecordModel(sponsors: [existingUserID]);
 
       // pb.collection()
       when(
@@ -204,12 +170,13 @@ void main() {
     });
 
     test("removeSponsor", () async {
+      final tc = TestContext();
       final pb = MockPocketBase();
       final recordService = MockRecordService();
       final asksRepository = AsksRepository(pb: pb);
 
       const existingUserID = "EXISTINGUSERID";
-      final recordModel = getRecordModel(sponsors: [existingUserID]);
+      final recordModel = tc.getAskRecordModel(sponsors: [existingUserID]);
 
       // pb.collection()
       when(
@@ -242,12 +209,6 @@ void main() {
     });
 
     test("create", () async {
-      var garden = Garden(
-        creator: user,
-        id: "TESTGARDEN",
-        name: "Tumeric"
-      );
-
       var map = {
         AskField.boon: "",
         AskField.currency: "",
@@ -258,17 +219,7 @@ void main() {
         AskField.type: "",
       };
 
-      var clientException = ClientException(
-        originalError: "Original error message",
-        response: {
-          "data": {
-            "FieldKey": {
-              "message": "The inner map message of create()"
-            }
-          }
-        },
-      );
-
+      final tc = TestContext();
       final pb = MockPocketBase();
       final recordService = MockRecordService();
       final asksRepository = AsksRepository(pb: pb);
@@ -278,10 +229,10 @@ void main() {
       getIt.registerLazySingleton<AppState>(
         () => AppState()
       );
-      GetIt.instance<AppState>().currentUser = user;
-      GetIt.instance<AppState>().currentGarden = garden;
+      GetIt.instance<AppState>().currentUser = tc.user;
+      GetIt.instance<AppState>().currentGarden = tc.garden;
 
-      final recordModel = getRecordModel();
+      final recordModel = tc.getAskRecordModel();
 
       // pb.collection()
       when(
@@ -305,7 +256,7 @@ void main() {
       when(
         () => recordService.create(body: any(named: "body"))
       ).thenThrow(
-        clientException
+        tc.clientException
       );
 
       var (isValid2, errorsMap2) = await asksRepository.create(map);
@@ -327,22 +278,12 @@ void main() {
         AskField.type: "",
       };
 
-      var clientException = ClientException(
-        originalError: "Original error message",
-        response: {
-          "data": {
-            "FieldKey": {
-              "message": "The inner map message of update()"
-            }
-          }
-        },
-      );
-
+      final tc = TestContext();
       final pb = MockPocketBase();
       final recordService = MockRecordService();
       final asksRepository = AsksRepository(pb: pb);
 
-      final recordModel = getRecordModel();
+      final recordModel = tc.getAskRecordModel();
 
       // pb.collection()
       when(
@@ -366,7 +307,7 @@ void main() {
       when(
         () => recordService.update(any(), body: any(named: "body"))
       ).thenThrow(
-        clientException
+        tc.clientException
       );
 
       var (isValid2, errorsMap2) = await asksRepository.update(map);

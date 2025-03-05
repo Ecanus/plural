@@ -5,7 +5,7 @@ import 'package:plural_app/src/constants/app_sizes.dart';
 
 // Gardens
 import 'package:plural_app/src/features/gardens/presentation/landing_page_settings_tab.dart';
-import 'package:plural_app/src/features/gardens/presentation/landing_page_welcome_tab.dart';
+import 'package:plural_app/src/features/gardens/presentation/landing_page_gardens_tab.dart';
 
 // Localization
 import 'package:plural_app/src/localization/lang_en.dart';
@@ -23,7 +23,7 @@ class _LandingPageState extends State<LandingPage> {
     super.initState();
 
     _tabs = <Tab>[
-      Tab(text: LandingPageText.welcome),
+      Tab(text: LandingPageText.gardens),
       Tab(text: LandingPageText.settings)
     ];
   }
@@ -45,7 +45,7 @@ class _LandingPageState extends State<LandingPage> {
               ),
               body: TabBarView(
                 children: [
-                  LandingPageWelcomeTab(),
+                  LandingPageGardensTab(),
                   LandingPageSettingsTab(),
                 ]
               ),
