@@ -37,6 +37,7 @@ void main() {
         "sponsors": "These sponsors are invalid",
       };
 
+      // Check that return value matches errorMap
       expect(errors.getErrorsMapFromClientException(exception), errorMap);
     });
   });

@@ -46,7 +46,7 @@ class AppForm {
   /// is the new key, and [errorMessage] is the corresponding value.
   void setError({
     required String fieldName,
-    required String errorMessage,
+    required String? errorMessage,
   }) {
     errors[fieldName] = errorMessage;
   }

@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:pocketbase/pocketbase.dart';
 
 // Common Functions
@@ -5,7 +6,11 @@ import 'package:plural_app/src/common_functions/errors.dart';
 
 // Constants
 import 'package:plural_app/src/constants/fields.dart';
+import 'package:plural_app/src/constants/formats.dart';
 import 'package:plural_app/src/constants/pocketbase.dart';
+
+// Asks
+import 'package:plural_app/src/features/asks/domain/ask.dart';
 
 // Auth
 import 'package:plural_app/src/features/authentication/domain/app_user.dart';
@@ -16,6 +21,7 @@ import 'package:plural_app/src/features/authentication/domain/app_user_settings.
 import 'package:plural_app/src/features/gardens/domain/garden.dart';
 
 class TestContext {
+  late Ask ask;
   late Garden garden;
   late AppUser user;
   late AppUserGardenRecord userGardenRecord;
@@ -48,6 +54,20 @@ class TestContext {
       user: user
     );
 
+    ask = Ask(
+      id: "TESTASK1",
+      boon: 15,
+      creator: user,
+      creationDate: DateTime.parse("1995-06-13"),
+      currency: "GHS",
+      description: "Test description of TESTASK1",
+      deadlineDate: DateTime.parse("1995-07-24"),
+      instructions: "Test instructions of TESTASK1",
+      targetMetDate: null,
+      targetSum: 160,
+      type: AskType.monetary,
+    );
+
     clientException = ClientException(
       originalError: "Original error message",
       response: {
@@ -64,19 +84,19 @@ class TestContext {
     List<String> sponsors = const []
   }) {
     return RecordModel(
-    id: "TESTASK1",
-    created: "1995-06-13",
+    id: ask.id,
+    created: DateFormat(Formats.dateYMMdd).format(ask.creationDate),
     collectionName: "asks",
     data: {
-      AskField.boon: 15,
-      AskField.creator: user.id,
-      AskField.currency: "GHS",
-      AskField.description: "Test description of TESTASK1",
-      AskField.deadlineDate: "1995-07-24",
-      AskField.instructions: "Test instructions of TESTASK1",
+      AskField.boon: ask.boon,
+      AskField.creator: ask.creator.id,
+      AskField.currency: ask.currency,
+      AskField.description: ask.description,
+      AskField.deadlineDate: DateFormat(Formats.dateYMMdd).format(ask.deadlineDate),
+      AskField.instructions: ask.instructions,
       AskField.sponsors: sponsors,
-      AskField.targetSum: 160,
-      AskField.targetMetDate: "",
+      AskField.targetSum: ask.targetSum,
+      AskField.targetMetDate: ask.targetMetDate ?? "",
       AskField.type: "monetary"
     }
   );
