@@ -22,7 +22,17 @@ class AppUserSettings {
       UserSettingsField.defaultCurrency: defaultCurrency,
       UserSettingsField.defaultInstructions: defaultInstructions,
       GenericField.id: id,
-      UserSettingsField.userID: user,
+      UserSettingsField.user: user.id,
     };
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is AppUserSettings && other.id == id && other.user == user;
+  }
+
+  @override
+  int get hashCode => id.hashCode;
 }

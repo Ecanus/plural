@@ -6,7 +6,6 @@ class AppFormFields {
 class AskField {
   static const boon = "boon";
   static const creator = "creator";
-  static const creatorID = "creatorID";
   static const currency = "currency";
   static const description = "description";
   static const deadlineDate = "deadlineDate";
@@ -45,15 +44,12 @@ class UserField {
 
 class UserGardenRecordField {
   static const garden = "garden";
-  static const gardenID = "garden";
   static const name = "name";
-  static const userID = "user";
   static const user = "user";
 }
 
 class UserSettingsField {
   static const user = "user";
-  static const userID = "user";
   static const defaultCurrency = "defaultCurrency";
   static const defaultInstructions = "defaultInstructions";
 }

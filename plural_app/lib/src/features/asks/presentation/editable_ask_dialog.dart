@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+// Common Functions
+import 'package:plural_app/src/common_functions/input_formatters.dart';
+
 // Common Widgets
 import 'package:plural_app/src/common_widgets/app_checkbox_list_tile_form_field.dart';
 import 'package:plural_app/src/common_widgets/app_currency_picker_form_field.dart';
@@ -16,8 +19,8 @@ import 'package:plural_app/src/constants/fields.dart';
 import 'package:plural_app/src/constants/themes.dart';
 
 // Ask
+import 'package:plural_app/src/features/asks/data/forms.dart';
 import 'package:plural_app/src/features/asks/domain/ask.dart';
-import 'package:plural_app/src/features/asks/domain/forms.dart';
 import 'package:plural_app/src/features/asks/presentation/route_to_listed_asks_view_button.dart';
 
 // Localization
@@ -93,7 +96,7 @@ class _AskDialogEditFormState extends State<AskDialogEditForm> {
                           child: AppTextFormField(
                             appForm: _appForm,
                             fieldName: AskField.targetSum,
-                            formFieldType: FormFieldType.int,
+                            formFieldType: FormFieldType.digitsOnly,
                             initialValue: widget.ask.targetSum.toString(),
                             label: AskDialogText.targetSum,
                             maxLength: AppMaxLengths.max4,
@@ -105,7 +108,7 @@ class _AskDialogEditFormState extends State<AskDialogEditForm> {
                           child: AppTextFormField(
                             appForm: _appForm,
                             fieldName: AskField.boon,
-                            formFieldType: FormFieldType.int,
+                            formFieldType: FormFieldType.digitsOnly,
                             initialValue: widget.ask.boon.toString(),
                             label: AskDialogText.boon,
                             maxLength: AppMaxLengths.max4,

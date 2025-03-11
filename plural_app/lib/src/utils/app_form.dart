@@ -1,19 +1,14 @@
 import 'package:intl/intl.dart';
-import 'package:flutter/services.dart';
 
 // Constants
 import 'package:plural_app/src/constants/formats.dart';
 
+// Keep naming consistent with TextFieldType, where possible
 enum FormFieldType {
   currency,
   datetimeNow,
-  int,
-  string,
-}
-
-enum TextFieldType {
+  digitsOnly,
   text,
-  digitsOnly
 }
 
 class AppForm {
@@ -52,7 +47,7 @@ class AppForm {
   /// is the new key, and [errorMessage] is the corresponding value.
   void setError({
     required String fieldName,
-    required String errorMessage,
+    required String? errorMessage,
   }) {
     errors[fieldName] = errorMessage;
   }
@@ -66,9 +61,11 @@ class AppForm {
     }
   }
 
-  /// Clears all values in [errors].
+  /// Sets all values in [errors] to null.
   void clearErrors() {
-    errors.clear();
+    for (var key in errors.keys) {
+      errors[key] = null;
+    }
   }
 
   /// Assigns the given [value] to the value of the key-value pairing in [fields]
@@ -85,7 +82,7 @@ class AppForm {
   void save({
     required String fieldName,
     required dynamic value,
-    FormFieldType formFieldType = FormFieldType.string,
+    FormFieldType formFieldType = FormFieldType.text,
   }) {
     dynamic newValue;
 
@@ -95,29 +92,12 @@ class AppForm {
       case FormFieldType.datetimeNow:
         newValue = value == true ?
           DateFormat(Formats.dateYMMdd).format(DateTime.now()) : null;
-      case FormFieldType.int:
+      case FormFieldType.digitsOnly:
         newValue = int.parse(value);
-      case FormFieldType.string:
+      case FormFieldType.text:
         newValue = value.toString().trim();
     }
 
     fields[fieldName] = newValue;
   }
-}
-
-/// Checks on the given [fieldType] to determine which
-/// [FilteringTextInputFormatter] to retrieve.
-///
-/// Returns a list with the correct [TextInputFormatter] values if one is found,
-/// or null if none is found/needed.
-List<TextInputFormatter>? getInputFormatters(TextFieldType fieldType, int maxLength) {
-  switch (fieldType) {
-    case TextFieldType.text:
-      return [LengthLimitingTextInputFormatter(maxLength)];
-    case TextFieldType.digitsOnly:
-      return [
-        LengthLimitingTextInputFormatter(maxLength),
-        FilteringTextInputFormatter.digitsOnly];
-  }
-
 }

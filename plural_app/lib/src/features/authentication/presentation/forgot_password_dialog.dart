@@ -14,7 +14,7 @@ import 'package:plural_app/src/constants/app_values.dart';
 import 'package:plural_app/src/constants/fields.dart';
 
 // Authentication
-import 'package:plural_app/src/features/authentication/domain/forms.dart';
+import 'package:plural_app/src/features/authentication/data/forms.dart';
 
 // Localization
 import 'package:plural_app/src/localization/lang_en.dart';

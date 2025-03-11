@@ -63,6 +63,7 @@ class AskDialogText {
   static const visibleOnTimeline = "Visible on timeline";
 
 }
+
 class AppFormText {
   static const invalidEmailOrPassword = "Invalid username/email or password";
   static const invalidValue = "Valid value required";
@@ -90,7 +91,7 @@ class LandingPageText {
   static const saveChanges = "Save changes";
   static const seeInvites = "See invitations";
   static const settings = "Settings";
-  static const welcome = "Welcome";
+  static const gardens = "Gardens";
 }
 
 class SignInPageText {

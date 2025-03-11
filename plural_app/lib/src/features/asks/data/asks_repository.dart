@@ -37,14 +37,13 @@ Future<List<Ask>> createAskInstancesFromQuery(
     List<Ask> instances = [];
 
     for (var record in records) {
-      var creatorID = record[AskField.creator];
-
       // Parse targetMetDate if non-null
       String targetMetDateString = record[AskField.targetMetDate];
       DateTime? parsedTargetMetDate = targetMetDateString.isNotEmpty ?
         DateTime.parse(targetMetDateString) : null;
 
       // Get AppUser that created the Ask
+      var creatorID = record[AskField.creator];
       var creator = await authRepository.getUserByID(creatorID);
 
       // Get type enum from the record (a string)
@@ -56,7 +55,7 @@ Future<List<Ask>> createAskInstancesFromQuery(
       var newAsk = Ask(
         id: record[GenericField.id],
         boon: record[AskField.boon],
-        creatorID: creatorID,
+        creator: creator,
         creationDate: DateTime.parse(record[GenericField.created]),
         currency: record[AskField.currency],
         description: record[AskField.description],
@@ -68,8 +67,6 @@ Future<List<Ask>> createAskInstancesFromQuery(
       );
 
       newAsk.sponsorIDS = List<String>.from(record[AskField.sponsors]);
-      newAsk.creator = creator;
-
       instances.add(newAsk);
     }
 
@@ -91,12 +88,12 @@ class AsksRepository {
     required String gardenID,
     int? count,
     String filterString = "",
-    String sortString = "deadlineDate,created",
+    String sortString = "${AskField.deadlineDate},${GenericField.created}",
     }) async {
-      filterString = filterString.isEmpty ? "garden = '$gardenID'" : filterString;
+      var finalFilter = "${AskField.garden} = '$gardenID' $filterString".trim();
 
       var result = await pb.collection(Collection.asks).getList(
-        filter: filterString,
+        filter: finalFilter,
         sort: sortString
       );
 
@@ -112,11 +109,11 @@ class AsksRepository {
     final currentGarden = GetIt.instance<AppState>().currentGarden!;
 
     var result = await pb.collection(Collection.asks).getList(
-      sort: "${AskField.targetMetDate},${AskField.deadlineDate},${GenericField.created}",
       filter: """
-          ${AskField.creator} = '$userID' &&
-          ${AskField.garden} = '${currentGarden.id}'
-          """
+        ${AskField.creator} = '$userID' &&
+        ${AskField.garden} = '${currentGarden.id}'
+        """,
+      sort: "${AskField.targetMetDate},${AskField.deadlineDate},${GenericField.created}",
     );
 
     return await createAskInstancesFromQuery(result);
@@ -129,9 +126,10 @@ class AsksRepository {
       filter: "${GenericField.id}='$askID'"
     );
 
-    // If ask already contains sponsor, return
     var record = result.toJson()[QueryKey.items][0];
     var currentSponsors = List<String>.from(record[AskField.sponsors]);
+
+    // If ask already contains sponsor, return
     if (currentSponsors.contains(userID)) return;
 
     // Else update

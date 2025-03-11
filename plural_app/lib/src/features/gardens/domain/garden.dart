@@ -17,7 +17,7 @@ class Garden {
 
   Map toMap() {
     return {
-      GardenField.creator: creator,
+      GardenField.creator: creator.id,
       GenericField.id: id,
       GardenField.name: name,
     };
@@ -30,4 +30,14 @@ class Garden {
       GardenField.name: null,
     };
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is Garden && other.id == id;
+  }
+
+  @override
+  int get hashCode => id.hashCode;
 }

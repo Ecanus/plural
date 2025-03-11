@@ -80,7 +80,7 @@ class AskDialogView extends StatelessWidget {
                   gapH25,
                   TextColumn(
                     label: AskDialogText.username,
-                    text: ask.creator!.username,
+                    text: ask.creator.username,
                   ),
                 ],
               ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 // Common Functions
 import 'package:plural_app/src/common_functions/form_validators.dart';
+import 'package:plural_app/src/common_functions/input_formatters.dart';
 
 // Common Widgets
 import 'package:plural_app/src/common_widgets/show_hide_password_button.dart';
@@ -146,8 +147,8 @@ class _CreatePasswordFormFieldState extends State<CreatePasswordFormField> {
               focusedErrorBorder: AppStyles.textFieldFocusedErrorBorder,
               label: const Text(SignInPageText.password),
               suffixIcon: ShowHidePasswordButton(
+                callback: _togglePasswordVisibility,
                 isPasswordVisible: _getPasswordVisibility,
-                onPressed: _togglePasswordVisibility,
               ),
             ),
             focusNode: _passwordFieldFocusNode,
@@ -223,8 +224,8 @@ class _CreatePasswordFormFieldState extends State<CreatePasswordFormField> {
               focusedErrorBorder: AppStyles.textFieldFocusedErrorBorder,
               label: const Text(SignInPageText.passwordConfirm),
               suffixIcon: ShowHidePasswordButton(
+                callback: _togglePasswordConfirmVisibility,
                 isPasswordVisible: _getPasswordConfirmVisibility,
-                onPressed: _togglePasswordConfirmVisibility,
               ),
             ),
             focusNode: _passwordConfirmFieldFocusNode,

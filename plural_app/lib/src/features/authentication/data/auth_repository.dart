@@ -2,7 +2,6 @@ import 'dart:developer' as developer;
 
 import 'package:go_router/go_router.dart';
 import 'package:get_it/get_it.dart';
-import 'package:intl/intl.dart';
 
 // Pocketbase
 import 'package:pocketbase/pocketbase.dart';
@@ -12,7 +11,6 @@ import 'package:plural_app/src/common_functions/errors.dart';
 
 // Constants
 import 'package:plural_app/src/constants/fields.dart';
-import 'package:plural_app/src/constants/formats.dart';
 import 'package:plural_app/src/constants/pocketbase.dart';
 import 'package:plural_app/src/constants/routes.dart';
 
@@ -29,6 +27,129 @@ import "package:plural_app/src/features/gardens/domain/garden.dart";
 import 'package:plural_app/src/utils/app_state.dart';
 import 'package:plural_app/src/utils/service_locator.dart';
 
+/// Attempts to log into the database with the given [usernameOrEmail]
+/// and [password] parameters and create all necessary [GetIt] instances.
+///
+/// Returns true if log in is successful, else false.
+Future<bool> login(
+  String usernameOrEmail,
+  String password, {
+  // primarily for testing
+  PocketBase? database
+}) async {
+  // TODO: Change url dynamically by env
+  var pb = database ?? PocketBase("http://127.0.0.1:8090");
+
+  try {
+    await pb.collection(Collection.users).authWithPassword(
+    usernameOrEmail, password);
+
+    await clearGetItInstances();
+    await registerGetItInstances(pb);
+
+    return true;
+  } on ClientException catch(e) {
+    // Log error
+    developer.log(
+      "AuthRepository login() error",
+      error: e,
+    );
+    return false;
+  }
+}
+
+/// Logs out of the database and clears all [GetIt] instances.
+Future<void> logout(
+  context, {
+  // primarily for testing
+  GoRouter? goRouter
+  }) async {
+  clearGetItInstances(logout: true);
+
+  if (context.mounted) {
+    var router = goRouter ?? GoRouter.of(context);
+
+    router.go(Routes.signIn);
+  }
+}
+
+/// Attempts to create a new [User] record in the database with the given
+/// [firstName], [lastName], [username], [email], and [password] parameters.
+///
+/// Returns (true, {}) if sign up is successful, else (false, errorsMap)
+Future<(bool, Map)> signup(
+  String firstName,
+  String lastName,
+  String username,
+  String email,
+  String password,
+  String passwordConfirm, {
+  // primarily for testing
+  PocketBase? database
+}) async {
+  // TODO: Change url dynamically by env
+  var pb = database ?? PocketBase("http://127.0.0.1:8090");
+
+  try {
+    // Create User
+    await pb.collection(Collection.users).create(
+      body: {
+        UserField.email: email,
+        UserField.firstName: firstName,
+        UserField.lastName: lastName,
+        UserField.password: password,
+        UserField.passwordConfirm: passwordConfirm,
+        UserField.username: username
+      }
+    );
+
+    // Send verification email
+    await pb.collection(Collection.users).requestVerification(email);
+
+    // Return
+    return (true, {});
+  } on ClientException catch(e) {
+    var errorsMap = getErrorsMapFromClientException(e);
+
+      // Log error
+      developer.log(
+      "AuthRepository signup() error",
+      error: e,
+    );
+
+      return (false, errorsMap);
+  }
+}
+
+/// Attempts to send an email to the given [email] containing instructions
+/// to reset the account password corresponding to [email].
+///
+/// Returns true if the email is successfully sent, else false.
+Future<bool> sendPasswordResetCode(
+  String email, {
+  // primarily for testing
+  PocketBase? database,
+}) async {
+  // TODO: Change url dynamically by env
+  var pb = database ?? PocketBase("http://127.0.0.1:8090");
+
+  try {
+    // Send password reset email
+    await pb.collection(Collection.users).requestPasswordReset(email);
+
+    // Return
+    return true;
+  } on ClientException catch(e) {
+    // Log error
+    developer.log(
+      "AuthRepository sendPasswordResetCode() error",
+      error: e,
+    );
+
+    return false;
+  }
+}
+
 class AuthRepository {
   AuthRepository({
     required this.pb,
@@ -43,14 +164,14 @@ class AuthRepository {
   ///
   /// Returns an [AppUserGardenRecord] instance corresponding to the retrieved
   /// UserGardenRecord if one is found. Else, returns null.
-  Future<AppUserGardenRecord?> getGardenRecord({
+  Future<AppUserGardenRecord?> getUserGardenRecord({
     required String userID,
     required String gardenID,
     sort = "-updated"
   }) async {
     var result = await pb.collection(Collection.userGardenRecords).getList(
+      filter: "user = '$userID' && garden = '$gardenID'",
       sort: sort,
-      filter: "user = '$userID' && garden = '$gardenID'"
     );
 
     // Return null if no UserGardenRecord is found
@@ -58,36 +179,6 @@ class AuthRepository {
     if (items.isEmpty) return null;
     var record = items[0];
 
-    var garden = await GetIt.instance<GardensRepository>().getGardenByID(gardenID);
-    var user = await getUserByID(userID);
-
-    return AppUserGardenRecord(
-      id: record[GenericField.id],
-      user: user,
-      garden: garden
-    );
-  }
-
-  /// Queries on the [UserGardenRecord] collection to retrieve the most recently
-  /// updated UserGardenRecord corresponding to the given [userID].
-  ///
-  /// Returns an [AppUserGardenRecord] instance corresponding to the retrieved
-  /// UserGardenRecord if one is found. Else, returns null.
-  Future<AppUserGardenRecord?> getMostRecentGardenRecordByUserID({
-    required String userID,
-  }) async {
-    var result = await pb.collection(Collection.userGardenRecords).getList(
-      sort: "-updated",
-      filter: "user = '$userID'"
-    );
-
-    // Return null if no UserGardenRecord is found
-    var items = result.toJson()[QueryKey.items];
-    if (items.isEmpty) return null;
-
-    var record = items[0];
-
-    var gardenID = record[UserGardenRecordField.gardenID];
     var garden = await GetIt.instance<GardensRepository>().getGardenByID(gardenID);
     var user = await getUserByID(userID);
 
@@ -112,14 +203,14 @@ class AuthRepository {
       sort: "user.username"
     );
 
-    // TODO: Raise error if result is empty
+    // TODO: Return empty list if result is empty
     var records = result.toJson()[QueryKey.items];
 
     for (var record in records) {
       var userRecord = record[QueryKey.expand][UserGardenRecordField.user];
 
       var appUser = AppUser(
-        id: record[UserGardenRecordField.userID],
+        id: record[UserGardenRecordField.user],
         email: userRecord[UserField.email],
         username: userRecord[UserField.username],
       );
@@ -149,38 +240,6 @@ class AuthRepository {
     );
   }
 
-  /// Queries on the [UserGardenRecord] collection to update the date of the
-  /// the record which corresponds to the given [userID] and [gardenID] parameters.
-  Future<void> updateUserGardenRecord(String userID, String gardenID) async {
-    var result = await pb.collection(Collection.userGardenRecords).getFirstListItem(
-      """
-      ${UserGardenRecordField.userID} = '$userID' &&
-      ${UserGardenRecordField.gardenID} = '$gardenID'
-      """
-    );
-
-    var userGardenRecord = result.toJson();
-
-    // Update
-    await pb.collection(Collection.userGardenRecords).update(
-      userGardenRecord[GenericField.id],
-      body: {
-        GenericField.updated: DateFormat(Formats.dateYMMdd).format(DateTime.now()),
-      }
-    );
-  }
-
-  /// Creates a new [UserGardenRecord] record using the given
-  /// [userID] and [gardenID] parameters.
-  Future<void> createUserGardenRecord(String userID, String gardenID) async {
-    await pb.collection(Collection.userGardenRecords).create(
-      body: {
-        UserGardenRecordField.user: userID,
-        UserGardenRecordField.gardenID: gardenID
-      }
-    );
-  }
-
   /// Queries on the [UserSettings] collection to retrieve the record which
   /// corresponds to the [currentUser].
   ///
@@ -189,7 +248,7 @@ class AuthRepository {
     final currentUser = GetIt.instance<AppState>().currentUser!;
 
     var result = await pb.collection(Collection.userSettings).getFirstListItem(
-      "${UserSettingsField.userID} = '${currentUser.id}'"
+      "${UserSettingsField.user} = '${currentUser.id}'"
     );
 
     var record = result.toJson();
@@ -243,7 +302,7 @@ class AuthRepository {
         var user = e.record!.toJson();
 
         // Only respond to changes to users in the given gardenID
-        var gardenRecord = await getGardenRecord(
+        var gardenRecord = await getUserGardenRecord(
           userID: user[GenericField.id],
           gardenID: gardenID,
         );
@@ -269,10 +328,10 @@ class AuthRepository {
   Future<Function> subscribeToUserSettings(String gardenID) {
     Future<Function> unsubscribeFunc = pb.collection(Collection.userSettings)
       .subscribe(Subscribe.all, (e) async {
-        var userID = e.record!.toJson()[UserSettingsField.userID];
+        var userID = e.record!.toJson()[UserSettingsField.user];
 
         // Only respond to changes if the userID belongs to a user in the given gardenID
-        var gardenRecord = await getGardenRecord(
+        var gardenRecord = await getUserGardenRecord(
           userID: userID,
           gardenID: gardenID,
         );
@@ -289,110 +348,5 @@ class AuthRepository {
       });
 
     return unsubscribeFunc;
-  }
-}
-
-
-/// Attempts to log into the database with the given [usernameOrEmail]
-/// and [password] parameters and create all necessary [GetIt] instances.
-///
-/// Returns true if log in is successful, else false.
-Future<bool> login(String usernameOrEmail, String password) async {
-  // TODO: Change url dynamically by env
-  var pb = PocketBase("http://127.0.0.1:8090");
-
-  try {
-    await pb.collection(Collection.users).authWithPassword(
-    usernameOrEmail, password);
-
-    await clearGetItInstances();
-    await registerGetItInstances(pb);
-
-    return true;
-  } on ClientException catch(e) {
-    // Log error
-    developer.log(
-      "AuthRepository login() error",
-      error: e,
-    );
-    return false;
-  }
-}
-
-/// Logs out of the database and clears all [GetIt] instances.
-Future<void> logout(context) async {
-  clearGetItInstances(logout: true);
-
-  if (context.mounted) GoRouter.of(context).go(Routes.signIn);
-}
-
-/// Attempts to create a new [User] record in the database with the given
-/// [firstName], [lastName], [username], [email], and [password] parameters.
-///
-/// Returns (true, {}) if sign up is successful, else (false, errorsMap)
-Future<(bool, Map)> signup(
-  String firstName,
-  String lastName,
-  String username,
-  String email,
-  String password,
-  String passwordConfirm,
-) async {
-  // TODO: Change url dynamically by env
-  var pb = PocketBase("http://127.0.0.1:8090");
-
-  try {
-    // Create User
-    await pb.collection(Collection.users).create(
-      body: {
-        UserField.email: email,
-        UserField.firstName: firstName,
-        UserField.lastName: lastName,
-        UserField.password: password,
-        UserField.passwordConfirm: passwordConfirm,
-        UserField.username: username
-      }
-    );
-
-    // Send verification email
-    await pb.collection(Collection.users).requestVerification(email);
-
-    // Return
-    return (true, {});
-  } on ClientException catch(e) {
-    var errorsMap = getErrorsMapFromClientException(e);
-
-      // Log error
-      developer.log(
-      "AuthRepository signup() error",
-      error: e,
-    );
-
-      return (false, errorsMap);
-  }
-}
-
-/// Attempts to send an email to the given [email] containing instructions
-/// to reset the account password corresponding to [email].
-///
-/// Returns true if the email is successfully sent, else false.
-Future<bool> sendPasswordResetCode(String email) async {
-  // TODO: Change url dynamically by env
-  var pb = PocketBase("http://127.0.0.1:8090");
-
-  try {
-    // Send password reset email
-    await pb.collection(Collection.users).requestPasswordReset(email);
-
-    // Return
-    return true;
-  } on ClientException catch(e) {
-    // Log error
-    developer.log(
-      "AuthRepository sendPasswordResetCode() error",
-      error: e,
-    );
-
-    return false;
   }
 }

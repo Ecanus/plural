@@ -71,7 +71,9 @@ class _AppDatePickerFormFieldState extends State<AppDatePickerFormField> {
           CircleAvatar(
             backgroundColor: Theme.of(context).colorScheme.primaryContainer,
             child: IconButton(
-              onPressed: () => selectDate(context, _controller.text, _setControllerText),
+              onPressed: () => showDatePickerDialog(
+                context, _controller.text, _setControllerText
+              ),
               icon: const Icon(Icons.mode_edit_outlined)
             ),
           ),
@@ -98,7 +100,7 @@ class _AppDatePickerFormFieldState extends State<AppDatePickerFormField> {
   }
 }
 
-Future<void> selectDate(
+Future<void> showDatePickerDialog(
   BuildContext context,
   String dateString,
   Function setTextCallback,

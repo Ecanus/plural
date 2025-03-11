@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 // Common Functions
 import 'package:plural_app/src/common_widgets/app_text_button.dart';
 import 'package:plural_app/src/common_functions/form_validators.dart';
+import 'package:plural_app/src/common_functions/input_formatters.dart';
 
 // Common Widgets
 import 'package:plural_app/src/common_widgets/show_hide_password_button.dart';
@@ -94,8 +95,8 @@ class _LogInPasswordFormFieldState extends State<LogInPasswordFormField> {
               focusedErrorBorder: AppStyles.textFieldFocusedErrorBorder,
               label: const Text(SignInPageText.password),
               suffixIcon: ShowHidePasswordButton(
+                callback: _togglePasswordVisibility,
                 isPasswordVisible: _getPasswordVisibility,
-                onPressed: _togglePasswordVisibility
               ),
             ),
             inputFormatters: getInputFormatters(
@@ -108,7 +109,7 @@ class _LogInPasswordFormFieldState extends State<LogInPasswordFormField> {
               fieldName: UserField.password,
               value: value,
             ),
-            validator:(value) => validateTextFormField(value),
+            validator:(value) => validateText(value),
           ),
         ),
         gapH5,

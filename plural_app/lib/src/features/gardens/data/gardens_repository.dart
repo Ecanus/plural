@@ -48,8 +48,8 @@ class GardensRepository {
   ///
   /// Returns a list of [Garden] instances.
   Future<List<Garden>> getGardensByUser(String userID) async {
-    final authRepository = GetIt.instance<AuthRepository>();
     List<Garden> instances = [];
+    final authRepository = GetIt.instance<AuthRepository>();
 
     var result = await pb.collection(Collection.userGardenRecords).getList(
       expand: UserGardenRecordField.garden,
@@ -60,12 +60,13 @@ class GardensRepository {
     // TODO: Raise error if result is empty
     var records = result.toJson()[QueryKey.items];
 
+    // For each UserGarden record, create a Garden instance
     for (var record in records) {
       var recordGarden = record[QueryKey.expand][UserGardenRecordField.garden];
       var creator = await authRepository.getUserByID(recordGarden[GardenField.creator]);
 
       var garden = Garden(
-        id: record[UserGardenRecordField.gardenID],
+        id: record[UserGardenRecordField.garden],
         creator: creator,
         name: recordGarden[GardenField.name],
       );

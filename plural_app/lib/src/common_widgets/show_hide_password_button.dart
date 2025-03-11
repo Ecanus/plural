@@ -5,12 +5,12 @@ import 'package:plural_app/src/constants/app_sizes.dart';
 
 class ShowHidePasswordButton extends StatelessWidget {
   const ShowHidePasswordButton({
+    required this.callback,
     required this.isPasswordVisible,
-    required this.onPressed,
   });
 
+  final Function callback;
   final Function isPasswordVisible;
-  final Function onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +19,7 @@ class ShowHidePasswordButton extends StatelessWidget {
         right: AppPaddings.p15
       ),
       child: IconButton(
-        onPressed: () => onPressed(),
+        onPressed: () => callback(),
         icon: Icon(
           isPasswordVisible()
           ? Icons.visibility

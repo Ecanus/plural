@@ -4,7 +4,6 @@ import 'package:get_it/get_it.dart';
 // Common Widgets
 import 'package:plural_app/src/common_widgets/app_dialog.dart';
 import 'package:plural_app/src/common_widgets/app_dialog_footer.dart';
-import 'package:plural_app/src/common_widgets/app_dialog_router.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
@@ -17,6 +16,7 @@ import 'package:plural_app/src/features/gardens/presentation/listed_garden_tile.
 import 'package:plural_app/src/localization/lang_en.dart';
 
 // Utils
+import 'package:plural_app/src/utils/app_dialog_router.dart';
 import 'package:plural_app/src/utils/app_state.dart';
 
 Future createListedGardensDialog(BuildContext context) async {
