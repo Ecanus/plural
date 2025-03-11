@@ -95,8 +95,8 @@ class _LogInPasswordFormFieldState extends State<LogInPasswordFormField> {
               focusedErrorBorder: AppStyles.textFieldFocusedErrorBorder,
               label: const Text(SignInPageText.password),
               suffixIcon: ShowHidePasswordButton(
+                callback: _togglePasswordVisibility,
                 isPasswordVisible: _getPasswordVisibility,
-                onPressed: _togglePasswordVisibility
               ),
             ),
             inputFormatters: getInputFormatters(
@@ -109,7 +109,7 @@ class _LogInPasswordFormFieldState extends State<LogInPasswordFormField> {
               fieldName: UserField.password,
               value: value,
             ),
-            validator:(value) => validateTextFormField(value),
+            validator:(value) => validateText(value),
           ),
         ),
         gapH5,

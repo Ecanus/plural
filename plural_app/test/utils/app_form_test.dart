@@ -123,21 +123,21 @@ void main() {
       var date = DateFormat(Formats.dateYMMdd).format(DateTime.now());
       expect(thisForm.getValue(fieldName: "testDateTime"), date);
 
-      // FormFieldType.int
+      // FormFieldType.digitsOnly
       expect(thisForm.getValue(fieldName: "testNumber"), null);
       thisForm.save(
         fieldName: "testNumber",
         value: "1966",
-        formFieldType: FormFieldType.int
+        formFieldType: FormFieldType.digitsOnly
       );
       expect(thisForm.getValue(fieldName: "testNumber"), 1966);
 
-      // FormFieldType.string
+      // FormFieldType.text
       expect(thisForm.getValue(fieldName: "testString"), null);
       thisForm.save(
         fieldName: "testString",
         value: "pickles",
-        formFieldType: FormFieldType.string
+        formFieldType: FormFieldType.text
       );
       expect(thisForm.getValue(fieldName: "testString"), "pickles");
     });

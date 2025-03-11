@@ -96,7 +96,7 @@ class _AskDialogEditFormState extends State<AskDialogEditForm> {
                           child: AppTextFormField(
                             appForm: _appForm,
                             fieldName: AskField.targetSum,
-                            formFieldType: FormFieldType.int,
+                            formFieldType: FormFieldType.digitsOnly,
                             initialValue: widget.ask.targetSum.toString(),
                             label: AskDialogText.targetSum,
                             maxLength: AppMaxLengths.max4,
@@ -108,7 +108,7 @@ class _AskDialogEditFormState extends State<AskDialogEditForm> {
                           child: AppTextFormField(
                             appForm: _appForm,
                             fieldName: AskField.boon,
-                            formFieldType: FormFieldType.int,
+                            formFieldType: FormFieldType.digitsOnly,
                             initialValue: widget.ask.boon.toString(),
                             label: AskDialogText.boon,
                             maxLength: AppMaxLengths.max4,

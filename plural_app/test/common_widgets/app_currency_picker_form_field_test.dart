@@ -1,5 +1,3 @@
-import '../tester_functions.dart' as funcs;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -18,10 +16,11 @@ import 'package:plural_app/src/utils/app_form.dart';
 
 // Tests
 import '../test_context.dart';
+import '../tester_functions.dart';
 
 void main() {
   group("AppCurrencyPickerFormField test", () {
-    testWidgets("initialValue null", (tester) async {
+    testWidgets("default values", (tester) async {
       final AppForm appForm = AppForm();
 
       const fieldName = AskField.currency;
@@ -40,10 +39,10 @@ void main() {
         ));
 
       // Check text is empty
-      expect(funcs.textFieldController(tester).value.text, "");
+      expect(textFieldController(tester).value.text, "");
     });
 
-    testWidgets("initialValue non-null", (tester) async {
+    testWidgets("initial values", (tester) async {
       final tc = TestContext();
       final AppForm appForm = AppForm();
 
@@ -64,12 +63,12 @@ void main() {
         ));
 
       // Check text is the currency
-      expect(funcs.textFieldController(tester).value.text, value);
+      expect(textFieldController(tester).value.text, value);
     });
 
     testWidgets("onSaved", (tester) async {
-      final GlobalKey<FormState> formKey = GlobalKey<FormState>();
       final AppForm appForm = AppForm();
+      final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
       const fieldName = AskField.currency;
       const label = AskDialogText.currency;
@@ -95,7 +94,7 @@ void main() {
       expect(appForm.getValue(fieldName: fieldName), null);
 
       // Set text to new value; save form
-      funcs.textFieldController(tester).text = "HKD";
+      textFieldController(tester).text = "HKD";
       formKey.currentState!.save();
 
       // Check appForm value now new value
@@ -103,8 +102,8 @@ void main() {
     });
 
     testWidgets("Invalid value", (tester) async {
-      final GlobalKey<FormState> formKey = GlobalKey<FormState>();
       final AppForm appForm = AppForm();
+      final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
       const fieldName = AskField.currency;
       const label = AskDialogText.currency;
@@ -131,7 +130,7 @@ void main() {
       expect(find.text(AppFormText.invalidValue), findsNothing);
 
       // Set text to invalid value; validate form
-      funcs.textFieldController(tester).text = "???";
+      textFieldController(tester).text = "???";
       expect(formKey.currentState!.validate(), false);
       await tester.pumpAndSettle();
 
@@ -201,7 +200,7 @@ void main() {
       );
 
       // Check text empty at first
-      expect(funcs.textFieldController(tester).value.text, "");
+      expect(textFieldController(tester).value.text, "");
 
       // Open Dialog
       await tester.tap(find.byType(IconButton));
@@ -215,7 +214,7 @@ void main() {
 
       // Check text is first currency (values in AppCurrencyPickerFormField are sorted)
       final sortedCurrencies = Currencies.all.keys.toList()..sort();
-      expect(funcs.textFieldController(tester).value.text, sortedCurrencies.first);
+      expect(textFieldController(tester).value.text, sortedCurrencies.first);
 
       // Dialog closed
       expect(find.byType(Dialog), findsNothing);
@@ -243,7 +242,7 @@ void main() {
       );
 
       // Check text empty at first
-      expect(funcs.textFieldController(tester).value.text, "");
+      expect(textFieldController(tester).value.text, "");
 
       // Open Dialog
       await tester.tap(find.byType(IconButton));
@@ -256,7 +255,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Check text still empty; dialog closed
-      expect(funcs.textFieldController(tester).value.text, "");
+      expect(textFieldController(tester).value.text, "");
       expect(find.byType(Dialog), findsNothing);
     });
   });

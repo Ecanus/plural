@@ -3,11 +3,12 @@ import 'package:intl/intl.dart';
 // Constants
 import 'package:plural_app/src/constants/formats.dart';
 
+// Keep naming consistent with TextFieldType, where possible
 enum FormFieldType {
   currency,
   datetimeNow,
-  int,
-  string,
+  digitsOnly,
+  text,
 }
 
 class AppForm {
@@ -81,7 +82,7 @@ class AppForm {
   void save({
     required String fieldName,
     required dynamic value,
-    FormFieldType formFieldType = FormFieldType.string,
+    FormFieldType formFieldType = FormFieldType.text,
   }) {
     dynamic newValue;
 
@@ -91,9 +92,9 @@ class AppForm {
       case FormFieldType.datetimeNow:
         newValue = value == true ?
           DateFormat(Formats.dateYMMdd).format(DateTime.now()) : null;
-      case FormFieldType.int:
+      case FormFieldType.digitsOnly:
         newValue = int.parse(value);
-      case FormFieldType.string:
+      case FormFieldType.text:
         newValue = value.toString().trim();
     }
 

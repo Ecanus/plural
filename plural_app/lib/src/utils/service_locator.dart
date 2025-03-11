@@ -1,9 +1,6 @@
 import 'package:get_it/get_it.dart';
 import 'package:pocketbase/pocketbase.dart';
 
-// Common Widgets
-import 'package:plural_app/src/common_widgets/app_dialog_router.dart';
-
 // Constants
 import 'package:plural_app/src/constants/fields.dart';
 
@@ -17,6 +14,7 @@ import 'package:plural_app/src/features/authentication/data/auth_repository.dart
 import 'package:plural_app/src/features/gardens/data/gardens_repository.dart';
 
 // Utils
+import 'package:plural_app/src/utils/app_dialog_router.dart';
 import 'package:plural_app/src/utils/app_state.dart';
 
 /// Populates the [GetIt] instance with the necessary singleton

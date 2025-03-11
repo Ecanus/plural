@@ -46,6 +46,18 @@ String? validateDatePickerFormField(String? value) {
   return null;
 }
 
+/// Validates that the given [value] is valid for a TextFormField of
+/// TextFieldType.digitsOnly.
+///
+/// Returns null if valid, else returns a String.
+String? validateDigitsOnly(String? value) {
+  if (value == null || value.isEmpty || !isNumeric(value)) {
+    return AppFormText.invalidValue;
+  }
+
+  return null;
+}
+
 /// Validates that the given [value] is valid for an Email.
 ///
 /// Returns null if valid, else returns a String.
@@ -75,10 +87,11 @@ String? validateNewPassword(String? value) {
   return null;
 }
 
-/// Validates that the given [value] is valid for a TextFormField.
+/// Validates that the given [value] is valid for a TextFormField of
+/// TextFieldType.text.
 ///
 /// Returns null if valid, else returns a String.
-String? validateTextFormField(String? value) {
+String? validateText(String? value) {
   if (value == null || value.isEmpty) return AppFormText.invalidValue;
 
   return null;

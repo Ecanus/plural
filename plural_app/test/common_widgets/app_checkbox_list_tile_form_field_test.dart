@@ -1,5 +1,3 @@
-import '../tester_functions.dart' as funcs;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/intl.dart';
@@ -19,6 +17,7 @@ import 'package:plural_app/src/utils/app_form.dart';
 
 // Tests
 import '../test_context.dart';
+import '../tester_functions.dart';
 
 void main() {
   group("AppCheckboxListTileFormField test", () {
@@ -37,13 +36,13 @@ void main() {
           ),
       ));
 
-      var checkbox = funcs.checkbox(tester);
+      var checkbox = get<Checkbox>(tester);
       expect(checkbox.value, tc.ask.isTargetMet);
 
       await tester.tap(find.byType(Checkbox));
       await tester.pumpAndSettle();
 
-      checkbox = funcs.checkbox(tester);
+      checkbox = get<Checkbox>(tester);
       expect(checkbox.value, !tc.ask.isTargetMet);
     });
 

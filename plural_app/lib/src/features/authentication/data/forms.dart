@@ -3,7 +3,6 @@ import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 
 // Common Widgets
-import 'package:plural_app/src/common_widgets/app_dialog_router.dart';
 import 'package:plural_app/src/common_widgets/app_snackbars.dart';
 
 // Constants
@@ -19,6 +18,7 @@ import "package:plural_app/src/features/authentication/domain/constants.dart";
 import 'package:plural_app/src/localization/lang_en.dart';
 
 // Utils
+import 'package:plural_app/src/utils/app_dialog_router.dart';
 import 'package:plural_app/src/utils/app_form.dart';
 
 /// Validates and submits form data to update an existing [UserSettings] record

@@ -1,5 +1,3 @@
-import '../tester_functions.dart' as funcs;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/intl.dart';
@@ -19,10 +17,11 @@ import 'package:plural_app/src/utils/app_form.dart';
 
 // Tests
 import '../test_context.dart';
+import '../tester_functions.dart';
 
 void main() {
   group("AppDatePickerFormField test", () {
-    testWidgets("initialValue null", (tester) async {
+    testWidgets("default values", (tester) async {
       final AppForm appForm = AppForm();
 
       const fieldName = AskField.deadlineDate;
@@ -41,10 +40,10 @@ void main() {
         ));
 
       // Check text is empty
-      expect(funcs.textFieldController(tester).value.text, "");
+      expect(textFieldController(tester).value.text, "");
     });
 
-    testWidgets("initialValue non-null", (tester) async {
+    testWidgets("initial values", (tester) async {
       final tc = TestContext();
       final AppForm appForm = AppForm();
 
@@ -66,7 +65,7 @@ void main() {
 
       // Check text is the formatted string of date
       expect(
-        funcs.textFieldController(tester).value.text,
+        textFieldController(tester).value.text,
         DateFormat(Formats.dateYMMdd).format(value)
       );
     });
@@ -99,7 +98,7 @@ void main() {
       expect(appForm.getValue(fieldName: fieldName), null);
 
       // Set text to a value
-      funcs.textFieldController(tester).text = "2074-31-08";
+      textFieldController(tester).text = "2074-31-08";
       formKey.currentState!.save();
 
       // Check value saved to appForm
@@ -135,7 +134,7 @@ void main() {
       expect(find.text(AppFormText.invalidValue), findsNothing);
 
       // Set text to invalid value; validate
-      funcs.textFieldController(tester).text = "???";
+      textFieldController(tester).text = "???";
       expect(formKey.currentState!.validate(), false);
       await tester.pumpAndSettle();
 
@@ -204,7 +203,7 @@ void main() {
       );
 
       // Text empty at first
-      expect(funcs.textFieldController(tester).value.text, "");
+      expect(textFieldController(tester).value.text, "");
 
       // Open Dialog
       await tester.tap(find.byType(IconButton));
@@ -222,7 +221,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Check date string set; dialog closed
-      expect(funcs.textFieldController(tester).value.text, days10AppFormat);
+      expect(textFieldController(tester).value.text, days10AppFormat);
       expect(find.byType(Dialog), findsNothing);
     });
 
@@ -247,7 +246,7 @@ void main() {
       );
 
       // Text empty at first
-      expect(funcs.textFieldController(tester).value.text, "");
+      expect(textFieldController(tester).value.text, "");
 
       // Open Dialog
       await tester.tap(find.byType(IconButton));
@@ -264,7 +263,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Text not updated; Dialog closed
-      expect(funcs.textFieldController(tester).value.text, "");
+      expect(textFieldController(tester).value.text, "");
       expect(find.byType(Dialog), findsNothing);
     });
 
@@ -289,7 +288,7 @@ void main() {
       );
 
       // Text empty at first; no error message
-      expect(funcs.textFieldController(tester).value.text, "");
+      expect(textFieldController(tester).value.text, "");
       expect(find.text('Out of range.'), findsNothing);
 
       // Open Dialog

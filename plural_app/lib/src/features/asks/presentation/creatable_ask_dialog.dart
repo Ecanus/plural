@@ -89,7 +89,7 @@ class _AskDialogCreateFormState extends State<AskDialogCreateForm> {
                           child: AppTextFormField(
                             appForm: _appForm,
                             fieldName: AskField.targetSum,
-                            formFieldType: FormFieldType.int,
+                            formFieldType: FormFieldType.digitsOnly,
                             label: AskDialogText.targetSum,
                             maxLength: AppMaxLengths.max4,
                             textFieldType: TextFieldType.digitsOnly,
@@ -100,7 +100,7 @@ class _AskDialogCreateFormState extends State<AskDialogCreateForm> {
                           child: AppTextFormField(
                             appForm: _appForm,
                             fieldName: AskField.boon,
-                            formFieldType: FormFieldType.int,
+                            formFieldType: FormFieldType.digitsOnly,
                             label: AskDialogText.boon,
                             maxLength: AppMaxLengths.max4,
                             suffixIcon: Tooltip(

@@ -6,7 +6,6 @@ import 'package:plural_app/src/common_widgets/app_currency_picker_form_field.dar
 import 'package:plural_app/src/common_widgets/app_dialog.dart';
 import 'package:plural_app/src/common_widgets/app_dialog_footer.dart';
 import 'package:plural_app/src/common_widgets/app_dialog_footer_buffer_submit_button.dart';
-import 'package:plural_app/src/common_widgets/app_dialog_router.dart';
 import 'package:plural_app/src/common_widgets/app_text_form_field.dart';
 
 // Constants
@@ -25,6 +24,9 @@ import 'package:plural_app/src/utils/app_state.dart';
 
 // Localization
 import 'package:plural_app/src/localization/lang_en.dart';
+
+// Utils
+import 'package:plural_app/src/utils/app_dialog_router.dart';
 
 Future createUserSettingsDialog(BuildContext context) async {
   final userSettings = GetIt.instance<AppState>().currentUserSettings!;

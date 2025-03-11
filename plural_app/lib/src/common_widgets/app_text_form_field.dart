@@ -16,7 +16,7 @@ class AppTextFormField extends StatefulWidget {
   const AppTextFormField({
     required this.appForm,
     required this.fieldName,
-    this.formFieldType = FormFieldType.string,
+    this.formFieldType = FormFieldType.text,
     this.hintText = "",
     this.initialValue = "",
     this.label = "",
@@ -67,7 +67,20 @@ class _AppTextFormFieldState extends State<AppTextFormField> {
 
     _paddingBottom = widget.paddingBottom ?? AppPaddings.p20;
     _paddingTop = widget.paddingTop ?? AppPaddings.p20;
-    _validator = widget.validator ?? validateTextFormField;
+    _validator = widget.validator ?? getValidator();
+  }
+
+  Function getValidator() {
+    var formFieldTypeName = widget.formFieldType.name;
+    var textFieldTypeName = widget.textFieldType.name;
+
+    if (formFieldTypeName == "text" && textFieldTypeName == "text") {
+      return validateText;
+    } else if (formFieldTypeName == "digitsOnly" && textFieldTypeName == "digitsOnly") {
+      return validateDigitsOnly;
+    } else {
+      return validateText;
+    }
   }
 
   @override

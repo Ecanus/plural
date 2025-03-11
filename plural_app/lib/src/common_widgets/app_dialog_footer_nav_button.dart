@@ -36,6 +36,7 @@ class AppDialogFooterNavButton extends StatelessWidget {
 
     return Expanded(
       child: GestureDetector(
+        behavior: HitTestBehavior.opaque, // For tests
         onTap: () => callback(),
         child: Row(
           mainAxisAlignment: alignment,

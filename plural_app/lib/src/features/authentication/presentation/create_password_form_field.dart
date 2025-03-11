@@ -147,8 +147,8 @@ class _CreatePasswordFormFieldState extends State<CreatePasswordFormField> {
               focusedErrorBorder: AppStyles.textFieldFocusedErrorBorder,
               label: const Text(SignInPageText.password),
               suffixIcon: ShowHidePasswordButton(
+                callback: _togglePasswordVisibility,
                 isPasswordVisible: _getPasswordVisibility,
-                onPressed: _togglePasswordVisibility,
               ),
             ),
             focusNode: _passwordFieldFocusNode,
@@ -224,8 +224,8 @@ class _CreatePasswordFormFieldState extends State<CreatePasswordFormField> {
               focusedErrorBorder: AppStyles.textFieldFocusedErrorBorder,
               label: const Text(SignInPageText.passwordConfirm),
               suffixIcon: ShowHidePasswordButton(
+                callback: _togglePasswordConfirmVisibility,
                 isPasswordVisible: _getPasswordConfirmVisibility,
-                onPressed: _togglePasswordConfirmVisibility,
               ),
             ),
             focusNode: _passwordConfirmFieldFocusNode,

@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-Checkbox checkbox(WidgetTester tester) {
-  return tester.firstWidget<Checkbox>(find.byType(Checkbox));
+T get<T extends Widget>(WidgetTester tester) {
+  return tester.firstWidget<T>(find.byType(T).first);
 }
 
-TextField textField(WidgetTester tester) {
-    return tester.firstWidget<TextField>(find.byType(TextField));
-  }
+T getLast<T extends Widget>(WidgetTester tester) {
+  return tester.firstWidget<T>(find.byType(T).last);
+}
 
 TextEditingController textFieldController(WidgetTester tester) {
-  return textField(tester).controller!;
+  return get<TextField>(tester).controller!;
 }

@@ -27,10 +27,10 @@ void main() {
     test("createAskInstancesFromQuery", () async {
       final tc = TestContext();
       final getIt = GetIt.instance;
-      final mockRepository = MockAuthRepository();
+      final mockAuthRepository = MockAuthRepository();
 
-      getIt.registerLazySingleton(() => mockRepository as AuthRepository);
-      when(() => mockRepository.getUserByID(any())).thenAnswer((_) async => tc.user);
+      getIt.registerLazySingleton<AuthRepository>(() => mockAuthRepository);
+      when(() => mockAuthRepository.getUserByID(any())).thenAnswer((_) async => tc.user);
 
       var resultList = ResultList(items: [tc.getAskRecordModel()]);
       var listAsks = await createAskInstancesFromQuery(resultList);
@@ -61,12 +61,12 @@ void main() {
       final tc = TestContext();
       final getIt = GetIt.instance;
       final pb = MockPocketBase();
-      final mockRepository = MockAuthRepository();
+      final mockAuthRepository = MockAuthRepository();
       final recordService = MockRecordService();
       final asksRepository = AsksRepository(pb: pb);
 
-      getIt.registerLazySingleton(() => mockRepository as AuthRepository);
-      when(() => mockRepository.getUserByID(any())).thenAnswer((_) async => tc.user);
+      getIt.registerLazySingleton(() => mockAuthRepository as AuthRepository);
+      when(() => mockAuthRepository.getUserByID(any())).thenAnswer((_) async => tc.user);
 
       // pb.collection()
       when(
@@ -95,7 +95,7 @@ void main() {
       final tc = TestContext();
       final getIt = GetIt.instance;
       final pb = MockPocketBase();
-      final mockRepository = MockAuthRepository();
+      final mockAuthRepository = MockAuthRepository();
       final recordService = MockRecordService();
       final asksRepository = AsksRepository(pb: pb);
 
@@ -104,8 +104,8 @@ void main() {
         () => AppState()
       );
       GetIt.instance<AppState>().currentGarden = tc.garden;
-      getIt.registerLazySingleton(() => mockRepository as AuthRepository);
-      when(() => mockRepository.getUserByID(any())).thenAnswer((_) async => tc.user);
+      getIt.registerLazySingleton(() => mockAuthRepository as AuthRepository);
+      when(() => mockAuthRepository.getUserByID(any())).thenAnswer((_) async => tc.user);
 
       // pb.collection()
       when(

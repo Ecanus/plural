@@ -47,6 +47,14 @@ void main() {
       expect(validateDatePickerFormField(date), null);
     });
 
+    test("validateDigitsOnly", () {
+      expect(validateDigitsOnly(null), AppFormText.invalidValue);
+      expect(validateDigitsOnly(""), AppFormText.invalidValue);
+      expect(validateDigitsOnly("with text"), AppFormText.invalidValue);
+
+      expect(validateDigitsOnly("9999"), null);
+    });
+
     test("validateEmail", () {
       expect(validateEmail(null), AppFormText.invalidValue);
       expect(validateEmail(""), AppFormText.invalidValue);
@@ -92,13 +100,13 @@ void main() {
       expect(validateNewPassword(validPassword), null);
     });
 
-    test("validateTextFormField", () {
-      expect(validateTextFormField(null), AppFormText.invalidValue);
-      expect(validateTextFormField(""), AppFormText.invalidValue);
+    test("validateText", () {
+      expect(validateText(null), AppFormText.invalidValue);
+      expect(validateText(""), AppFormText.invalidValue);
 
-      expect(validateTextFormField("with text"), null);
-      expect(validateTextFormField("with text and numbers 9999"), null);
-      expect(validateTextFormField("9999"), null);
+      expect(validateText("with text"), null);
+      expect(validateText("with text and numbers 9999"), null);
+      expect(validateText("9999"), null);
     });
 
     test("validateUsernameOrEmail", () {
