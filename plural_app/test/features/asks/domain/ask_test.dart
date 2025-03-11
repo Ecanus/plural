@@ -1,66 +1,55 @@
 import 'package:test/test.dart';
 import 'package:get_it/get_it.dart';
+import "package:mocktail/mocktail.dart";
 
 // Asks
+import 'package:plural_app/src/features/asks/data/asks_repository.dart';
 import 'package:plural_app/src/features/asks/domain/ask.dart';
-
-// Auth
-import "package:plural_app/src/features/authentication/domain/app_user.dart";
 
 // Utils
 import 'package:plural_app/src/utils/app_state.dart';
 
+// Tests
+import '../../../test_context.dart';
+import '../../../test_mocks.dart';
+
 void main() {
   group("Ask test", () {
-    // AppUser
-    final AppUser user = AppUser(
-      email: "user@test.com",
-      id: "TESTUSER1",
-      username: "testuser1"
-    );
-
-    // Ask
-    final Ask ask = Ask(
-      id: "ASKID",
-      boon: 5,
-      creator: user,
-      creationDate: DateTime(1996, 10, 28),
-      currency: "CAD",
-      description: "The description for the test Ask.",
-      deadlineDate: DateTime(1996, 12, 25),
-      instructions: "The instructions for the test Ask.",
-      targetMetDate: null,
-      targetSum: 70,
-      type: AskType.monetary
-    );
-
-    // GetIt
-    final getIt = GetIt.instance;
-    getIt.registerLazySingleton<AppState>(
-      () => AppState()
-    );
-    GetIt.instance<AppState>().currentUser = user;
-
     test("constructor", () {
-      expect(ask.id == "ASKID", true);
-      expect(ask.boon == 5, true);
-      expect(ask.creator == user, true);
-      expect(ask.creationDate == DateTime(1996, 10, 28), true);
-      expect(ask.currency == "CAD", true);
-      expect(ask.description == "The description for the test Ask.", true);
-      expect(ask.deadlineDate == DateTime(1996, 12, 25), true);
-      expect(ask.instructions == "The instructions for the test Ask.", true);
+      final tc = TestContext();
+      final ask = tc.ask;
+
+      // GetIt
+      final getIt = GetIt.instance;
+      getIt.registerLazySingleton<AppState>(() => AppState());
+      GetIt.instance<AppState>().currentUser = tc.user;
+
+      expect(ask.id == "TESTASK1", true);
+      expect(ask.boon == 15, true);
+      expect(ask.creator == tc.user, true);
+      expect(ask.creationDate == DateTime(1995, 06, 13), true);
+      expect(ask.currency == "GHS", true);
+      expect(ask.description == "Test description of TESTASK1", true);
+      expect(ask.deadlineDate == DateTime(1995, 07, 24), true);
+      expect(ask.instructions == "Test instructions of TESTASK1", true);
       expect(ask.targetMetDate == null, true);
-      expect(ask.targetSum == 70, true);
+      expect(ask.targetSum == 160, true);
       expect(ask.type == AskType.monetary, true);
     });
 
+    tearDown(() => GetIt.instance.reset());
+
     test("formattedDeadlineDate", () {
-      ask.deadlineDate = DateTime(1996, 12, 25);
-      expect(ask.formattedDeadlineDate, "1996-12-25");
+      final tc = TestContext();
+
+      tc.ask.deadlineDate = DateTime(1996, 12, 25);
+      expect(tc.ask.formattedDeadlineDate, "1996-12-25");
     });
 
     test("formattedTargetMetDate", () {
+      final tc = TestContext();
+      final ask = tc.ask;
+
       ask.targetMetDate = null;
       expect(ask.formattedTargetMetDate, "");
 
@@ -69,10 +58,22 @@ void main() {
     });
 
     test("isCreatedByCurrentUser", () {
-      expect(ask.isCreatedByCurrentUser, true);
+      final tc = TestContext();
+
+      // GetIt
+      final getIt = GetIt.instance;
+      getIt.registerLazySingleton<AppState>(() => AppState());
+      GetIt.instance<AppState>().currentUser = tc.user;
+
+      expect(tc.ask.isCreatedByCurrentUser, true);
     });
 
+    tearDown(() => GetIt.instance.reset());
+
     test("isDeadlinePassed", () {
+      final tc = TestContext();
+      final ask = tc.ask;
+
       ask.deadlineDate = DateTime.now().add(const Duration(days: -5));
       expect(ask.isDeadlinePassed, true);
 
@@ -80,35 +81,86 @@ void main() {
       expect(ask.isDeadlinePassed, false);
     });
 
-    test("isOnTimeline", () {
+    test("isOnTimeline", () async {
+      final tc = TestContext();
+      final ask = tc.ask;
+      final mockAsksRepository = MockAsksRepository();
+
+      // GetIt
+      final getIt = GetIt.instance;
+      final appState =
+              AppState()
+              ..currentGarden = tc.garden;
+
+      getIt.registerLazySingleton<AppState>(() => appState);
+      getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
+
+      when(
+        () => mockAsksRepository.getAsksByGardenID(
+          gardenID: any(named: "gardenID"),
+          count: any(named: "count"),
+          filterString: any(named: "filterString")
+        )
+      ).thenAnswer(
+        (_) async => [ask]
+      );
+
       expect(ask.isOnTimeline, false);
+
+      // Call AppState.getTimelineAsks() to populate its _timelineAsks
+      await GetIt.instance<AppState>().getTimelineAsks();
+
+      expect(ask.isOnTimeline, true);
     });
 
+    tearDown(() => GetIt.instance.reset());
+
     test("isSponsoredByCurrentUser", () {
+      final tc = TestContext();
+      final ask = tc.ask;
+
+      // GetIt
+      final getIt = GetIt.instance;
+      final appState =
+              AppState()
+              ..currentUser = tc.user;
+
+      getIt.registerLazySingleton<AppState>(() => appState);
+
       ask.sponsorIDS.clear();
       expect(ask.isSponsoredByCurrentUser, false);
 
-      ask.sponsorIDS.add(user.id);
+      ask.sponsorIDS.add(tc.user.id);
       expect(ask.isSponsoredByCurrentUser, true);
     });
 
+    tearDown(() => GetIt.instance.reset());
+
     test("isTargetMet", () {
+      final tc = TestContext();
+      final ask = tc.ask;
+
       ask.targetMetDate = null;
       expect(ask.isTargetMet, false);
 
       ask.targetMetDate = DateTime(1997, 1, 31);
-      expect(ask.isSponsoredByCurrentUser, true);
+      expect(ask.isTargetMet, true);
     });
 
     test("listTileDescription", () {
-      ask.description = "A really really really really long description";
-      expect(ask.listTileDescription, "A really really really really...");
+      final tc = TestContext();
 
-      ask.description = "A short description";
-      expect(ask.listTileDescription, "A short description");
+      tc.ask.description = "A really really really really long description";
+      expect(tc.ask.listTileDescription, "A really really really really...");
+
+      tc.ask.description = "A short description";
+      expect(tc.ask.listTileDescription, "A short description");
     });
 
     test("timeRemainingString", () {
+      final tc = TestContext();
+      final ask = tc.ask;
+
       ask.deadlineDate = DateTime.now().add(const Duration(days: 12));
       expect(ask.timeRemainingString.contains("days"), true);
 
@@ -129,6 +181,9 @@ void main() {
     });
 
     test("truncatedDescription", () {
+      final tc = TestContext();
+      final ask = tc.ask;
+
       ask.description = "A short description";
       expect(ask.truncatedDescription, "A short description");
 
@@ -139,6 +194,9 @@ void main() {
     });
 
     test("isSponsoredByUser", () {
+      final tc = TestContext();
+      final ask = tc.ask;
+
       ask.sponsorIDS.add("TESTUSER2");
       expect(ask.isSponsoredByUser("TESTUSER2"), true);
 
@@ -147,6 +205,9 @@ void main() {
     });
 
     test("toMap", () {
+      final tc = TestContext();
+      final ask = tc.ask;
+
       ask.boon = 5;
       ask.currency = "CAD";
       ask.description = "Ask description";
@@ -157,9 +218,9 @@ void main() {
       ask.type = AskType.monetary;
 
       var askMap = {
-        "id": "ASKID",
+        "id": "TESTASK1",
         "boon": 5,
-        "creator": user.id,
+        "creator": tc.user.id,
         "currency": "CAD",
         "description": "Ask description",
         "deadlineDate": DateTime(1996, 12, 25),
@@ -189,13 +250,16 @@ void main() {
     });
 
     test("==", () {
+      final tc = TestContext();
+      final ask = tc.ask;
+
       // Identity
       expect(ask == ask, true);
 
       Ask otherAskSameID = Ask(
         id: ask.id,
         boon: 250,
-        creator: user,
+        creator: tc.user,
         creationDate: DateTime(2001, 1, 3),
         currency: "GHS",
         description: "The description for the OTHER test Ask.",
@@ -211,7 +275,7 @@ void main() {
       Ask otherAskDifferentID = Ask(
         id: "OTHERASKID",
         boon: 250,
-        creator: user,
+        creator: tc.user,
         creationDate: DateTime(2001, 1, 3),
         currency: "GHS",
         description: "The description for the OTHER test Ask.",

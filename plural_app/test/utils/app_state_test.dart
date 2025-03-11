@@ -21,21 +21,6 @@ import 'package:plural_app/src/utils/app_state.dart';
 import '../test_context.dart';
 import '../test_mocks.dart';
 
-// For AuthStore()
-class MockModel {
-  String id;
-
-  MockModel(this.id);
-
-  void clear() {}
-
-  Map<String, dynamic> toJson() {
-    return {
-      GenericField.id: id,
-    };
-  }
-}
-
 void main() {
   group("App state test", () {
     test("getTimelineAsks", () async {
@@ -82,7 +67,7 @@ void main() {
       final asks = await appState.getTimelineAsks();
       expect(asks.length, 1);
 
-      final ask = asks[0];
+      final ask = asks.first;
       expect(ask, isA<Ask>());
       expect(ask.id, "TESTASK1");
       expect(ask.boon, 15);

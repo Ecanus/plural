@@ -112,7 +112,7 @@ void main() {
       var gardens = await gardensRepository.getGardensByUser(tc.user.id);
       expect(gardens.length, 1);
 
-      var garden = gardens[0];
+      var garden = gardens.first;
       expect(garden, isA<Garden>());
       expect(garden.id, tc.garden.id);
       expect(garden.creator, tc.user);

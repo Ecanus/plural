@@ -96,13 +96,13 @@ void main() {
           ),
         ));
 
-      // Check button not yet dispalyed
+      // Check close button not yet dispalyed
       expect(find.byType(IconButton), findsNothing);
 
       await tester.tap(find.byType(GestureDetector));
       await tester.pumpAndSettle();
 
-      // Check button displayed
+      // Check close button displayed
       expect(find.byType(IconButton), findsOneWidget);
     });
 
@@ -129,14 +129,14 @@ void main() {
           ),
         ));
 
-      // Check button not yet dispalyed
+      // Check close button not dispalyed
       expect(find.byType(SnackBar), findsNothing);
       expect(find.byType(IconButton), findsNothing);
 
       await tester.tap(find.byType(GestureDetector));
       await tester.pumpAndSettle();
 
-      // Check snackbar displayed, button still displayed
+      // Check snackbar displayed; close button still not displayed
       expect(find.byType(SnackBar), findsOneWidget);
       expect(find.byType(IconButton), findsNothing);
     });

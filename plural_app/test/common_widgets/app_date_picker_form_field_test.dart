@@ -71,8 +71,8 @@ void main() {
     });
 
     testWidgets("onSaved", (tester) async {
-      final GlobalKey<FormState> formKey = GlobalKey<FormState>();
       final AppForm appForm = AppForm();
+      final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
       const fieldName = AskField.deadlineDate;
       const label = AskDialogText.deadlineDate;
@@ -106,8 +106,8 @@ void main() {
     });
 
     testWidgets("Invalid value", (tester) async {
-      final GlobalKey<FormState> formKey = GlobalKey<FormState>();
       final AppForm appForm = AppForm();
+      final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
       const fieldName = AskField.deadlineDate;
       const label = AskDialogText.deadlineDate;

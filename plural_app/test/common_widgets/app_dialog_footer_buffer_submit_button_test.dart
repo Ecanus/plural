@@ -6,7 +6,7 @@ import 'package:plural_app/src/common_widgets/app_dialog_footer_buffer_submit_bu
 
 void main() {
   group("AppDialogFooterBufferSubmitButton test", () {
-    testWidgets("callback and arguments", (tester) async {
+    testWidgets("callback", (tester) async {
       final testList = [];
       const testStringA = "StringA";
       const testStringB = "StringB";

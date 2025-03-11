@@ -49,7 +49,7 @@ void main() {
       // Check inputFormatter has maxLength == 20
       expect(textField.inputFormatters!.isEmpty, false);
       final inputFormatter =
-        textField.inputFormatters![0] as LengthLimitingTextInputFormatter;
+        textField.inputFormatters!.first as LengthLimitingTextInputFormatter;
       expect(inputFormatter.maxLength, 20);
     });
 
@@ -97,7 +97,7 @@ void main() {
       // Check inputFormatter has correct maxLength
       expect(textField.inputFormatters!.isEmpty, false);
       final inputFormatter =
-        textField.inputFormatters![0] as LengthLimitingTextInputFormatter;
+        textField.inputFormatters!.first as LengthLimitingTextInputFormatter;
       expect(inputFormatter.maxLength, 15);
     });
 
@@ -162,11 +162,11 @@ void main() {
       await tester.pumpAndSettle();
 
       // Value not saved to appForm; error text now shown
-      expect(appForm.getValue(fieldName: fieldName), null);
-      expect(find.text(AppFormText.invalidValue), findsOneWidget);
-
       final textField = get<TextField>(tester);
       final decoration = textField.decoration!;
+
+      expect(appForm.getValue(fieldName: fieldName), null);
+      expect(find.text(AppFormText.invalidValue), findsOneWidget);
       expect(decoration.errorText, AppFormText.invalidValue);
     });
   });

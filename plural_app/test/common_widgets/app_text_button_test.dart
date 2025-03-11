@@ -9,7 +9,7 @@ import 'package:plural_app/src/constants/text_themes.dart';
 import '../tester_functions.dart';
 
 void main() {
-  group("AppSnackbars test", () {
+  group("AppTextButton test", () {
     testWidgets("initial values", (tester) async {
       await tester.pumpWidget(
         MaterialApp(

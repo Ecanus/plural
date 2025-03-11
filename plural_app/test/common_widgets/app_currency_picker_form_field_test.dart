@@ -38,7 +38,7 @@ void main() {
           ),
         ));
 
-      // Check text is empty
+      // Check default value of initialValue is ""
       expect(textFieldController(tester).value.text, "");
     });
 
@@ -202,7 +202,7 @@ void main() {
       // Check text empty at first
       expect(textFieldController(tester).value.text, "");
 
-      // Open Dialog
+      // Open Dialog; check number of CurrencyCards is correct
       await tester.tap(find.byType(IconButton));
       await tester.pumpAndSettle();
       expect(find.byType(Dialog), findsOneWidget);

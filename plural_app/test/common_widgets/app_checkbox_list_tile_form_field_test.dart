@@ -36,20 +36,24 @@ void main() {
           ),
       ));
 
+      // Check checkbox value matches initial value
       var checkbox = get<Checkbox>(tester);
       expect(checkbox.value, tc.ask.isTargetMet);
 
+      // Tap the checkbox
       await tester.tap(find.byType(Checkbox));
       await tester.pumpAndSettle();
 
+      // Check that checkbox value has toggled
       checkbox = get<Checkbox>(tester);
       expect(checkbox.value, !tc.ask.isTargetMet);
     });
 
     testWidgets("onSaved", (tester) async {
       final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-
       final AppForm appForm = AppForm();
+
+      // Set value of field in appForm to null
       appForm.setValue(fieldName: AskField.targetMetDate, value: null);
 
       await tester.pumpWidget(
@@ -68,10 +72,11 @@ void main() {
           ),
         ));
 
+      // Check value of field in appForm is null; save appForm
       expect(appForm.getValue(fieldName: AskField.targetMetDate), null);
-
       formKey.currentState!.save();
 
+      // Check that value of field set to string of current date
       expect(
         appForm.getValue(fieldName: AskField.targetMetDate),
         DateFormat(Formats.dateYMMdd).format(DateTime.now())

@@ -363,7 +363,7 @@ void main() {
       var users = await authRepository.getCurrentGardenUsers();
       expect(users.length, 1);
 
-      var thisUser = users[0];
+      var thisUser = users.first;
       expect(thisUser, isA<AppUser>());
       expect(thisUser.id, tc.user.id);
       expect(thisUser.email, tc.user.email);
