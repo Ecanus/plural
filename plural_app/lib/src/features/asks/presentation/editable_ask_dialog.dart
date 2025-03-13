@@ -332,7 +332,11 @@ class EditableAskHeader extends StatelessWidget {
       child: Column(
         children: [
           gapH35,
-          VisibleOnTimelineLabel(isOnTimeline: ask.isOnTimeline),
+          VisibleOnTimelineLabel(
+            isDeadlinePassed: ask.isDeadlinePassed,
+            isOnTimeline: ask.isOnTimeline,
+            isTargetMet: ask.isTargetMet,
+          ),
           gapH15,
           IsTargetMetLabel(targetMetDateString: ask.formattedTargetMetDate,),
         ]
@@ -343,15 +347,27 @@ class EditableAskHeader extends StatelessWidget {
 
 class VisibleOnTimelineLabel extends StatelessWidget {
   const VisibleOnTimelineLabel({
+    required this.isDeadlinePassed,
     required this.isOnTimeline,
+    required this.isTargetMet,
   });
 
+  final bool isDeadlinePassed;
   final bool isOnTimeline;
+  final bool isTargetMet;
 
   @override
   Widget build(BuildContext context) {
     var color = isOnTimeline ?
       AppThemes.positiveColor : Theme.of(context).colorScheme.onPrimaryFixed;
+
+    var firstText = isOnTimeline ?
+      AskDialogText.visibleOnTimeline : AskDialogText.notVisibleOnTimeline;
+
+    var deadlineText = isDeadlinePassed ? " ${AskDialogText.reasonDeadlinePassed}" : "";
+    var targetMetText = isTargetMet ? " ${AskDialogText.reasonTargetMet}" : "";
+    var secondText = [targetMetText, deadlineText].firstWhere(
+      (val) => val.isNotEmpty, orElse: () => "");
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -362,14 +378,18 @@ class VisibleOnTimelineLabel extends StatelessWidget {
           color: color,
         ),
         gapW10,
-        Text(
-          isOnTimeline ?
-            AskDialogText.visibleOnTimeline : AskDialogText.notVisibleOnTimeline,
-          style: TextStyle(
-            color: color,
-            fontWeight: FontWeight.w500,
-          )
-        )
+        Text.rich(
+          TextSpan(
+            style: TextStyle(
+              color: color,
+              fontWeight: FontWeight.w500,
+            ),
+            children: [
+              TextSpan(text: firstText),
+              TextSpan(text: secondText)
+            ]
+          ),
+        ),
       ],
     );
   }

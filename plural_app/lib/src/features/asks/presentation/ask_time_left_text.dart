@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+// Constants
+import 'package:plural_app/src/constants/app_sizes.dart';
+
 // Asks
 import 'package:plural_app/src/features/asks/domain/ask.dart';
 
@@ -9,12 +12,12 @@ import 'package:plural_app/src/localization/lang_en.dart';
 class AskTimeLeftText extends StatelessWidget {
   const AskTimeLeftText({
     required this.ask,
-    this.fontSize,
+    this.fontSize = AppFontSizes.s20,
     required this.textColor,
   });
 
   final Ask ask;
-  final double? fontSize;
+  final double fontSize;
   final Color textColor;
 
   @override

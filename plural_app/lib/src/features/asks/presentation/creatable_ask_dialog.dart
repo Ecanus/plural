@@ -7,7 +7,6 @@ import 'package:plural_app/src/common_functions/input_formatters.dart';
 // Common Widgets
 import 'package:plural_app/src/common_widgets/app_currency_picker_form_field.dart';
 import 'package:plural_app/src/common_widgets/app_date_picker_form_field.dart';
-import 'package:plural_app/src/common_widgets/app_dialog.dart';
 import 'package:plural_app/src/common_widgets/app_dialog_footer.dart';
 import 'package:plural_app/src/common_widgets/app_dialog_footer_buffer_submit_button.dart';
 import 'package:plural_app/src/common_widgets/app_text_form_field.dart';
@@ -29,17 +28,6 @@ import 'package:plural_app/src/localization/lang_en.dart';
 // Utils
 import 'package:plural_app/src/utils/app_form.dart';
 import 'package:plural_app/src/utils/app_state.dart';
-
-Future createCreatableAskDialog(BuildContext context) {
-  return showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AppDialog(
-        view: AskDialogCreateForm(),
-      );
-    }
-  );
-}
 
 class AskDialogCreateForm extends StatefulWidget {
   @override

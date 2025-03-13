@@ -45,7 +45,10 @@ class AskDialogText {
 
   static const markAsSponsored = "Click to mark as sponsored";
 
-  static const notVisibleOnTimeline = "Not visible on timeilne";
+  static const notVisibleOnTimeline = "Not visible on timeline";
+
+  static const reasonDeadlinePassed = "(deadline passed)";
+  static const reasonTargetMet = "(target met)";
 
   static const saveChanges = "Save changes";
   static const selectDateLabel = "Select date";

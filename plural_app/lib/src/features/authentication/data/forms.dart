@@ -20,6 +20,7 @@ import 'package:plural_app/src/localization/lang_en.dart';
 // Utils
 import 'package:plural_app/src/utils/app_dialog_router.dart';
 import 'package:plural_app/src/utils/app_form.dart';
+import 'package:pocketbase/pocketbase.dart';
 
 /// Validates and submits form data to update an existing [UserSettings] record
 /// in the database.
@@ -61,8 +62,10 @@ Future<void> submitUpdateSettings(
 Future<void> submitLogIn(
   BuildContext context,
   GlobalKey<FormState> formKey,
-  AppForm appForm,
-) async {
+  AppForm appForm, {
+  // primarily for testing
+  PocketBase? database,
+}) async {
   if (formKey.currentState!.validate()) {
     // Save form
     formKey.currentState!.save();
@@ -70,7 +73,8 @@ Future<void> submitLogIn(
     // Login
     var isValid = await login(
       appForm.getValue(fieldName: SignInField.usernameOrEmail),
-      appForm.getValue(fieldName: UserField.password)
+      appForm.getValue(fieldName: UserField.password),
+      database: database,
     );
 
     if (isValid && context.mounted) {
@@ -97,8 +101,10 @@ Future<void> submitLogIn(
 Future<void> submitSignUp(
   BuildContext context,
   GlobalKey<FormState> formKey,
-  AppForm appForm,
-) async {
+  AppForm appForm, {
+  // primarily for testing
+  PocketBase? database,
+}) async {
   if (formKey.currentState!.validate()) {
     // Save form
     formKey.currentState!.save();
@@ -111,6 +117,7 @@ Future<void> submitSignUp(
       appForm.getValue(fieldName: UserField.email),
       appForm.getValue(fieldName: UserField.password),
       appForm.getValue(fieldName: UserField.passwordConfirm),
+      database: database,
     );
 
     if (isValid && context.mounted) {
@@ -140,14 +147,16 @@ Future<void> submitSignUp(
 Future<void> submitForgotPassword(
   BuildContext context,
   GlobalKey<FormState> formKey,
-  AppForm appForm,
-) async {
+  AppForm appForm, {
+  // primarily for testing
+  PocketBase? database,
+}) async {
   if (formKey.currentState!.validate()) {
     // Save form
     formKey.currentState!.save();
 
     var email = appForm.getValue(fieldName: UserField.email);
-    var isValid = await sendPasswordResetCode(email);
+    var isValid = await sendPasswordResetCode(email, database: database);
 
     if (context.mounted) {
       // Close dialog

@@ -81,16 +81,19 @@ class TestContext {
   }
 
   RecordModel getAskRecordModel({
+    String? id,
+    int? boon,
+    String? currency,
     List<String> sponsors = const []
   }) {
     return RecordModel(
-    id: ask.id,
+    id: id ?? ask.id,
     created: DateFormat(Formats.dateYMMdd).format(ask.creationDate),
     collectionName: "asks",
     data: {
-      AskField.boon: ask.boon,
+      AskField.boon: boon ?? ask.boon,
       AskField.creator: ask.creator.id,
-      AskField.currency: ask.currency,
+      AskField.currency: currency ?? ask.currency,
       AskField.description: ask.description,
       AskField.deadlineDate: DateFormat(Formats.dateYMMdd).format(ask.deadlineDate),
       AskField.instructions: ask.instructions,
@@ -184,5 +187,18 @@ class TestContext {
         UserSettingsField.user: user.id,
       }
     );
+  }
+}
+
+// For AuthStore()
+class MockModel {
+  String id;
+
+  MockModel(this.id);
+
+  Map<String, dynamic> toJson() {
+    return {
+      GenericField.id: id,
+    };
   }
 }
