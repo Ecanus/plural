@@ -22,8 +22,8 @@ class AppTextFormField extends StatefulWidget {
     this.label = "",
     this.maxLength = AppMaxLengths.max20,
     this.maxLines = AppMaxLines.max1,
-    this.paddingBottom,
-    this.paddingTop,
+    this.paddingBottom = AppPaddings.p20,
+    this.paddingTop = AppPaddings.p20,
     this.suffixIcon,
     this.textFieldType = TextFieldType.text,
     this.validator,
@@ -37,8 +37,8 @@ class AppTextFormField extends StatefulWidget {
   final String label;
   final int maxLength;
   final int? maxLines;
-  final double? paddingBottom;
-  final double? paddingTop;
+  final double paddingBottom;
+  final double paddingTop;
   final Widget? suffixIcon;
   final TextFieldType textFieldType;
   final Function? validator;
@@ -49,9 +49,6 @@ class AppTextFormField extends StatefulWidget {
 
 class _AppTextFormFieldState extends State<AppTextFormField> {
   final _controller = TextEditingController();
-
-  late double _paddingBottom;
-  late double _paddingTop;
   late Function _validator;
 
   @override
@@ -64,9 +61,6 @@ class _AppTextFormFieldState extends State<AppTextFormField> {
     super.initState();
 
     _controller.text = widget.initialValue;
-
-    _paddingBottom = widget.paddingBottom ?? AppPaddings.p20;
-    _paddingTop = widget.paddingTop ?? AppPaddings.p20;
     _validator = widget.validator ?? getValidator();
   }
 
@@ -87,8 +81,8 @@ class _AppTextFormFieldState extends State<AppTextFormField> {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.only(
-        top: _paddingTop,
-        bottom: _paddingBottom,
+        top: widget.paddingTop,
+        bottom: widget.paddingBottom,
       ),
       child: TextFormField(
         controller: _controller,

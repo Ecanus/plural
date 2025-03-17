@@ -38,13 +38,13 @@ void main() {
 
       // GetIt
       final getIt = GetIt.instance;
-      final mockAsksRepository = MockAsksRepository();
       final mockAppDialogRouter = MockAppDialogRouter();
+      final mockAsksRepository = MockAsksRepository();
       final appState = AppState()
                       ..currentUser = tc.user;
       getIt.registerLazySingleton<AppState>(() => appState);
-      getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
       getIt.registerLazySingleton<AppDialogRouter>(() => mockAppDialogRouter);
+      getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
 
       // AppDialogRouter.routeToAskDialogListView()
       when(

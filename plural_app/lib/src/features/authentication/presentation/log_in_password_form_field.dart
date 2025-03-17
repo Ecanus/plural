@@ -28,15 +28,13 @@ class LogInPasswordFormField extends StatefulWidget {
     required this.appForm,
     this.maxLength = AppMaxLengths.max20,
     this.maxLines = AppMaxLines.max1,
-    this.paddingBottom,
-    this.paddingTop,
+    this.paddingTop = AppPaddings.p20,
   });
 
   final AppForm appForm;
   final int maxLength;
-  final int? maxLines;
-  final double? paddingBottom;
-  final double? paddingTop;
+  final int maxLines;
+  final double paddingTop;
 
   @override
   State<LogInPasswordFormField> createState() => _LogInPasswordFormFieldState();
@@ -44,9 +42,7 @@ class LogInPasswordFormField extends StatefulWidget {
 
 class _LogInPasswordFormFieldState extends State<LogInPasswordFormField> {
   final _controller = TextEditingController();
-
   late bool _isPasswordVisible;
-  late double _paddingTop;
 
   @override
   void dispose() {
@@ -58,9 +54,7 @@ class _LogInPasswordFormFieldState extends State<LogInPasswordFormField> {
     super.initState();
 
     _controller.text = "";
-
     _isPasswordVisible = false;
-    _paddingTop = widget.paddingTop ?? AppPaddings.p20;
   }
 
   // Password
@@ -80,7 +74,7 @@ class _LogInPasswordFormFieldState extends State<LogInPasswordFormField> {
       children: [
         Container(
           padding: EdgeInsets.only(
-            top: _paddingTop,
+            top: widget.paddingTop,
           ),
           child: TextFormField(
             controller: _controller,
