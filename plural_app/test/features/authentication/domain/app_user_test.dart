@@ -9,12 +9,15 @@ import '../../../test_context.dart';
 void main() {
   group("AppUser test", () {
     test("constructor", () {
-      final tc = TestContext();
-      final user = tc.user;
+      final user = AppUser(
+        email: "test2@user.com",
+        id: "TESTUSER2",
+        username: "testuser2"
+      );
 
-      expect(user.email == "test@user.com", true);
-      expect(user.id == "TESTUSER1", true);
-      expect(user.username == "testuser", true);
+      expect(user.email == "test2@user.com", true);
+      expect(user.id == "TESTUSER2", true);
+      expect(user.username == "testuser2", true);
     });
 
     test("==", () {
@@ -24,7 +27,7 @@ void main() {
       // Identity
       expect(user == user, true);
 
-      var otherUserSameIDAndEmail = AppUser(
+      final otherUserSameIDAndEmail = AppUser(
         email: user.email,
         id: user.id,
         username: "testotheruser"
@@ -32,13 +35,29 @@ void main() {
 
       expect(user == otherUserSameIDAndEmail, true);
 
-      var otherUserDifferentID = AppUser(
+      final otherUserDifferentIDAndEmail = AppUser(
         email: "test@otheruser.com",
         id: "TESTUSER2",
         username: "testotheruser"
       );
 
-      expect(user == otherUserDifferentID, false);
+      expect(user == otherUserDifferentIDAndEmail, false);
+
+      final otherUserSameIDAndDifferentEmail = AppUser(
+        email: "test@otheruser.com",
+        id: user.id,
+        username: "testotheruser"
+      );
+
+      expect(user == otherUserSameIDAndDifferentEmail, false);
+
+      final otherUserDifferentIDAndSameEmail = AppUser(
+        email: user.email,
+        id: "TESTUSER2",
+        username: "testotheruser"
+      );
+
+      expect(user == otherUserDifferentIDAndSameEmail, false);
     });
 
     test("toString", () {

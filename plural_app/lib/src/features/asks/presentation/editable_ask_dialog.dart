@@ -378,16 +378,18 @@ class VisibleOnTimelineLabel extends StatelessWidget {
           color: color,
         ),
         gapW10,
-        Text.rich(
-          TextSpan(
-            style: TextStyle(
-              color: color,
-              fontWeight: FontWeight.w500,
+        Expanded(
+          child: Text.rich(
+            TextSpan(
+              style: TextStyle(
+                color: color,
+                fontWeight: FontWeight.w500,
+              ),
+              children: [
+                TextSpan(text: firstText),
+                TextSpan(text: secondText)
+              ]
             ),
-            children: [
-              TextSpan(text: firstText),
-              TextSpan(text: secondText)
-            ]
           ),
         ),
       ],

@@ -50,7 +50,6 @@ class _AskDialogCreateFormState extends State<AskDialogCreateForm> {
     );
 
     _appState = GetIt.instance<AppState>();
-
     _formKey = GlobalKey<FormState>();
   }
 

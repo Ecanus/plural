@@ -19,12 +19,8 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: ListView(
-              children: [
-                AppDialog(
-                  view: Text("AppDialog view value"),
-                ),
-              ],
+            body: AppDialog(
+              view: Text("AppDialog view value"),
             ),
           ),
         ));

@@ -1,6 +1,3 @@
-// Auth
-import 'package:plural_app/src/features/authentication/domain/app_user_garden_record.dart';
-
 class AppUser {
   AppUser({
     required this.email,
@@ -11,8 +8,6 @@ class AppUser {
   final String email;
   final String id;
   final String username;
-
-  AppUserGardenRecord? latestGardenRecord;
 
   @override
   bool operator ==(Object other) {
