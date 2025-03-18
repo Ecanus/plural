@@ -106,7 +106,7 @@ class AppBottomBar extends StatelessWidget {
                 gapW10,
                 IconButton(
                   color: iconColor,
-                  icon: const Icon(Icons.library_add),
+                  icon: const Icon(Icons.aspect_ratio),
                   iconSize: iconSize,
                   tooltip: GardenFooterText.asksTooltip,
                   onPressed: () => createListedAsksDialog(context),

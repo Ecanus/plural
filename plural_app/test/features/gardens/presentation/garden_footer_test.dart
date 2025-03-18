@@ -83,8 +83,8 @@ void main() {
       expect(find.byType(AppBottomBar), findsOneWidget);
       expect(find.byType(AskDialogList), findsNothing);
 
-      // Tap IconButton with Icons.library_add (opens listed asks dialog)
-      await tester.tap(find.byIcon(Icons.library_add));
+      // Tap IconButton with Icons.aspect_ratio (opens listed asks dialog)
+      await tester.tap(find.byIcon(Icons.aspect_ratio));
       await tester.pumpAndSettle();
 
       expect(find.byType(AskDialogList), findsOneWidget);

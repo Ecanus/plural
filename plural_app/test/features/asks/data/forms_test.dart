@@ -33,15 +33,15 @@ void main() {
       // AppForm
       const fieldName = "champs";
       final appForm = AppForm()
-                              ..setValue(fieldName: AppFormFields.rebuild, value: func);
-      appForm.setValue(fieldName: fieldName, value: null);
+                      ..setValue(fieldName: AppFormFields.rebuild, value: func)
+                      ..setValue(fieldName: fieldName, value: null);
+      final appState = AppState()
+                      ..currentUser = tc.user;
 
       // GetIt
       final getIt = GetIt.instance;
       final mockAppDialogRouter = MockAppDialogRouter();
       final mockAsksRepository = MockAsksRepository();
-      final appState = AppState()
-                      ..currentUser = tc.user;
       getIt.registerLazySingleton<AppState>(() => appState);
       getIt.registerLazySingleton<AppDialogRouter>(() => mockAppDialogRouter);
       getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
@@ -133,15 +133,15 @@ void main() {
       // AppForm
       const fieldName = "fields";
       final appForm = AppForm()
-                              ..setValue(fieldName: AppFormFields.rebuild, value: func);
-      appForm.setValue(fieldName: fieldName, value: null);
+                      ..setValue(fieldName: AppFormFields.rebuild, value: func)
+                      ..setValue(fieldName: fieldName, value: null);
+      final appState = AppState()
+                      ..currentUser = tc.user;
 
       // GetIt
       final getIt = GetIt.instance;
       final mockAsksRepository = MockAsksRepository();
       final mockAppDialogRouter = MockAppDialogRouter();
-      final appState = AppState()
-                      ..currentUser = tc.user;
       getIt.registerLazySingleton<AppState>(() => appState);
       getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
       getIt.registerLazySingleton<AppDialogRouter>(() => mockAppDialogRouter);
@@ -233,15 +233,16 @@ void main() {
 
       final tc = TestContext();
       final appForm = AppForm()
-                              ..setValue(fieldName: AppFormFields.rebuild, value: func);
+                      ..setValue(fieldName: AppFormFields.rebuild, value: func);
+      final appState = AppState()
+                      ..currentUser = tc.user;
+
       final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
       // GetIt
       final getIt = GetIt.instance;
       final mockAsksRepository = MockAsksRepository();
       final mockAppDialogRouter = MockAppDialogRouter();
-      final appState = AppState()
-                      ..currentUser = tc.user;
       getIt.registerLazySingleton<AppState>(() => appState);
       getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
       getIt.registerLazySingleton<AppDialogRouter>(() => mockAppDialogRouter);
@@ -332,8 +333,8 @@ void main() {
       // AppForm
       const fieldName = "champs";
       final appForm = AppForm()
-                              ..setValue(fieldName: AppFormFields.rebuild, value: func);
-      appForm.setValue(fieldName: fieldName, value: null);
+                      ..setValue(fieldName: AppFormFields.rebuild, value: func)
+                      ..setValue(fieldName: fieldName, value: null);
 
       // GetIt
       final getIt = GetIt.instance;
@@ -408,8 +409,8 @@ void main() {
       // AppForm
       const fieldName = "champs";
       final appForm = AppForm()
-                              ..setValue(fieldName: AppFormFields.rebuild, value: func);
-      appForm.setValue(fieldName: fieldName, value: null);
+                      ..setValue(fieldName: AppFormFields.rebuild, value: func)
+                      ..setValue(fieldName: fieldName, value: null);
 
       // GetIt
       final getIt = GetIt.instance;
@@ -488,8 +489,8 @@ void main() {
       // AppForm
       const fieldName = "champs";
       final appForm = AppForm()
-                              ..setValue(fieldName: AppFormFields.rebuild, value: func);
-      appForm.setValue(fieldName: fieldName, value: null);
+                      ..setValue(fieldName: AppFormFields.rebuild, value: func)
+                      ..setValue(fieldName: fieldName, value: null);
 
       // GetIt
       final getIt = GetIt.instance;
@@ -563,8 +564,8 @@ void main() {
     ft.testWidgets("valid delete", (tester) async {
       // AppForm
       const fieldName = "champs";
-      final appForm = AppForm();
-      appForm.setValue(fieldName: fieldName, value: null);
+      final appForm = AppForm()
+                      ..setValue(fieldName: fieldName, value: null);
 
       // GetIt
       final getIt = GetIt.instance;
@@ -620,8 +621,8 @@ void main() {
     ft.testWidgets("invalid delete", (tester) async {
       // AppForm
       const fieldName = "champs";
-      final appForm = AppForm();
-      appForm.setValue(fieldName: fieldName, value: null);
+      final appForm = AppForm()
+                      ..setValue(fieldName: fieldName, value: null);
 
       // GetIt
       final getIt = GetIt.instance;

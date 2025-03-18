@@ -59,11 +59,6 @@ void main() {
         )
       );
 
-      // Gesture handling
-      await gesture.addPointer();
-      await gesture.moveTo(const Offset(1.0, 1.0));
-      await tester.pump();
-
       // Check AskDialogView not yet displayed
       expect(find.byType(AskDialogView), findsNothing);
 
@@ -155,12 +150,14 @@ void main() {
   group("BoonColumn test", () {
     testWidgets("boon", (tester) async {
       final tc = TestContext();
-      tc.ask.boon = 0;
+      final ask = tc.ask;
+
+      ask.boon = 0;
 
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: BoonColumn(ask: tc.ask)
+            body: BoonColumn(ask: ask)
           ),
         )
       );
@@ -168,7 +165,7 @@ void main() {
       // No relevant text renders when boon <= 0
       expect(find.text(AskDialogText.boon), findsNothing);
       expect(find.byType(Tooltip), findsNothing);
-      expect(find.text("${tc.ask.boon.toString()} ${tc.ask.currency}"), findsNothing);
+      expect(find.text("${ask.boon.toString()} ${ask.currency}"), findsNothing);
 
       // Set boon > 0
       tc.ask.boon = 10;
@@ -176,7 +173,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: BoonColumn(ask: tc.ask)
+            body: BoonColumn(ask: ask)
           ),
         )
       );
@@ -184,7 +181,7 @@ void main() {
       // Check text renders when boon > 0
       expect(find.text(AskDialogText.boon), findsOneWidget);
       expect(find.byType(Tooltip), findsOneWidget);
-      expect(find.text("${tc.ask.boon.toString()} ${tc.ask.currency}"), findsOneWidget);
+      expect(find.text("${ask.boon.toString()} ${ask.currency}"), findsOneWidget);
     });
   });
 }

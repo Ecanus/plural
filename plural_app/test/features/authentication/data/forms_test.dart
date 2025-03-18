@@ -35,8 +35,8 @@ void main() {
 
       // AppForm
       const fieldName = "champs";
-      final appForm = AppForm();
-      appForm.setValue(fieldName: fieldName, value: null);
+      final appForm = AppForm()
+                      ..setValue(fieldName: fieldName, value: null);
 
       // GetIt
       final getIt = GetIt.instance;
@@ -116,8 +116,8 @@ void main() {
 
       // AppForm
       const fieldName = "champs";
-      final appForm = AppForm();
-      appForm.setValue(fieldName: fieldName, value: null);
+      final appForm = AppForm()
+                      ..setValue(fieldName: fieldName, value: null);
 
       // GetIt
       final getIt = GetIt.instance;
@@ -200,8 +200,8 @@ void main() {
 
       // AppForm
       const fieldName = "champs";
-      final appForm = AppForm();
-      appForm.setValue(fieldName: fieldName, value: null);
+      final appForm = AppForm()
+                      ..setValue(fieldName: fieldName, value: null);
 
       // GetIt
       final getIt = GetIt.instance;
@@ -289,10 +289,11 @@ void main() {
       final testList = [1, 2, 3];
       void func() => testList.clear();
 
-      final appForm = AppForm();
-      appForm.setValue(fieldName: AppFormFields.rebuild, value: func);
-      appForm.setValue(fieldName: SignInField.usernameOrEmail, value: "username");
-      appForm.setValue(fieldName: UserField.password, value: "password");
+      final appForm =
+        AppForm()
+        ..setValue(fieldName: AppFormFields.rebuild, value: func)
+        ..setValue(fieldName: SignInField.usernameOrEmail, value: "username")
+        ..setValue(fieldName: UserField.password, value: "password");
 
       // pb
       final pb = MockPocketBase();
@@ -401,10 +402,11 @@ void main() {
       final testList = [1, 2, 3];
       void func() => testList.clear();
 
-      final appForm = AppForm();
-      appForm.setValue(fieldName: AppFormFields.rebuild, value: func);
-      appForm.setValue(fieldName: SignInField.usernameOrEmail, value: "username");
-      appForm.setValue(fieldName: UserField.password, value: "password");
+      final appForm =
+        AppForm()
+        ..setValue(fieldName: AppFormFields.rebuild, value: func)
+        ..setValue(fieldName: SignInField.usernameOrEmail, value: "username")
+        ..setValue(fieldName: UserField.password, value: "password");
 
       final pb = MockPocketBase();
       final recordService = MockRecordService();
@@ -522,10 +524,11 @@ void main() {
       final testList = [1, 2, 3];
       void func() => testList.clear();
 
-      final appForm = AppForm();
-      appForm.setValue(fieldName: AppFormFields.rebuild, value: func);
-      appForm.setValue(fieldName: SignInField.usernameOrEmail, value: "username");
-      appForm.setValue(fieldName: UserField.password, value: "password");
+      final appForm =
+        AppForm()
+        ..setValue(fieldName: AppFormFields.rebuild, value: func)
+        ..setValue(fieldName: SignInField.usernameOrEmail, value: "username")
+        ..setValue(fieldName: UserField.password, value: "password");
 
       // pb
       final pb = MockPocketBase();
@@ -641,14 +644,15 @@ void main() {
       final testList = [1, 2, 3];
       void func() => testList.clear();
 
-      final appForm = AppForm();
-      appForm.setValue(fieldName: AppFormFields.rebuild, value: func);
-      appForm.setValue(fieldName: UserField.firstName, value: "firstName");
-      appForm.setValue(fieldName: UserField.lastName, value: "lastName");
-      appForm.setValue(fieldName: UserField.username, value: "username");
-      appForm.setValue(fieldName: UserField.email, value: email);
-      appForm.setValue(fieldName: UserField.password, value: "password");
-      appForm.setValue(fieldName: UserField.passwordConfirm, value: "passwordConfirm");
+      final appForm =
+        AppForm()
+        ..setValue(fieldName: AppFormFields.rebuild, value: func)
+        ..setValue(fieldName: UserField.firstName, value: "firstName")
+        ..setValue(fieldName: UserField.lastName, value: "lastName")
+        ..setValue(fieldName: UserField.username, value: "username")
+        ..setValue(fieldName: UserField.email, value: email)
+        ..setValue(fieldName: UserField.password, value: "password")
+        ..setValue(fieldName: UserField.passwordConfirm, value: "passwordConfirm");
 
       // pb
       final pb = MockPocketBase();
@@ -719,14 +723,15 @@ void main() {
       final testList = [1, 2, 3];
       void func() => testList.clear();
 
-      final appForm = AppForm();
-      appForm.setValue(fieldName: AppFormFields.rebuild, value: func);
-      appForm.setValue(fieldName: UserField.firstName, value: "firstName");
-      appForm.setValue(fieldName: UserField.lastName, value: "lastName");
-      appForm.setValue(fieldName: UserField.username, value: "username");
-      appForm.setValue(fieldName: UserField.email, value: email);
-      appForm.setValue(fieldName: UserField.password, value: "password");
-      appForm.setValue(fieldName: UserField.passwordConfirm, value: "passwordConfirm");
+      final appForm =
+        AppForm()
+        ..setValue(fieldName: AppFormFields.rebuild, value: func)
+        ..setValue(fieldName: UserField.firstName, value: "firstName")
+        ..setValue(fieldName: UserField.lastName, value: "lastName")
+        ..setValue(fieldName: UserField.username, value: "username")
+        ..setValue(fieldName: UserField.email, value: email)
+        ..setValue(fieldName: UserField.password, value: "password")
+        ..setValue(fieldName: UserField.passwordConfirm, value: "passwordConfirm");
 
       // pb
       final pb = MockPocketBase();
@@ -803,14 +808,15 @@ void main() {
       final testList = [1, 2, 3];
       void func() => testList.clear();
 
-      final appForm = AppForm();
-      appForm.setValue(fieldName: AppFormFields.rebuild, value: func);
-      appForm.setValue(fieldName: UserField.firstName, value: "firstName");
-      appForm.setValue(fieldName: UserField.lastName, value: "lastName");
-      appForm.setValue(fieldName: UserField.username, value: "username");
-      appForm.setValue(fieldName: UserField.email, value: email);
-      appForm.setValue(fieldName: UserField.password, value: "password");
-      appForm.setValue(fieldName: UserField.passwordConfirm, value: "passwordConfirm");
+      final appForm =
+        AppForm()
+        ..setValue(fieldName: AppFormFields.rebuild, value: func)
+        ..setValue(fieldName: UserField.firstName, value: "firstName")
+        ..setValue(fieldName: UserField.lastName, value: "lastName")
+        ..setValue(fieldName: UserField.username, value: "username")
+        ..setValue(fieldName: UserField.email, value: email)
+        ..setValue(fieldName: UserField.password, value: "password")
+        ..setValue(fieldName: UserField.passwordConfirm, value: "passwordConfirm");
 
       // pb
       final pb = MockPocketBase();
@@ -880,8 +886,8 @@ void main() {
 
       // AppForm
       const email = "testEmail";
-      final appForm = AppForm();
-      appForm.setValue(fieldName: UserField.email, value: email);
+      final appForm = AppForm()
+                      ..setValue(fieldName: UserField.email, value: email);
 
       // pb
       final pb = MockPocketBase();
@@ -949,8 +955,8 @@ void main() {
 
       // AppForm
       const email = "testEmail";
-      final appForm = AppForm();
-      appForm.setValue(fieldName: UserField.email, value: email);
+      final appForm = AppForm()
+                      ..setValue(fieldName: UserField.email, value: email);
 
       // pb
       final pb = MockPocketBase();
@@ -1017,8 +1023,8 @@ void main() {
 
       // AppForm
       const email = "testEmail";
-      final appForm = AppForm();
-      appForm.setValue(fieldName: UserField.email, value: email);
+      final appForm = AppForm()
+                      ..setValue(fieldName: UserField.email, value: email);
 
       // pb
       final pb = MockPocketBase();

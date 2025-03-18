@@ -25,7 +25,7 @@ class RouteToListedAsksViewButton extends StatelessWidget {
           shape: CircleBorder(),
         ),
         onPressed: () => appDialogRouter.routeToAskDialogListView(),
-        child: const Icon(Icons.reorder)
+        child: const Icon(Icons.toc_rounded)
       ),
     );
   }

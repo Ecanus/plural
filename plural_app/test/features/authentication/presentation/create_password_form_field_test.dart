@@ -91,7 +91,6 @@ void main() {
       // Check error text now shown for both fields
       final firstDecoration = get<TextField>(tester).decoration!;
       final lastDecoration = getLast<TextField>(tester).decoration!;
-
       expect(find.text(AppFormText.invalidValue), findsNWidgets(2));
       expect(firstDecoration.errorText, AppFormText.invalidValue);
       expect(lastDecoration.errorText, AppFormText.invalidValue);
@@ -140,10 +139,11 @@ void main() {
       expect(formKey.currentState!.validate(), true);
       await tester.pumpAndSettle();
 
-      // Check still no invalidValue text; check still no mismatch text
+      // Check still no invalidValue text
       expect(find.text(AppFormText.invalidValue), findsNothing);
       expect(find.text(SignInPageText.passwordMismatch), findsNothing);
 
+      // Check still no mismatch text (color still success)
       checkText(SignInPageText.passwordLength, AppThemes.successColor);
       checkText(SignInPageText.passwordLowercase, AppThemes.successColor);
       checkText(SignInPageText.passwordUppercase, AppThemes.successColor);
@@ -204,6 +204,7 @@ void main() {
       // Both errorText and PasswordTextRow text should render
       expect(find.text(SignInPageText.passwordMismatch), findsNWidgets(2));
 
+      // Check password doesn't pass any checks (i.e. color is onPrimary)
       checkText(SignInPageText.passwordLength, AppThemes.colorScheme.onPrimary);
       checkText(SignInPageText.passwordLowercase, AppThemes.colorScheme.onPrimary);
       checkText(SignInPageText.passwordUppercase, AppThemes.colorScheme.onPrimary);

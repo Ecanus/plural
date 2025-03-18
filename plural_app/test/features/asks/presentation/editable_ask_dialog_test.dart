@@ -71,7 +71,7 @@ void main() {
       // Check ConfirmDeleteAskDialog has been created
       expect(find.byType(ConfirmDeleteAskDialog), findsOneWidget);
 
-      // Tap barrier (to dismiss ConfirmDeleteAskDialog)
+      // Tap OutlinedButton (to close ConfirmDeleteAskDialog)
       await tester.tap(find.byType(OutlinedButton));
       await tester.pumpAndSettle();
 
