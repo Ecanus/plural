@@ -4,6 +4,7 @@ import 'package:test/test.dart';
 import 'package:plural_app/src/constants/fields.dart';
 
 // Auth
+import 'package:plural_app/src/features/authentication/domain/app_user.dart';
 import 'package:plural_app/src/features/authentication/domain/app_user_settings.dart';
 
 // Test
@@ -13,11 +14,15 @@ void main() {
   group("AppUserSettings test", () {
     test("constructor", () {
       final tc = TestContext();
-      final userSettings = tc.userSettings;
+      final userSettings = AppUserSettings(
+        defaultCurrency: "GHS",
+        defaultInstructions: "The default instructions!!",
+        id: "USERSETTINGSTEST",
+        user: tc.user);
 
       expect(userSettings.defaultCurrency == "GHS", true);
-      expect(userSettings.defaultInstructions == "The default instructions", true);
-      expect(userSettings.id == "USERSETTINGS1", true);
+      expect(userSettings.defaultInstructions == "The default instructions!!", true);
+      expect(userSettings.id == "USERSETTINGSTEST", true);
       expect(userSettings.user == tc.user, true);
     });
 
@@ -39,6 +44,57 @@ void main() {
       };
 
       expect(settingsToMap.toMap(), map);
+    });
+
+    test("==", () {
+      final tc = TestContext();
+      final userSettings = tc.userSettings;
+
+      final differentUser = AppUser(
+        email: "other@email.com",
+        id: "OTHERID",
+        username: "otheruser"
+      );
+
+      // Identity
+      expect(userSettings == userSettings, true);
+
+      final sameIDAndUser = AppUserSettings(
+        defaultCurrency: "KRW",
+        defaultInstructions: "Instructions!!",
+        id: userSettings.id,
+        user: tc.user
+      );
+
+      expect(userSettings == sameIDAndUser, true);
+
+      final differentIDAndUser = AppUserSettings(
+        defaultCurrency: "KRW",
+        defaultInstructions: "Instructions!!",
+        id: "DIFFERENTID",
+        user: differentUser
+      );
+
+      expect(userSettings == differentIDAndUser, false);
+
+      final sameIDAndDifferentUser = AppUserSettings(
+        defaultCurrency: "KRW",
+        defaultInstructions: "Instructions!!",
+        id: userSettings.id,
+        user: differentUser
+      );
+
+      expect(userSettings == sameIDAndDifferentUser, false);
+
+      final differentIDAndSameUser = AppUserSettings(
+        defaultCurrency: "KRW",
+        defaultInstructions: "Instructions!!",
+        id: "DIFFERENTID",
+        user: tc.user
+      );
+
+
+      expect(userSettings == differentIDAndSameUser, false);
     });
   });
 }

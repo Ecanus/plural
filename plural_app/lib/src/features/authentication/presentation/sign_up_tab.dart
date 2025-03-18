@@ -80,7 +80,6 @@ class SignUpTab extends StatelessWidget {
         ),
         CreatePasswordFormField(
           appForm: appForm,
-          paddingTop: AppPaddings.p0,
         ),
         gapH30,
         AppElevatedButton(

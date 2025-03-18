@@ -133,6 +133,7 @@ void main() {
       expect(find.byType(SnackBar), findsNothing);
       expect(find.byType(IconButton), findsNothing);
 
+      // Tap GestureDetector (to open Snackbar)
       await tester.tap(find.byType(GestureDetector));
       await tester.pumpAndSettle();
 

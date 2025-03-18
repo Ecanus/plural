@@ -24,14 +24,12 @@ class CreatePasswordFormField extends StatefulWidget {
   const CreatePasswordFormField({
     required this.appForm,
     this.maxLines = AppMaxLines.max1,
-    this.paddingBottom,
-    this.paddingTop,
+    this.paddingTop = AppPaddings.p20,
   });
 
   final AppForm appForm;
-  final int? maxLines;
-  final double? paddingBottom;
-  final double? paddingTop;
+  final int maxLines;
+  final double paddingTop;
 
   @override
   State<CreatePasswordFormField> createState() => _CreatePasswordFormFieldState();
@@ -48,7 +46,6 @@ class _CreatePasswordFormFieldState extends State<CreatePasswordFormField> {
   late FocusNode _passwordConfirmFieldFocusNode;
   late ValueNotifier<Map> _passwordValuesNotifier;
 
-  late double _paddingTop;
   late bool _isPasswordVisible;
   late bool _isPasswordConfirmVisible;
 
@@ -88,7 +85,6 @@ class _CreatePasswordFormFieldState extends State<CreatePasswordFormField> {
 
     _passwordValuesNotifier = ValueNotifier<Map>(passwordValues);
 
-    _paddingTop = widget.paddingTop ?? AppPaddings.p20;
     _isPasswordVisible = false;
     _isPasswordConfirmVisible = false;
   }
@@ -132,7 +128,7 @@ class _CreatePasswordFormFieldState extends State<CreatePasswordFormField> {
       children: [
         Container(
           padding: EdgeInsets.only(
-            top: _paddingTop,
+            top: widget.paddingTop,
           ),
           child: TextFormField(
             controller: _passwordController,
@@ -165,51 +161,9 @@ class _CreatePasswordFormFieldState extends State<CreatePasswordFormField> {
             validator: (value) => validateNewPassword(value),
           ),
         ),
-        AnimatedSize(
-          duration: AppDurations.ms125,
-          child: Container(
-            height: _passwordFieldFocusNode.hasFocus ? null : 0.0,
-            padding: const EdgeInsets.only(
-              top: AppPaddings.p5,
-              bottom: AppPaddings.p25
-            ),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Column(
-                children: [
-                  PasswordRequirementText(
-                    notifier: _passwordValuesNotifier,
-                    requirement: checkPasswordLength,
-                    text: SignInPageText.passwordLength
-                  ),
-                  PasswordRequirementText(
-                    notifier: _passwordValuesNotifier,
-                    requirement: checkHasLowercase,
-                    text: SignInPageText.passwordLowercase
-                  ),
-                  PasswordRequirementText(
-                    notifier: _passwordValuesNotifier,
-                    requirement: checkHasUppercase,
-                    text: SignInPageText.passwordUppercase
-                  ),
-                  PasswordRequirementText(
-                    notifier: _passwordValuesNotifier,
-                    requirement: checkHasNumber,
-                    text: SignInPageText.passwordNumber
-                  ),
-                  PasswordRequirementText(
-                    notifier: _passwordValuesNotifier,
-                    requirement: checkHasSpecialCharacter,
-                    text: SignInPageText.passwordSpecial
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
         Container(
-          padding: const EdgeInsets.only(
-            top: AppPaddings.p20,
+          padding: EdgeInsets.only(
+            top: widget.paddingTop,
           ),
           child: TextFormField(
             controller: _passwordConfirmController,
@@ -264,7 +218,49 @@ class _CreatePasswordFormFieldState extends State<CreatePasswordFormField> {
               ],
             ),
           ),
-        )
+        ),
+        AnimatedSize(
+          duration: AppDurations.ms125,
+          child: Container(
+            height: _passwordFieldFocusNode.hasFocus ? null : 0.0,
+            padding: const EdgeInsets.only(
+              top: AppPaddings.p15,
+              bottom: AppPaddings.p25
+            ),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Column(
+                children: [
+                  PasswordRequirementText(
+                    notifier: _passwordValuesNotifier,
+                    requirement: checkPasswordLength,
+                    text: SignInPageText.passwordLength
+                  ),
+                  PasswordRequirementText(
+                    notifier: _passwordValuesNotifier,
+                    requirement: checkHasLowercase,
+                    text: SignInPageText.passwordLowercase
+                  ),
+                  PasswordRequirementText(
+                    notifier: _passwordValuesNotifier,
+                    requirement: checkHasUppercase,
+                    text: SignInPageText.passwordUppercase
+                  ),
+                  PasswordRequirementText(
+                    notifier: _passwordValuesNotifier,
+                    requirement: checkHasNumber,
+                    text: SignInPageText.passwordNumber
+                  ),
+                  PasswordRequirementText(
+                    notifier: _passwordValuesNotifier,
+                    requirement: checkHasSpecialCharacter,
+                    text: SignInPageText.passwordSpecial
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
       ],
     );
   }

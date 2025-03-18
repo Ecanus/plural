@@ -1,7 +1,6 @@
-import 'package:pocketbase/pocketbase.dart';
-
 import 'package:get_it/get_it.dart';
 import "package:mocktail/mocktail.dart";
+import 'package:pocketbase/pocketbase.dart';
 import 'package:test/test.dart';
 
 // Constants
@@ -51,6 +50,40 @@ void main() {
       expect(createdAsk.targetSum, 160);
       expect(createdAsk.targetMetDate, null);
       expect(createdAsk.type, AskType.monetary);
+    });
+
+    tearDown(() => GetIt.instance.reset());
+
+    test("createAskInstancesFromQuery count", () async {
+      final tc = TestContext();
+      final getIt = GetIt.instance;
+      final mockAuthRepository = MockAuthRepository();
+
+      getIt.registerLazySingleton<AuthRepository>(() => mockAuthRepository);
+      when(() => mockAuthRepository.getUserByID(any())).thenAnswer((_) async => tc.user);
+
+      var resultList = ResultList(
+        items: [
+          tc.getAskRecordModel(id: "ASK002"),
+          tc.getAskRecordModel(id: "ASK003"),
+          tc.getAskRecordModel(id: "ASK004"),
+          tc.getAskRecordModel(id: "ASK005"),
+          tc.getAskRecordModel(id: "ASK006"),
+          tc.getAskRecordModel(id: "ASK007"),
+        ]
+      );
+
+      var listAsks = await createAskInstancesFromQuery(resultList);
+      expect(resultList.items.length, 6);
+      expect(listAsks.length, 6);
+
+      listAsks = await createAskInstancesFromQuery(resultList, count: 2);
+      expect(resultList.items.length, 6);
+      expect(listAsks.length, 2);
+
+      listAsks = await createAskInstancesFromQuery(resultList, count: 4);
+      expect(resultList.items.length, 6);
+      expect(listAsks.length, 4);
     });
 
     tearDown(() => GetIt.instance.reset());

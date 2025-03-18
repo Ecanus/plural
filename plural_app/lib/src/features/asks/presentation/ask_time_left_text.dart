@@ -19,33 +19,35 @@ class AskTimeLeftText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text.rich(
-      TextSpan(
-        children: [
-          TextSpan(
-            style: TextStyle(
-              color: textColor,
-              fontSize: fontSize
+    return Center(
+      child: Text.rich(
+        TextSpan(
+          children: [
+            TextSpan(
+              style: TextStyle(
+                color: textColor,
+                fontSize: fontSize
+              ),
+              text: "${AskDialogText.askTimeLeftBrace} "
             ),
-            text: "${AskDialogText.askTimeLeftBrace} "
-          ),
-          TextSpan(
-            style: TextStyle(
-              color: textColor,
-              fontSize: fontSize,
-              fontWeight: FontWeight.bold
+            TextSpan(
+              style: TextStyle(
+                color: textColor,
+                fontSize: fontSize,
+                fontWeight: FontWeight.bold
+              ),
+              text: ask.timeRemainingString,
             ),
-            text: ask.timeRemainingString,
-          ),
-          TextSpan(
-            style: TextStyle(
-              color: textColor,
-              fontSize: fontSize
+            TextSpan(
+              style: TextStyle(
+                color: textColor,
+                fontSize: fontSize
+              ),
+              text: " ${AskDialogText.askTimeLeftBrace}"
             ),
-            text: " ${AskDialogText.askTimeLeftBrace}"
-          ),
-        ]
-      )
+          ]
+        )
+      ),
     );
   }
 }

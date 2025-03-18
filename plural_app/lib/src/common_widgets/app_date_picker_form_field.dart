@@ -105,15 +105,18 @@ Future<void> showDatePickerDialog(
   String dateString,
   Function setTextCallback,
   ) async {
-    var today = DateTime.now().toLocal();
-    var dateThreshold = today.add(AppDateValues.datePickerThreshold);
-    var initialDate = dateString.isEmpty ? null : DateTime.parse(dateString).toLocal();
+    var now = DateTime.now().toLocal();
+    var lastDate = now.add(AppDateValues.datePickerThreshold);
+
+    var parsedDate = dateString.isEmpty ? null : DateTime.parse(dateString).toLocal();
+    var initialDate = parsedDate == null || parsedDate.isBefore(now) ? null : parsedDate;
 
     final DateTime? datePicked = await showDatePicker(
       context: context,
       initialDate: initialDate,
-      firstDate: today,
-      lastDate: dateThreshold);
+      firstDate: now,
+      lastDate: lastDate
+    );
 
     if (datePicked != null && datePicked != initialDate) {
       setTextCallback(datePicked);

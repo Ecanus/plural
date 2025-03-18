@@ -22,19 +22,6 @@ import 'package:plural_app/src/utils/app_state.dart';
 import '../../../test_context.dart';
 import '../../../test_mocks.dart';
 
-// For AuthStore()
-class MockModel {
-  String id;
-
-  MockModel(this.id);
-
-  Map<String, dynamic> toJson() {
-    return {
-      GenericField.id: id,
-    };
-  }
-}
-
 void main() {
   group("Auth methods test", () {
     test("login", () async {

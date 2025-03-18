@@ -22,66 +22,7 @@ class LandingPageSettingsTab extends StatelessWidget {
         children: [
           Expanded(
             child: ListView(
-              children: [
-                CheckboxListTile(
-                  secondary: const Icon(Icons.assessment_rounded),
-                  title: Text("CheckboxList Tile Test!"),
-                  value: false,
-                  onChanged: (bool? value) {}
-                ),
-                Slider(
-                  value: 0.4,
-                  onChanged: (double value) {}
-                ),
-                SwitchListTile(
-                  secondary: const Icon(Icons.add_alert),
-                  title: Text("SwitchListTile Test"),
-                  value: true,
-                  onChanged: (bool value) {}
-                ),
-                SwitchListTile(
-                  secondary: const Icon(Icons.add_alert),
-                  title: Text("SwitchListTile Test"),
-                  value: false,
-                  onChanged: (bool value) {}
-                ),
-                CheckboxListTile(
-                  secondary: const Icon(Icons.assessment_rounded),
-                  title: Text("CheckboxList Tile Test!"),
-                  value: false,
-                  onChanged: (bool? value) {}
-                ),
-                SwitchListTile(
-                  secondary: const Icon(Icons.add_alert),
-                  title: Text("SwitchListTile Test"),
-                  value: true,
-                  onChanged: (bool value) {}
-                ),
-                SwitchListTile(
-                  secondary: const Icon(Icons.add_alert),
-                  title: Text("SwitchListTile Test"),
-                  value: false,
-                  onChanged: (bool value) {}
-                ),
-                SwitchListTile(
-                  secondary: const Icon(Icons.add_alert),
-                  title: Text("SwitchListTile Test"),
-                  value: false,
-                  onChanged: (bool value) {}
-                ),
-                CheckboxListTile(
-                  secondary: const Icon(Icons.assessment_rounded),
-                  title: Text("CheckboxList Tile Test!"),
-                  value: true,
-                  onChanged: (bool? value) {}
-                ),
-                CheckboxListTile(
-                  secondary: const Icon(Icons.assessment_rounded),
-                  title: Text("CheckboxList Tile Test!"),
-                  value: true,
-                  onChanged: (bool? value) {}
-                ),
-              ],
+              children: [],
             )
           ),
           gapH30,

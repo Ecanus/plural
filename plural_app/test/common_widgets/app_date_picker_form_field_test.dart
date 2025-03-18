@@ -309,5 +309,34 @@ void main() {
       expect(find.text('Out of range.'), findsOneWidget);
       expect(find.byType(Dialog), findsOneWidget);
     });
+
+    testWidgets("showDatePickerDialog initialValue out of range", (tester) async {
+      final AppForm appForm = AppForm();
+      const fieldName = AskField.deadlineDate;
+      const label = AskDialogText.deadlineDate;
+
+      appForm.setValue(fieldName: fieldName, value: null);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: AppDatePickerFormField(
+              appForm: appForm,
+              fieldName: fieldName,
+              initialValue: DateTime(2000, 1, 1),
+              label: label,
+            ),
+          ),
+        )
+      );
+
+      // Check text set to string of initialValue
+      expect(textFieldController(tester).value.text, "2000-01-01");
+
+      // Open Dialog; should not raise error
+      await tester.tap(find.byType(IconButton));
+      await tester.pumpAndSettle();
+      expect(find.byType(Dialog), findsOneWidget);
+    });
   });
 }
