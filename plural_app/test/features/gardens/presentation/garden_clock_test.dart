@@ -16,7 +16,8 @@ void main() {
           home: Scaffold(
             body: GardenClock(),
           ),
-        ));
+        )
+      );
 
       final displayedTime = DateFormat(Formats.dateYMMdd).format(DateTime.now().toLocal());
 

@@ -185,7 +185,6 @@ class TileContents extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isSponsoredByCurrentUser = ask.isSponsoredByCurrentUser;
     final textColor = hideContent ?
       Colors.transparent : Theme.of(context).colorScheme.onPrimary;
 
@@ -202,7 +201,9 @@ class TileContents extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  AskTimeLeftText(textColor: textColor, ask: ask),
+                  Expanded(
+                    child: AskTimeLeftText(textColor: textColor, ask: ask)
+                  ),
                 ],
               ),
               gapH10,
@@ -218,7 +219,9 @@ class TileContents extends StatelessWidget {
                 ]
               ),
               gapH20,
-              TileIsSponsoredIcon(hideContent: !isSponsoredByCurrentUser || hideContent,) // Always "show" the icon else the icon in the TileViewButton will misalign on redraws of the GardenTimeline
+              TileIsSponsoredIcon(
+                hideContent: !ask.isSponsoredByCurrentUser || hideContent, // Always "show" the icon else the icon in the TileViewButton will misalign on redraws of the GardenTimeline
+              )
             ]
           ),
         ),
