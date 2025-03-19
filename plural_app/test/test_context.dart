@@ -83,50 +83,51 @@ class TestContext {
   RecordModel getAskRecordModel({
     String? id,
     int? boon,
+    DateTime? creationDate,
+    String? creatorID,
     String? currency,
+    DateTime? deadlineDate,
+    String? description,
+    String? instructions,
+    int? targetSum,
     List<String> sponsors = const []
   }) {
-    return RecordModel(
-    id: id ?? ask.id,
-    created: DateFormat(Formats.dateYMMdd).format(ask.creationDate),
-    collectionName: "asks",
-    data: {
+    return RecordModel({
+      "id": id ?? ask.id,
+      "created": DateFormat(Formats.dateYMMdd).format(creationDate ?? ask.creationDate),
+      "collectionName": "asks",
       AskField.boon: boon ?? ask.boon,
-      AskField.creator: ask.creator.id,
+      AskField.creator: creatorID ?? ask.creator.id,
       AskField.currency: currency ?? ask.currency,
-      AskField.description: ask.description,
-      AskField.deadlineDate: DateFormat(Formats.dateYMMdd).format(ask.deadlineDate),
-      AskField.instructions: ask.instructions,
+      AskField.deadlineDate: DateFormat(Formats.dateYMMdd).format(
+        deadlineDate ?? ask.deadlineDate),
+      AskField.description: description ?? ask.description,
+      AskField.instructions: instructions ?? ask.instructions,
       AskField.sponsors: sponsors,
-      AskField.targetSum: ask.targetSum,
+      AskField.targetSum: targetSum ?? ask.targetSum,
       AskField.targetMetDate: ask.targetMetDate ?? "",
       AskField.type: "monetary"
-    }
-  );
+    });
   }
 
   RecordModel getGardenRecordModel() {
-    return RecordModel(
-      id: garden.id,
-      created: "1990-10-16",
-      collectionName: Collection.gardens,
-      data: {
-        GardenField.creator: user.id,
-        GardenField.name: garden.name,
-      }
-    );
+    return RecordModel({
+      "id": garden.id,
+      "created": "1990-10-16",
+      "collectionName": Collection.gardens,
+      GardenField.creator: user.id,
+      GardenField.name: garden.name,
+    });
   }
 
   RecordModel getGardenRecordRecordModel() {
-    return RecordModel(
-      id: userGardenRecord.id,
-      created: "1999-10-08",
-      collectionName: Collection.userGardenRecords,
-      data: {
-        UserGardenRecordField.user: user.id,
-        UserGardenRecordField.garden: garden.id,
-      }
-    );
+    return RecordModel({
+      "id": userGardenRecord.id,
+      "created": "1999-10-08",
+      "collectionName": Collection.userGardenRecords,
+      UserGardenRecordField.user: user.id,
+      UserGardenRecordField.garden: garden.id,
+    });
   }
 
   RecordModel getGardenRecordRecordModelFromJson(String expand) {
@@ -164,41 +165,28 @@ class TestContext {
     });
   }
 
-  RecordModel getUserRecordModel() {
-    return RecordModel(
-      id: user.id,
-      created: "1992-12-23",
-      collectionName: Collection.users,
-      data: {
-        UserField.email: user.email,
-        UserField.username: user.username,
-      }
-    );
+  RecordModel getUserRecordModel({
+    String? id,
+    String? email,
+    String? username,
+  }) {
+    return RecordModel({
+      "id": id ?? user.id,
+      "created": "1992-12-23",
+      "collectionName": Collection.users,
+      UserField.email: email ?? user.email,
+      UserField.username: username ?? user.username,
+    });
   }
 
   RecordModel getUserSettingsRecordModel() {
-    return RecordModel(
-      id: userSettings.id,
-      created: "2001-01-03",
-      collectionName: Collection.userSettings,
-      data: {
-        UserSettingsField.defaultCurrency: "GHS",
-        UserSettingsField.defaultInstructions: "UserSettings record instructions",
-        UserSettingsField.user: user.id,
-      }
-    );
-  }
-}
-
-// For AuthStore()
-class MockModel {
-  String id;
-
-  MockModel(this.id);
-
-  Map<String, dynamic> toJson() {
-    return {
-      GenericField.id: id,
-    };
+    return RecordModel({
+      "id": userSettings.id,
+      "created": "2001-01-03",
+      "collectionName": Collection.userSettings,
+      UserSettingsField.defaultCurrency: "GHS",
+      UserSettingsField.defaultInstructions: "UserSettings record instructions",
+      UserSettingsField.user: user.id,
+  });
   }
 }

@@ -118,13 +118,13 @@ void main() {
 
       // Check AppBottomBar is rendered; UserSettingsDialog not rendered
       expect(find.byType(AppBottomBar), findsOneWidget);
-      expect(find.byType(UserSettingsDialog), findsNothing);
+      expect(find.byType(UserSettingsList), findsNothing);
 
       // Tap IconButton with Icons.settings (opens user settings dialog)
       await tester.tap(find.byIcon(Icons.settings));
       await tester.pumpAndSettle();
 
-      expect(find.byType(UserSettingsDialog), findsOneWidget);
+      expect(find.byType(UserSettingsList), findsOneWidget);
     });
 
     tearDown(() => GetIt.instance.reset());

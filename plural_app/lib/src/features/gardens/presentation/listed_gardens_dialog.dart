@@ -63,7 +63,7 @@ class GardenDialogList extends StatelessWidget {
           leftDialogIcon: Icons.people_alt_rounded,
           leftNavCallback: appDialogRouter.routeToUserDialogListView,
           leftTooltipMessage: AppDialogFooterText.navToUsers,
-          rightDialogIcon: Icons.library_add,
+          rightDialogIcon: Icons.aspect_ratio,
           rightNavCallback: appDialogRouter.routeToAskDialogListView,
           rightTooltipMessage: AppDialogFooterText.navToAsks,
           title: AppDialogFooterText.gardens

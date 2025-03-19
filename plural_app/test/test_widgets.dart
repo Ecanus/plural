@@ -21,14 +21,12 @@ class TestLogin extends StatelessWidget {
     required this.appForm,
     required this.fieldName,
     required this.formKey,
-    required this.pb,
     this.validatorReturnVal,
   });
 
   final AppForm appForm;
   final String fieldName;
   final GlobalKey<FormState> formKey;
-  final PocketBase pb;
   final String? validatorReturnVal;
 
   @override
@@ -48,7 +46,7 @@ class TestLogin extends StatelessWidget {
                   validator: (value) => validatorReturnVal,
                 ),
                 ElevatedButton(
-                  onPressed: () => submitLogIn(context, formKey, appForm, database: pb),
+                  onPressed: () => submitLogIn(context, formKey, appForm),
                   child: Text("x")
                 ),
               ],

@@ -33,13 +33,9 @@ import 'package:plural_app/src/utils/service_locator.dart';
 /// Returns true if log in is successful, else false.
 Future<bool> login(
   String usernameOrEmail,
-  String password, {
-  // primarily for testing
-  PocketBase? database
-}) async {
-  // TODO: Change url dynamically by env
-  var pb = database ?? PocketBase("http://127.0.0.1:8090");
-
+  String password,
+  PocketBase pb
+) async {
   try {
     await pb.collection(Collection.users).authWithPassword(
     usernameOrEmail, password);

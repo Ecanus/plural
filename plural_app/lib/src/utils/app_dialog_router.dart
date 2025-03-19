@@ -60,7 +60,7 @@ class AppDialogRouter {
 
   Future<void> routeToUserSettingsDialogView() async {
     final currentUserSettings = GetIt.instance<AppState>().currentUserSettings!;
-    viewNotifier.value = UserSettingsDialog(userSettings: currentUserSettings);
+    viewNotifier.value = UserSettingsList(userSettings: currentUserSettings);
   }
 
   /// Gardens

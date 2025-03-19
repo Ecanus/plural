@@ -21,8 +21,8 @@ class Ask {
     required this.creator,
     required this.creationDate,
     required this.currency,
-    required this.description,
     required this.deadlineDate,
+    required this.description,
     required this.instructions,
     this.targetMetDate,
     required this.targetSum,
@@ -34,8 +34,8 @@ class Ask {
   final AppUser creator;
   final DateTime creationDate;
   String currency;
-  String description;
   DateTime deadlineDate;
+  String description;
   String instructions;
   DateTime? targetMetDate;
   int targetSum;

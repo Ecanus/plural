@@ -39,9 +39,9 @@ void main() {
 
       // pb.authStore.model
       final authStore = AuthStore();
-      authStore.save("newToken", MockModel(tc.user.id));
+      authStore.save("newToken", tc.getUserRecordModel());
       when(
-        () => pb.authStore.model
+        () => pb.authStore
       ).thenReturn(
         authStore
       );
@@ -80,7 +80,7 @@ void main() {
         (_) async => tc.getUserSettingsRecordModel()
       );
 
-      var loginStatus1 = await login("username", "password", database: pb);
+      var loginStatus1 = await login("username", "password", pb);
       expect(loginStatus1, true);
 
       // RecordService.authWithPassword(), throw Exception
@@ -90,7 +90,7 @@ void main() {
         ClientException()
       );
 
-      var loginStatus2 = await login("username", "password", database: pb);
+      var loginStatus2 = await login("username", "password", pb);
       expect(loginStatus2, false);
     });
 
@@ -110,7 +110,7 @@ void main() {
 
       // pb.authStore
       var authStore = AuthStore();
-      authStore.save("newToken", MockModel(tc.user.id));
+      authStore.save("newToken", tc.getUserRecordModel());
       when(
         () => pb.authStore
       ).thenReturn(

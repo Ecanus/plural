@@ -36,25 +36,26 @@ Future createUserSettingsDialog(BuildContext context) async {
       context: context,
       builder: (BuildContext context) {
         return AppDialog(
-          view: UserSettingsDialog(userSettings: userSettings),
+          view: UserSettingsList(userSettings: userSettings),
         );
       }
     );
   }
 }
 
-class UserSettingsDialog extends StatefulWidget {
-  const UserSettingsDialog({
+class UserSettingsList extends StatefulWidget {
+  const UserSettingsList({
     required this.userSettings,
   });
 
   final AppUserSettings userSettings;
 
   @override
-  State<UserSettingsDialog> createState() => _UserSettingsDialogState();
+  State<UserSettingsList> createState() => _UserSettingsListState();
 }
 
-class _UserSettingsDialogState extends State<UserSettingsDialog> {
+class _UserSettingsListState extends State<UserSettingsList> {
+  late AppDialogRouter _appDialogRouter;
   late AppForm _appForm;
   late GlobalKey<FormState> _formKey;
 
@@ -64,12 +65,11 @@ class _UserSettingsDialogState extends State<UserSettingsDialog> {
 
     _appForm = AppForm.fromMap(widget.userSettings.toMap());
     _formKey = GlobalKey<FormState>();
+    _appDialogRouter = GetIt.instance<AppDialogRouter>();
   }
 
   @override
   Widget build(BuildContext context) {
-    final appDialogRouter = GetIt.instance<AppDialogRouter>();
-
     return Column(
       children: [
         Expanded(
@@ -111,11 +111,11 @@ class _UserSettingsDialogState extends State<UserSettingsDialog> {
           ]
         ),
         AppDialogNavFooter(
-          leftDialogIcon: Icons.library_add,
-          leftNavCallback: appDialogRouter.routeToAskDialogListView,
+          leftDialogIcon: Icons.aspect_ratio,
+          leftNavCallback: _appDialogRouter.routeToAskDialogListView,
           leftTooltipMessage: AppDialogFooterText.navToAsks,
           rightDialogIcon: Icons.people_alt_rounded,
-          rightNavCallback: appDialogRouter.routeToUserDialogListView,
+          rightNavCallback: _appDialogRouter.routeToUserDialogListView,
           rightTooltipMessage: AppDialogFooterText.navToUsers,
           title: AppDialogFooterText.settings
         )
