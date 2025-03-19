@@ -45,14 +45,14 @@ void main() {
       );
 
       // Check AskDialogList not yet displayed
-      expect(find.byType(UserSettingsDialog), findsNothing);
+      expect(find.byType(UserSettingsList), findsNothing);
 
       // Tap ElevatedButton (to open dialog)
       await tester.tap(find.byType(ElevatedButton));
       await tester.pumpAndSettle();
 
       // Check expected values are found
-      expect(find.byType(UserSettingsDialog), findsOneWidget);
+      expect(find.byType(UserSettingsList), findsOneWidget);
       expect(find.byType(AppCurrencyPickerFormField), findsOneWidget);
       expect(find.byType(AppTextFormField), findsOneWidget);
       expect(find.byType(LogOutButton), findsOneWidget);

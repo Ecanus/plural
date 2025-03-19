@@ -273,7 +273,7 @@ class TileEditAskButton extends StatelessWidget {
           color: Theme.of(context).colorScheme.onPrimary,
           icon: const Icon(Icons.mode_edit_outlined),
           hoverColor: Theme.of(context).colorScheme.onPrimary
-            .withOpacity(AppOpacities.point3),
+            .withValues(alpha: AppOpacities.point3),
           onPressed: () => createEditableAskDialog(context: context, ask: ask),
           padding: EdgeInsets.zero,
         ),

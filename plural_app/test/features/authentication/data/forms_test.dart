@@ -299,9 +299,13 @@ void main() {
       final pb = MockPocketBase();
       final recordService = MockRecordService();
 
+      // GetIt
+      final getIt = GetIt.instance;
+      getIt.registerLazySingleton<PocketBase>(() => pb);
+
       // pb.authStore
       var authStore = AuthStore();
-      authStore.save("newToken", MockModel(tc.user.id));
+      authStore.save("newToken", tc.getUserRecordModel());
       when(
         () => pb.authStore
       ).thenReturn(
@@ -348,7 +352,7 @@ void main() {
               appForm: appForm,
               fieldName: fieldName,
               formKey: formKey,
-              pb: pb,)
+            )
           ),
           GoRoute(
             path: Routes.landing,
@@ -408,12 +412,17 @@ void main() {
         ..setValue(fieldName: SignInField.usernameOrEmail, value: "username")
         ..setValue(fieldName: UserField.password, value: "password");
 
+      // pb
       final pb = MockPocketBase();
       final recordService = MockRecordService();
 
+      // GetIt
+      final getIt = GetIt.instance;
+      getIt.registerLazySingleton<PocketBase>(() => pb);
+
       // pb.authStore
       var authStore = AuthStore();
-      authStore.save("newToken", MockModel(tc.user.id));
+      authStore.save("newToken", tc.getUserRecordModel());
       when(
         () => pb.authStore
       ).thenReturn(
@@ -460,7 +469,7 @@ void main() {
               appForm: appForm,
               fieldName: fieldName,
               formKey: formKey,
-              pb: pb,)
+            )
           ),
           GoRoute(
             path: Routes.landing,
@@ -534,9 +543,13 @@ void main() {
       final pb = MockPocketBase();
       final recordService = MockRecordService();
 
+      // GetIt
+      final getIt = GetIt.instance;
+      getIt.registerLazySingleton<PocketBase>(() => pb);
+
       // pb.authStore
       var authStore = AuthStore();
-      authStore.save("newToken", MockModel(tc.user.id));
+      authStore.save("newToken", tc.getUserRecordModel());
       when(
         () => pb.authStore
       ).thenReturn(
@@ -583,8 +596,8 @@ void main() {
               appForm: appForm,
               fieldName: fieldName,
               formKey: formKey,
-              pb: pb,
-              validatorReturnVal: "error!")
+              validatorReturnVal: "error!"
+            )
           ),
           GoRoute(
             path: Routes.landing,
@@ -711,8 +724,6 @@ void main() {
       expect(testList.isNotEmpty, true);
     });
 
-    tearDown(() => GetIt.instance.reset());
-
     ft.testWidgets("invalid signUp", (tester) async {
       final tc = TestContext();
       final GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -796,8 +807,6 @@ void main() {
       );
     });
 
-    tearDown(() => GetIt.instance.reset());
-
     ft.testWidgets("invalid form", (tester) async {
       final tc = TestContext();
       final GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -876,8 +885,6 @@ void main() {
       // Check testList still has values (no error)
       expect(testList.isNotEmpty, true);
     });
-
-    tearDown(() => GetIt.instance.reset());
   });
 
   group("Auth submitForgotPassword", () {

@@ -17,15 +17,15 @@ class AppRouter {
       routes: [
         GoRoute(
           path: Routes.home,
-          builder: (context, state) => GardenPage()
+          builder: (_, __) => GardenPage()
         ),
         GoRoute(
           path: Routes.landing,
-          builder: (context, state) => LandingPage(),
+          builder: (_, __) => LandingPage(),
         ),
         GoRoute(
           path: Routes.signIn,
-          builder: (context, state) => SignInPage(),
+          builder: (_, __) => SignInPage(),
         )
       ]
     );

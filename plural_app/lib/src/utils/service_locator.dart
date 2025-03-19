@@ -1,9 +1,6 @@
 import 'package:get_it/get_it.dart';
 import 'package:pocketbase/pocketbase.dart';
 
-// Constants
-import 'package:plural_app/src/constants/fields.dart';
-
 // Asks
 import 'package:plural_app/src/features/asks/data/asks_repository.dart';
 
@@ -58,8 +55,8 @@ Future<void> registerGetItInstances(PocketBase pb) async {
     () => AppState()
   );
 
-  var userMap = pb.authStore.model.toJson();
-  await setInitialAppStateValues(userMap[GenericField.id]);
+  var userID = pb.authStore.record!.id;
+  await setInitialAppStateValues(userID);
 }
 
 

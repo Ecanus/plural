@@ -25,21 +25,6 @@ import 'package:plural_app/src/utils/service_locator.dart';
 import '../test_context.dart';
 import '../test_mocks.dart';
 
-// For AuthStore()
-class MockModel {
-  String id;
-
-  MockModel(this.id);
-
-  void clear() {}
-
-  Map<String, dynamic> toJson() {
-    return {
-      GenericField.id: id,
-    };
-  }
-}
-
 void main() {
   group("Service locator test", () {
     test("registerGetItInstances", () async {
@@ -50,7 +35,7 @@ void main() {
 
       // pb.authStore.model
       final authStore = AuthStore();
-      authStore.save("newToken", MockModel(tc.user.id));
+      authStore.save("newToken", tc.getUserRecordModel());
       when(
         () => pb.authStore.model
       ).thenReturn(

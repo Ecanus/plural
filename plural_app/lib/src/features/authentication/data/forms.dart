@@ -62,19 +62,26 @@ Future<void> submitUpdateSettings(
 Future<void> submitLogIn(
   BuildContext context,
   GlobalKey<FormState> formKey,
-  AppForm appForm, {
-  // primarily for testing
-  PocketBase? database,
-}) async {
+  AppForm appForm,
+) async {
   if (formKey.currentState!.validate()) {
     // Save form
     formKey.currentState!.save();
+
+    // Get database
+    // TODO: Change url dynamically by env
+    PocketBase pb;
+    try {
+      pb = GetIt.instance<PocketBase>(); // primarily for testing
+    } on StateError catch(_) {
+      pb = PocketBase("http://127.0.0.1:8090");
+    }
 
     // Login
     var isValid = await login(
       appForm.getValue(fieldName: SignInField.usernameOrEmail),
       appForm.getValue(fieldName: UserField.password),
-      database: database,
+      pb,
     );
 
     if (isValid && context.mounted) {
