@@ -330,10 +330,13 @@ class AuthRepository {
   ///
   /// Updates the [AppState]'s currentUserSettings whenever a change is made.
   Future<Function> subscribeToUserSettings() {
-    final currentUserSettings = GetIt.instance<AppState>().currentUserSettings!;
-
     Future<Function> unsubscribeFunc = pb.collection(Collection.userSettings)
-      .subscribe(currentUserSettings.id, (e) async {
+      .subscribe(Subscribe.all, (e) async { // can't subscribe directly on userSettings.id because of pocketbase bug
+        final currentUserSettings = GetIt.instance<AppState>().currentUserSettings!;
+        final idMatch = currentUserSettings.user.id == pb.authStore.record?.id;
+
+        if (!idMatch) return;
+
         switch (e.action) {
           case EventAction.update:
             GetIt.instance<AppState>().currentUserSettings =
