@@ -101,6 +101,7 @@ void main() {
       final pb = MockPocketBase();
       final getIt = GetIt.instance;
 
+      final recordService = MockRecordService();
       final mockBuildContext = MockBuildContext();
       final mockGoRouter = MockGoRouter();
 
@@ -117,6 +118,35 @@ void main() {
         authStore
       );
 
+      // pb.collection
+      when(
+        () => pb.collection(Collection.asks)
+      ).thenAnswer(
+        (_) => recordService as RecordService
+      );
+      when(
+        () => pb.collection(Collection.gardens)
+      ).thenAnswer(
+        (_) => recordService as RecordService
+      );
+      when(
+        () => pb.collection(Collection.users)
+      ).thenAnswer(
+        (_) => recordService as RecordService
+      );
+      when(
+        () => pb.collection(Collection.userSettings)
+      ).thenAnswer(
+        (_) => recordService as RecordService
+      );
+
+      // RecordService.unsubscribe()
+      when(
+        () => recordService.unsubscribe()
+      ).thenAnswer(
+        (_) async => () {}
+      );
+
       // BuildContext.mounted
       when(
         () => mockBuildContext.mounted
@@ -130,7 +160,9 @@ void main() {
       ).thenReturn(null);
 
       await logout(mockBuildContext, goRouter: mockGoRouter);
+
       verify(() => pb.authStore).called(1);
+      verify(() => recordService.unsubscribe()).called(4);
       verify(() => mockBuildContext.mounted).called(1);
       verify(() => mockGoRouter.go(any())).called(1);
     });

@@ -33,11 +33,11 @@ void main() {
       final getIt = GetIt.instance;
       final recordService = MockRecordService();
 
-      // pb.authStore.model
+      // pb.authStore
       final authStore = AuthStore();
       authStore.save("newToken", tc.getUserRecordModel());
       when(
-        () => pb.authStore.model
+        () => pb.authStore
       ).thenReturn(
         authStore
       );
@@ -82,7 +82,7 @@ void main() {
 
     tearDown(() => GetIt.instance.reset());
 
-    test("clearGetItInstances", () async {
+    test("clearGetItInstance", () async {
       final pb = MockPocketBase();
       final getIt = GetIt.instance;
 
@@ -90,29 +90,37 @@ void main() {
       getIt.registerLazySingleton<PocketBase>(
         () => pb
       );
-
-      // pb.authStore.model
-      final authStore = AuthStore();
-      when(
-        () => pb.authStore
-      ).thenReturn(
-        authStore
+      getIt.registerLazySingleton<AppDialogRouter>(
+        () => AppDialogRouter()
       );
-
-      // test logout == false
-      expect(getIt.isRegistered<PocketBase>(), true);
-      await clearGetItInstances(logout: false);
-      expect(getIt.isRegistered<PocketBase>(), false);
-
-      // test logout == true
-      getIt.registerLazySingleton<PocketBase>(
-        () => pb
+      getIt.registerLazySingleton<AsksRepository>(
+        () => AsksRepository(pb: pb)
+      );
+      getIt.registerLazySingleton<AuthRepository>(
+        () => AuthRepository(pb: pb)
+      );
+      getIt.registerLazySingleton<GardensRepository>(
+        () => GardensRepository(pb: pb)
+      );
+      getIt.registerLazySingleton<AppState>(
+        () => AppState()
       );
 
       expect(getIt.isRegistered<PocketBase>(), true);
-      await clearGetItInstances(logout: true);
+      expect(getIt.isRegistered<AppDialogRouter>(), true);
+      expect(getIt.isRegistered<AsksRepository>(), true);
+      expect(getIt.isRegistered<AuthRepository>(), true);
+      expect(getIt.isRegistered<GardensRepository>(), true);
+      expect(getIt.isRegistered<AppState>(), true);
+
+      await clearGetItInstance();
+
       expect(getIt.isRegistered<PocketBase>(), false);
-      verify(() => pb.authStore.clear()).called(1);
+      expect(getIt.isRegistered<AppDialogRouter>(), false);
+      expect(getIt.isRegistered<AsksRepository>(), false);
+      expect(getIt.isRegistered<AuthRepository>(), false);
+      expect(getIt.isRegistered<GardensRepository>(), false);
+      expect(getIt.isRegistered<AppState>(), false);
     });
   });
 }

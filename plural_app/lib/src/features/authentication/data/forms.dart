@@ -28,6 +28,7 @@ Future<void> submitUpdateSettings(
   BuildContext context,
   GlobalKey<FormState> formKey,
   AppForm appForm,
+  String currentRoute,
 ) async {
   if (formKey.currentState!.validate()) {
     // Save form
@@ -46,14 +47,24 @@ Future<void> submitUpdateSettings(
       // Display Success Snackbar
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
 
-      // Reload Dialog (and reacquire user settings)
-      GetIt.instance<AppDialogRouter>().routeToUserSettingsDialogView();
+      switch(currentRoute) {
+        case Routes.home:
+          // Reload Dialog (and reacquire user settings)
+          GetIt.instance<AppDialogRouter>().routeToUserSettingsDialogView();
+        default:
+          return;
+      }
     } else {
       // Add errors to corresponding fields
       appForm.setErrors(errorsMap: errorsMap);
 
-      // Reload Dialog (and reacquire user settings)
-      GetIt.instance<AppDialogRouter>().routeToUserSettingsDialogView();
+      switch(currentRoute) {
+        case Routes.home:
+          // Reload Dialog (and reacquire user settings)
+          GetIt.instance<AppDialogRouter>().routeToUserSettingsDialogView();
+        default:
+          return;
+      }
     }
   }
 }

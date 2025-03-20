@@ -24,7 +24,7 @@ Future<void> registerGetItInstances(PocketBase pb) async {
     () => pb
   );
 
-  // AppDialogManager
+  // AppDialogRouter
   getIt.registerLazySingleton<AppDialogRouter>(
     () => AppDialogRouter()
   );
@@ -75,11 +75,6 @@ Future<void> setInitialAppStateValues(userID) async {
 }
 
 /// Resets the [GetIt] instance used in the application.
-/// If [logout] is true, will also clear the database authentication tokens.
-Future<void> clearGetItInstances({bool logout = false}) async {
-  final getIt = GetIt.instance;
-
-  if (logout) getIt<PocketBase>().authStore.clear();
-
-  await getIt.reset();
+Future<void> clearGetItInstance() async {
+  await GetIt.instance.reset();
 }

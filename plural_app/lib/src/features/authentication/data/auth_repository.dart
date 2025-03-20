@@ -40,7 +40,7 @@ Future<bool> login(
     await pb.collection(Collection.users).authWithPassword(
     usernameOrEmail, password);
 
-    await clearGetItInstances();
+    await clearGetItInstance();
     await registerGetItInstances(pb);
 
     return true;
@@ -60,11 +60,20 @@ Future<void> logout(
   // primarily for testing
   GoRouter? goRouter
   }) async {
-  clearGetItInstances(logout: true);
+  final pb = GetIt.instance<PocketBase>();
+
+  // Clear all database subscriptions
+  await pb.collection(Collection.asks).unsubscribe();
+  await pb.collection(Collection.gardens).unsubscribe();
+  await pb.collection(Collection.users).unsubscribe();
+  await pb.collection(Collection.userSettings).unsubscribe();
+
+  // Clear logged in credentials and GetIt instance
+  pb.authStore.clear();
+  clearGetItInstance();
 
   if (context.mounted) {
     var router = goRouter ?? GoRouter.of(context);
-
     router.go(Routes.signIn);
   }
 }
@@ -316,27 +325,16 @@ class AuthRepository {
     return unsubscribeFunc;
   }
 
-  /// Subscribes to any changes made in the [UserSettings] collection to any
-  /// [UserSettings] record associated with a [User] associated with
-  /// the given [gardenID].
+  /// Subscribes to any changes made in the [UserSettings] collection to the
+  /// [UserSettings] record stored in [AppState].currentUserSettings.
   ///
   /// Updates the [AppState]'s currentUserSettings whenever a change is made.
-  Future<Function> subscribeToUserSettings(String gardenID) {
+  Future<Function> subscribeToUserSettings() {
+    final currentUserSettings = GetIt.instance<AppState>().currentUserSettings!;
+
     Future<Function> unsubscribeFunc = pb.collection(Collection.userSettings)
-      .subscribe(Subscribe.all, (e) async {
-        var userID = e.record!.toJson()[UserSettingsField.user];
-
-        // Only respond to changes if the userID belongs to a user in the given gardenID
-        var gardenRecord = await getUserGardenRecord(
-          userID: userID,
-          gardenID: gardenID,
-        );
-
-        if (gardenRecord == null) return;
-
+      .subscribe(currentUserSettings.id, (e) async {
         switch (e.action) {
-          case EventAction.create:
-          case EventAction.delete:
           case EventAction.update:
             GetIt.instance<AppState>().currentUserSettings =
               await getCurrentUserSettings();

@@ -3,6 +3,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import "package:mocktail/mocktail.dart";
 
+// Auth
+import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
+
 // Gardens
 import 'package:plural_app/src/features/gardens/data/gardens_repository.dart';
 import 'package:plural_app/src/features/gardens/presentation/landing_page.dart';
@@ -24,12 +27,22 @@ void main() {
     testWidgets("widgets", (tester) async {
       final tc = TestContext();
       final appState = AppState()
-                        ..currentUser = tc.user;
+                        ..currentUser = tc.user
+                        ..currentUserSettings = tc.userSettings;
 
       final getIt = GetIt.instance;
+      final mockAuthRepository = MockAuthRepository();
       final mockGardensRepository = MockGardensRepository();
       getIt.registerLazySingleton<AppState>(() => appState);
+      getIt.registerLazySingleton<AuthRepository>(() => mockAuthRepository);
       getIt.registerLazySingleton<GardensRepository>(() => mockGardensRepository);
+
+      // AuthRepository.subscribeToUserSettings()
+      when(
+        () => mockAuthRepository.subscribeToUserSettings()
+      ).thenAnswer(
+        (_) async => () {}
+      );
 
       // GardensRepository.getGardensByUser()
       when(

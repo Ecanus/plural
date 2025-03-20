@@ -18,23 +18,21 @@ class LandingPageGardensTab extends StatelessWidget {
     final gardensRepository = GetIt.instance<GardensRepository>();
     final appState = GetIt.instance<AppState>();
 
-    return SizedBox(
-      child: Column(
-        children: [
-          FutureBuilder<List<Garden>>(
-            future: gardensRepository.getGardensByUser(appState.currentUserID!),
-            builder: (BuildContext context, AsyncSnapshot<List<Garden>> snapshot) {
-              if (snapshot.hasData) {
-                return LandingPageGardensList(gardens: snapshot.data!);
-              } else if (snapshot.hasError) {
-                return LandingPageGardensListError(error: snapshot.error);
-              } else {
-                return LandingPageGardensListLoading();
-              }
+    return Column(
+      children: [
+        FutureBuilder<List<Garden>>(
+          future: gardensRepository.getGardensByUser(appState.currentUserID!),
+          builder: (BuildContext context, AsyncSnapshot<List<Garden>> snapshot) {
+            if (snapshot.hasData) {
+              return LandingPageGardensList(gardens: snapshot.data!);
+            } else if (snapshot.hasError) {
+              return LandingPageGardensListError(error: snapshot.error);
+            } else {
+              return LandingPageGardensListLoading();
             }
-          ),
-        ]
-      ),
+          }
+        ),
+      ]
     );
   }
 }

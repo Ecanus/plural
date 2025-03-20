@@ -12,6 +12,7 @@ import 'package:plural_app/src/common_widgets/app_text_form_field.dart';
 import 'package:plural_app/src/constants/app_sizes.dart';
 import 'package:plural_app/src/constants/app_values.dart';
 import 'package:plural_app/src/constants/fields.dart';
+import 'package:plural_app/src/constants/routes.dart';
 
 // Auth
 import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
@@ -73,40 +74,36 @@ class _UserSettingsListState extends State<UserSettingsList> {
     return Column(
       children: [
         Expanded(
-          child: ListView(
-            padding: const EdgeInsets.all(AppPaddings.p35),
-            children: [
-              Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    AppCurrencyPickerFormField(
-                      appForm: _appForm,
-                      fieldName: UserSettingsField.defaultCurrency,
-                      initialValue: widget.userSettings.defaultCurrency,
-                      label: UserSettingsDialogText.defaultCurrency,
-                    ),
-                    AppTextFormField(
-                      appForm: _appForm,
-                      fieldName: UserSettingsField.defaultInstructions,
-                      initialValue: widget.userSettings.defaultInstructions,
-                      label: UserSettingsDialogText.defaultInstructions,
-                      maxLength: AppMaxLengths.max200,
-                      maxLines: null,
-                    ),
-                    gapH30,
-                    LogOutButton(),
-                  ],
+          child: Form(
+            key: _formKey,
+            child: ListView(
+              padding: const EdgeInsets.all(AppPaddings.p35),
+              children: [
+                AppCurrencyPickerFormField(
+                  appForm: _appForm,
+                  fieldName: UserSettingsField.defaultCurrency,
+                  initialValue: widget.userSettings.defaultCurrency,
+                  label: UserSettingsDialogText.defaultCurrency,
                 ),
-              ),
-            ],
+                AppTextFormField(
+                  appForm: _appForm,
+                  fieldName: UserSettingsField.defaultInstructions,
+                  initialValue: widget.userSettings.defaultInstructions,
+                  label: UserSettingsDialogText.defaultInstructions,
+                  maxLength: AppMaxLengths.max200,
+                  maxLines: null,
+                ),
+                gapH30,
+                LogOutButton(),
+              ],
+            ),
           ),
         ),
         AppDialogFooterBuffer(
           buttons: [
             AppDialogFooterBufferSubmitButton(
               callback: submitUpdateSettings,
-              positionalArguments: [context, _formKey, _appForm]
+              positionalArguments: [context, _formKey, _appForm, Routes.home]
             ),
           ]
         ),
