@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
+
+// Auth
+import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
 
 // Gardens
 import 'package:plural_app/src/features/gardens/presentation/landing_page_settings_tab.dart';
@@ -26,6 +30,9 @@ class _LandingPageState extends State<LandingPage> {
       Tab(text: LandingPageText.gardens),
       Tab(text: LandingPageText.settings)
     ];
+
+    // Subscribe to UserSettings
+    GetIt.instance<AuthRepository>().subscribeToUserSettings();
   }
 
   @override

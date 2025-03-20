@@ -30,7 +30,7 @@ import '../../../test_widgets.dart';
 
 void main() {
   group("Auth submitUpdateSettings", () {
-    ft.testWidgets("valid update", (tester) async {
+    ft.testWidgets("valid update home", (tester) async {
       final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
       // AppForm
@@ -76,7 +76,8 @@ void main() {
                         validator: (value) => null,
                       ),
                       ElevatedButton(
-                        onPressed: () => submitUpdateSettings(context, formKey, appForm),
+                        onPressed: () => submitUpdateSettings(
+                          context, formKey, appForm, Routes.home),
                         child: Text("x")
                       ),
                     ],
@@ -105,6 +106,88 @@ void main() {
       // Check methods were called; check expected values are found
       verify(() => mockAuthRepository.updateUserSettings(appForm.fields)).called(1);
       verify(() => mockAppDialogRouter.routeToUserSettingsDialogView()).called(1);
+      expect(formKey.currentState!.validate(), true);
+      expect(ft.find.byType(SnackBar), ft.findsOneWidget);
+    });
+
+    tearDown(() => GetIt.instance.reset());
+
+    ft.testWidgets("valid update landing", (tester) async {
+      final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+      // AppForm
+      const fieldName = "champs";
+      final appForm = AppForm()
+                      ..setValue(fieldName: fieldName, value: null);
+
+      // GetIt
+      final getIt = GetIt.instance;
+      final mockAuthRepository = MockAuthRepository();
+      final mockAppDialogRouter = MockAppDialogRouter();
+      getIt.registerLazySingleton<AuthRepository>(() => mockAuthRepository);
+      getIt.registerLazySingleton<AppDialogRouter>(() => mockAppDialogRouter);
+
+      // AppDialogRouter.routeToUserSettingsDialogView()
+      when(
+        () => mockAppDialogRouter.routeToUserSettingsDialogView()
+      ).thenAnswer(
+        (_) async => {}
+      );
+
+      // AuthRepository.updateUserSettings()
+      when(
+        () => mockAuthRepository.updateUserSettings(appForm.fields)
+      ).thenAnswer(
+        (_) async => (true, {})
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (BuildContext context) {
+                return Form(
+                  key: formKey,
+                  child: ListView(
+                    children: [
+                      TextFormField(
+                        onSaved: (value) => appForm.save(
+                          fieldName: fieldName,
+                          value: "New Settings Value!",
+                        ),
+                        validator: (value) => null,
+                      ),
+                      ElevatedButton(
+                        onPressed: () => submitUpdateSettings(
+                          context, formKey, appForm, Routes.landing),
+                        child: Text("x")
+                      ),
+                    ],
+                  ),
+                );
+              })
+          ),
+        )
+      );
+
+      // Check appForm not yet saved
+      expect(appForm.getValue(fieldName: fieldName), null);
+
+      // Check no method calls before submit; no snackbar
+      verifyNever(() => mockAuthRepository.updateUserSettings(appForm.fields));
+      verifyNever(() => mockAppDialogRouter.routeToUserSettingsDialogView());
+      expect(ft.find.byType(SnackBar), ft.findsNothing);
+
+      // Tap ElevatedButton (to call submitCreate)
+      await tester.tap(ft.find.byType(ElevatedButton));
+      await tester.pumpAndSettle();
+
+      // Check appForm has saved new value
+      expect(appForm.getValue(fieldName: fieldName), "New Settings Value!");
+
+      // Check methods were called; check expected values are found
+      verify(() => mockAuthRepository.updateUserSettings(appForm.fields)).called(1);
+      verifyNever(() => mockAppDialogRouter.routeToUserSettingsDialogView());
       expect(formKey.currentState!.validate(), true);
       expect(ft.find.byType(SnackBar), ft.findsOneWidget);
     });
@@ -157,7 +240,8 @@ void main() {
                         validator: (value) => null,
                       ),
                       ElevatedButton(
-                        onPressed: () => submitUpdateSettings(context, formKey, appForm),
+                        onPressed: () => submitUpdateSettings(
+                          context, formKey, appForm, Routes.home),
                         child: Text("x")
                       ),
                     ],
@@ -241,7 +325,8 @@ void main() {
                         validator: (value) => "error!",
                       ),
                       ElevatedButton(
-                        onPressed: () => submitUpdateSettings(context, formKey, appForm),
+                        onPressed: () => submitUpdateSettings(
+                          context, formKey, appForm, Routes.home),
                         child: Text("x")
                       ),
                     ],

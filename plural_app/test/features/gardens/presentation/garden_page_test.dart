@@ -66,7 +66,7 @@ void main() {
 
       // AuthRepository.subscribeToUserSettings()
       when(
-        () => mockAuthRepository.subscribeToUserSettings(any())
+        () => mockAuthRepository.subscribeToUserSettings()
       ).thenAnswer(
         (_) async => () {}
       );

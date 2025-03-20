@@ -24,10 +24,6 @@ class GardenPage extends StatefulWidget {
 }
 
 class _GardenPageState extends State<GardenPage> {
-  late Future<Function> _asksUnsubscribe;
-  late Future<Function> _gardensUnsubscribe;
-  late Future<Function> _usersUnsubscribe;
-  late Future<Function> _userSettingsUnsubscribe;
 
   @override
   void initState() {
@@ -36,22 +32,18 @@ class _GardenPageState extends State<GardenPage> {
     var appState = GetIt.instance<AppState>();
     var currentGarden = appState.currentGarden!;
 
-    _asksUnsubscribe = GetIt.instance<AsksRepository>().subscribeTo(
+    GetIt.instance<AsksRepository>().subscribeTo(
       currentGarden.id,
       appState.notifyAllListeners
     );
 
-    _gardensUnsubscribe = GetIt.instance<GardensRepository>().subscribeTo(
+    GetIt.instance<GardensRepository>().subscribeTo(
       currentGarden.id
     );
 
-    _usersUnsubscribe = GetIt.instance<AuthRepository>().subscribeToUsers(
+    GetIt.instance<AuthRepository>().subscribeToUsers(
       currentGarden.id,
       appState.notifyAllListeners
-    );
-
-    _userSettingsUnsubscribe = GetIt.instance<AuthRepository>().subscribeToUserSettings(
-      currentGarden.id,
     );
   }
 
