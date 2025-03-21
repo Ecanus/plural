@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:pocketbase/pocketbase.dart';
 
+// Constants
+import 'package:plural_app/src/constants/fields.dart';
+
 // Auth
 import 'package:plural_app/src/features/authentication/data/forms.dart';
 
@@ -78,23 +81,25 @@ class TestTabView extends StatefulWidget {
 }
 
 class _TestTabViewState extends State<TestTabView> with SingleTickerProviderStateMixin {
-  late List<Widget> _tabs;
+  late List<Tab> _tabs;
+  late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
 
     // Tabs
-    _tabs = <Widget>[
-      BlankPage(),
-      TestSignUpTab(
-        appForm: widget.appForm,
-        fieldName: widget.fieldName,
-        formKey: widget.formKey,
-        pb: widget.pb,
-        validatorReturnVal: widget.validatorReturnVal,
-      ),
+    _tabs = <Tab>[
+      Tab(text: "BlankPage"),
+      Tab(text: "TestSignUpTab"),
     ];
+
+    // Tab Controller
+    _tabController = TabController(initialIndex: 1, length: _tabs.length, vsync: this);
+    widget.appForm.setValue(
+      fieldName: AppFormFields.tabController,
+      value: _tabController
+    );
   }
 
   @override
@@ -111,10 +116,18 @@ class _TestTabViewState extends State<TestTabView> with SingleTickerProviderStat
                     appBar: AppBar(
                       title: const Text("Tab View")
                     ),
-                    body: DefaultTabController(
-                      initialIndex: 1,
-                      length: _tabs.length,
-                      child: TabBar(tabs: _tabs),
+                    body: TabBarView(
+                      controller: _tabController,
+                      children: [
+                        BlankPage(),
+                        TestSignUpTab(
+                          appForm: widget.appForm,
+                          fieldName: widget.fieldName,
+                          formKey: widget.formKey,
+                          pb: widget.pb,
+                          validatorReturnVal: widget.validatorReturnVal,
+                        ),
+                      ]
                     ),
                   ),
                 ),

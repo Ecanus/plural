@@ -56,6 +56,10 @@ class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateM
     // Tab Controller
     _tabController = TabController(length: _tabs.length, vsync: this);
     _tabController.addListener(_clearAppFormErrors);
+    _appForm.setValue(
+      fieldName: AppFormFields.tabController,
+      value: _tabController
+    );
   }
 
   void _clearAppFormErrors() {
@@ -99,7 +103,7 @@ class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateM
           ),
         ),
       ),
-      bottomSheet: MediaQuery.sizeOf(context).height > AppHeights.h500 ?
+      bottomSheet: MediaQuery.sizeOf(context).height > AppHeights.h800 ?
         AppLogo()
         : null,
     );

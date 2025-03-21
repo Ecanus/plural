@@ -180,12 +180,34 @@ void main() {
       ).thenAnswer(
         (_) => recordService as RecordService
       );
+      when(
+        () => pb.collection(Collection.userSettings)
+      ).thenAnswer(
+        (_) => recordService as RecordService
+      );
 
       // RecordService.create()
       when(
-        () => recordService.create(body: any(named: "body"))
+        () => recordService.create(body: {
+          UserField.email: email,
+          UserField.firstName: "firstName",
+          UserField.lastName: "lastName",
+          UserField.password: "password",
+          UserField.passwordConfirm: "passwordConfirm",
+          UserField.username: "username",
+          UserField.emailVisibility: false,
+        })
       ).thenAnswer(
         (_) async => tc.getUserRecordModel()
+      );
+      when(
+        () => recordService.create(body: {
+          UserSettingsField.defaultCurrency: "",
+          UserSettingsField.defaultInstructions: "",
+          UserSettingsField.user: tc.getUserRecordModel().id,
+        })
+      ).thenAnswer(
+        (_) async => tc.getUserSettingsRecordModel()
       );
 
       // RecordService.requestVerification()
@@ -207,7 +229,20 @@ void main() {
 
       expect(signupStatus1, true);
       expect(errorsMap1.isEmpty, true);
-      verify(() => recordService.create(body: any(named: "body"))).called(1);
+      verify(() => recordService.create(body: {
+          UserField.email: email,
+          UserField.firstName: "firstName",
+          UserField.lastName: "lastName",
+          UserField.password: "password",
+          UserField.passwordConfirm: "passwordConfirm",
+          UserField.username: "username",
+          UserField.emailVisibility: false,
+      })).called(1);
+      verify(() => recordService.create(body: {
+        UserSettingsField.defaultCurrency: "",
+        UserSettingsField.defaultInstructions: "",
+        UserSettingsField.user: tc.getUserRecordModel().id,
+      })).called(1);
       verify(() => recordService.requestVerification(email)).called(1);
 
       // RecordService.create(), throw exception

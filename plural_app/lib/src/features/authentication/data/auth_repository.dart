@@ -38,7 +38,7 @@ Future<bool> login(
 ) async {
   try {
     await pb.collection(Collection.users).authWithPassword(
-    usernameOrEmail, password);
+      usernameOrEmail, password);
 
     await clearGetItInstance();
     await registerGetItInstances(pb);
@@ -97,14 +97,24 @@ Future<(bool, Map)> signup(
 
   try {
     // Create User
-    await pb.collection(Collection.users).create(
+    final userRecord = await pb.collection(Collection.users).create(
       body: {
         UserField.email: email,
         UserField.firstName: firstName,
         UserField.lastName: lastName,
         UserField.password: password,
         UserField.passwordConfirm: passwordConfirm,
-        UserField.username: username
+        UserField.username: username,
+        UserField.emailVisibility: false,
+      }
+    );
+
+    // Create UserSettings
+    await pb.collection(Collection.userSettings).create(
+      body: {
+        UserSettingsField.defaultCurrency: "",
+        UserSettingsField.defaultInstructions: "",
+        UserSettingsField.user: userRecord.id,
       }
     );
 

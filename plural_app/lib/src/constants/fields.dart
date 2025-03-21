@@ -1,6 +1,7 @@
 class AppFormFields {
   static const error = "error";
   static const rebuild = "rebuild";
+  static const tabController = "tabController";
 }
 
 class AskField {
@@ -34,6 +35,7 @@ class SignInField {
 
 class UserField {
   static const email = "email";
+  static const emailVisibility = "emailVisibility"; // only used for User creation in db
   static const firstName = "firstName";
   static const instructions = "instructions";
   static const lastName = "lastName";

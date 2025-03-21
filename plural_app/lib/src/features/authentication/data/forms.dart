@@ -140,7 +140,8 @@ Future<void> submitSignUp(
 
     if (isValid && context.mounted) {
       // Go to log in tab
-      DefaultTabController.of(context).animateTo(AuthConstants.logInTabIndex);
+      appForm.getValue(fieldName: AppFormFields.tabController).animateTo(
+        AuthConstants.logInTabIndex);
 
       var snackBar = AppSnackbars.getSuccessSnackbar(
         SnackbarText.sentUserVerificationEmail,
