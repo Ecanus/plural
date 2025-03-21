@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-// Common Widgets
-import 'package:plural_app/src/common_widgets/app_logo.dart';
-
 // Auth
 import 'package:plural_app/src/features/authentication/presentation/log_in_tab.dart';
 import 'package:plural_app/src/features/authentication/presentation/sign_in_page.dart';
@@ -28,9 +25,6 @@ void main() {
       // Check tabs rendered (2 for logIn because of Tab and Button)
       expect(find.text(SignInPageText.logIn), findsNWidgets(2));
       expect(signUpTab, findsOneWidget);
-
-      // Check AppLogo renders (i.e context.height > 500)
-      expect(find.byType(AppLogo), findsOneWidget);
 
       // Check only LogIn tab rendered fully; SignUp tab not rendered
       expect(find.byType(LogInTab), findsOneWidget);

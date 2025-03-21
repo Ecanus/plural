@@ -762,12 +762,35 @@ void main() {
       ).thenAnswer(
         (_) => recordService as RecordService
       );
+      when(
+        () => pb.collection(Collection.userSettings)
+      ).thenAnswer(
+        (_) => recordService as RecordService
+      );
 
       // RecordService.create()
       when(
-        () => recordService.create(body: any(named: "body"))
+        () => recordService.create(body: {
+          UserField.email: email,
+          UserField.firstName: appForm.getValue(fieldName: UserField.firstName),
+          UserField.lastName: appForm.getValue(fieldName: UserField.lastName),
+          UserField.password: appForm.getValue(fieldName: UserField.password),
+          UserField.passwordConfirm: appForm.getValue(
+            fieldName: UserField.passwordConfirm),
+          UserField.username: appForm.getValue(fieldName: UserField.username),
+          UserField.emailVisibility: false,
+        })
       ).thenAnswer(
         (_) async => tc.getUserRecordModel()
+      );
+      when(
+        () => recordService.create(body: {
+          UserSettingsField.defaultCurrency: "",
+          UserSettingsField.defaultInstructions: "",
+          UserSettingsField.user: tc.getUserRecordModel().id,
+        })
+      ).thenAnswer(
+        (_) async => tc.getUserSettingsRecordModel()
       );
 
       // RecordService.requestVerification()
@@ -777,6 +800,7 @@ void main() {
         (_) async => {}
       );
 
+      // NOTE: _tabController is added to appForm within TestTabView
       await tester.pumpWidget(
         TestTabView(
           appForm: appForm,
@@ -801,7 +825,21 @@ void main() {
       expect(formKey.currentState!.validate(), true);
 
       // Check methods were called; snackbar shows
-      verify(() => recordService.create(body: any(named: "body"))).called(1);
+      verify(() => recordService.create(body: {
+        UserField.email: email,
+        UserField.firstName: appForm.getValue(fieldName: UserField.firstName),
+        UserField.lastName: appForm.getValue(fieldName: UserField.lastName),
+        UserField.password: appForm.getValue(fieldName: UserField.password),
+        UserField.passwordConfirm: appForm.getValue(
+          fieldName: UserField.passwordConfirm),
+        UserField.username: appForm.getValue(fieldName: UserField.username),
+        UserField.emailVisibility: false,
+      })).called(1);
+      verify(() => recordService.create(body: {
+        UserSettingsField.defaultCurrency: "",
+        UserSettingsField.defaultInstructions: "",
+        UserSettingsField.user: tc.getUserRecordModel().id,
+      })).called(1);
       verify(() => recordService.requestVerification(email)).called(1);
       expect(ft.find.byType(SnackBar), ft.findsOneWidget);
 
