@@ -7,6 +7,7 @@ import 'package:plural_app/src/common_widgets/app_snackbars.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_values.dart';
+import 'package:plural_app/src/constants/environments.dart';
 import 'package:plural_app/src/constants/fields.dart';
 import 'package:plural_app/src/constants/routes.dart';
 
@@ -80,12 +81,11 @@ Future<void> submitLogIn(
     formKey.currentState!.save();
 
     // Get database
-    // TODO: Change url dynamically by env
     PocketBase pb;
     try {
       pb = GetIt.instance<PocketBase>(); // primarily for testing
     } on StateError catch(_) {
-      pb = PocketBase("http://127.0.0.1:8090");
+      pb = PocketBase(Environments.pocketbaseUrl);
     }
 
     // Login

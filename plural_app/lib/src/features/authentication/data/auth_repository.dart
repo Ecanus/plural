@@ -10,6 +10,7 @@ import 'package:pocketbase/pocketbase.dart';
 import 'package:plural_app/src/common_functions/errors.dart';
 
 // Constants
+import 'package:plural_app/src/constants/environments.dart';
 import 'package:plural_app/src/constants/fields.dart';
 import 'package:plural_app/src/constants/pocketbase.dart';
 import 'package:plural_app/src/constants/routes.dart';
@@ -92,8 +93,7 @@ Future<(bool, Map)> signup(
   // primarily for testing
   PocketBase? database
 }) async {
-  // TODO: Change url dynamically by env
-  var pb = database ?? PocketBase("http://127.0.0.1:8090");
+  var pb = database ?? PocketBase(Environments.pocketbaseUrl);
 
   try {
     // Create User
@@ -145,8 +145,7 @@ Future<bool> sendPasswordResetCode(
   // primarily for testing
   PocketBase? database,
 }) async {
-  // TODO: Change url dynamically by env
-  var pb = database ?? PocketBase("http://127.0.0.1:8090");
+  var pb = database ?? PocketBase(Environments.pocketbaseUrl);
 
   try {
     // Send password reset email

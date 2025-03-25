@@ -19,7 +19,5 @@ List<TextInputFormatter>? getInputFormatters(TextFieldType fieldType, int maxLen
         LengthLimitingTextInputFormatter(maxLength),
         FilteringTextInputFormatter.digitsOnly
       ];
-    default:
-      return null;
   }
 }
