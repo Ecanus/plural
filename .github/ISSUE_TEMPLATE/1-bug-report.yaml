@@ -1,0 +1,46 @@
+name: Bug Report
+description: Report a bug in the Plural app
+
+body:
+  - type: dropdown
+    id: app-page
+    attributes:
+      label: Which page did the error occur?
+      options:
+        - sign in page
+        - landing page
+        - garden page (timeline)
+        - Don't know / other
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description (attach image and/or video of reproduction)
+    validations:
+      required: true
+
+  - type: textarea
+    id: exception-or-error
+    attributes:
+      label: Please provide the exception or error you saw
+      render: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Please provide the environment you discovered this bug in
+      render: true
+      placeholder: |
+        OS: [e.g. Windows, Mac OS]
+        OS Version: [e.g. 11]
+        Browser [e.g. chrome, safari]
+        Browser Version [e.g. 22]
+    validations:
+      required: true
+
+  - type: textarea
+    id: other
+    attributes:
+      label: Anything else?
