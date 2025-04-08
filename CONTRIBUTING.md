@@ -64,6 +64,6 @@ See [Commit Message Guidelines][commit-message-guidelines] for details.
 These Contributing guidelines were adapted from
 [Angular](https://github.com/angular/angular/blob/main/CONTRIBUTING.md).
 
-[coc]: https://github.com/Ecanus/plural
+[coc]: https://github.com/Ecanus/plural/blob/main/CODE_OF_CONDUCT.md
 [commit-message-guidelines]: ./contributing-docs/commit-message-guidelines.md
 [github]: https://github.com/Ecanus/plural

@@ -26,8 +26,8 @@ The `footer` is optional. The [Commit Message Footer](#commit-footer) format des
 
 ```
 <type>: <summary>
-  │            │
-  │            └─⫸ Summary in present tense. Not capitalized. No period at the end.
+  │         │
+  │         └─⫸ Summary in present tense. Not capitalized. No period at the end.
   │
   │
   └─⫸ Commit Type: build|ci|docs|feat|fix|perf|refactor|test
