@@ -13,9 +13,6 @@
     <em>Plural is a free and open source mutual aid application
         <br>designed to spotlight community needs and encourage collective effort.</em>
 </p>
-<p align="center">
-    <a href="https://www.pluralapp.ca/"><strong>pluralapp.ca</strong></a>
-</p>
 
 <p align="center">
     <a href="CONTRIBUTING.md">Contributing Guidelines</a>
@@ -53,8 +50,8 @@ Help us keep the Plural app open and inclusive. Please read and follow our [Code
 
 Plural uses the following open source packages:
 
-- [Flutter](https://flutter.dev/)
-- [PocketBase](https://pocketbase.io/)
+- [Flutter (v3.29.2)](https://flutter.dev/)
+- [PocketBase (v0.26.1)](https://pocketbase.io/)
 
 
 [contributing]: CONTRIBUTING.md
