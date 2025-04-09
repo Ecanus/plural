@@ -39,12 +39,12 @@ Examples of unacceptable behavior include:
 
 ## Our Responsibilities
 
-Community leaders are responsible for clarifying and enforcing our standards of
+The Plural app team is responsible for clarifying and enforcing our standards of
 acceptable behavior and will take appropriate and fair corrective action in
 response to any behavior that they deem inappropriate, threatening, offensive,
 or harmful.
 
-Community leaders have the right and responsibility to remove, edit, or reject
+The Plural app team has the right and responsibility to remove, edit, or reject
 comments, commits, code, wiki edits, issues, and other contributions that are
 not aligned to this Code of Conduct, and will communicate reasons for moderation
 decisions when appropriate.
@@ -64,7 +64,7 @@ reported to the community leaders responsible for enforcement at
 conduct@pluralapp.ca.
 All complaints will be reviewed and investigated promptly and fairly.
 
-The Plural app team are obligated to respect the privacy and security of the
+The Plural app team is obligated to respect the privacy and security of the
 reporter of any incident.
 
 ## Enforcement Guidelines

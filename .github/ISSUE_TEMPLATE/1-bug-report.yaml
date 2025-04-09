@@ -24,7 +24,7 @@ body:
   - type: textarea
     id: exception-or-error
     attributes:
-      label: Please provide the exception or error you saw
+      label: Please provide the exception or error you saw (if possible)
       render: true
 
   - type: textarea

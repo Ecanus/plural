@@ -26,13 +26,13 @@
 
 ### Asks
 
-With Plural, users can request for help with planned or unexpected expenses. These requests are referred to as Asks and have attributes such as deadlines, instructions for sponsoring, and the target amount.
+With Plural, users can request help for planned or unexpected expenses. These requests are referred to as Asks and have properties such as a deadline, a target amount, and instructions how to help.
 
 <p align="center"><img src="https://storage.googleapis.com/plural-assets/asks_github_600px.png" alt="Ask dialog versions"></p>
 
 ### Sponsoring
 
-When users send money to others it's referred to as sponsoring an Ask. There's no minimum or maximum amount, or limit, on how many times an Ask can be sponsored.
+When users send money to others it is referred to as sponsoring an Ask. There's no minimum or maximum amount, or limit on how many times an Ask can be sponsored.
 
 <p align="center"><img src="https://storage.googleapis.com/plural-assets/sponsor_asks_github_600px.png" alt="Sponsor Ask dialog"></p>
 
