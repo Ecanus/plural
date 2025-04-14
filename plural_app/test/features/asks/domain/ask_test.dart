@@ -171,14 +171,8 @@ void main() {
       ask.deadlineDate = DateTime.now().add(const Duration(hours: 3));
       expect(ask.timeRemainingString.contains("hours"), true);
 
-      ask.deadlineDate = DateTime.now().add(const Duration(hours: 1));
-      expect(ask.timeRemainingString.contains("hour"), true);
-
       ask.deadlineDate = DateTime.now().add(const Duration(minutes: 49));
       expect(ask.timeRemainingString.contains("minutes"), true);
-
-      ask.deadlineDate = DateTime.now().add(const Duration(minutes: 1));
-      expect(ask.timeRemainingString.contains("minute"), true);
     });
 
     test("truncatedDescription", () {

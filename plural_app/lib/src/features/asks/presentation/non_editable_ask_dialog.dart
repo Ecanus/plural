@@ -62,7 +62,7 @@ class AskDialogView extends StatelessWidget {
                       right: AppPaddings.p40,
                       bottom: AppPaddings.p40,
                     ),
-                    child: Text(ask.description),
+                    child: SelectableText(ask.description),
                   ),
                   Divider(
                     color: Theme.of(context).colorScheme.primary,
@@ -271,7 +271,7 @@ class TextColumn extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Flexible(
-              child: Text(
+              child: SelectableText(
                 text,
                 style: TextStyle(
                   fontSize: AppFontSizes.s16,

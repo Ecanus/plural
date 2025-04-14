@@ -243,12 +243,12 @@ void main() {
 
     test("create", () async {
       var map = {
-        AskField.boon: "",
+        AskField.boon: 0,
         AskField.currency: "",
         AskField.description: "",
         AskField.deadlineDate: "",
         AskField.instructions: "",
-        AskField.targetSum: "",
+        AskField.targetSum: 10,
         AskField.type: "",
       };
 
@@ -281,20 +281,35 @@ void main() {
         (_) async => recordModel
       );
 
+      // boon < targetSum. No Exception
+      map[AskField.boon] = 5;
+      map[AskField.targetSum] = 10;
+
       var (isValid1, errorsMap1) = await asksRepository.create(map);
       expect(isValid1, true);
       expect(errorsMap1, {});
 
-      // RecordService.create() Raise Exception
+      // boon >= targetSum. Raise Exception
+      map[AskField.boon] = 5;
+      map[AskField.targetSum] = 5;
+
+      var (isValid2, errorsMap2) = await asksRepository.create(map);
+      expect(isValid2, false);
+      expect(errorsMap2.isNotEmpty, true);
+
+      // boon < targetSum. RecordService.create() Raise Exception
       when(
         () => recordService.create(body: any(named: "body"))
       ).thenThrow(
         tc.clientException
       );
 
-      var (isValid2, errorsMap2) = await asksRepository.create(map);
-      expect(isValid2, false);
-      expect(errorsMap2.isNotEmpty, true);
+      map[AskField.boon] = 5;
+      map[AskField.targetSum] = 10;
+
+      var (isValid3, errorsMap3) = await asksRepository.create(map);
+      expect(isValid3, false);
+      expect(errorsMap3.isNotEmpty, true);
     });
 
     tearDown(() => GetIt.instance.reset());
@@ -302,12 +317,12 @@ void main() {
     test("update", () async {
       var map = {
         GenericField.id: "UPDATEDASKID",
-        AskField.boon: "",
+        AskField.boon: 0,
         AskField.currency: "",
         AskField.description: "",
         AskField.deadlineDate: "",
         AskField.instructions: "",
-        AskField.targetSum: "",
+        AskField.targetSum: 10,
         AskField.type: "",
       };
 
@@ -332,20 +347,35 @@ void main() {
         (_) async => recordModel
       );
 
+      // boon < targetSum. No Exception
+      map[AskField.boon] = 5;
+      map[AskField.targetSum] = 10;
+
       var (isValid1, errorsMap1) = await asksRepository.update(map);
       expect(isValid1, true);
       expect(errorsMap1, {});
 
-      // RecordService.update() Raise Exception
+      // boon >= targetSum. Raise Exception
+      map[AskField.boon] = 5;
+      map[AskField.targetSum] = 4;
+
+      var (isValid2, errorsMap2) = await asksRepository.update(map);
+      expect(isValid2, false);
+      expect(errorsMap2.isNotEmpty, true);
+
+      // boon < targetSum. RecordService.update() Raise Exception
       when(
         () => recordService.update(any(), body: any(named: "body"))
       ).thenThrow(
         tc.clientException
       );
 
-      var (isValid2, errorsMap2) = await asksRepository.update(map);
-      expect(isValid2, false);
-      expect(errorsMap2.isNotEmpty, true);
+      map[AskField.boon] = 5;
+      map[AskField.targetSum] = 10;
+
+      var (isValid3, errorsMap3) = await asksRepository.update(map);
+      expect(isValid3, false);
+      expect(errorsMap3.isNotEmpty, true);
     });
 
     test("delete", () async {

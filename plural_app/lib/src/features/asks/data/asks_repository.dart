@@ -16,6 +16,9 @@ import 'package:plural_app/src/features/asks/domain/ask.dart';
 // Auth
 import "package:plural_app/src/features/authentication/data/auth_repository.dart";
 
+// Localization
+import 'package:plural_app/src/localization/lang_en.dart';
+
 // Utils
 import 'package:plural_app/src/utils/app_state.dart';
 
@@ -71,6 +74,21 @@ Future<List<Ask>> createAskInstancesFromQuery(
     }
 
     return instances;
+}
+
+/// Checks if [boon] is strictly less than [targetSum]. Else, throws a [ClientException]
+void checkBoonCeiling(int boon, int targetSum) {
+  if (boon >= targetSum) {
+    Map<String, dynamic> response = {
+      dataKey: {
+        AskField.boon: {
+          messageKey: AppFormText.invalidBoonValue
+        }
+      },
+    };
+
+    throw ClientException(response: response);
+  }
 }
 
 class AsksRepository {
@@ -172,18 +190,23 @@ class AsksRepository {
   Future<(bool, Map)> create(Map map) async {
     try {
       var appState = GetIt.instance<AppState>();
+      var boon = map[AskField.boon];
+      var targetSum = map[AskField.targetSum];
+
+      // Check that boon < targetSum
+      checkBoonCeiling(boon, targetSum);
 
       // Create Ask
       await pb.collection(Collection.asks).create(
         body: {
-          AskField.boon: map[AskField.boon],
+          AskField.boon: boon,
           AskField.creator: appState.currentUserID!,
           AskField.currency: map[AskField.currency],
           AskField.description: map[AskField.description],
           AskField.deadlineDate: map[AskField.deadlineDate],
           AskField.garden: appState.currentGarden!.id,
           AskField.instructions: map[AskField.instructions],
-          AskField.targetSum: map[AskField.targetSum],
+          AskField.targetSum: targetSum,
           AskField.type: map[AskField.type],
         }
       );
@@ -210,6 +233,12 @@ class AsksRepository {
   /// and a map of the errors.
   Future<(bool, Map)> update(Map map) async {
     try {
+      var boon = map[AskField.boon];
+      var targetSum = map[AskField.targetSum];
+
+      // Check that boon < targetSum
+      checkBoonCeiling(boon, targetSum);
+
       // Update Ask
       await pb.collection(Collection.asks).update(
         map[GenericField.id],
