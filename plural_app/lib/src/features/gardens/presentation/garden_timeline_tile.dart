@@ -243,9 +243,9 @@ class TileViewAskButton extends StatelessWidget {
       width: AppIconSizes.s35,
       height: AppIconSizes.s35,
       child: CircleAvatar(
-        backgroundColor: Theme.of(context).colorScheme.secondaryFixed,
+        backgroundColor: Theme.of(context).colorScheme.onTertiary,
         child: IconButton(
-          color: Theme.of(context).colorScheme.onSecondary,
+          color: Theme.of(context).colorScheme.secondaryFixed,
           icon: const Icon(Icons.more_horiz_rounded),
           onPressed: () => createNonEditableAskDialog(context: context, ask: ask),
           padding: EdgeInsets.zero

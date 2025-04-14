@@ -198,6 +198,13 @@ void main() {
         )
       );
 
+      // RecordService.unsubscribe()
+      when(
+        () => recordService.unsubscribe()
+      ).thenAnswer(
+        (_) async => () async {}
+      );
+
       // RecordService.subscribe()
       when(
         () => recordService.subscribe(any(), any())

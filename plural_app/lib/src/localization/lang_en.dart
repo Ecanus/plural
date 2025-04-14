@@ -56,8 +56,9 @@ class AskDialogText {
   static const targetMet = "Target met";
   static const targetNotMet = "Target not met";
   static const targetSum = "Target Sum";
-  static const tooltipBoon = "The ideal donation amount";
-  static const tooltipInstructions = "How to sponsor the ask";
+  static const tooltipBoon = "The smallest ideal donation amount, "
+                              "e.g. \$5 boon for \$20 target sum";
+  static const tooltipInstructions = "How funds can be sent to you";
   static const type = "Type";
 
   static const unmarkAsSponsored = "Click to unmark as sponsored";
@@ -68,6 +69,7 @@ class AskDialogText {
 }
 
 class AppFormText {
+  static const invalidBoonValue = "Boon too high";
   static const invalidEmailOrPassword = "Invalid username/email or password";
   static const invalidValue = "Valid value required";
   static const invalidPassword = "Password does not meet all requirements";

@@ -11,6 +11,7 @@ import 'package:plural_app/src/common_widgets/app_dialog.dart';
 import 'package:plural_app/src/common_widgets/app_dialog_footer.dart';
 import 'package:plural_app/src/common_widgets/app_dialog_footer_buffer_submit_button.dart';
 import 'package:plural_app/src/common_widgets/app_text_form_field.dart';
+import 'package:plural_app/src/common_widgets/app_tooltip_icon.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
@@ -112,6 +113,10 @@ class _AskDialogEditFormState extends State<AskDialogEditForm> {
                             initialValue: widget.ask.boon.toString(),
                             label: AskDialogText.boon,
                             maxLength: AppMaxLengths.max4,
+                            suffixIcon: Tooltip(
+                              message: AskDialogText.tooltipBoon,
+                              child: AppTooltipIcon(dark: false),
+                            ),
                             textFieldType: TextFieldType.digitsOnly,
                           ),
                         ),
@@ -142,6 +147,10 @@ class _AskDialogEditFormState extends State<AskDialogEditForm> {
                       label: AskDialogText.instructions,
                       maxLength: AppMaxLengths.max200,
                       maxLines: null,
+                      suffixIcon: Tooltip(
+                        message: AskDialogText.tooltipInstructions,
+                        child: AppTooltipIcon(dark: false),
+                      ),
                     ),
                     gapH30,
                     Row(
