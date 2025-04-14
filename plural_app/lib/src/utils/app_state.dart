@@ -58,7 +58,7 @@ class AppState with ChangeNotifier {
   }
 
   Future<List<Ask>> getTimelineAsks() async {
-    var nowString = DateFormat(Formats.dateYMMdd).format(DateTime.now());
+    var nowString = DateFormat(Formats.dateYMMddHms).format(DateTime.now());
 
     // Asks with target met, or deadlineDate passed are filtered out.
     var filterString = ""
