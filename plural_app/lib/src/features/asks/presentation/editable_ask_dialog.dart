@@ -139,6 +139,10 @@ class _AskDialogEditFormState extends State<AskDialogEditForm> {
                       label: AskDialogText.description,
                       maxLength: AppMaxLengths.max400,
                       maxLines: null,
+                      suffixIcon: Tooltip(
+                        message: AskDialogText.urlFormattingText,
+                        child: AppTooltipIcon(dark: false),
+                      ),
                     ),
                     AppTextFormField(
                       appForm: _appForm,
