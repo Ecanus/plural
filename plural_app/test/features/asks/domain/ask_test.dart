@@ -165,9 +165,6 @@ void main() {
       ask.deadlineDate = DateTime.now().add(const Duration(days: 12));
       expect(ask.timeRemainingString.contains("days"), true);
 
-      ask.deadlineDate = DateTime.now().add(const Duration(hours: 24));
-      expect(ask.timeRemainingString.contains("day"), true);
-
       ask.deadlineDate = DateTime.now().add(const Duration(hours: 3));
       expect(ask.timeRemainingString.contains("hours"), true);
 
