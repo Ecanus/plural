@@ -29,8 +29,8 @@ void main() {
       final getIt = GetIt.instance;
       final recordService = MockRecordService();
 
-      final appState = AppState();
-      appState.currentGarden = tc.garden;
+      final appState = AppState()
+                        ..currentGarden = tc.garden;
 
       // GetIt
       getIt.registerLazySingleton<AsksRepository>(() => AsksRepository(pb: pb));
@@ -81,6 +81,56 @@ void main() {
       expect(ask.targetSum, 160);
       expect(ask.targetMetDate, null);
       expect(ask.type, AskType.monetary);
+    });
+
+    tearDown(() => GetIt.instance.reset());
+
+    test("getTimelineAsks", () async {
+      final tc = TestContext();
+      final pb = MockPocketBase();
+      final getIt = GetIt.instance;
+      final recordService = MockRecordService();
+
+      final appState = AppState()
+                        ..currentGarden = tc.garden;
+
+      // GetIt
+      getIt.registerLazySingleton<AsksRepository>(() => AsksRepository(pb: pb));
+      getIt.registerLazySingleton<AuthRepository>(() => AuthRepository(pb: pb));
+
+      // pb.collection()
+      when(
+        () => pb.collection(Collection.asks)
+      ).thenAnswer(
+        (_) => recordService as RecordService
+      );
+      when(
+        () => pb.collection(Collection.users)
+      ).thenAnswer(
+        (_) => recordService as RecordService
+      );
+
+      // RecordService.getFirstListItem()
+      when(
+        () => recordService.getFirstListItem("${GenericField.id} = '${tc.user.id}'")
+      ).thenAnswer(
+        (_) async => tc.getUserRecordModel()
+      );
+
+      // RecordService.getList()
+      when(
+        () => recordService.getList(
+          filter: any(named: "filter"),
+          sort: any(named: "sort"))
+      ).thenAnswer(
+        (_) async => ResultList<RecordModel>(items: [tc.getAskRecordModel()])
+      );
+
+      final asks = await appState.getTimelineAsks();
+      expect(asks.length, 1);
+
+      appState.refresh();
+      expect(asks.length, 0);
     });
 
     tearDown(() => GetIt.instance.reset());

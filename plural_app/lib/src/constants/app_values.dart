@@ -34,3 +34,7 @@ class AppOpacities {
 class AppRotations {
   static const degrees10 = 10/360;
 }
+
+class AppURLValues {
+  static const blank = "_blank";
+}

@@ -18,14 +18,27 @@ class GardenHeader extends StatelessWidget {
         Expanded(
           child: Column(
             children: [
-              Text(
-                Provider.of<AppState>(context).currentGarden!.name,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: AppFontSizes.s25,
-                ),
-                textAlign: TextAlign.center,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                    color: Theme.of(context).colorScheme.tertiary,
+                    icon: const Icon(Icons.sync),
+                    onPressed: () {
+                      Provider.of<AppState>(context, listen: false).refresh();
+                    },
+                  ),
+                  gapH5,
+                  Text(
+                    Provider.of<AppState>(context).currentGarden!.name,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: AppFontSizes.s25,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
               ),
               GardenClock(),
             ],

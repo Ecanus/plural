@@ -3,9 +3,6 @@ import 'dart:developer' as developer;
 import 'package:pocketbase/pocketbase.dart';
 import 'package:get_it/get_it.dart';
 
-// Common Functions
-import 'package:plural_app/src/common_functions/errors.dart';
-
 // Constants
 import 'package:plural_app/src/constants/fields.dart';
 import 'package:plural_app/src/constants/pocketbase.dart';
@@ -21,6 +18,7 @@ import 'package:plural_app/src/localization/lang_en.dart';
 
 // Utils
 import 'package:plural_app/src/utils/app_state.dart';
+import 'package:plural_app/src/utils/exceptions.dart';
 
 /// Iterates over the given [query] to generate a list of [Ask] instances.
 ///

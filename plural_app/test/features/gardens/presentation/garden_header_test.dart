@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import "package:mocktail/mocktail.dart";
 import 'package:provider/provider.dart';
 
-
-// Asks
+// Gardens
 import 'package:plural_app/src/features/gardens/presentation/garden_clock.dart';
 import 'package:plural_app/src/features/gardens/presentation/garden_header.dart';
 
@@ -12,6 +12,7 @@ import 'package:plural_app/src/utils/app_state.dart';
 
 // Tests
 import '../../../test_context.dart';
+import '../../../test_mocks.dart';
 
 void main() {
   group("GardenClock test", () {
@@ -30,9 +31,48 @@ void main() {
           )
         ));
 
-      // Check text widget is rendered; GardenClock is rendered
+      // Check text widget is rendered; GardenClock is rendered;
+      // refresh button is rendered
       expect(find.text(tc.garden.name), findsOneWidget);
       expect(find.byType(GardenClock), findsOneWidget);
+      expect(find.byType(IconButton), findsOneWidget);
+    });
+
+    testWidgets("refresh", (tester) async {
+      final tc = TestContext();
+
+      // final appState = AppState()
+      //                   ..currentGarden = tc.garden;
+      final mockAppState = MockAppState();
+
+      // AppState.currentGarden()
+      when(
+        () => mockAppState.currentGarden
+      ).thenAnswer(
+        (_) => tc.garden
+      );
+      // AppState.refresh()
+      when(
+        () => mockAppState.refresh()
+      ).thenAnswer(
+        (_) => {}
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: ChangeNotifierProvider<AppState>.value(
+            value: mockAppState,
+            child: Scaffold(
+              body: GardenHeader(),
+            )
+          )
+        ));
+
+      // Tap on the refresh button
+      await tester.tap(find.byType(IconButton));
+      tester.pumpAndSettle();
+
+      verify(() => mockAppState.refresh()).called(1);
     });
   });
 }

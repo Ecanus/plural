@@ -33,9 +33,10 @@ Future<void> submitCreate(
       await GetIt.instance<AsksRepository>().create(appForm.fields);
 
     if (isValid && context.mounted) {
-      var snackBar = AppSnackbars.getSuccessSnackbar(
+      var snackBar = AppSnackbars.getSnackbar(
         SnackbarText.createAskSuccess,
-        showCloseIcon: false
+        showCloseIcon: false,
+        snackbarType: SnackbarType.success
       );
 
       // Display Success Snackbar
@@ -68,9 +69,10 @@ Future<void> submitUpdate(
       await GetIt.instance<AsksRepository>().update(appForm.fields);
 
     if (isValid && context.mounted) {
-      var snackBar = AppSnackbars.getSuccessSnackbar(
+      var snackBar = AppSnackbars.getSnackbar(
         SnackbarText.updateAskSuccess,
-        showCloseIcon: false
+        showCloseIcon: false,
+        snackbarType: SnackbarType.success
       );
 
       // Display Success Snackbar
@@ -98,9 +100,10 @@ Future<void> submitDelete(
     await GetIt.instance<AsksRepository>().delete(appForm.fields);
 
   if (isValid && context.mounted) {
-    var snackBar = AppSnackbars.getSuccessSnackbar(
+    var snackBar = AppSnackbars.getSnackbar(
       SnackbarText.deleteAskSuccess,
-      showCloseIcon: false
+      showCloseIcon: false,
+      snackbarType: SnackbarType.success
     );
 
     // Display Success Snackbar

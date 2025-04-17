@@ -4,6 +4,7 @@ import 'package:get_it/get_it.dart';
 // Common Widgets
 import 'package:plural_app/src/common_widgets/app_dialog.dart';
 import 'package:plural_app/src/common_widgets/app_dialog_footer.dart';
+import 'package:plural_app/src/common_widgets/app_hyperlinkable_text.dart';
 import 'package:plural_app/src/common_widgets/app_snackbars.dart';
 import 'package:plural_app/src/common_widgets/app_tooltip_icon.dart';
 
@@ -62,7 +63,13 @@ class AskDialogView extends StatelessWidget {
                       right: AppPaddings.p40,
                       bottom: AppPaddings.p40,
                     ),
-                    child: SelectableText(ask.description),
+                    child: AppHyperlinkableText(
+                      text: ask.description,
+                      linkStyle: TextStyle(
+                        color: Theme.of(context).primaryColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
                   Divider(
                     color: Theme.of(context).colorScheme.primary,
@@ -74,13 +81,13 @@ class AskDialogView extends StatelessWidget {
                   gapH25,
                   TextColumn(
                     fontWeight: FontWeight.bold,
-                    label: AskDialogText.instructions,
-                    text: ask.instructions,
+                    labelText: AskDialogText.instructions,
+                    bodyText: ask.instructions,
                   ),
                   gapH25,
                   TextColumn(
-                    label: AskDialogText.username,
-                    text: ask.creator.username,
+                    labelText: AskDialogText.username,
+                    bodyText: ask.creator.username,
                   ),
                 ],
               ),
@@ -124,9 +131,10 @@ class _NonEditableAskHeaderState extends State<NonEditableAskHeader> {
       if (value) {
         await asksRepository.addSponsor(widget.ask.id, currentUserID);
 
-        var snackBar = AppSnackbars.getSuccessSnackbar(
+        var snackBar = AppSnackbars.getSnackbar(
           SnackbarText.askSponsored,
-          showCloseIcon: false
+          showCloseIcon: false,
+          snackbarType: SnackbarType.success
         );
 
         if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -246,37 +254,44 @@ class BoonColumn extends StatelessWidget {
 class TextColumn extends StatelessWidget {
   const TextColumn({
     this.fontWeight = FontWeight.normal,
-    required this.label,
-    required this.text,
+    required this.labelText,
+    required this.bodyText,
   });
 
   final FontWeight fontWeight;
-  final String label;
-  final String text;
+  final String labelText;
+  final String bodyText;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
+        // Label row
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Text(
-              label,
+              labelText,
               style: TextStyle(color: Theme.of(context).colorScheme.primary)
             ),
           ],
         ),
+        // Body row
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Flexible(
-              child: SelectableText(
-                text,
-                style: TextStyle(
+              child: AppHyperlinkableText(
+                text: bodyText,
+                linkStyle: TextStyle(
+                  fontSize: AppFontSizes.s16,
+                  fontWeight: fontWeight,
+                  color: Theme.of(context).primaryColor,
+                ),
+                textStyle: TextStyle(
                   fontSize: AppFontSizes.s16,
                   fontWeight: fontWeight
-                )
+                ),
               ),
             ),
           ],

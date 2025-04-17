@@ -79,4 +79,9 @@ class AppState with ChangeNotifier {
   void notifyAllListeners() {
     notifyListeners();
   }
+
+  void refresh() {
+    _timelineAsks.clear();
+    notifyListeners();
+  }
 }

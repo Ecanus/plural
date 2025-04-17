@@ -16,9 +16,10 @@ void main() {
                   behavior: HitTestBehavior.opaque,
                   child: SizedBox(height: 100.0, width: 100.0,),
                   onTap: () {
-                    final snackBar = AppSnackbars.getSuccessSnackbar(
+                    final snackBar = AppSnackbars.getSnackbar(
                       "Success Message",
-                      showCloseIcon: true
+                      showCloseIcon: true,
+                      snackbarType: SnackbarType.success
                     );
 
                     ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -29,7 +30,7 @@ void main() {
           ),
         ));
 
-      // Check text not dispalyed
+      // Check text not displayed (NOTE: trailing space needed)
       expect(find.text("Success Message "), findsNothing);
 
       await tester.tap(find.byType(GestureDetector));
@@ -49,10 +50,11 @@ void main() {
                   behavior: HitTestBehavior.opaque,
                   child: SizedBox(height: 100.0, width: 100.0,),
                   onTap: () {
-                    final snackBar = AppSnackbars.getSuccessSnackbar(
-                      "Success Message",
+                    final snackBar = AppSnackbars.getSnackbar(
+                      "Error Message",
                       boldMessage: "and bold message!",
-                      showCloseIcon: true
+                      showCloseIcon: true,
+                      snackbarType: SnackbarType.error
                     );
 
                     ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -64,13 +66,13 @@ void main() {
         ));
 
       // Check text not dispalyed
-      expect(find.text("Success Message and bold message!"), findsNothing);
+      expect(find.text("Error Message and bold message!"), findsNothing);
 
       await tester.tap(find.byType(GestureDetector));
       await tester.pumpAndSettle();
 
       // Check text displayed
-      expect(find.text("Success Message and bold message!"), findsOneWidget);
+      expect(find.text("Error Message and bold message!"), findsOneWidget);
     });
 
     testWidgets("SnackBar showCloseIcon true", (tester) async {
@@ -83,9 +85,10 @@ void main() {
                   behavior: HitTestBehavior.opaque,
                   child: SizedBox(height: 100.0, width: 100.0,),
                   onTap: () {
-                    final snackBar = AppSnackbars.getSuccessSnackbar(
+                    final snackBar = AppSnackbars.getSnackbar(
                       "Success Message",
-                      showCloseIcon: true
+                      showCloseIcon: true,
+                      snackbarType: SnackbarType.success
                     );
 
                     ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -116,9 +119,10 @@ void main() {
                   behavior: HitTestBehavior.opaque,
                   child: SizedBox(height: 100.0, width: 100.0,),
                   onTap: () {
-                    final snackBar = AppSnackbars.getSuccessSnackbar(
-                      "Success Message",
-                      showCloseIcon: false
+                    final snackBar = AppSnackbars.getSnackbar(
+                      "Error Message",
+                      showCloseIcon: false,
+                      snackbarType: SnackbarType.error
                     );
 
                     ScaffoldMessenger.of(context).showSnackBar(snackBar);

@@ -40,9 +40,10 @@ Future<void> submitUpdateSettings(
       await GetIt.instance<AuthRepository>().updateUserSettings(appForm.fields);
 
     if (isValid && context.mounted) {
-      var snackBar = AppSnackbars.getSuccessSnackbar(
+      var snackBar = AppSnackbars.getSnackbar(
         SnackbarText.updateUserSettingsSuccess,
-        showCloseIcon: false
+        showCloseIcon: false,
+        snackbarType: SnackbarType.success
       );
 
       // Display Success Snackbar
@@ -143,10 +144,11 @@ Future<void> submitSignUp(
       appForm.getValue(fieldName: AppFormFields.tabController).animateTo(
         AuthConstants.logInTabIndex);
 
-      var snackBar = AppSnackbars.getSuccessSnackbar(
+      var snackBar = AppSnackbars.getSnackbar(
         SnackbarText.sentUserVerificationEmail,
         boldMessage: appForm.getValue(fieldName: UserField.email),
         duration: AppDurations.s9,
+        snackbarType: SnackbarType.success
       );
 
       // Display Success Snackbar
@@ -182,10 +184,11 @@ Future<void> submitForgotPassword(
       Navigator.pop(context);
 
       if (isValid) {
-        var snackBar = AppSnackbars.getSuccessSnackbar(
+        var snackBar = AppSnackbars.getSnackbar(
           SnackbarText.sentPasswordResetEmail,
           boldMessage: email,
-          duration: AppDurations.s9
+          duration: AppDurations.s9,
+          snackbarType: SnackbarType.success
         );
 
         // Display Success Snackbar

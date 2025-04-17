@@ -58,13 +58,17 @@ class AskDialogText {
   static const targetSum = "Target Sum";
   static const tooltipBoon = "The smallest ideal donation amount, "
                               "e.g. \$5 boon for \$20 target sum";
-  static const tooltipInstructions = "How funds can be sent to you";
+  static const tooltipInstructions = "How funds can be sent to you.\n"
+                                      "$urlFormattingText";
   static const type = "Type";
 
   static const unmarkAsSponsored = "Click to unmark as sponsored";
   static const username = "Username";
 
   static const visibleOnTimeline = "Visible on timeline";
+
+  static const urlFormattingText = "Use markdown to format links "
+                                  "e.g. [text](https://www.fakeurl.com)";
 
 }
 
@@ -139,6 +143,8 @@ class SnackbarText {
 
   static const updateAskSuccess = "Ask successfully updated!";
   static const updateUserSettingsSuccess = "Settings updated";
+
+  static const urlError = "Invalid URL:";
 }
 
 class UserSettingsDialogText {

@@ -1,9 +1,6 @@
 import 'package:intl/intl.dart';
 import 'package:pocketbase/pocketbase.dart';
 
-// Common Functions
-import 'package:plural_app/src/common_functions/errors.dart';
-
 // Constants
 import 'package:plural_app/src/constants/fields.dart';
 import 'package:plural_app/src/constants/formats.dart';
@@ -19,6 +16,9 @@ import 'package:plural_app/src/features/authentication/domain/app_user_settings.
 
 // Gardens
 import 'package:plural_app/src/features/gardens/domain/garden.dart';
+
+// Utils
+import 'package:plural_app/src/utils/exceptions.dart';
 
 class TestContext {
   late Ask ask;

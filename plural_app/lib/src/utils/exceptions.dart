@@ -3,6 +3,8 @@ import 'package:pocketbase/pocketbase.dart';
 const dataKey = "data";
 const messageKey = "message";
 
+class PluralException implements Exception {}
+
 Map<String, String> getErrorsMapFromClientException(ClientException e) {
   Map<String, String> errorsMap = {};
   var innerMap = e.response[dataKey];

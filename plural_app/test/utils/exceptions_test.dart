@@ -1,13 +1,15 @@
 import 'package:pocketbase/pocketbase.dart' show ClientException;
-import 'package:plural_app/src/common_functions/errors.dart' as errors;
 
 import 'package:test/test.dart';
 
 // Constants
 import 'package:plural_app/src/constants/fields.dart';
 
+// Utils
+import 'package:plural_app/src/utils/exceptions.dart' as errors;
+
 void main() {
-  group("Errors test", () {
+  group("Exceptions test", () {
     test("getErrorsMapFromClientException", () {
       var exception = ClientException(
         url: Uri(),
