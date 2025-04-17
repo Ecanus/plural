@@ -23,7 +23,7 @@ void main() {
       UrlLauncherPlatform.instance = mockLauncher;
       registerFallbackValue(const LaunchOptions());
 
-      // UrlLauncherPlatform.launchURL
+      // UrlLauncherPlatform.launchURL()
       when(
         () => mockLauncher.launchUrl(any(), any())
       ).thenAnswer(
@@ -71,7 +71,7 @@ void main() {
       UrlLauncherPlatform.instance = mockLauncher;
       registerFallbackValue(const LaunchOptions());
 
-      // UrlLauncherPlatform.launchURL
+      // UrlLauncherPlatform.launchURL()
       when(
         () => mockLauncher.launchUrl(any(), any())
       ).thenThrow(
@@ -119,7 +119,7 @@ void main() {
       UrlLauncherPlatform.instance = mockLauncher;
       registerFallbackValue(const LaunchOptions());
 
-      // UrlLauncherPlatform.launchURL
+      // UrlLauncherPlatform.launchURL()
       when(
         () => mockLauncher.launchUrl(any(), any())
       ).thenAnswer(

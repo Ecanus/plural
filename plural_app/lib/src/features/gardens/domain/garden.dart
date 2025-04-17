@@ -40,4 +40,7 @@ class Garden {
 
   @override
   int get hashCode => id.hashCode;
+
+  @override
+  String toString() => "Garden(id: $id, name: $name, creator: $creator)";
 }
