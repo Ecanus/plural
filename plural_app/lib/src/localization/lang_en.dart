@@ -143,6 +143,8 @@ class SnackbarText {
 
   static const updateAskSuccess = "Ask successfully updated!";
   static const updateUserSettingsSuccess = "Settings updated";
+
+  static const urlError = "Invalid URL:";
 }
 
 class UserSettingsDialogText {

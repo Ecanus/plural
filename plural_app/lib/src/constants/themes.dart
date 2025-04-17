@@ -10,10 +10,15 @@ class AppThemes {
   static Color positiveColor = Color(0xff77BB7A);
 
   // Snackbar
-  static Color snackbarBackgroundColor = Colors.green[400]!;
-  static Color snackbarCloseIconColor = Colors.black;
-  static Color snackbarIconColor = Colors.green[900]!;
-  static Color snackbarTextColor = Colors.black;
+  static Color snackbarSuccessBackgroundColor = Colors.green[400]!;
+  static Color snackbarSuccessCloseIconColor = Colors.black;
+  static Color snackbarSuccessIconColor = Colors.green[900]!;
+  static Color snackbarSuccessTextColor = Colors.black;
+
+  static Color snackbarErrorBackgroundColor = Color(0xffB94B58);
+  static Color snackbarErrorCloseIconColor = Colors.black;
+  static Color snackbarErrorIconColor = Colors.black;
+  static Color snackbarErrorTextColor = Colors.black;
 
   // ColorScheme
   static ColorScheme colorScheme = ColorScheme(

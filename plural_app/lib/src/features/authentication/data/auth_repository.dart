@@ -6,9 +6,6 @@ import 'package:get_it/get_it.dart';
 // Pocketbase
 import 'package:pocketbase/pocketbase.dart';
 
-// Common Functions
-import 'package:plural_app/src/common_functions/errors.dart';
-
 // Constants
 import 'package:plural_app/src/constants/environments.dart';
 import 'package:plural_app/src/constants/fields.dart';
@@ -26,6 +23,7 @@ import "package:plural_app/src/features/gardens/domain/garden.dart";
 
 // Utils
 import 'package:plural_app/src/utils/app_state.dart';
+import 'package:plural_app/src/utils/exceptions.dart';
 import 'package:plural_app/src/utils/service_locator.dart';
 
 /// Attempts to log into the database with the given [usernameOrEmail]

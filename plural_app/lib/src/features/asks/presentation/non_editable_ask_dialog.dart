@@ -131,9 +131,10 @@ class _NonEditableAskHeaderState extends State<NonEditableAskHeader> {
       if (value) {
         await asksRepository.addSponsor(widget.ask.id, currentUserID);
 
-        var snackBar = AppSnackbars.getSuccessSnackbar(
+        var snackBar = AppSnackbars.getSnackbar(
           SnackbarText.askSponsored,
-          showCloseIcon: false
+          showCloseIcon: false,
+          snackbarType: SnackbarType.success
         );
 
         if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(snackBar);
