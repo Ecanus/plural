@@ -32,6 +32,10 @@ class ListedAskTile extends StatelessWidget {
       Theme.of(context).colorScheme.onPrimaryFixed
       : Theme.of(context).colorScheme.onPrimary;
 
+    final tileTrailingAvatar = getTileTrailingAvatar(
+      context, ask.isOnTimeline, ask.isTargetMet
+    );
+
     return Card(
       elevation: AppElevations.e7,
       child: ListTile(
@@ -52,7 +56,7 @@ class ListedAskTile extends StatelessWidget {
             fontStyle: FontStyle.italic,
           ),
         ),
-        trailing: TileTrailing(isOnTimeline: ask.isOnTimeline),
+        trailing: TileTrailing(tileTrailingAvatar: tileTrailingAvatar),
         onTap: () {
           Future.delayed(AppDurations.ms80, () {
             appDialogRouter.routeToEditableAskDialogView(ask);
@@ -65,35 +69,50 @@ class ListedAskTile extends StatelessWidget {
 
 class TileTrailing extends StatelessWidget {
   const TileTrailing({
-    required this.isOnTimeline,
+    required this.tileTrailingAvatar,
   });
 
-  final bool isOnTimeline;
+  final Widget tileTrailingAvatar;
 
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        isOnTimeline ?
-        CircleAvatar(
-          backgroundColor: AppThemes.positiveColor,
-          radius: AppBorderRadii.r15,
-          child: Icon(
-            Icons.local_florist,
-            size: AppIconSizes.s20,
-            color: Theme.of(context).colorScheme.surface,
-          ),
-        )
-        : SizedBox(),
+        tileTrailingAvatar,
         gapW10,
         Icon(
           Icons.arrow_forward_ios,
-          color: isOnTimeline ?
-          AppThemes.positiveColor
-          : Theme.of(context).colorScheme.onSecondary
+          color: Theme.of(context).colorScheme.onSecondary
         )
       ],
     );
   }
+}
+
+Widget getTileTrailingAvatar(context, isOnTimeline, isTargetMet) {
+  if (isOnTimeline) {
+    return CircleAvatar(
+      backgroundColor: AppThemes.positiveColor,
+      radius: AppBorderRadii.r15,
+      child: Icon(
+        Icons.local_florist,
+        size: AppIconSizes.s20,
+        color: Theme.of(context).colorScheme.surface,
+      ),
+    );
+  }
+  if (isTargetMet) {
+    return CircleAvatar(
+      backgroundColor: Theme.of(context).colorScheme.primary,
+      radius: AppBorderRadii.r15,
+      child: Icon(
+        Icons.check,
+        size: AppIconSizes.s20,
+        color: Theme.of(context).colorScheme.surface,
+      ),
+    );
+  }
+
+  return SizedBox();
 }

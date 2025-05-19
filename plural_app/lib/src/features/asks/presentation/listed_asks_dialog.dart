@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:intl/intl.dart';
 
 // Common Widgets
 import 'package:plural_app/src/common_widgets/app_dialog.dart';
@@ -7,9 +8,10 @@ import 'package:plural_app/src/common_widgets/app_dialog_footer.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
+import 'package:plural_app/src/constants/formats.dart';
 
 // Asks
-import 'package:plural_app/src/features/asks/data/asks_repository.dart';
+import 'package:plural_app/src/features/asks/data/asks_api.dart';
 import 'package:plural_app/src/features/asks/presentation/listed_ask_tile.dart';
 
 // Utils
@@ -23,8 +25,12 @@ import 'package:plural_app/src/utils/app_dialog_router.dart';
 
 Future createListedAsksDialog(BuildContext context) async {
   final currentUserID = GetIt.instance<AppState>().currentUserID!;
-  final asks = await GetIt.instance<AsksRepository>().getAsksByUserID(
-    userID: currentUserID);
+  final nowString = DateFormat(Formats.dateYMMddHms).format(DateTime.now());
+
+  final asks = await getAsksForListedAsksDialog(
+    userID: currentUserID,
+    nowString: nowString
+  );
 
   if (context.mounted) {
     return showDialog(

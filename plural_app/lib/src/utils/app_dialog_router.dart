@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:intl/intl.dart';
+
+// Constants
+import 'package:plural_app/src/constants/formats.dart';
 
 // Asks
-import 'package:plural_app/src/features/asks/data/asks_repository.dart';
+import 'package:plural_app/src/features/asks/data/asks_api.dart';
 import 'package:plural_app/src/features/asks/domain/ask.dart';
 import 'package:plural_app/src/features/asks/presentation/creatable_ask_dialog.dart';
 import 'package:plural_app/src/features/asks/presentation/editable_ask_dialog.dart';
@@ -41,8 +45,12 @@ class AppDialogRouter {
 
   Future<void> routeToAskDialogListView() async {
     final currentUserID = GetIt.instance<AppState>().currentUserID!;
-    final asks = await GetIt.instance<AsksRepository>().getAsksByUserID(
-      userID: currentUserID);
+    final nowString = DateFormat(Formats.dateYMMddHms).format(DateTime.now());
+
+    final asks = await getAsksForListedAsksDialog(
+      userID: currentUserID,
+      nowString: nowString,
+    );
 
     viewNotifier.value = AskDialogList(
       listedAskTiles: [for (Ask ask in asks) ListedAskTile(ask: ask)]

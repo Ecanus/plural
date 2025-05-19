@@ -66,9 +66,13 @@ void main() {
       getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
 
       when(
-        () => mockAsksRepository.getAsksByUserID(userID: tc.user.id)
+        () => mockAsksRepository.getAsksByUserID(
+          filterString: any(named: "filterString"),
+          sortString: any(named: "sortString"),
+          userID: any(named: "userID")
+        )
       ).thenAnswer(
-        (_) async => [tc.ask]
+        (_) async => []
       );
 
       final appDialogRouter = AppDialogRouter();
