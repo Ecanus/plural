@@ -8,86 +8,12 @@ import 'package:plural_app/src/constants/fields.dart';
 import 'package:plural_app/src/constants/pocketbase.dart';
 
 // Asks
+import 'package:plural_app/src/features/asks/data/asks_api.dart';
 import 'package:plural_app/src/features/asks/domain/ask.dart';
-
-// Auth
-import "package:plural_app/src/features/authentication/data/auth_repository.dart";
-
-// Localization
-import 'package:plural_app/src/localization/lang_en.dart';
 
 // Utils
 import 'package:plural_app/src/utils/app_state.dart';
 import 'package:plural_app/src/utils/exceptions.dart';
-
-/// Iterates over the given [query] to generate a list of [Ask] instances.
-///
-/// Returns a list of the created [Ask] instances.
-Future<List<Ask>> createAskInstancesFromQuery(
-  query,
-  { int? count }
-) async {
-    final authRepository = GetIt.instance<AuthRepository>();
-
-    var records = query.toJson()[QueryKey.items];
-
-    if (count != null && records.length >= count) {
-      records = records.sublist(0, count);
-    }
-
-    List<Ask> instances = [];
-
-    for (var record in records) {
-      // Parse targetMetDate if non-null
-      String targetMetDateString = record[AskField.targetMetDate];
-      DateTime? parsedTargetMetDate = targetMetDateString.isNotEmpty ?
-        DateTime.parse(targetMetDateString) : null;
-
-      // Get AppUser that created the Ask
-      var creatorID = record[AskField.creator];
-      var creator = await authRepository.getUserByID(creatorID);
-
-      // Get type enum from the record (a string)
-      var askTypeFromString = AskType.values.firstWhere(
-        (a) => a.name == "AskType.${record[AskField.type]}",
-        orElse: () => AskType.monetary
-      );
-
-      var newAsk = Ask(
-        id: record[GenericField.id],
-        boon: record[AskField.boon],
-        creator: creator,
-        creationDate: DateTime.parse(record[GenericField.created]),
-        currency: record[AskField.currency],
-        description: record[AskField.description],
-        deadlineDate: DateTime.parse(record[AskField.deadlineDate]),
-        instructions: record[AskField.instructions],
-        targetSum: record[AskField.targetSum],
-        targetMetDate: parsedTargetMetDate,
-        type: askTypeFromString
-      );
-
-      newAsk.sponsorIDS = List<String>.from(record[AskField.sponsors]);
-      instances.add(newAsk);
-    }
-
-    return instances;
-}
-
-/// Checks if [boon] is strictly less than [targetSum]. Else, throws a [ClientException]
-void checkBoonCeiling(int boon, int targetSum) {
-  if (boon >= targetSum) {
-    Map<String, dynamic> response = {
-      dataKey: {
-        AskField.boon: {
-          messageKey: AppFormText.invalidBoonValue
-        }
-      },
-    };
-
-    throw ClientException(response: response);
-  }
-}
 
 class AsksRepository {
   AsksRepository({
@@ -97,9 +23,9 @@ class AsksRepository {
   final PocketBase pb;
 
   /// Queries on the [Ask] collection to retrieve records corresponding to the
-  /// given [gardenID] and [filterString].
+  /// given [gardenID], [filterString] and [sortString].
   ///
-  /// Returns the list of retrieved [Ask]s.
+  /// Returns the list of retrieved [Ask]s up to [count].
   Future<List<Ask>> getAsksByGardenID({
     required String gardenID,
     int? count,
@@ -118,18 +44,23 @@ class AsksRepository {
   }
 
   /// Queries on the [Ask] collection to retrieve all records corresponding
-  /// to the given [userID] and the current [Garden].
+  /// to the given [userID], [filterString], [sortString], and the current [Garden].
   ///
-  /// Returns the list of retrieved [Ask]s
-  Future<List<Ask>> getAsksByUserID({required String userID}) async {
+  /// Returns the list of retrieved [Ask]s.
+  Future<List<Ask>> getAsksByUserID({
+    required String userID,
+    String filterString = "",
+    String sortString = "",
+    }) async {
     final currentGarden = GetIt.instance<AppState>().currentGarden!;
+    var finalFilter = """
+        ${AskField.creator} = '$userID' &&
+        ${AskField.garden} = '${currentGarden.id}' $filterString
+        """.trim();
 
     var result = await pb.collection(Collection.asks).getList(
-      filter: """
-        ${AskField.creator} = '$userID' &&
-        ${AskField.garden} = '${currentGarden.id}'
-        """,
-      sort: "${AskField.targetMetDate},${AskField.deadlineDate},${GenericField.created}",
+      filter: finalFilter,
+      sort: sortString,
     );
 
     return await createAskInstancesFromQuery(result);

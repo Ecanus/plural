@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:intl/intl.dart';
 import "package:mocktail/mocktail.dart";
 import 'package:pocketbase/pocketbase.dart';
 
@@ -17,7 +16,6 @@ import 'package:plural_app/src/common_widgets/close_dialog_button.dart';
 
 // Constants
 import 'package:plural_app/src/constants/fields.dart';
-import 'package:plural_app/src/constants/formats.dart';
 import 'package:plural_app/src/constants/pocketbase.dart';
 
 // Asks
@@ -62,7 +60,7 @@ void main() {
         currency: "KRW",
         deadlineDate: now.add(const Duration(days: 50)),
         description: "This ask belongs to another user. Not the one logged in.",
-        instructions: "Get everybody and the stuff togther.",
+        instructions: "Get everybody and the stuff together.",
         targetSum: 1350,
         type: AskType.monetary
       );
@@ -140,8 +138,7 @@ void main() {
         (_) async => tc.getUserSettingsRecordModel()
       );
 
-      // RecordService.getList()
-      final nowString = DateFormat(Formats.dateYMMdd).format(now);
+      // RecordService.getList() - getGardensByUser()
       when(
         () => recordService.getList(
           expand: UserGardenRecordField.garden,
@@ -153,12 +150,10 @@ void main() {
           items: [tc.getGardenRecordRecordModelFromJson(UserGardenRecordField.garden)]
         )
       );
+      // recordService.getList() - getAsksByGardenID
       when(
         () => recordService.getList(
-          filter: ""
-          "${AskField.garden} = '${tc.garden.id}' "
-          "&& ${AskField.targetMetDate} = null"
-          "&& ${AskField.deadlineDate} > '$nowString'",
+          filter: any(named: "filter"), // use any() because internal nowString is down to the second (inconsistent to recreate)
           sort: "${AskField.deadlineDate},${GenericField.created}",
         )
       ).thenAnswer(
@@ -177,15 +172,17 @@ void main() {
           ]
         )
       );
+      // recordService.getList() - getAsksForListedAsksDialog()
       when(
         () => recordService.getList(
           filter: any(named: "filter"), // Use any(). Copy pasting the filter string doesn't seem to work
-          sort: "${AskField.targetMetDate},${AskField.deadlineDate},${GenericField.created}",
+          sort: GenericField.created,
         )
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(items: [tc.getAskRecordModel()]
         )
       );
+      // recordService.getList() - getCurrentGardenUsers()
       when(
         () => recordService.getList(
           expand: UserGardenRecordField.user,

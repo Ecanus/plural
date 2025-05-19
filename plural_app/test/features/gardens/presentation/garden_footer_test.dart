@@ -59,7 +59,11 @@ void main() {
 
       // AsksRepository.getAsksByUserID()
       when(
-        () => mockAsksRepository.getAsksByUserID(userID: tc.user.id)
+        () => mockAsksRepository.getAsksByUserID(
+          filterString: any(named: "filterString"),
+          sortString: any(named: "sortString"),
+          userID: tc.user.id,
+        )
       ).thenAnswer(
         (_) async => [tc.ask]
       );

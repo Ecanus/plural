@@ -80,6 +80,32 @@ class TestContext {
     );
   }
 
+  Ask getNewAsk({
+    required String id,
+    int boon = 5,
+    DateTime? creationDate,
+    String currency = "GHS",
+    String? description,
+    DateTime? deadlineDate,
+    String? instructions,
+    DateTime? targetMetDate,
+    int targetSum = 100
+  }) {
+    return Ask(
+      id: id,
+      boon: boon,
+      creator: user,
+      creationDate: creationDate ?? DateTime.parse("1995-06-13"),
+      currency: "GHS",
+      description: description ?? "Test description of $id",
+      deadlineDate: deadlineDate ?? DateTime.parse("1995-07-24"),
+      instructions: instructions ?? "Test instructions of $id",
+      targetMetDate: targetMetDate,
+      targetSum: targetSum,
+      type: AskType.monetary,
+    );
+  }
+
   RecordModel getAskRecordModel({
     String? id,
     int? boon,

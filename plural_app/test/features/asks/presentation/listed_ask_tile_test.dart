@@ -156,37 +156,102 @@ void main() {
 
   group("TileTrailing test", () {
     testWidgets("isOnTimeline", (tester) async {
+      var isOnTimeline = true;
+      var isTargetMet = false;
+
       // isOnTimeline == true
       await tester.pumpWidget(
         MaterialApp(
           theme: AppThemes.standard,
-          home: Scaffold(
-            body: TileTrailing(isOnTimeline: true,),
+          home: Material(
+            child: Builder(
+              builder: (BuildContext context) {
+                final avatar = getTileTrailingAvatar(context, isOnTimeline, isTargetMet);
+                return Scaffold(
+                  body: TileTrailing(tileTrailingAvatar: avatar,),
+                );
+              }
+            ),
           ),
         ),
       );
 
-      // Check CircleAvatar shows if isOnTimeline; check color is correct
+      // Check CircleAvatar + Icons.local_florist shows if isOnTimeline
       expect(find.byType(CircleAvatar), findsOneWidget);
-
-      var icon = getLast<Icon>(tester);
-      expect(icon.color, AppThemes.positiveColor);
+      expect(find.byIcon(Icons.local_florist), findsOneWidget);
 
       // isOnTimeline == false
+      isOnTimeline = false;
+
       await tester.pumpWidget(
         MaterialApp(
           theme: AppThemes.standard,
-          home: Scaffold(
-            body: TileTrailing(isOnTimeline: false,),
+          home: Material(
+            child: Builder(
+              builder: (BuildContext context) {
+                final avatar = getTileTrailingAvatar(context, isOnTimeline, isTargetMet);
+                return Scaffold(
+                  body: TileTrailing(tileTrailingAvatar: avatar,),
+                );
+              }
+            ),
           ),
         ),
       );
 
-      // Check CircleAvatar doesn't show if !isOnTimeline; check color is correct
+      // Check CircleAvatar + Icons.local_florist doesn't show if !isOnTimeline
       expect(find.byType(CircleAvatar), findsNothing);
-
-      icon = getLast<Icon>(tester);
-      expect(icon.color, AppThemes.colorScheme.onSecondary);
+      expect(find.byIcon(Icons.local_florist), findsNothing);
     });
+
+    testWidgets("isTargetMet", (tester) async {
+      var isOnTimeline = false;
+      var isTargetMet = true;
+
+      // isTargetMet == true
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppThemes.standard,
+          home: Material(
+            child: Builder(
+              builder: (BuildContext context) {
+                final avatar = getTileTrailingAvatar(context, isOnTimeline, isTargetMet);
+                return Scaffold(
+                  body: TileTrailing(tileTrailingAvatar: avatar,),
+                );
+              }
+            ),
+          ),
+        ),
+      );
+
+      // Check CircleAvatar + Icons.check shows if isTargetMet
+      expect(find.byType(CircleAvatar), findsOneWidget);
+      expect(find.byIcon(Icons.check), findsOneWidget);
+
+      // isOnTimeline == false
+      isTargetMet = false;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppThemes.standard,
+          home: Material(
+            child: Builder(
+              builder: (BuildContext context) {
+                final avatar = getTileTrailingAvatar(context, isOnTimeline, isTargetMet);
+                return Scaffold(
+                  body: TileTrailing(tileTrailingAvatar: avatar,),
+                );
+              }
+            ),
+          ),
+        ),
+      );
+
+      // Check CircleAvatar + Icons.check doesn't show if !isTargetMet
+      expect(find.byType(CircleAvatar), findsNothing);
+      expect(find.byIcon(Icons.check), findsNothing);
+    });
+
   });
 }
