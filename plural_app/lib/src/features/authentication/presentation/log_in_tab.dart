@@ -39,6 +39,7 @@ class LogInTab extends StatelessWidget {
         children: [
           AppTextFormField(
             appForm: appForm,
+            autofocus: true,
             fieldName: SignInField.usernameOrEmail,
             label: SignInPageText.email,
             maxLength: AppMaxLengths.max50,

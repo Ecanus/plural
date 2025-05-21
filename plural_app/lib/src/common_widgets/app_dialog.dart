@@ -33,44 +33,50 @@ class _AppDialogState extends State<AppDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      padding: EdgeInsets.only(
-        top: AppPaddings.p40,
-      ),
-      children: [
-        Dialog(
-          backgroundColor: Colors.transparent,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                constraints: BoxConstraints.expand(
-                  width: AppConstraints.c600,
-                  height: AppConstraints.c800,
-                ),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(AppBorderRadii.r15),
-                  color: Theme.of(context).colorScheme.surface,
-                ),
-                child: Column(
-                  children: [
-                    Expanded(
-                      child: ValueListenableBuilder(
-                        valueListenable: _appDialogRouter.viewNotifier,
-                        builder: (BuildContext context, Widget view, Widget? _) {
-                          return view;
-                        }
-                      )
-                    ),
-                  ],
-                ),
-              ),
-              gapH37,
-              CloseDialogButton()
-            ],
-          ),
+    return GestureDetector( // Because of ListView, need to wrap entire return in GestureDetector for custom barrierDismissable functionality
+      onTap: () => {},
+      child: ListView(
+        padding: EdgeInsets.only(
+          top: AppPaddings.p30,
         ),
-      ],
+        children: [
+          Dialog(
+            backgroundColor: Colors.transparent,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                GestureDetector( // Wrap Container of Dialog in GestureDetector so clicking Container itself won't trigger outer GestureDetector callback
+                  onTap: () {}, // Use empty callback to win out over parent GestureDetector (callbacks are first come, first serve)
+                  child: Container(
+                    constraints: BoxConstraints.expand(
+                      width: AppConstraints.c600,
+                      height: AppConstraints.c800,
+                    ),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(AppBorderRadii.r15),
+                      color: Theme.of(context).colorScheme.surface,
+                    ),
+                    child: Column(
+                      children: [
+                        Expanded(
+                          child: ValueListenableBuilder(
+                            valueListenable: _appDialogRouter.viewNotifier,
+                            builder: (BuildContext context, Widget view, Widget? _) {
+                              return view;
+                            }
+                          )
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                gapH37,
+                CloseDialogButton()
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

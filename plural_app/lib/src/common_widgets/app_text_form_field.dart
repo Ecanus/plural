@@ -15,6 +15,7 @@ import 'package:plural_app/src/utils/app_form.dart';
 class AppTextFormField extends StatefulWidget {
   const AppTextFormField({
     required this.appForm,
+    this.autofocus = false,
     required this.fieldName,
     this.formFieldType = FormFieldType.text,
     this.hintText = "",
@@ -30,6 +31,7 @@ class AppTextFormField extends StatefulWidget {
   });
 
   final AppForm appForm;
+  final bool autofocus;
   final String fieldName;
   final FormFieldType formFieldType;
   final String hintText;
@@ -85,6 +87,7 @@ class _AppTextFormFieldState extends State<AppTextFormField> {
         bottom: widget.paddingBottom,
       ),
       child: TextFormField(
+        autofocus: widget.autofocus,
         controller: _controller,
         decoration: InputDecoration(
           border: AppStyles.textFieldBorder,
