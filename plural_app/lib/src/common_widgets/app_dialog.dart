@@ -46,7 +46,7 @@ class _AppDialogState extends State<AppDialog> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 GestureDetector( // Wrap Container of Dialog in GestureDetector so clicking Container itself won't trigger outer GestureDetector callback
-                  onTap: () {}, // Use empty method to win out over parent GestureDetector (callbacks are first come, first serve)
+                  onTap: () {}, // Use empty callback to win out over parent GestureDetector (callbacks are first come, first serve)
                   child: Container(
                     constraints: BoxConstraints.expand(
                       width: AppConstraints.c600,
