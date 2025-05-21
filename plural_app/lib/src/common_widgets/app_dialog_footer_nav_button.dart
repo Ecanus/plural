@@ -34,9 +34,10 @@ class AppDialogFooterNavButton extends StatelessWidget {
     var arrowIcon = isLeft ?
       Icons.keyboard_arrow_left_rounded : Icons.keyboard_arrow_right_rounded;
 
-    return Expanded(
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
       child: GestureDetector(
-        behavior: HitTestBehavior.opaque, // For tests
+        behavior: HitTestBehavior.opaque,
         onTap: () => callback(),
         child: Row(
           mainAxisAlignment: alignment,

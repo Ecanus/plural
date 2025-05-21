@@ -115,12 +115,16 @@ class _AppDialogNavFooterState extends State<AppDialogNavFooter> {
               isMouseHovered: _isMouseHovered,
               tooltipMessage: widget.leftTooltipMessage,
             ),
-            Text(
-              widget.title,
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.onPrimary,
-                fontSize: AppFontSizes.s25,
-                fontWeight: FontWeight.bold,
+            Expanded(
+              child: Center(
+                child: Text(
+                  widget.title,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onPrimary,
+                    fontSize: AppFontSizes.s25,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ),
             AppDialogFooterNavButton(

@@ -45,6 +45,7 @@ class SignUpTab extends StatelessWidget {
             Expanded(
               child: AppTextFormField(
                 appForm: appForm,
+                autofocus: true,
                 fieldName: UserField.firstName,
                 label: SignInPageText.firstName,
                 maxLength: AppMaxLengths.max50,
