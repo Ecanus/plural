@@ -34,7 +34,7 @@ class _AppDialogState extends State<AppDialog> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector( // Because of ListView, need to wrap entire return in GestureDetector for custom barrierDismissable functionality
-      onTap: () => {},
+      onTap: () => Navigator.pop(context),
       child: ListView(
         padding: EdgeInsets.only(
           top: AppPaddings.p30,

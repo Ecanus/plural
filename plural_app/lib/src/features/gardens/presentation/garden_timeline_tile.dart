@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:timeline_tile/timeline_tile.dart';
 
+// Constants
+import 'package:plural_app/src/constants/app_sizes.dart';
+import 'package:plural_app/src/constants/app_values.dart';
+
 // Asks
 import 'package:plural_app/src/features/asks/domain/ask.dart';
 import 'package:plural_app/src/features/asks/presentation/ask_time_left_text.dart';
 import 'package:plural_app/src/features/asks/presentation/editable_ask_dialog.dart';
 import 'package:plural_app/src/features/asks/presentation/non_editable_ask_dialog.dart';
-
-// Constants
-import 'package:plural_app/src/constants/app_sizes.dart';
-import 'package:plural_app/src/constants/app_values.dart';
 
 class GardenTimelineTile extends StatelessWidget {
   const GardenTimelineTile({

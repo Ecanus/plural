@@ -21,7 +21,7 @@ void main() {
   group("GardenTimeline test", () {
     testWidgets("snapshot.hasData", (tester) async {
       final tc = TestContext();
-      final appState = AppState()
+      final appState = AppState.ignoreSubscribe()
                         ..currentUser = tc.user
                         ..currentGarden = tc.garden;
 
@@ -69,7 +69,7 @@ void main() {
 
     testWidgets("snapshot.hasError", (tester) async {
       final tc = TestContext();
-      final appState = AppState()
+      final appState = AppState.ignoreSubscribe()
                         ..currentUser = tc.user
                         ..currentGarden = tc.garden;
 

@@ -25,7 +25,7 @@ class GardenHeader extends StatelessWidget {
                     color: Theme.of(context).colorScheme.tertiary,
                     icon: const Icon(Icons.sync),
                     onPressed: () {
-                      Provider.of<AppState>(context, listen: false).refresh();
+                      Provider.of<AppState>(context, listen: false).refreshTimelineAsks();
                     },
                   ),
                   gapH5,

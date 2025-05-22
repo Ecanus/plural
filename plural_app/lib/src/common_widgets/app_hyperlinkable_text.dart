@@ -1,12 +1,17 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:plural_app/src/common_widgets/app_snackbars.dart';
-import 'package:plural_app/src/localization/lang_en.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+// Common Widgets
+import 'package:plural_app/src/common_widgets/app_snackbars.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_values.dart';
+
+// Localization
+import 'package:plural_app/src/localization/lang_en.dart';
+
 
 /// Source code taken and adapted from
 /// https://github.com/Odinachi/hyperlink/blob/master/lib/src/hyperlink_impl.dart
@@ -32,7 +37,7 @@ class AppHyperlinkableText extends StatefulWidget {
   final String text;
   final TextAlign textAlign;
   final TextStyle? textStyle;
-  final String? webOnlyWindowName;
+  final String webOnlyWindowName;
   final WebViewConfiguration webViewConfiguration;
 
   @override
@@ -74,7 +79,7 @@ class _AppHyperlinkableTextState extends State<AppHyperlinkableText> {
       // Prepare gesture recognizer for tapping link
       var linkGestureRecognizer = TapGestureRecognizer()
       ..onTap = () async {
-        final linkText = match.group(2) ?? ""; // "[link_address]"
+        final linkText = match.group(2) ?? ""; // "(link_address)"
         final url = Uri.parse(linkText);
 
         var tapResult = true;
@@ -110,7 +115,7 @@ class _AppHyperlinkableTextState extends State<AppHyperlinkableText> {
       // Add link text
       parsedText.add(
         TextSpan(
-          text: match.group(1), // "(link_title)"
+          text: match.group(1), // "[link_title]"
           style: widget.linkStyle,
           recognizer: linkGestureRecognizer
         )

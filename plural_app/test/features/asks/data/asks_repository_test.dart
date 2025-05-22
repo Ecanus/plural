@@ -67,7 +67,7 @@ void main() {
 
       // GetIt
       getIt.registerLazySingleton<AppState>(
-        () => AppState()
+        () => AppState.ignoreSubscribe()
       );
       GetIt.instance<AppState>().currentGarden = tc.garden;
       getIt.registerLazySingleton(() => mockAuthRepository as AuthRepository);
@@ -193,7 +193,7 @@ void main() {
       // GetIt
       final getIt = GetIt.instance;
       getIt.registerLazySingleton<AppState>(
-        () => AppState()
+        () => AppState.ignoreSubscribe()
       );
       GetIt.instance<AppState>().currentUser = tc.user;
       GetIt.instance<AppState>().currentGarden = tc.garden;

@@ -88,9 +88,8 @@ void main() {
 
       // GetIt
       final getIt = GetIt.instance;
-      final appState =
-              AppState()
-              ..currentGarden = tc.garden;
+      final appState = AppState.ignoreSubscribe()
+                        ..currentGarden = tc.garden;
 
       getIt.registerLazySingleton<AppState>(() => appState);
       getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);

@@ -388,9 +388,9 @@ void main() {
 
       final recordService = MockRecordService();
       final authRepository = AuthRepository(pb: pb);
-      final AppState appState = AppState();
 
-      appState.currentGarden = tc.garden;
+      final AppState appState = AppState.ignoreSubscribe()
+                                ..currentGarden = tc.garden;
 
       // GetIt
       getIt.registerLazySingleton<AppState>(

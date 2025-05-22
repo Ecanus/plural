@@ -27,7 +27,7 @@ void main() {
   group("GardenPage test", () {
     testWidgets("widgets", (tester) async {
       final tc = TestContext();
-      final appState = AppState()
+      final appState = AppState.ignoreSubscribe()
                         ..currentGarden = tc.garden;
 
       final getIt = GetIt.instance;
@@ -50,33 +50,33 @@ void main() {
         (_) async => [tc.ask]
       );
 
-      // AsksRepository.subscribeTo()
-      when(
-        () => mockAsksRepository.subscribeTo(any(), any())
-      ).thenAnswer(
-        (_) async => () {}
-      );
+      // // AsksRepository.subscribeTo()
+      // when(
+      //   () => mockAsksRepository.subscribeTo(any(), any())
+      // ).thenAnswer(
+      //   (_) async => () {}
+      // );
 
-      // AuthRepository.subscribeToUsers()
-      when(
-        () => mockAuthRepository.subscribeToUsers(any(), any())
-      ).thenAnswer(
-        (_) async => () {}
-      );
+      // // AuthRepository.subscribeToUsers()
+      // when(
+      //   () => mockAuthRepository.subscribeToUsers(any(), any())
+      // ).thenAnswer(
+      //   (_) async => () {}
+      // );
 
-      // AuthRepository.subscribeToUserSettings()
-      when(
-        () => mockAuthRepository.subscribeToUserSettings()
-      ).thenAnswer(
-        (_) async => () {}
-      );
+      // // AuthRepository.subscribeToUserSettings()
+      // when(
+      //   () => mockAuthRepository.subscribeToUserSettings()
+      // ).thenAnswer(
+      //   (_) async => () {}
+      // );
 
-      // GardensRepository.subscribeTo()
-      when(
-        () => mockGardensRepository.subscribeTo(any())
-      ).thenAnswer(
-        (_) async => () {}
-      );
+      // // GardensRepository.subscribeTo()
+      // when(
+      //   () => mockGardensRepository.subscribeTo(any())
+      // ).thenAnswer(
+      //   (_) async => () {}
+      // );
 
       await tester.pumpWidget(
         MaterialApp(

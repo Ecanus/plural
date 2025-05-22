@@ -1,13 +1,17 @@
+import 'package:flutter/material.dart' show InlineSpan, TextSpan;
 import 'package:intl/intl.dart';
 import 'package:get_it/get_it.dart';
 
-// Auth
-import "package:plural_app/src/features/authentication/domain/app_user.dart";
+// Common Functions
+import 'package:plural_app/src/common_functions/markdown.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_values.dart';
 import 'package:plural_app/src/constants/fields.dart';
 import 'package:plural_app/src/constants/formats.dart';
+
+// Auth
+import "package:plural_app/src/features/authentication/domain/app_user.dart";
 
 // Utils
 import 'package:plural_app/src/utils/app_state.dart';
@@ -96,12 +100,22 @@ class Ask {
   }
 
   String get truncatedDescription {
-    var limit = AppMaxLengths.max200;
+    const limit = AppMaxLengths.max200;
 
-    if (description.length > limit) {
-      return "${description.substring(0, limit).trim()}...";
+    // First convert "[link_text](link_address)" markdown to just "link_text"
+    List<InlineSpan> strippedDescriptionSpans = stripHttpMarkdown(text: description);
+    var parsedDescription = strippedDescriptionSpans.fold(
+      "",
+      (previous, current) {
+        return "$previous${(current as TextSpan).text!}";
+      }
+    );
+
+    // Return truncated text after the markdown conversion
+    if (parsedDescription.length > limit) {
+      return "${parsedDescription.substring(0, limit).trim()}...";
     } else {
-      return description;
+      return parsedDescription;
     }
   }
 
