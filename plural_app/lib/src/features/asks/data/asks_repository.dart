@@ -224,7 +224,10 @@ class AsksRepository {
   /// associated with the given [gardenID].
   ///
   /// Calls the given [callback] method whenever a change is made.
-  Future<Function> subscribeTo(String gardenID, Function callback) {
+  Future<Function> subscribeTo(String gardenID, Function callback) async {
+    // Always clear before setting new subscription
+    await pb.collection(Collection.asks).unsubscribe();
+
     Future<Function> unsubscribeFunc = pb.collection(Collection.asks)
       .subscribe(Subscribe.all, (e) async {
         if (e.record?.data[AskField.garden] != gardenID) return;

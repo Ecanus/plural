@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:go_router/go_router.dart';
 
 // Common Widgets
 import 'package:plural_app/src/common_widgets/app_dialog.dart';
@@ -7,6 +8,7 @@ import 'package:plural_app/src/common_widgets/app_dialog_footer.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
+import 'package:plural_app/src/constants/routes.dart';
 
 // Gardens
 import 'package:plural_app/src/features/gardens/data/gardens_repository.dart';
@@ -53,6 +55,15 @@ class GardenDialogList extends StatelessWidget {
 
     return Column(
       children: [
+        Padding(
+          padding: const EdgeInsets.only(
+            left: AppPaddings.p40,
+            right: AppPaddings.p40,
+            top: AppPaddings.p50,
+            bottom: AppPaddings.p10,
+          ),
+          child: ListedLandingPageTile(),
+        ),
         Expanded(
           child: ListView(
             padding: const EdgeInsets.all(AppPaddings.p35),
@@ -69,6 +80,28 @@ class GardenDialogList extends StatelessWidget {
           title: AppDialogFooterText.gardens
         )
       ],
+    );
+  }
+}
+
+class ListedLandingPageTile extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: AppElevations.e7,
+      child: ListTile(
+        tileColor: Theme.of(context).colorScheme.primaryContainer,
+        title: Text(
+          GardenDialogText.listedLandingPageTileLabel,
+          style: TextStyle(
+            fontWeight: FontWeight.w500)
+        ),
+        leading: Icon(Icons.arrow_back_rounded),
+        onTap: () {
+          Navigator.pop(context);
+          GoRouter.of(context).go(Routes.landing);
+        }
+      ),
     );
   }
 }

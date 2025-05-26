@@ -198,3 +198,9 @@ Future<void> submitForgotPassword(
     }
   }
 }
+
+Future<void> submitDeleteAccount(
+  BuildContext context,
+) async {
+
+}

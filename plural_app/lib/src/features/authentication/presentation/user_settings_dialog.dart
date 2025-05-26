@@ -7,6 +7,7 @@ import 'package:plural_app/src/common_widgets/app_dialog.dart';
 import 'package:plural_app/src/common_widgets/app_dialog_footer.dart';
 import 'package:plural_app/src/common_widgets/app_dialog_footer_buffer_submit_button.dart';
 import 'package:plural_app/src/common_widgets/app_text_form_field.dart';
+import 'package:plural_app/src/common_widgets/log_out_button.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
@@ -15,7 +16,6 @@ import 'package:plural_app/src/constants/fields.dart';
 import 'package:plural_app/src/constants/routes.dart';
 
 // Auth
-import 'package:plural_app/src/features/authentication/data/auth_api.dart';
 import 'package:plural_app/src/features/authentication/data/forms.dart';
 import 'package:plural_app/src/features/authentication/domain/app_user_settings.dart';
 
@@ -117,34 +117,6 @@ class _UserSettingsListState extends State<UserSettingsList> {
           title: AppDialogFooterText.settings
         )
       ],
-    );
-  }
-}
-
-class LogOutButton extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      constraints: BoxConstraints(
-        minWidth: double.infinity,
-        minHeight: AppHeights.h50,
-      ),
-      child: OutlinedButton(
-        onPressed: () => logout(context),
-        style: ButtonStyle(
-          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-            RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(AppBorderRadii.r5)
-            )
-          ),
-          side: WidgetStateProperty.all<BorderSide>(
-            BorderSide(
-              color: Theme.of(context).colorScheme.primary
-            )
-          )
-        ),
-        child: const Text(SignInPageText.logOut)
-      ),
     );
   }
 }

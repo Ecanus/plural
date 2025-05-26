@@ -167,7 +167,10 @@ class AuthRepository {
   /// associated with the given [gardenID].
   ///
   /// Calls the [callback] function whenever a change is made.
-  Future<Function> subscribeToUsers(String gardenID, Function callback) {
+  Future<Function> subscribeToUsers(String gardenID, Function callback) async {
+    // Always clear before setting new subscription
+    await pb.collection(Collection.users).unsubscribe();
+
     Future<Function> unsubscribeFunc = pb.collection(Collection.users)
       .subscribe(Subscribe.all, (e) async {
         var user = e.record!.toJson();
@@ -195,7 +198,10 @@ class AuthRepository {
   /// [UserSettings] record stored in [AppState].currentUserSettings.
   ///
   /// Updates the [AppState]'s currentUserSettings whenever a change is made.
-  Future<Function> subscribeToUserSettings() {
+  Future<Function> subscribeToUserSettings() async {
+    // Always clear before setting new subscription
+    await pb.collection(Collection.userSettings).unsubscribe();
+
     Future<Function> unsubscribeFunc = pb.collection(Collection.userSettings)
       .subscribe(Subscribe.all, (e) async { // can't subscribe directly on userSettings.id because of pocketbase bug. Use Subscribe.all instead
         final currentUserSettings = GetIt.instance<AppState>().currentUserSettings!;

@@ -6,6 +6,8 @@ import 'package:plural_app/src/common_widgets/app_currency_picker_form_field.dar
 import 'package:plural_app/src/common_widgets/app_elevated_button.dart';
 import 'package:plural_app/src/common_widgets/app_text_form_field.dart';
 import 'package:plural_app/src/common_widgets/app_tooltip_icon.dart';
+import 'package:plural_app/src/common_widgets/delete_account_button.dart';
+import 'package:plural_app/src/common_widgets/log_out_button.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
@@ -16,7 +18,6 @@ import 'package:plural_app/src/constants/routes.dart';
 // Auth
 import 'package:plural_app/src/features/authentication/data/forms.dart';
 import 'package:plural_app/src/features/authentication/domain/app_user_settings.dart';
-import 'package:plural_app/src/features/authentication/presentation/user_settings_dialog.dart';
 
 // Localization
 import 'package:plural_app/src/localization/lang_en.dart';
@@ -75,6 +76,7 @@ class _LandingPageSettingsTabState extends State<LandingPageSettingsTab> {
                         child: AppTooltipIcon(dark: false),
                       ),
                 ),
+                DeleteAccountButton(),
               ],
             ),
           ),
