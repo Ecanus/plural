@@ -8,7 +8,7 @@ import 'package:plural_app/src/common_widgets/app_snackbars.dart';
 import 'package:plural_app/src/constants/fields.dart';
 
 // Ask
-import "package:plural_app/src/features/asks/data/asks_repository.dart";
+import 'package:plural_app/src/features/asks/data/asks_repository.dart';
 
 // Localization
 import 'package:plural_app/src/localization/lang_en.dart';

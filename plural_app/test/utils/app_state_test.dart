@@ -1,5 +1,5 @@
 import 'package:get_it/get_it.dart';
-import "package:mocktail/mocktail.dart";
+import 'package:mocktail/mocktail.dart';
 import 'package:pocketbase/pocketbase.dart';
 import 'package:test/test.dart';
 
@@ -29,7 +29,7 @@ void main() {
       final getIt = GetIt.instance;
       final recordService = MockRecordService();
 
-      final appState = AppState.ignoreSubscribe()
+      final appState = AppState.skipSubscribe()
                         ..currentGarden = tc.garden;
 
       // GetIt
@@ -91,7 +91,7 @@ void main() {
       final getIt = GetIt.instance;
       final recordService = MockRecordService();
 
-      final appState = AppState.ignoreSubscribe()
+      final appState = AppState.skipSubscribe()
                         ..currentGarden = tc.garden;
 
       // GetIt

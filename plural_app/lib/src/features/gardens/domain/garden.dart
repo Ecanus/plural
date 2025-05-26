@@ -2,7 +2,7 @@
 import 'package:plural_app/src/constants/fields.dart';
 
 // Auth
-import "package:plural_app/src/features/authentication/domain/app_user.dart";
+import 'package:plural_app/src/features/authentication/domain/app_user.dart';
 
 class Garden {
   Garden({

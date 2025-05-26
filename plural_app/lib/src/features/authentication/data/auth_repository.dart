@@ -10,13 +10,13 @@ import 'package:plural_app/src/constants/fields.dart';
 import 'package:plural_app/src/constants/pocketbase.dart';
 
 // Auth
-import "package:plural_app/src/features/authentication/domain/app_user.dart";
+import 'package:plural_app/src/features/authentication/domain/app_user.dart';
 import 'package:plural_app/src/features/authentication/domain/app_user_garden_record.dart';
-import "package:plural_app/src/features/authentication/domain/app_user_settings.dart";
+import 'package:plural_app/src/features/authentication/domain/app_user_settings.dart';
 
 // Gardens
 import 'package:plural_app/src/features/gardens/data/gardens_repository.dart';
-import "package:plural_app/src/features/gardens/domain/garden.dart";
+import 'package:plural_app/src/features/gardens/domain/garden.dart';
 
 // Utils
 import 'package:plural_app/src/utils/app_state.dart';

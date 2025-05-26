@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import "package:mocktail/mocktail.dart";
+import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
 // Asks

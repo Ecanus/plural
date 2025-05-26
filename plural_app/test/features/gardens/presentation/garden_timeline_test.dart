@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
-import "package:mocktail/mocktail.dart";
+import 'package:mocktail/mocktail.dart';
 import 'package:provider/provider.dart';
 
 // Asks
@@ -21,7 +21,7 @@ void main() {
   group("GardenTimeline test", () {
     testWidgets("snapshot.hasData", (tester) async {
       final tc = TestContext();
-      final appState = AppState.ignoreSubscribe()
+      final appState = AppState.skipSubscribe()
                         ..currentUser = tc.user
                         ..currentGarden = tc.garden;
 
@@ -69,7 +69,7 @@ void main() {
 
     testWidgets("snapshot.hasError", (tester) async {
       final tc = TestContext();
-      final appState = AppState.ignoreSubscribe()
+      final appState = AppState.skipSubscribe()
                         ..currentUser = tc.user
                         ..currentGarden = tc.garden;
 

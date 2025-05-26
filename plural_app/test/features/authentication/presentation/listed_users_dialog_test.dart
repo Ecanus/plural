@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
-import "package:mocktail/mocktail.dart";
+import 'package:mocktail/mocktail.dart';
 
 // Common Widgets
 import 'package:plural_app/src/common_widgets/app_dialog_footer.dart';

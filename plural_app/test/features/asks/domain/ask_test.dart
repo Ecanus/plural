@@ -1,6 +1,6 @@
 import 'package:test/test.dart';
 import 'package:get_it/get_it.dart';
-import "package:mocktail/mocktail.dart";
+import 'package:mocktail/mocktail.dart';
 
 // Asks
 import 'package:plural_app/src/features/asks/data/asks_repository.dart';
@@ -88,7 +88,7 @@ void main() {
 
       // GetIt
       final getIt = GetIt.instance;
-      final appState = AppState.ignoreSubscribe()
+      final appState = AppState.skipSubscribe()
                         ..currentGarden = tc.garden;
 
       getIt.registerLazySingleton<AppState>(() => appState);

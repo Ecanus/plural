@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 /// Parses through the given [text] and creates a list of
 /// [InlineSpan], converting "[link_text](link_address)" text into only "link_text".
 ///
-/// Returns the list of [InlineSpan] of the given [text].
+/// Returns the list of [InlineSpan] of the parsed [text].
 List<InlineSpan> stripHttpMarkdown({
   required String text,
   TextStyle? textStyle,
@@ -23,10 +23,10 @@ List<InlineSpan> stripHttpMarkdown({
 
     // Add link text
     parsedText.add(
-      TextSpan(text: match.group(1)) // "[link_title]"
+      TextSpan(text: match.group(1)) // "[link_title]" without brackets
     );
 
-    // Update index to be after the (link_title)[link_address] text
+    // Update index to be after the [link_title](link_address) text
     currentIndex = match.end;
   });
 

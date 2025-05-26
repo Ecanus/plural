@@ -1,4 +1,4 @@
-import "package:flutter/material.dart";
+import 'package:flutter/material.dart';
 
 class AppBorderRadii {
   static const r5 = 5.0;

@@ -16,7 +16,7 @@ import 'package:plural_app/src/features/asks/domain/ask.dart';
 
 // Auth
 import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
-import "package:plural_app/src/features/authentication/domain/app_user.dart";
+import 'package:plural_app/src/features/authentication/domain/app_user.dart';
 import 'package:plural_app/src/features/authentication/domain/app_user_settings.dart';
 
 // Gardens
@@ -27,10 +27,10 @@ import 'package:plural_app/src/features/gardens/domain/garden.dart';
 class AppState with ChangeNotifier {
 
   AppState();
-  AppState.ignoreSubscribe() : ignoreSubscriptions = true;
+  AppState.skipSubscribe() : skipSubscriptions = true;
 
   // only for testing
-  bool ignoreSubscriptions = false;
+  bool skipSubscriptions = false;
 
   Garden? _currentGarden;
 
@@ -43,7 +43,7 @@ class AppState with ChangeNotifier {
   Garden? get currentGarden => _currentGarden;
   set currentGarden(Garden? newGarden) {
     // Update subscriptions if newGarden is a new, non-null value
-    if (!ignoreSubscriptions) {
+    if (!skipSubscriptions) {
       if (newGarden != null && newGarden != currentGarden) {
         updateSubscriptions(newGarden);
       }

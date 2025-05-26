@@ -121,7 +121,7 @@ class _AppHyperlinkableTextState extends State<AppHyperlinkableText> {
         )
       );
 
-      // Update index to be after the (link_title)[link_address] text
+      // Update index to be after the [link_title](link_address) text
       currentIndex = match.end;
     });
 

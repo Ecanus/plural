@@ -7,7 +7,7 @@ import 'package:plural_app/src/constants/app_values.dart';
 import 'package:plural_app/src/constants/themes.dart';
 
 // Asks
-import "package:plural_app/src/features/asks/domain/ask.dart";
+import 'package:plural_app/src/features/asks/domain/ask.dart';
 
 // Localization
 import 'package:plural_app/src/localization/lang_en.dart';

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import "package:mocktail/mocktail.dart";
+import 'package:mocktail/mocktail.dart';
 import 'package:provider/provider.dart';
 
 // Gardens
@@ -18,7 +18,7 @@ void main() {
   group("GardenClock test", () {
     testWidgets("garden name", (tester) async {
       final tc = TestContext();
-      final appState = AppState.ignoreSubscribe()
+      final appState = AppState.skipSubscribe()
                         ..currentGarden = tc.garden;
 
       await tester.pumpWidget(
