@@ -10,7 +10,7 @@ import 'package:plural_app/src/features/asks/data/asks_repository.dart';
 import 'package:plural_app/src/features/asks/domain/ask.dart';
 
 // Auth
-import "package:plural_app/src/features/authentication/data/auth_repository.dart";
+import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
 
 // Localization
 import 'package:plural_app/src/localization/lang_en.dart';

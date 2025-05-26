@@ -1,5 +1,5 @@
 import 'package:get_it/get_it.dart';
-import "package:mocktail/mocktail.dart";
+import 'package:mocktail/mocktail.dart';
 import 'package:pocketbase/pocketbase.dart';
 import 'package:test/test.dart';
 
@@ -67,7 +67,7 @@ void main() {
 
       // GetIt
       getIt.registerLazySingleton<AppState>(
-        () => AppState()
+        () => AppState.skipSubscribe()
       );
       GetIt.instance<AppState>().currentGarden = tc.garden;
       getIt.registerLazySingleton(() => mockAuthRepository as AuthRepository);
@@ -193,7 +193,7 @@ void main() {
       // GetIt
       final getIt = GetIt.instance;
       getIt.registerLazySingleton<AppState>(
-        () => AppState()
+        () => AppState.skipSubscribe()
       );
       GetIt.instance<AppState>().currentUser = tc.user;
       GetIt.instance<AppState>().currentGarden = tc.garden;

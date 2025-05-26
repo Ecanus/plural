@@ -1,5 +1,5 @@
 import 'package:get_it/get_it.dart';
-import "package:mocktail/mocktail.dart";
+import 'package:mocktail/mocktail.dart';
 import 'package:pocketbase/pocketbase.dart';
 import 'package:test/test.dart';
 
@@ -29,7 +29,7 @@ void main() {
       final getIt = GetIt.instance;
       final recordService = MockRecordService();
 
-      final appState = AppState()
+      final appState = AppState.skipSubscribe()
                         ..currentGarden = tc.garden;
 
       // GetIt
@@ -85,13 +85,13 @@ void main() {
 
     tearDown(() => GetIt.instance.reset());
 
-    test("getTimelineAsks", () async {
+    test("refreshTimelineAsks", () async {
       final tc = TestContext();
       final pb = MockPocketBase();
       final getIt = GetIt.instance;
       final recordService = MockRecordService();
 
-      final appState = AppState()
+      final appState = AppState.skipSubscribe()
                         ..currentGarden = tc.garden;
 
       // GetIt
@@ -100,7 +100,7 @@ void main() {
 
       // pb.collection()
       when(
-        () => pb.collection(Collection.asks)
+        () => pb.collection(any())
       ).thenAnswer(
         (_) => recordService as RecordService
       );
@@ -129,7 +129,9 @@ void main() {
       final asks = await appState.getTimelineAsks();
       expect(asks.length, 1);
 
-      appState.refresh();
+      // refreshTimelineAsks() should clear AppState._timelineAsks
+      // (update shouldn't occur though because nothing to notify)
+      appState.refreshTimelineAsks();
       expect(asks.length, 0);
     });
 

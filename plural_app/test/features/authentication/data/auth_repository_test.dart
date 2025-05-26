@@ -1,5 +1,5 @@
 import 'package:get_it/get_it.dart';
-import "package:mocktail/mocktail.dart";
+import 'package:mocktail/mocktail.dart';
 import 'package:pocketbase/pocketbase.dart';
 import 'package:test/test.dart';
 
@@ -388,9 +388,9 @@ void main() {
 
       final recordService = MockRecordService();
       final authRepository = AuthRepository(pb: pb);
-      final AppState appState = AppState();
 
-      appState.currentGarden = tc.garden;
+      final AppState appState = AppState.skipSubscribe()
+                                ..currentGarden = tc.garden;
 
       // GetIt
       getIt.registerLazySingleton<AppState>(

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import "package:mocktail/mocktail.dart";
+import 'package:mocktail/mocktail.dart';
 import 'package:provider/provider.dart';
 
 // Gardens
@@ -18,7 +18,7 @@ void main() {
   group("GardenClock test", () {
     testWidgets("garden name", (tester) async {
       final tc = TestContext();
-      final appState = AppState()
+      final appState = AppState.skipSubscribe()
                         ..currentGarden = tc.garden;
 
       await tester.pumpWidget(
@@ -53,7 +53,7 @@ void main() {
       );
       // AppState.refresh()
       when(
-        () => mockAppState.refresh()
+        () => mockAppState.refreshTimelineAsks()
       ).thenAnswer(
         (_) => {}
       );
@@ -72,7 +72,7 @@ void main() {
       await tester.tap(find.byType(IconButton));
       tester.pumpAndSettle();
 
-      verify(() => mockAppState.refresh()).called(1);
+      verify(() => mockAppState.refreshTimelineAsks()).called(1);
     });
   });
 }

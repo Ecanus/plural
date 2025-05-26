@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
-import "package:mocktail/mocktail.dart";
+import 'package:mocktail/mocktail.dart';
 
 // Asks
 import 'package:plural_app/src/features/asks/data/asks_repository.dart';
@@ -27,7 +27,7 @@ void main() {
   group("GardenPage test", () {
     testWidgets("widgets", (tester) async {
       final tc = TestContext();
-      final appState = AppState()
+      final appState = AppState.skipSubscribe()
                         ..currentGarden = tc.garden;
 
       final getIt = GetIt.instance;
@@ -48,34 +48,6 @@ void main() {
         )
       ).thenAnswer(
         (_) async => [tc.ask]
-      );
-
-      // AsksRepository.subscribeTo()
-      when(
-        () => mockAsksRepository.subscribeTo(any(), any())
-      ).thenAnswer(
-        (_) async => () {}
-      );
-
-      // AuthRepository.subscribeToUsers()
-      when(
-        () => mockAuthRepository.subscribeToUsers(any(), any())
-      ).thenAnswer(
-        (_) async => () {}
-      );
-
-      // AuthRepository.subscribeToUserSettings()
-      when(
-        () => mockAuthRepository.subscribeToUserSettings()
-      ).thenAnswer(
-        (_) async => () {}
-      );
-
-      // GardensRepository.subscribeTo()
-      when(
-        () => mockGardensRepository.subscribeTo(any())
-      ).thenAnswer(
-        (_) async => () {}
       );
 
       await tester.pumpWidget(
