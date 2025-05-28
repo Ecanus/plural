@@ -81,7 +81,10 @@ class GardensRepository {
   /// the [Garden] record with the corresponding [gardenID].
   ///
   /// Updates the value of [AppState] currentGarden whenever a change is made.
-  Future<Function> subscribeTo(String gardenID) {
+  Future<Function> subscribeTo(String gardenID) async {
+    // Always clear before setting new subscription
+    await pb.collection(Collection.gardens).unsubscribe();
+
     Future<Function> unsubscribeFunc = pb.collection(Collection.gardens)
       .subscribe(gardenID, (e) async {
         switch (e.action) {

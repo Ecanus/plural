@@ -77,7 +77,7 @@ void main() {
                       ),
                       ElevatedButton(
                         onPressed: () => submitUpdateSettings(
-                          context, formKey, appForm, Routes.home),
+                          context, formKey, appForm, Routes.garden),
                         child: Text("x")
                       ),
                     ],
@@ -241,7 +241,7 @@ void main() {
                       ),
                       ElevatedButton(
                         onPressed: () => submitUpdateSettings(
-                          context, formKey, appForm, Routes.home),
+                          context, formKey, appForm, Routes.garden),
                         child: Text("x")
                       ),
                     ],
@@ -326,7 +326,7 @@ void main() {
                       ),
                       ElevatedButton(
                         onPressed: () => submitUpdateSettings(
-                          context, formKey, appForm, Routes.home),
+                          context, formKey, appForm, Routes.garden),
                         child: Text("x")
                       ),
                     ],

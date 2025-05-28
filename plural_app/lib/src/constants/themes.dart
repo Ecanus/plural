@@ -63,7 +63,7 @@ class AppThemes {
     //scaffoldBackgroundColor: null,
     //scrollbarTheme: ScrollbarThemeData(),
     shadowColor: Colors.black.withValues(alpha: AppOpacities.point6),
-    tabBarTheme: TabBarTheme(
+    tabBarTheme: TabBarThemeData(
       labelColor: colorScheme.onPrimary,
       indicatorColor: colorScheme.onPrimary,
       indicatorSize: TabBarIndicatorSize.tab

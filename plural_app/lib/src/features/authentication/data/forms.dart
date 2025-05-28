@@ -51,7 +51,7 @@ Future<void> submitUpdateSettings(
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
 
       switch(currentRoute) {
-        case Routes.home:
+        case Routes.garden:
           // Reload Dialog (and reacquire user settings)
           GetIt.instance<AppDialogRouter>().routeToUserSettingsDialogView();
         default:
@@ -62,7 +62,7 @@ Future<void> submitUpdateSettings(
       appForm.setErrors(errorsMap: errorsMap);
 
       switch(currentRoute) {
-        case Routes.home:
+        case Routes.garden:
           // Reload Dialog (and reacquire user settings)
           GetIt.instance<AppDialogRouter>().routeToUserSettingsDialogView();
         default:

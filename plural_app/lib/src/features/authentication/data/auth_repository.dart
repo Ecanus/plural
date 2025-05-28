@@ -61,6 +61,19 @@ class AuthRepository {
     );
   }
 
+  /// Deletes the [UserGardenRecord] record corresponding to [AppState].currentUser.id
+  Future<void> deleteCurrentUserGardenRecords() async {
+    final currentUser = GetIt.instance<AppState>().currentUser!;
+
+    var result = await pb.collection(Collection.userGardenRecords).getList(
+      filter: "${UserGardenRecordField.user} = '${currentUser.id}'",
+    );
+
+    for (var record in result.items) {
+      await pb.collection(Collection.userGardenRecords).delete(record.id);
+    }
+  }
+
   /// Queries on the [UserGardenRecord] collection to retrieve all [User]s
   /// with the same [Garden] as the currentGarden.
   ///
@@ -109,6 +122,12 @@ class AuthRepository {
       email: record[UserField.email],
       username: record[UserField.username],
     );
+  }
+
+  /// Deletes the [User] record corresponding to [AppState].currentUser
+  Future<void> deleteCurrentUser() async {
+    final currentUser = GetIt.instance<AppState>().currentUser!;
+    await pb.collection(Collection.users).delete(currentUser.id);
   }
 
   /// Queries on the [UserSettings] collection to retrieve the record which
@@ -163,11 +182,21 @@ class AuthRepository {
     }
   }
 
+  /// Deletes the [UserSettings] record corresponding to [AppState].currentUser.id
+  Future<void> deleteCurrentUserSettings() async {
+    final currentUserSettings = GetIt.instance<AppState>().currentUserSettings!;
+
+    await pb.collection(Collection.userSettings).delete(currentUserSettings.id);
+  }
+
   /// Subscribes to any changes made in the [User] collection for any [User] record
   /// associated with the given [gardenID].
   ///
   /// Calls the [callback] function whenever a change is made.
-  Future<Function> subscribeToUsers(String gardenID, Function callback) {
+  Future<Function> subscribeToUsers(String gardenID, Function callback) async {
+    // Always clear before setting new subscription
+    await pb.collection(Collection.users).unsubscribe();
+
     Future<Function> unsubscribeFunc = pb.collection(Collection.users)
       .subscribe(Subscribe.all, (e) async {
         var user = e.record!.toJson();
@@ -195,7 +224,10 @@ class AuthRepository {
   /// [UserSettings] record stored in [AppState].currentUserSettings.
   ///
   /// Updates the [AppState]'s currentUserSettings whenever a change is made.
-  Future<Function> subscribeToUserSettings() {
+  Future<Function> subscribeToUserSettings() async {
+    // Always clear before setting new subscription
+    await pb.collection(Collection.userSettings).unsubscribe();
+
     Future<Function> unsubscribeFunc = pb.collection(Collection.userSettings)
       .subscribe(Subscribe.all, (e) async { // can't subscribe directly on userSettings.id because of pocketbase bug. Use Subscribe.all instead
         final currentUserSettings = GetIt.instance<AppState>().currentUserSettings!;

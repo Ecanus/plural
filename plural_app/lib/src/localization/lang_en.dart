@@ -85,6 +85,10 @@ class ForgotPasswordDialogText {
     "Please enter the email address to send password reset instructions to");
 }
 
+class GardenDialogText {
+  static const listedLandingPageTileLabel = "Go to Landing page";
+}
+
 class GardenFooterText {
   static const asksTooltip = "Asks";
 
@@ -96,11 +100,22 @@ class GardenFooterText {
 }
 
 class LandingPageText {
+  static const cancelConfirmDeleteAccount = "Cancel";
+  static const confirmDeleteAccount = "Deleting account";
+  static const confirmDeleteAccountPrompt = "To confirm this, type";
+  static const confirmDeleteAccountValue = "DELETE";
+  static const confirmDeleteAccountSubtitle = ""
+    "Deleting your account will remove all of your information from our "
+    "database. This cannot be undone.";
   static const createGarden = "Create Garden";
+
+  static const deleteAccount = "Delete account";
+
+  static const gardens = "Gardens";
+
   static const saveChanges = "Save changes";
   static const seeInvites = "See invitations";
   static const settings = "Settings";
-  static const gardens = "Gardens";
 }
 
 class SignInPageText {
@@ -137,6 +152,9 @@ class SnackbarText {
   static const createAskSuccess = "Ask successfully created";
 
   static const deleteAskSuccess = "Ask successfully deleted";
+  static const deletedUserAccount = "Your account has been deleted";
+  static const deletedUserAccountFailed = ""
+    "An error occurred while trying to delete your account";
 
   static const sentPasswordResetEmail = "Password reset instructions have been sent to";
   static const sentUserVerificationEmail = "A verification email has been sent to";

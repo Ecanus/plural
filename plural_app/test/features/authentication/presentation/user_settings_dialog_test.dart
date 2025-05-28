@@ -6,6 +6,7 @@ import 'package:get_it/get_it.dart';
 import 'package:plural_app/src/common_widgets/app_currency_picker_form_field.dart';
 import 'package:plural_app/src/common_widgets/app_dialog_footer.dart';
 import 'package:plural_app/src/common_widgets/app_text_form_field.dart';
+import 'package:plural_app/src/common_widgets/log_out_button.dart';
 
 // Auth
 import 'package:plural_app/src/features/authentication/presentation/user_settings_dialog.dart';

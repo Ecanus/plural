@@ -13,6 +13,7 @@ import 'package:plural_app/src/common_widgets/app_dialog_footer_nav_button.dart'
 import 'package:plural_app/src/common_widgets/app_elevated_button.dart';
 import 'package:plural_app/src/common_widgets/app_text_form_field.dart';
 import 'package:plural_app/src/common_widgets/close_dialog_button.dart';
+import 'package:plural_app/src/common_widgets/log_out_button.dart';
 
 // Constants
 import 'package:plural_app/src/constants/fields.dart';
@@ -26,7 +27,6 @@ import 'package:plural_app/src/features/asks/presentation/route_to_listed_asks_v
 // Auth
 import 'package:plural_app/src/features/authentication/domain/app_user.dart';
 import 'package:plural_app/src/features/authentication/presentation/log_in_password_form_field.dart';
-import 'package:plural_app/src/features/authentication/presentation/user_settings_dialog.dart';
 
 // Gardens
 import 'package:plural_app/src/features/gardens/presentation/garden_timeline_tile.dart';

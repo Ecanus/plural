@@ -1,5 +1,5 @@
 class Routes {
-  static const home = "/";
+  static const garden = "/";
   static const landing = "/landing";
   static const signIn = "/signin";
 }

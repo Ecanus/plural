@@ -27,10 +27,10 @@ import 'package:plural_app/src/features/gardens/domain/garden.dart';
 class AppState with ChangeNotifier {
 
   AppState();
-  AppState.skipSubscribe() : skipSubscriptions = true;
+  AppState.skipSubscribe() : _skipSubscriptions = true;
 
-  // only for testing
-  bool skipSubscriptions = false;
+  // primarily for testing
+  bool _skipSubscriptions = false;
 
   Garden? _currentGarden;
 
@@ -43,7 +43,7 @@ class AppState with ChangeNotifier {
   Garden? get currentGarden => _currentGarden;
   set currentGarden(Garden? newGarden) {
     // Update subscriptions if newGarden is a new, non-null value
-    if (!skipSubscriptions) {
+    if (!_skipSubscriptions) {
       if (newGarden != null && newGarden != currentGarden) {
         updateSubscriptions(newGarden);
       }
@@ -76,16 +76,21 @@ class AppState with ChangeNotifier {
     return _timelineAsks;
   }
 
-  /// Resets the database subscriptions for all Collections affected by
-  /// the value of currentGarden
-  void updateSubscriptions(Garden newGarden) async {
-    final pb = GetIt.instance<PocketBase>();
+  /// Sets the value of _currentGarden to null without notifying listeners.
+  /// Clears all database subscriptions as well
+  void clearGardenAndSubscriptions() async {
+    _currentGarden = null;
 
     // Clear all database subscriptions
+    final pb = GetIt.instance<PocketBase>();
     await pb.collection(Collection.asks).unsubscribe();
     await pb.collection(Collection.gardens).unsubscribe();
     await pb.collection(Collection.users).unsubscribe();
+  }
 
+  /// Resets the database subscriptions for all Collections dependant on
+  /// the value of _currentGarden
+  void updateSubscriptions(Garden newGarden) async {
     // Set new database subscriptions
     GetIt.instance<AsksRepository>().subscribeTo(
       newGarden.id,
@@ -107,8 +112,8 @@ class AppState with ChangeNotifier {
 
     // Asks with target met, or deadlineDate passed are filtered out.
     var filterString = ""
-    "&& ${AskField.targetMetDate} = null"
-    "&& ${AskField.deadlineDate} > '$nowString'";
+      "&& ${AskField.targetMetDate} = null"
+      "&& ${AskField.deadlineDate} > '$nowString'";
 
     List<Ask> asks = await GetIt.instance<AsksRepository>().getAsksByGardenID(
       gardenID: currentGarden!.id,

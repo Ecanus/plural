@@ -13,6 +13,7 @@ import 'package:plural_app/src/features/gardens/presentation/landing_page_garden
 
 // Localization
 import 'package:plural_app/src/localization/lang_en.dart';
+import 'package:plural_app/src/utils/app_state.dart';
 
 class LandingPage extends StatefulWidget {
   @override
@@ -33,6 +34,10 @@ class _LandingPageState extends State<LandingPage> {
 
     // Subscribe to UserSettings
     GetIt.instance<AuthRepository>().subscribeToUserSettings();
+
+    // Always set currentGarden to null and
+    // clear garden-specific database subscriptions when loading this page
+    GetIt.instance<AppState>().clearGardenAndSubscriptions();
   }
 
   @override
