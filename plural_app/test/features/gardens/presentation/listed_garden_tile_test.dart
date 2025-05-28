@@ -5,6 +5,9 @@ import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:pocketbase/pocketbase.dart';
 
+// Constants
+import 'package:plural_app/src/constants/routes.dart';
+
 // Asks
 import 'package:plural_app/src/features/asks/data/asks_repository.dart';
 
@@ -151,7 +154,7 @@ void main() {
         initialLocation: "/test_landing_tile",
         routes: [
           GoRoute(
-            path: "/",
+            path: Routes.garden,
             builder: (_, __) => SizedBox()
           ),
           GoRoute(

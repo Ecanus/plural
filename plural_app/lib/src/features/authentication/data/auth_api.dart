@@ -1,16 +1,29 @@
 import 'dart:developer' as developer;
 
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:get_it/get_it.dart';
-
-// Pocketbase
 import 'package:pocketbase/pocketbase.dart';
 
 // Constants
+// Constants
+import 'package:plural_app/src/constants/app_values.dart';
 import 'package:plural_app/src/constants/environments.dart';
 import 'package:plural_app/src/constants/fields.dart';
 import 'package:plural_app/src/constants/pocketbase.dart';
 import 'package:plural_app/src/constants/routes.dart';
+
+// Common Widgets
+import 'package:plural_app/src/common_widgets/app_snackbars.dart';
+
+// Asks
+import 'package:plural_app/src/features/asks/data/asks_repository.dart';
+
+// Auth
+import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
+
+// Localization
+import 'package:plural_app/src/localization/lang_en.dart';
 
 // Utils
 import 'package:plural_app/src/utils/exceptions.dart';
@@ -26,6 +39,7 @@ Future<bool> login(
   PocketBase pb
 ) async {
   try {
+    // TODO: Move pb.collection call into a method in AuthRepository
     await pb.collection(Collection.users).authWithPassword(
       usernameOrEmail, password);
 
@@ -36,7 +50,7 @@ Future<bool> login(
   } on ClientException catch(e) {
     // Log error
     developer.log(
-      "AuthRepository login() error",
+      "auth_api.login() error",
       error: e,
     );
     return false;
@@ -52,12 +66,14 @@ Future<void> logout(
   final pb = GetIt.instance<PocketBase>();
 
   // Clear all database subscriptions
+  // TODO: Move pb.collection call into a method in AuthRepository
   await pb.collection(Collection.asks).unsubscribe();
   await pb.collection(Collection.gardens).unsubscribe();
   await pb.collection(Collection.users).unsubscribe();
   await pb.collection(Collection.userSettings).unsubscribe();
 
   // Clear logged in credentials and GetIt instance
+  // TODO: Move pb.authStore call into a method in AuthRepository
   pb.authStore.clear();
   clearGetItInstance();
 
@@ -85,6 +101,7 @@ Future<(bool, Map)> signup(
 
   try {
     // Create User
+    // TODO: Move pb.collection call into a method in AuthRepository
     final userRecord = await pb.collection(Collection.users).create(
       body: {
         UserField.email: email,
@@ -98,6 +115,7 @@ Future<(bool, Map)> signup(
     );
 
     // Create UserSettings
+    // TODO: Move pb.collection call into a method in AuthRepository
     await pb.collection(Collection.userSettings).create(
       body: {
         UserSettingsField.defaultCurrency: "",
@@ -107,6 +125,7 @@ Future<(bool, Map)> signup(
     );
 
     // Send verification email
+    // TODO: Move pb.collection call into a method in AuthRepository
     await pb.collection(Collection.users).requestVerification(email);
 
     // Return
@@ -116,7 +135,7 @@ Future<(bool, Map)> signup(
 
       // Log error
       developer.log(
-      "AuthRepository signup() error",
+      "auth_api.signup() error",
       error: e,
     );
 
@@ -137,6 +156,7 @@ Future<bool> sendPasswordResetCode(
 
   try {
     // Send password reset email
+    // TODO: Move pb.collection call into a method in AuthRepository
     await pb.collection(Collection.users).requestPasswordReset(email);
 
     // Return
@@ -144,9 +164,64 @@ Future<bool> sendPasswordResetCode(
   } on ClientException catch(e) {
     // Log error
     developer.log(
-      "AuthRepository sendPasswordResetCode() error",
+      "auth_api.sendPasswordResetCode() error",
       error: e,
     );
+
+    return false;
+  }
+}
+
+/// Attempts to delete a [User] record, by first deleting all associated records
+/// across all Collections, and then the [User] record itself.
+///
+/// Returns true if all deletions are successful. Else returns false.
+Future<bool> deleteCurrentUserAccount({BuildContext? context}) async {
+  try {
+    // Delete Asks
+    await GetIt.instance<AsksRepository>().deleteCurrentUserAsks();
+
+    // Delete UserGardenRecords
+    await GetIt.instance<AuthRepository>().deleteCurrentUserGardenRecords();
+
+    // Delete UserSettings
+    await GetIt.instance<AuthRepository>().deleteCurrentUserSettings();
+
+    // Delete User
+    await GetIt.instance<AuthRepository>().deleteCurrentUser();
+
+    if (context != null && context.mounted) {
+      // Route to Sign in Page
+      GoRouter.of(context).go(Routes.signIn);
+
+      var snackBar = AppSnackbars.getSnackbar(
+        SnackbarText.deletedUserAccount,
+        duration: AppDurations.s9,
+        snackbarType: SnackbarType.success
+      );
+
+      // Display success Snackbar
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
+
+    return true;
+  } on ClientException catch(e) {
+    // Log error
+    developer.log(
+      "auth_api.deleteCurrentUserAccount() error",
+      error: e,
+    );
+
+    if (context != null && context.mounted) {
+      var snackBar = AppSnackbars.getSnackbar(
+        SnackbarText.deletedUserAccountFailed,
+        duration: AppDurations.s9,
+        snackbarType: SnackbarType.error
+      );
+
+      // Display error Snackbar
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
 
     return false;
   }

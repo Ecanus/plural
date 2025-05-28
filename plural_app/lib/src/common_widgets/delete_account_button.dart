@@ -5,7 +5,7 @@ import 'package:plural_app/src/constants/app_sizes.dart';
 import 'package:plural_app/src/constants/styles.dart';
 
 // Auth
-import 'package:plural_app/src/features/authentication/data/forms.dart';
+import 'package:plural_app/src/features/authentication/data/auth_api.dart';
 
 // Localization
 import 'package:plural_app/src/localization/lang_en.dart';
@@ -174,8 +174,7 @@ class _ConfirmDeleteAccountDialogState extends State<ConfirmDeleteAccountDialog>
                   constraints: BoxConstraints(minHeight: AppHeights.h40),
                   child: FilledButton(
                     onPressed: _isTextMatch ? () {
-                      Navigator.pop(context);
-                      submitDeleteAccount(context);
+                      deleteCurrentUserAccount(context: context);
                     }
                     : null,
                     style: ButtonStyle(

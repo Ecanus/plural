@@ -105,8 +105,8 @@ class LandingPageText {
   static const confirmDeleteAccountPrompt = "To confirm this, type";
   static const confirmDeleteAccountValue = "DELETE";
   static const confirmDeleteAccountSubtitle = ""
-  "Deleting your account will remove all of your information from our "
-  "database. This cannot be undone.";
+    "Deleting your account will remove all of your information from our "
+    "database. This cannot be undone.";
   static const createGarden = "Create Garden";
 
   static const deleteAccount = "Delete account";
@@ -152,6 +152,9 @@ class SnackbarText {
   static const createAskSuccess = "Ask successfully created";
 
   static const deleteAskSuccess = "Ask successfully deleted";
+  static const deletedUserAccount = "Your account has been deleted";
+  static const deletedUserAccountFailed = ""
+    "An error occurred while trying to delete your account";
 
   static const sentPasswordResetEmail = "Password reset instructions have been sent to";
   static const sentUserVerificationEmail = "A verification email has been sent to";

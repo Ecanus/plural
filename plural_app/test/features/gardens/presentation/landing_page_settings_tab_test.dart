@@ -6,6 +6,7 @@ import 'package:get_it/get_it.dart';
 import 'package:plural_app/src/common_widgets/app_currency_picker_form_field.dart';
 import 'package:plural_app/src/common_widgets/app_elevated_button.dart';
 import 'package:plural_app/src/common_widgets/app_text_form_field.dart';
+import 'package:plural_app/src/common_widgets/delete_account_button.dart';
 import 'package:plural_app/src/common_widgets/log_out_button.dart';
 
 // Gardens
@@ -38,6 +39,7 @@ void main() {
       expect(find.byType(AppCurrencyPickerFormField), findsOneWidget);
       expect(find.byType(AppTextFormField), findsOneWidget);
       expect(find.byType(AppElevatedButton), findsOneWidget);
+      expect(find.byType(DeleteAccountButton), findsOneWidget);
       expect(find.byType(LogOutButton), findsOneWidget);
     });
   });

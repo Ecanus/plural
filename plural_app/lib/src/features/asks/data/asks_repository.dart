@@ -66,9 +66,22 @@ class AsksRepository {
     return await createAskInstancesFromQuery(result);
   }
 
+  /// Deletes all [Ask] records associated with [AppState].currentUser
+  Future<void> deleteCurrentUserAsks() async {
+    final currentUser = GetIt.instance<AppState>().currentUser!;
+
+    var result = await pb.collection(Collection.asks).getList(
+      filter: "${AskField.creator} = '${currentUser.id}'"
+    );
+
+    for (var record in result.items) {
+      await pb.collection(Collection.asks).delete(record.id);
+    }
+  }
+
   /// Appends the [User] record which corresponds to the given [userID] to the list
   /// of sponsors of the [Ask] record which corresponds to the given [askID].
-  Future addSponsor(String askID, String userID) async {
+  Future<void> addSponsor(String askID, String userID) async {
     var result = await pb.collection(Collection.asks).getList(
       filter: "${GenericField.id}='$askID'"
     );
@@ -91,7 +104,7 @@ class AsksRepository {
 
   /// Removes the [User] record which corresponds to the given [userID] from the list
   /// of sponsors of the [Ask] record which corresponds to the given [askID].
-  Future removeSponsor(String askID, String userID) async {
+  Future<void> removeSponsor(String askID, String userID) async {
     var result = await pb.collection(Collection.asks).getList(
       filter: "${GenericField.id}='$askID'"
     );

@@ -29,7 +29,7 @@ class AppState with ChangeNotifier {
   AppState();
   AppState.skipSubscribe() : _skipSubscriptions = true;
 
-  // for testing
+  // primarily for testing
   bool _skipSubscriptions = false;
 
   Garden? _currentGarden;
@@ -112,8 +112,8 @@ class AppState with ChangeNotifier {
 
     // Asks with target met, or deadlineDate passed are filtered out.
     var filterString = ""
-    "&& ${AskField.targetMetDate} = null"
-    "&& ${AskField.deadlineDate} > '$nowString'";
+      "&& ${AskField.targetMetDate} = null"
+      "&& ${AskField.deadlineDate} > '$nowString'";
 
     List<Ask> asks = await GetIt.instance<AsksRepository>().getAsksByGardenID(
       gardenID: currentGarden!.id,

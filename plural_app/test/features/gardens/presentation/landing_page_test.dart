@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:pocketbase/pocketbase.dart';
 
 // Auth
 import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
@@ -33,9 +34,25 @@ void main() {
       final getIt = GetIt.instance;
       final mockAuthRepository = MockAuthRepository();
       final mockGardensRepository = MockGardensRepository();
+      final pb = MockPocketBase();
+      final recordService = MockRecordService();
       getIt.registerLazySingleton<AppState>(() => appState);
       getIt.registerLazySingleton<AuthRepository>(() => mockAuthRepository);
       getIt.registerLazySingleton<GardensRepository>(() => mockGardensRepository);
+      getIt.registerLazySingleton<PocketBase>(() => pb);
+
+      // pb.collection()
+      when(
+        () => pb.collection(any())
+      ).thenAnswer(
+        (_) => recordService as RecordService
+      );
+      // RecordService.unsubscribe()
+      when(
+        () => recordService.unsubscribe()
+      ).thenAnswer(
+        (_) async => () {}
+      );
 
       // AuthRepository.subscribeToUserSettings()
       when(

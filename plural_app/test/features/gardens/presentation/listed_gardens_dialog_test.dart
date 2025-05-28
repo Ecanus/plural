@@ -1,14 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:plural_app/src/common_widgets/app_dialog_footer.dart';
 
+// Constants
+import 'package:plural_app/src/constants/routes.dart';
+
+// Common Widgets
+import 'package:plural_app/src/common_widgets/app_dialog_footer.dart';
 
 // Gardens
 import 'package:plural_app/src/features/gardens/data/gardens_repository.dart';
 import 'package:plural_app/src/features/gardens/presentation/listed_garden_tile.dart';
 import 'package:plural_app/src/features/gardens/presentation/listed_gardens_dialog.dart';
+
+// Localization
+import 'package:plural_app/src/localization/lang_en.dart';
 
 // Utils
 import 'package:plural_app/src/utils/app_dialog_router.dart';
@@ -66,5 +74,47 @@ void main() {
     });
 
     tearDown(() => GetIt.instance.reset());
+
+    testWidgets("ListedLandingPageTile", (tester) async {
+      var testRouter = GoRouter(
+        initialLocation: "/test_listed_landing_page_tile",
+        routes: [
+          GoRoute(
+            path: Routes.landing,
+            builder: (_, __) => SizedBox(
+              child: Text("Test routing to Landing Page was successful."),
+            )
+          ),
+          GoRoute(
+            path: "/test_listed_landing_page_tile",
+            builder: (_, __) => Scaffold(
+            body: Builder(
+                builder: (BuildContext context) {
+                  return ListedLandingPageTile();
+                }
+              ),
+            ),
+          )
+        ]
+      );
+
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routerConfig: testRouter,
+        )
+      );
+
+      // Check routed text not rendered, widget is present, and tile label is rendered
+      expect(find.text("Test routing to Landing Page was successful."), findsNothing);
+      expect(find.text(GardenDialogText.listedLandingPageTileLabel), findsOneWidget);
+      expect(find.byType(ListedLandingPageTile), findsOneWidget);
+
+      // Tap on the ListTile
+      await tester.tap(find.byType(ListedLandingPageTile));
+      await tester.pumpAndSettle();
+
+      // Check successful reroute (text should now appear)
+      expect(find.text("Test routing to Landing Page was successful."), findsOneWidget);
+    });
   });
 }

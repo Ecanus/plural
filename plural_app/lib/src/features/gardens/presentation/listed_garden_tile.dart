@@ -62,7 +62,7 @@ class LandingPageListedGardenTile extends StatelessWidget {
         onTap: () {
           // Update AppState.currentGarden (should also rebuild Garden Timeline via notifyListeners())
           GetIt.instance<AppState>().currentGarden = garden;
-          GoRouter.of(context).go(Routes.home);
+          GoRouter.of(context).go(Routes.garden);
         }
       ),
     );

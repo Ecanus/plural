@@ -27,7 +27,7 @@ import '../../../test_context.dart';
 import '../../../test_mocks.dart';
 
 void main() {
-    group("Ask methods test", () {
+    group("Asks api test", () {
     test("createAskInstancesFromQuery", () async {
       final tc = TestContext();
       final getIt = GetIt.instance;

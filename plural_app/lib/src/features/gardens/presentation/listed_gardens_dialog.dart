@@ -98,7 +98,6 @@ class ListedLandingPageTile extends StatelessWidget {
         ),
         leading: Icon(Icons.arrow_back_rounded),
         onTap: () {
-          Navigator.pop(context);
           GoRouter.of(context).go(Routes.landing);
         }
       ),
