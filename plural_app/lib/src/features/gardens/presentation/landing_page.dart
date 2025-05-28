@@ -35,8 +35,8 @@ class _LandingPageState extends State<LandingPage> {
     // Subscribe to UserSettings
     GetIt.instance<AuthRepository>().subscribeToUserSettings();
 
-    // Always set currentGarden to null and clear garden-specific database subscriptions
-    // when loading this page
+    // Always set currentGarden to null and
+    // clear garden-specific database subscriptions when loading this page
     GetIt.instance<AppState>().clearGardenAndSubscriptions();
   }
 

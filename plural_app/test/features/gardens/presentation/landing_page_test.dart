@@ -31,11 +31,11 @@ void main() {
                         ..currentUser = tc.user
                         ..currentUserSettings = tc.userSettings;
 
+      final pb = MockPocketBase();
+      final recordService = MockRecordService();
       final getIt = GetIt.instance;
       final mockAuthRepository = MockAuthRepository();
       final mockGardensRepository = MockGardensRepository();
-      final pb = MockPocketBase();
-      final recordService = MockRecordService();
       getIt.registerLazySingleton<AppState>(() => appState);
       getIt.registerLazySingleton<AuthRepository>(() => mockAuthRepository);
       getIt.registerLazySingleton<GardensRepository>(() => mockGardensRepository);

@@ -6,7 +6,6 @@ import 'package:get_it/get_it.dart';
 import 'package:pocketbase/pocketbase.dart';
 
 // Constants
-// Constants
 import 'package:plural_app/src/constants/app_values.dart';
 import 'package:plural_app/src/constants/environments.dart';
 import 'package:plural_app/src/constants/fields.dart';
@@ -173,7 +172,7 @@ Future<bool> sendPasswordResetCode(
 }
 
 /// Attempts to delete a [User] record, by first deleting all associated records
-/// across all Collections, and then the [User] record itself.
+/// across all Collections, then deletes the [User] record itself.
 ///
 /// Returns true if all deletions are successful. Else returns false.
 Future<bool> deleteCurrentUserAccount({BuildContext? context}) async {

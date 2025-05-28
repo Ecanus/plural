@@ -67,7 +67,7 @@ class AppSnackbars {
               TextSpan(
                 style: TextStyle(color: snackbarValues.textColor),
                 children: [
-                  TextSpan(text: "$mainMessage "), // note the trailing space
+                  TextSpan(text: "$mainMessage "), // note trailing space
                   TextSpan(
                     text: boldMessage,
                     style: TextStyle(
