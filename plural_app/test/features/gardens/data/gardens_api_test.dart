@@ -66,7 +66,16 @@ void main() {
         tc.user.id, excludeCurrentGarden: false
       );
 
+      // Check that 3 gardens created
       expect(gardens.length, 3);
+
+      // Check that the correct filter was used
+      verify(() => mockUserGardenRecordsRepository.getList(
+          expand: any(named: "expand"),
+          filter: "${UserGardenRecordField.user} = '${tc.user.id}'",
+          sort: any(named: "sort"),
+        )
+      ).called(1);
     });
 
     tearDown(() => GetIt.instance.reset());
@@ -117,14 +126,18 @@ void main() {
         tc.user.id, excludeCurrentGarden: true
       );
 
+      // Check 3 gardens created
       expect(gardens.length, 3);
+
+      // Check that the correct filter was used
       verify(() => mockUserGardenRecordsRepository.getList(
           expand: any(named: "expand"),
           filter: ""
             "${UserGardenRecordField.garden}.${GenericField.id} != '${tc.garden.id}' && "
             "${UserGardenRecordField.user} = '${tc.user.id}'",
           sort: any(named: "sort"),
-        )).called(1);
+        )
+      ).called(1);
     });
 
     tearDown(() => GetIt.instance.reset());

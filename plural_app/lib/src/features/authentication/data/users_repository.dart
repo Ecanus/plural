@@ -1,10 +1,10 @@
-import 'package:plural_app/src/common_interfaces/repository.dart';
-
-// Pocketbase
 import 'package:pocketbase/pocketbase.dart';
 
 // Constants
 import 'package:plural_app/src/constants/pocketbase.dart';
+
+// Common Interfaces
+import 'package:plural_app/src/common_interfaces/repository.dart';
 
 class UsersRepository implements Repository {
   UsersRepository({
