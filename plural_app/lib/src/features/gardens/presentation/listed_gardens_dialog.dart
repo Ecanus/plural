@@ -11,7 +11,7 @@ import 'package:plural_app/src/constants/app_sizes.dart';
 import 'package:plural_app/src/constants/routes.dart';
 
 // Gardens
-import 'package:plural_app/src/features/gardens/data/gardens_repository.dart';
+import 'package:plural_app/src/features/gardens/data/gardens_api.dart';
 import 'package:plural_app/src/features/gardens/presentation/listed_garden_tile.dart';
 
 // Localization
@@ -22,9 +22,7 @@ import 'package:plural_app/src/utils/app_dialog_router.dart';
 import 'package:plural_app/src/utils/app_state.dart';
 
 Future createListedGardensDialog(BuildContext context) async {
-  final gardens = await GetIt.instance<GardensRepository>().getGardensByUser(
-      GetIt.instance<AppState>().currentUserID!
-    );
+  final gardens = await getGardensByUser(GetIt.instance<AppState>().currentUserID!);
 
   if (context.mounted) {
     return showDialog(

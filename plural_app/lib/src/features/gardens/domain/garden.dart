@@ -15,6 +15,11 @@ class Garden {
   final String id;
   final String name;
 
+  Garden.fromJson(Map<String, dynamic> json, AppUser user) :
+    creator = user,
+    id = json[GenericField.id] as String,
+    name = json[GardenField.name] as String;
+
   Map toMap() {
     return {
       GardenField.creator: creator.id,

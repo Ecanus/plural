@@ -20,6 +20,8 @@ import 'package:plural_app/src/features/asks/data/asks_repository.dart';
 
 // Auth
 import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
+import 'package:plural_app/src/features/authentication/data/users_repository.dart';
+import 'package:plural_app/src/features/authentication/domain/app_user.dart';
 
 // Localization
 import 'package:plural_app/src/localization/lang_en.dart';
@@ -27,6 +29,17 @@ import 'package:plural_app/src/localization/lang_en.dart';
 // Utils
 import 'package:plural_app/src/utils/exceptions.dart';
 import 'package:plural_app/src/utils/service_locator.dart';
+
+
+/// Returns an instance of [AppUser] corresponding to the [User] record
+/// from the database with the given [userID].
+Future<AppUser> getUserByID(String userID) async {
+  final query = await GetIt.instance<UsersRepository>().getFirstListItem(
+    filter: "${GenericField.id} = '$userID'",
+  );
+
+  return AppUser.fromJson(query.toJson());
+}
 
 /// Attempts to log into the database with the given [usernameOrEmail]
 /// and [password] parameters and create all necessary [GetIt] instances.

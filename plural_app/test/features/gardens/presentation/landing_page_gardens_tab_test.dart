@@ -2,6 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:pocketbase/pocketbase.dart';
+
+// Constants
+import 'package:plural_app/src/constants/fields.dart';
+
+// Auth
+import 'package:plural_app/src/features/authentication/data/user_garden_records_repository.dart';
+import 'package:plural_app/src/features/authentication/data/users_repository.dart';
 
 // Gardens
 import 'package:plural_app/src/features/gardens/data/gardens_repository.dart';
@@ -22,15 +30,34 @@ void main() {
                         ..currentUser = tc.user;
 
       final getIt = GetIt.instance;
-      final mockGardensRepository = MockGardensRepository();
+      final mockUsersRepository = MockUsersRepository();
+      final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
       getIt.registerLazySingleton<AppState>(() => appState);
-      getIt.registerLazySingleton<GardensRepository>(() => mockGardensRepository);
+      getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
+      getIt.registerLazySingleton<UserGardenRecordsRepository>(
+        () => mockUserGardenRecordsRepository
+      );
 
-      // GardensRepository.getGardensByUser()
+      // UsersRepository.getFirstListItem()
       when(
-        () => mockGardensRepository.getGardensByUser(any())
+        () => mockUsersRepository.getFirstListItem(filter: any(named: "filter"))
       ).thenAnswer(
-        (_) async => [tc.garden]
+        (_) async => tc.getUserRecordModel()
+      );
+
+      // UserGardenRecordsRepository.getList()
+      when(
+        () => mockUserGardenRecordsRepository.getList(
+          expand: any(named: "expand"),
+          filter: "${UserGardenRecordField.user} = '${tc.user.id}'",
+          sort: any(named: "sort"),
+        )
+      ).thenAnswer(
+        (_) async => ResultList<RecordModel>(
+          items: [
+            tc.getGardenRecordRecordModelFromJson(UserGardenRecordField.garden),
+          ]
+        )
       );
 
       await tester.pumpWidget(
