@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:pocketbase/pocketbase.dart';
+
+// Constants
+import 'package:plural_app/src/constants/fields.dart';
 
 // Asks
 import 'package:plural_app/src/features/asks/data/asks_repository.dart';
@@ -9,11 +13,12 @@ import 'package:plural_app/src/features/asks/presentation/listed_asks_dialog.dar
 
 // Auth
 import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
+import 'package:plural_app/src/features/authentication/data/user_garden_records_repository.dart';
+import 'package:plural_app/src/features/authentication/data/users_repository.dart';
 import 'package:plural_app/src/features/authentication/presentation/listed_users_dialog.dart';
 import 'package:plural_app/src/features/authentication/presentation/user_settings_dialog.dart';
 
 // Gardens
-import 'package:plural_app/src/features/gardens/data/gardens_repository.dart';
 import 'package:plural_app/src/features/gardens/presentation/garden_footer.dart';
 import 'package:plural_app/src/features/gardens/presentation/listed_gardens_dialog.dart';
 
@@ -178,20 +183,41 @@ void main() {
 
     testWidgets("createListedGardensDialog", (tester) async {
       final tc = TestContext();
-      final appState = AppState()
-                        ..currentUser = tc.user;
+      final appState = AppState.skipSubscribe()
+                        ..currentUser = tc.user
+                        ..currentGarden = tc.garden;
 
       final getIt = GetIt.instance;
-      final mockGardensRepository = MockGardensRepository();
+      final mockUsersRepository = MockUsersRepository();
+      final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
       getIt.registerLazySingleton<AppState>(() => appState);
       getIt.registerLazySingleton<AppDialogRouter>(() => AppDialogRouter());
-      getIt.registerLazySingleton<GardensRepository>(() => mockGardensRepository);
+      getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
+      getIt.registerLazySingleton<UserGardenRecordsRepository>(
+        () => mockUserGardenRecordsRepository
+      );
 
-      // GardensRepository.getAsksByUserID()
+      // UsersRepository.getFirstListItem()
       when(
-        () => mockGardensRepository.getGardensByUser(any())
+        () => mockUsersRepository.getFirstListItem(filter: any(named: "filter"))
       ).thenAnswer(
-        (_) async => [tc.garden, tc.garden]
+        (_) async => tc.getUserRecordModel()
+      );
+
+      // UserGardenRecordsRepository.getList()
+      when(
+        () => mockUserGardenRecordsRepository.getList(
+          expand: any(named: "expand"),
+          filter: any(named: "filter"),
+          sort: any(named: "sort"),
+        )
+      ).thenAnswer(
+        (_) async => ResultList<RecordModel>(
+          items: [
+            tc.getGardenRecordRecordModelFromJson(UserGardenRecordField.garden),
+            tc.getGardenRecordRecordModelFromJson(UserGardenRecordField.garden),
+          ]
+        )
       );
 
       await tester.pumpWidget(

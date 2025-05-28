@@ -138,7 +138,21 @@ void main() {
         (_) async => tc.getUserSettingsRecordModel()
       );
 
-      // RecordService.getList() - getGardensByUser()
+      // RecordService.getList() - getGardensByUser(excludeCurrentGarden: true)
+      when(
+        () => recordService.getList(
+          expand: UserGardenRecordField.garden,
+          filter: ""
+            "${UserGardenRecordField.garden}.${GenericField.id} != '${tc.garden.id}' && "
+            "${UserGardenRecordField.user} = '${tc.user.id}'",
+          sort: "garden.name",
+        )
+      ).thenAnswer(
+        (_) async => ResultList<RecordModel>(
+          items: [tc.getGardenRecordRecordModelFromJson(UserGardenRecordField.garden)]
+        )
+      );
+      // RecordService.getList() - getGardensByUser(excludeCurrentGarden: false)
       when(
         () => recordService.getList(
           expand: UserGardenRecordField.garden,

@@ -5,7 +5,7 @@ import 'package:get_it/get_it.dart';
 import 'package:plural_app/src/constants/app_sizes.dart';
 
 // Gardens
-import 'package:plural_app/src/features/gardens/data/gardens_repository.dart';
+import 'package:plural_app/src/features/gardens/data/gardens_api.dart';
 import 'package:plural_app/src/features/gardens/domain/garden.dart';
 import 'package:plural_app/src/features/gardens/presentation/listed_garden_tile.dart';
 
@@ -15,13 +15,12 @@ import 'package:plural_app/src/utils/app_state.dart';
 class LandingPageGardensTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final gardensRepository = GetIt.instance<GardensRepository>();
     final appState = GetIt.instance<AppState>();
 
     return Column(
       children: [
         FutureBuilder<List<Garden>>(
-          future: gardensRepository.getGardensByUser(appState.currentUserID!),
+          future: getGardensByUser(appState.currentUserID!, excludeCurrentGarden: false),
           builder: (BuildContext context, AsyncSnapshot<List<Garden>> snapshot) {
             if (snapshot.hasData) {
               return LandingPageGardensList(gardens: snapshot.data!);
