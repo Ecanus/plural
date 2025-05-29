@@ -295,6 +295,7 @@ class ConfirmDeleteAskDialog extends StatelessWidget {
                   child: FilledButton(
                     onPressed: () {
                       Navigator.pop(context);
+                      // TODO: Remove appForm from ask deletion
                       submitDelete(context, appForm);
                     },
                     style: ButtonStyle(
@@ -307,7 +308,7 @@ class ConfirmDeleteAskDialog extends StatelessWidget {
                         )
                       ),
                     ),
-                    child: const Text(AskDialogText.confirmDeleteAsk)
+                    child: const Text(AskDialogText.deleteAsk)
                   ),
                 )
               ],

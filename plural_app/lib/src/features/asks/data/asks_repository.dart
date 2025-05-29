@@ -7,6 +7,9 @@ import 'package:get_it/get_it.dart';
 import 'package:plural_app/src/constants/fields.dart';
 import 'package:plural_app/src/constants/pocketbase.dart';
 
+// Common Interfaces
+import 'package:plural_app/src/common_interfaces/repository.dart';
+
 // Asks
 import 'package:plural_app/src/features/asks/data/asks_api.dart';
 import 'package:plural_app/src/features/asks/domain/ask.dart';
@@ -15,12 +18,127 @@ import 'package:plural_app/src/features/asks/domain/ask.dart';
 import 'package:plural_app/src/utils/app_state.dart';
 import 'package:plural_app/src/utils/exceptions.dart';
 
-class AsksRepository {
+class AsksRepository implements Repository {
   AsksRepository({
     required this.pb,
   });
 
   final PocketBase pb;
+  final _collection = Collection.asks;
+
+  @override
+  Future<void> bulkDelete({
+    required ResultList records,
+  }) async {
+    try {
+      for (final record in records.items) {
+        await pb.collection(_collection).delete(record.toJson()[GenericField.id]);
+      }
+    } on ClientException catch(e) {
+      developer.log(
+        ""
+        "--\n"
+        "$runtimeType.bulkDelete(), "
+        "\n--",
+        error: e,
+      );
+
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> delete({
+    required String id,
+  }) async {
+    try {
+      await pb.collection(_collection).delete(id);
+    } on ClientException catch(e) {
+      developer.log(
+        ""
+        "--\n"
+        "$runtimeType.delete(), "
+        "id: $id"
+        "\n--",
+        error: e,
+      );
+
+      rethrow;
+    }
+  }
+
+  @override
+  Future<RecordModel> getFirstListItem({
+    required String filter,
+  }) async {
+    try {
+      return await pb.collection(_collection).getFirstListItem(filter);
+    } on ClientException catch(e) {
+      developer.log(
+        ""
+        "--\n"
+        "$runtimeType.getFirstListItem(), "
+        "filter: $filter"
+        "\n--",
+        error: e,
+      );
+
+      rethrow;
+    }
+  }
+
+  @override
+  Future<ResultList> getList({
+    String expand = "",
+    String filter = "",
+    String sort = "",
+  }) async {
+    try {
+      return await pb.collection(_collection).getList(
+        expand: expand,
+        filter: filter,
+        sort: sort,
+      );
+    } on ClientException catch(e) {
+      developer.log(
+        ""
+        "--\n"
+        "$runtimeType.getList(), "
+        "expand: $expand, "
+        "filter: $filter, "
+        "sort: $sort, "
+        "\n--",
+        error: e,
+      );
+
+      rethrow;
+    }
+  }
+
+  @override
+  Future<RecordModel> update({
+    required String id,
+    Map<String, dynamic> body = const {},
+  }) async {
+    try {
+      return await pb.collection(_collection).update(
+        id,
+        body: body
+      );
+    } on ClientException catch(e) {
+      developer.log(
+        ""
+        "--\n"
+        "$runtimeType.update(), "
+        "id: $id, "
+        "body: $body, "
+        "\n--",
+        error: e,
+      );
+
+      rethrow;
+    }
+  }
 
   /// Queries on the [Ask] collection to retrieve records corresponding to the
   /// given [gardenID], [filterString] and [sortString].
@@ -173,7 +291,7 @@ class AsksRepository {
   ///
   /// Returns (true, {}) if updated successfully, else false
   /// and a map of the errors.
-  Future<(bool, Map)> update(Map map) async {
+  Future<(bool, Map)> updateWithMap(Map map) async {
     try {
       var boon = map[AskField.boon];
       var targetSum = map[AskField.targetSum];
@@ -216,7 +334,7 @@ class AsksRepository {
   ///
   /// Returns (true, {}) if deleted successfully, else false
   /// and a map of the errors.
-  Future<(bool, Map)> delete(Map map) async {
+  Future<(bool, Map)> deleteWithMap(Map map) async {
     try {
       // Delete Ask
       await pb.collection(Collection.asks).delete(map[GenericField.id]);

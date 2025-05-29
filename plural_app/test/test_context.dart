@@ -31,7 +31,9 @@ class TestContext {
   TestContext() {
     user = AppUser(
       email: "test@user.com",
+      firstName: "MyFirstName",
       id: "TESTUSER1",
+      lastName: "MyLastName",
       username: "testuser"
     );
 

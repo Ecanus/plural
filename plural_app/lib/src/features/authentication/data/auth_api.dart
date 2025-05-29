@@ -21,6 +21,7 @@ import 'package:plural_app/src/features/asks/data/asks_repository.dart';
 // Auth
 import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
 import 'package:plural_app/src/features/authentication/data/users_repository.dart';
+import 'package:plural_app/src/features/authentication/data/user_settings_repository.dart';
 import 'package:plural_app/src/features/authentication/domain/app_user.dart';
 
 // Localization
@@ -39,6 +40,64 @@ Future<AppUser> getUserByID(String userID) async {
   );
 
   return AppUser.fromJson(query.toJson());
+}
+
+/// Attempts to update the [User] record that matches the values passed
+/// in the given [map] parameter.
+///
+/// Returns true and an empty map if updated successfully,
+/// else false and a map of the errors.
+Future<(bool, Map)> updateUser(Map map) async {
+  try {
+    await GetIt.instance<UsersRepository>().update(
+      id: map[GenericField.id],
+      body: {
+        UserField.firstName: map[UserField.firstName],
+        UserField.lastName: map[UserField.lastName],
+      }
+    );
+
+    return (true, {});
+  } on ClientException catch(e) {
+    var errorsMap = getErrorsMapFromClientException(e);
+
+      // Log error
+      developer.log(
+        "updateUser() error",
+        error: e,
+      );
+
+      return (false, errorsMap);
+  }
+}
+
+/// Attempts to update the [UserSettings] record that matches the values passed
+/// in the given [map] parameter.
+///
+/// Returns true and an empty map if updated successfully,
+/// else false and a map of the errors.
+Future<(bool, Map)> updateUserSettings(Map map) async {
+  try {
+    await GetIt.instance<UserSettingsRepository>().update(
+      id: map[GenericField.id],
+      body: {
+        UserSettingsField.defaultCurrency: map[UserSettingsField.defaultCurrency],
+        UserSettingsField.defaultInstructions: map[UserSettingsField.defaultInstructions],
+      }
+    );
+
+    return (true, {});
+  } on ClientException catch(e) {
+    var errorsMap = getErrorsMapFromClientException(e);
+
+      // Log error
+      developer.log(
+        "updateUser() error",
+        error: e,
+      );
+
+      return (false, errorsMap);
+  }
 }
 
 /// Attempts to log into the database with the given [usernameOrEmail]

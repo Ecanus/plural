@@ -13,7 +13,6 @@ import 'package:plural_app/src/constants/routes.dart';
 
 // Auth
 import 'package:plural_app/src/features/authentication/data/auth_api.dart';
-import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
 import 'package:plural_app/src/features/authentication/domain/constants.dart';
 
 // Localization
@@ -29,7 +28,8 @@ import 'package:pocketbase/pocketbase.dart';
 Future<void> submitUpdateSettings(
   BuildContext context,
   GlobalKey<FormState> formKey,
-  AppForm appForm,
+  AppForm userAppForm,
+  AppForm userSettingsAppForm,
   String currentRoute,
 ) async {
   if (formKey.currentState!.validate()) {
@@ -37,10 +37,11 @@ Future<void> submitUpdateSettings(
     formKey.currentState!.save();
 
     // Update DB (should also rebuild Garden Timeline via SubscribeTo)
-    var (isValid, errorsMap) =
-      await GetIt.instance<AuthRepository>().updateUserSettings(appForm.fields);
+    var (isUserValid, userErrorsMap) = await updateUser(userAppForm.fields);
+    var (isUserSettingsValid, userSettingsErrorsMap) =
+      await updateUserSettings(userSettingsAppForm.fields);
 
-    if (isValid && context.mounted) {
+    if (isUserValid && isUserSettingsValid && context.mounted) {
       var snackBar = AppSnackbars.getSnackbar(
         SnackbarText.updateUserSettingsSuccess,
         showCloseIcon: false,
@@ -59,7 +60,8 @@ Future<void> submitUpdateSettings(
       }
     } else {
       // Add errors to corresponding fields
-      appForm.setErrors(errorsMap: errorsMap);
+      userAppForm.setErrors(errorsMap: userErrorsMap);
+      userSettingsAppForm.setErrors(errorsMap: userSettingsErrorsMap);
 
       switch(currentRoute) {
         case Routes.garden:

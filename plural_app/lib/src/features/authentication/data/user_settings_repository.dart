@@ -9,13 +9,13 @@ import 'package:plural_app/src/constants/pocketbase.dart';
 // Common Interfaces
 import 'package:plural_app/src/common_interfaces/repository.dart';
 
-class UserGardenRecordsRepository implements Repository {
-  UserGardenRecordsRepository({
+class UserSettingsRepository implements Repository {
+  UserSettingsRepository({
     required this.pb,
   });
 
   final PocketBase pb;
-  final _collection = Collection.userGardenRecords;
+  final _collection = Collection.userSettings;
 
   @override
   Future<void> bulkDelete({
@@ -59,7 +59,7 @@ class UserGardenRecordsRepository implements Repository {
   }
 
   @override
-  Future<RecordModel?> getFirstListItem({
+  Future<RecordModel> getFirstListItem({
     required String filter,
   }) async {
     try {
@@ -74,7 +74,7 @@ class UserGardenRecordsRepository implements Repository {
         error: e,
       );
 
-      return null;
+      rethrow;
     }
   }
 

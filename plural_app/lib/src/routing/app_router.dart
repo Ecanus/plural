@@ -21,7 +21,9 @@ class AppRouter {
         ),
         GoRoute(
           path: Routes.landing,
-          builder: (_, __) => LandingPage(),
+          builder: (_, state) => LandingPage(
+            exitedGardenID: state.uri.queryParameters["exitedGardenID"],
+          ),
         ),
         GoRoute(
           path: Routes.signIn,

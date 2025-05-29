@@ -53,7 +53,9 @@ void main() {
 
       final newUser = AppUser(
         email: "new@user.com",
+        firstName: "NewFirst",
         id: "NEWUSER001",
+        lastName: "NewLast",
         username: "newuser"
       );
 

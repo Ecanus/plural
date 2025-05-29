@@ -17,6 +17,7 @@ class AppConstraints {
   static const c60 = 60.0;
   static const c100 = 100.0;
   static const c180 = 180.0;
+  static const c300 = 300.0;
   static const c350 = 350.0;
   static const c400 = 400.0;
   static const c500 = 500.0;
@@ -134,3 +135,4 @@ const gapH40 = SizedBox(height: AppPaddings.p40);
 const gapH50 = SizedBox(height: AppPaddings.p50);
 const gapH60 = SizedBox(height: AppPaddings.p60);
 const gapH65 = SizedBox(height: AppPaddings.p65);
+const gapH80 = SizedBox(height: AppPaddings.p80);

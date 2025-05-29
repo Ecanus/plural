@@ -96,6 +96,8 @@ class AuthRepository {
       var appUser = AppUser(
         id: record[UserGardenRecordField.user],
         email: userRecord[UserField.email],
+        firstName: userRecord[UserField.firstName],
+        lastName: userRecord[UserField.lastName],
         username: userRecord[UserField.username],
       );
 
@@ -120,6 +122,8 @@ class AuthRepository {
     return AppUser(
       id: record[GenericField.id],
       email: record[UserField.email],
+      firstName: record[UserField.firstName],
+      lastName: record[UserField.lastName],
       username: record[UserField.username],
     );
   }
@@ -197,22 +201,29 @@ class AuthRepository {
     // Always clear before setting new subscription
     await pb.collection(Collection.users).unsubscribe();
 
+    var currentUser = GetIt.instance<AppState>().currentUser!;
+
     Future<Function> unsubscribeFunc = pb.collection(Collection.users)
       .subscribe(Subscribe.all, (e) async {
         var user = e.record!.toJson();
+        var userID = user[GenericField.id];
 
         // Only respond to changes to users in the given gardenID
         var gardenRecord = await getUserGardenRecord(
-          userID: user[GenericField.id],
+          userID: userID,
           gardenID: gardenID,
         );
 
         if (gardenRecord == null) return;
 
         switch (e.action) {
+          case EventAction.update:
+            // Get new values from db, if it was currentUser that was updated
+            if (userID == currentUser.id) {
+              GetIt.instance<AppState>().currentUser = await getUserByID(userID);
+            }
           case EventAction.create:
           case EventAction.delete:
-          case EventAction.update:
             callback();
         }
       });

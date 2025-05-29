@@ -1,7 +1,15 @@
 import 'package:pocketbase/pocketbase.dart';
 
 abstract class Repository {
-  Future<RecordModel> getFirstListItem({
+  Future<void> bulkDelete({
+    required ResultList records,
+  });
+
+  Future<void> delete({
+    required String id,
+  });
+
+  Future<RecordModel?> getFirstListItem({
     required String filter,
   });
 
@@ -9,5 +17,10 @@ abstract class Repository {
     String expand = "",
     String filter = "",
     String sort = "",
+  });
+
+  Future<RecordModel> update({
+    required String id,
+    Map<String, dynamic> body = const {},
   });
 }

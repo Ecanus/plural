@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-
-// Pocketbase
 import 'package:pocketbase/pocketbase.dart';
 
 // Constants
+import 'package:plural_app/src/constants/app_values.dart';
 import 'package:plural_app/src/constants/fields.dart';
 import 'package:plural_app/src/constants/formats.dart';
 import 'package:plural_app/src/constants/pocketbase.dart';
+import 'package:plural_app/src/constants/routes.dart';
+
+// Common Widgets
+import 'package:plural_app/src/common_widgets/app_snackbars.dart';
 
 // Asks
 import 'package:plural_app/src/features/asks/data/asks_repository.dart';
@@ -23,6 +27,9 @@ import 'package:plural_app/src/features/authentication/domain/app_user_settings.
 import 'package:plural_app/src/features/gardens/data/gardens_repository.dart';
 import 'package:plural_app/src/features/gardens/domain/constants.dart';
 import 'package:plural_app/src/features/gardens/domain/garden.dart';
+
+// Localization
+import 'package:plural_app/src/localization/lang_en.dart';
 
 class AppState with ChangeNotifier {
 
@@ -74,6 +81,34 @@ class AppState with ChangeNotifier {
   // _timelineAsks
   List<Ask>? get timelineAsks {
     return _timelineAsks;
+  }
+
+  /// Verifies the existence of a [UserGardenRecord] record associated with
+  /// both the [currentUser] and the given [newGarden] before rerouting to the
+  /// Garden page.
+  ///
+  /// If no corresponding [UserGardenRecord] is found, an error Snackbar will appear,
+  /// and no reroute will take place.
+  void setGardenAndReroute(BuildContext context, Garden newGarden) async {
+    // TODO: check on a valid UserGardenRecord before redirecting
+    // Check there exists a UserGardenRecord corresponding to _currentUser and newGarden
+    final userGardenRecordExists = true;
+
+    // If exists corresponding UserGardenRecord, reroute
+    if (userGardenRecordExists && context.mounted) {
+      currentGarden = newGarden; // will also call notifyListeners() and updateSubscriptions()
+      GoRouter.of(context).go(Routes.garden);
+    } else {
+      // Else, show Snackbar error
+      var snackBar = AppSnackbars.getSnackbar(
+          SnackbarText.invalidGardenPermissions,
+          duration: AppDurations.s9,
+          snackbarType: SnackbarType.error
+        );
+
+        // Display error Snackbar
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
   }
 
   /// Sets the value of _currentGarden to null without notifying listeners.
