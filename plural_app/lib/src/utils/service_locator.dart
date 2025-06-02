@@ -78,8 +78,7 @@ Future<void> registerGetItInstances(PocketBase pb) async {
 }
 
 
-/// Assigns values to the global [AppState] instance using the given
-/// [userID].
+/// Assigns values to the global [AppState] instance using [userID].
 Future<void> setInitialAppStateValues(userID) async {
   var appState = GetIt.instance<AppState>();
 

@@ -5,15 +5,15 @@ import 'package:go_router/go_router.dart';
 import 'package:get_it/get_it.dart';
 import 'package:pocketbase/pocketbase.dart';
 
+// Common Widgets
+import 'package:plural_app/src/common_widgets/app_snackbars.dart';
+
 // Constants
 import 'package:plural_app/src/constants/app_values.dart';
 import 'package:plural_app/src/constants/environments.dart';
 import 'package:plural_app/src/constants/fields.dart';
 import 'package:plural_app/src/constants/pocketbase.dart';
 import 'package:plural_app/src/constants/routes.dart';
-
-// Common Widgets
-import 'package:plural_app/src/common_widgets/app_snackbars.dart';
 
 // Asks
 import 'package:plural_app/src/features/asks/data/asks_repository.dart';
@@ -100,8 +100,8 @@ Future<(bool, Map)> updateUserSettings(Map map) async {
   }
 }
 
-/// Attempts to log into the database with the given [usernameOrEmail]
-/// and [password] parameters and create all necessary [GetIt] instances.
+/// Attempts to log in to the database with [usernameOrEmail]
+/// and [password] parameters, and creates all necessary [GetIt] instances.
 ///
 /// Returns true if log in is successful, else false.
 Future<bool> login(
@@ -154,7 +154,7 @@ Future<void> logout(
   }
 }
 
-/// Attempts to create a new [User] record in the database with the given
+/// Attempts to create a new [User] record in the database with the
 /// [firstName], [lastName], [username], [email], and [password] parameters.
 ///
 /// Returns (true, {}) if sign up is successful, else (false, errorsMap)
@@ -214,8 +214,8 @@ Future<(bool, Map)> signup(
   }
 }
 
-/// Attempts to send an email to the given [email] containing instructions
-/// to reset the account password corresponding to [email].
+/// Attempts to send an email to [email] containing instructions
+/// to reset the account password corresponding to that account.
 ///
 /// Returns true if the email is successfully sent, else false.
 Future<bool> sendPasswordResetCode(

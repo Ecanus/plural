@@ -108,7 +108,7 @@ void main() {
               children: [
                 TileContents(
                   ask: ask,
-                  hideContent: false,
+                  hasHiddenContent: false,
                 )
               ],
             ),
@@ -128,7 +128,7 @@ void main() {
               children: [
                 TileContents(
                   ask: ask,
-                  hideContent: true,
+                  hasHiddenContent: true,
                 )
               ],
             ),
@@ -149,7 +149,7 @@ void main() {
         MaterialApp(
           theme: AppThemes.standard,
           home: Scaffold(
-            body: TileIsSponsoredIcon(hideContent: false,),
+            body: TileIsSponsoredIcon(hasHiddenContent: false,),
           )
         )
       );
@@ -162,7 +162,7 @@ void main() {
         MaterialApp(
           theme: AppThemes.standard,
           home: Scaffold(
-            body: TileIsSponsoredIcon(hideContent: true,),
+            body: TileIsSponsoredIcon(hasHiddenContent: true,),
           )
         )
       );

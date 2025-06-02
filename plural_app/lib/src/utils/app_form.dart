@@ -27,8 +27,7 @@ class AppForm {
     }
   }
 
-  /// Retrieves the value in [errors] associated with the given
-  /// [fieldName] if one exists.
+  /// Retrieves the value in [errors] associated with [fieldName], if one exists.
   ///
   /// Returns the retrieved value if a matching key is found, else null.
   String? getError({required String fieldName}) {
@@ -37,8 +36,7 @@ class AppForm {
     return errors[fieldName];
   }
 
-  /// Retrieves the value in [fields] associated with the given
-  /// [fieldName].
+  /// Retrieves the value in [fields] associated with [fieldName].
   dynamic getValue({required String fieldName}) {
     return fields[fieldName];
   }
@@ -52,9 +50,10 @@ class AppForm {
     errors[fieldName] = errorMessage;
   }
 
-  /// Iterates over the given [errorsMap], where its keys are field names
-  /// and its values are the corresponding error messages, and creates
-  /// new key-value pairings within [errors].
+  /// Iterates over [errorsMap], where its keys are field names
+  /// and its values are the corresponding error messages.
+  ///
+  /// Creates new key-value pairings within [errors].
   void setErrors({required Map errorsMap}) {
     for (var key in errorsMap.keys) {
       setError(fieldName: key, errorMessage: errorsMap[key]);
@@ -68,7 +67,7 @@ class AppForm {
     }
   }
 
-  /// Assigns the given [value] to the value of the key-value pairing in [fields]
+  /// Assigns [value] to the value of the key-value pairing in [fields]
   /// with a key that matches [fieldName].
   void setValue({
     required String fieldName,
@@ -77,8 +76,8 @@ class AppForm {
     fields[fieldName] = value;
   }
 
-  /// Saves the given [value] into this AppForm instance's [fields]
-  /// using the given [FormFieldType] to properly format.
+  /// Saves [value] into this AppForm instance's [fields]
+  /// using [FormFieldType] to properly format.
   void save({
     required String fieldName,
     required dynamic value,

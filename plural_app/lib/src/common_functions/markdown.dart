@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-/// Parses through the given [text] and creates a list of
-/// [InlineSpan], converting "[link_text](link_address)" text into only "link_text".
+/// Parses through [text] and creates a list of [InlineSpan].
 ///
+/// Converts "[link_text](link_address)" text into only "link_text".
 /// Returns the list of [InlineSpan] of the parsed [text].
 List<InlineSpan> stripHttpMarkdown({
   required String text,

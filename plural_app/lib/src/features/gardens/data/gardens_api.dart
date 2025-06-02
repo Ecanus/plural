@@ -19,19 +19,19 @@ import 'package:plural_app/src/features/authentication/data/user_garden_records_
 import 'package:plural_app/src/features/gardens/domain/garden.dart';
 
 /// Returns a list of [Garden] instances corresponding to [Garden] records from the
-/// database that the given [userID] belongs to.
+/// database that [userID] belongs to.
 ///
-/// If [excludeCurrentGarden] is true, the [Garden] corresponding
+/// If [excludesCurrentGarden] is true, the [Garden] corresponding
 /// to [AppState].currentGarden will be excluded from the list of results.
 Future<List<Garden>> getGardensByUser(
   String userID, {
-  bool excludeCurrentGarden = true,
+  bool excludesCurrentGarden = true,
 }) async {
   List<Garden> gardens = [];
   var filter = "${UserGardenRecordField.user} = '$userID'";
 
-  // excludeCurrentGarden
-  if (excludeCurrentGarden) {
+  // excludesCurrentGarden
+  if (excludesCurrentGarden) {
     final currentGardenID = GetIt.instance<AppState>().currentGarden!.id;
     filter = ""
       "${UserGardenRecordField.garden}.${GenericField.id} != '$currentGardenID' && "
@@ -56,8 +56,9 @@ Future<List<Garden>> getGardensByUser(
   return gardens;
 }
 
-/// Reroutes to the Landing page, and populates the [exitedGardenID] parameter
-/// of the Landing page widget with the id of the [Garden] that
+/// Reroutes to the Landing page, with a non-null [exitedGardenID] value.
+///
+/// The value of [exitedGardenID] is the id of the [Garden] that
 /// the current [User] has just exited.
 Future<void> rerouteToLandingAndPrepareGardenExit(BuildContext context) async {
   final appState = GetIt.instance<AppState>();
@@ -75,11 +76,11 @@ Future<void> rerouteToLandingAndPrepareGardenExit(BuildContext context) async {
   }
 }
 
-/// Deletes all Asks corresponding to the [User] record with the given [userID],
-/// and deletes the [UserGardenRecord] record corresponding to the
-/// User with [userID] and Garden with [exitedGardenID].
+/// Deletes the [UserGardenRecord] record corresponding to the
+/// [User] with [userID] and Garden with [exitedGardenID].
 ///
-/// Calls the given [callback] once all database calls are done.
+/// Also deletes all Asks corresponding to the [User] record with the given [userID],
+/// and calls the given [callback] once all database functionality is done.
 Future<void> removeUserFromGarden(
   String userID,
   String exitedGardenID,

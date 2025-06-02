@@ -59,7 +59,8 @@ class _AppTextFormFieldState extends State<AppTextFormField> {
     super.dispose();
   }
 
-  @override void initState() {
+  @override
+  void initState() {
     super.initState();
 
     _controller.text = widget.initialValue;

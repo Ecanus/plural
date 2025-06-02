@@ -73,7 +73,7 @@ class _LandingPageSettingsTabState extends State<LandingPageSettingsTab> {
                   maxLines: null,
                   suffixIcon: Tooltip(
                         message: AskDialogText.tooltipInstructions,
-                        child: AppTooltipIcon(dark: false),
+                        child: AppTooltipIcon(isDark: false),
                       ),
                 ),
                 DeleteAccountButton(),

@@ -18,7 +18,7 @@ void main() {
           theme: AppThemes.standard,
           home: Scaffold(
             body: AppTooltipIcon(
-              dark: true
+              isDark: true
             ),
           ),
         ));
@@ -32,7 +32,7 @@ void main() {
           theme: AppThemes.standard,
           home: Scaffold(
             body: AppTooltipIcon(
-              dark: false
+              isDark: false
             ),
           ),
         ));

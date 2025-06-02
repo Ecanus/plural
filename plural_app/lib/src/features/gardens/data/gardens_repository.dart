@@ -21,8 +21,8 @@ class GardensRepository {
 
   final PocketBase pb;
 
-  /// Queries on the [Garden] collection to retrieve the record corresponding to the
-  /// given [gardenID].
+  /// Queries on the [Garden] collection to retrieve the record corresponding to
+  /// [gardenID].
   ///
   /// Returns a [Garden] instance.
   Future<Garden> getGardenByID(String gardenID) async {
@@ -44,7 +44,7 @@ class GardensRepository {
   }
 
   /// Queries on the [UserGardenRecord] collection to retrieve all [Garden] records
-  /// associated with the given [userID].
+  /// associated with [userID].
   ///
   /// Returns a list of [Garden] instances.
   Future<List<Garden>> getGardensByUser(String userID) async {

@@ -5,12 +5,12 @@ import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:pocketbase/pocketbase.dart';
 
+// Common Widgets
+import 'package:plural_app/src/common_widgets/app_dialog_footer.dart';
+
 // Constants
 import 'package:plural_app/src/constants/fields.dart';
 import 'package:plural_app/src/constants/routes.dart';
-
-// Common Widgets
-import 'package:plural_app/src/common_widgets/app_dialog_footer.dart';
 
 // Auth
 import 'package:plural_app/src/features/authentication/data/user_garden_records_repository.dart';

@@ -1,8 +1,6 @@
 import 'dart:developer' as developer;
 
 import 'package:get_it/get_it.dart';
-
-// Pocketbase
 import 'package:pocketbase/pocketbase.dart';
 
 // Constants

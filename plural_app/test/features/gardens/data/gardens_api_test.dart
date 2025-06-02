@@ -63,7 +63,7 @@ void main() {
 
       // getGardensByUser
       List<Garden> gardens = await getGardensByUser(
-        tc.user.id, excludeCurrentGarden: false
+        tc.user.id, excludesCurrentGarden: false
       );
 
       // Check that 3 gardens created
@@ -123,7 +123,7 @@ void main() {
 
       // getGardensByUser
       List<Garden> gardens = await getGardensByUser(
-        tc.user.id, excludeCurrentGarden: true
+        tc.user.id, excludesCurrentGarden: true
       );
 
       // Check 3 gardens created

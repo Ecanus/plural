@@ -3,12 +3,12 @@ import 'dart:developer' as developer;
 import 'package:pocketbase/pocketbase.dart';
 import 'package:get_it/get_it.dart';
 
+// Common Interfaces
+import 'package:plural_app/src/common_interfaces/repository.dart';
+
 // Constants
 import 'package:plural_app/src/constants/fields.dart';
 import 'package:plural_app/src/constants/pocketbase.dart';
-
-// Common Interfaces
-import 'package:plural_app/src/common_interfaces/repository.dart';
 
 // Asks
 import 'package:plural_app/src/features/asks/data/asks_api.dart';
@@ -140,8 +140,8 @@ class AsksRepository implements Repository {
     }
   }
 
-  /// Queries on the [Ask] collection to retrieve records corresponding to the
-  /// given [gardenID], [filterString] and [sortString].
+  /// Queries on the [Ask] collection to retrieve records corresponding to [gardenID],
+  /// [filterString] and [sortString].
   ///
   /// Returns the list of retrieved [Ask]s up to [count].
   Future<List<Ask>> getAsksByGardenID({
@@ -162,7 +162,7 @@ class AsksRepository implements Repository {
   }
 
   /// Queries on the [Ask] collection to retrieve all records corresponding
-  /// to the given [userID], [filterString], [sortString], and the current [Garden].
+  /// to [userID], [filterString], [sortString], and the current [Garden].
   ///
   /// Returns the list of retrieved [Ask]s.
   Future<List<Ask>> getAsksByUserID({
@@ -184,7 +184,7 @@ class AsksRepository implements Repository {
     return await createAskInstancesFromQuery(result);
   }
 
-  /// Deletes all [Ask] records associated with [AppState].currentUser
+  /// Deletes all [Ask] records associated with [AppState].currentUser.
   Future<void> deleteCurrentUserAsks() async {
     final currentUser = GetIt.instance<AppState>().currentUser!;
 
@@ -197,8 +197,8 @@ class AsksRepository implements Repository {
     }
   }
 
-  /// Appends the [User] record which corresponds to the given [userID] to the list
-  /// of sponsors of the [Ask] record which corresponds to the given [askID].
+  /// Appends the [User] record which corresponds to [userID] to the list
+  /// of sponsors of the [Ask] record which corresponds to [askID].
   Future<void> addSponsor(String askID, String userID) async {
     var result = await pb.collection(Collection.asks).getList(
       filter: "${GenericField.id}='$askID'"
@@ -220,8 +220,8 @@ class AsksRepository implements Repository {
     );
   }
 
-  /// Removes the [User] record which corresponds to the given [userID] from the list
-  /// of sponsors of the [Ask] record which corresponds to the given [askID].
+  /// Removes the [User] record which corresponds to [userID] from the list
+  /// of sponsors of the [Ask] record which corresponds to [askID].
   Future<void> removeSponsor(String askID, String userID) async {
     var result = await pb.collection(Collection.asks).getList(
       filter: "${GenericField.id}='$askID'"
@@ -352,7 +352,7 @@ class AsksRepository implements Repository {
   }
 
   /// Subscribes to any changes made in the [Ask] collection for any [Ask] record
-  /// associated with the given [gardenID].
+  /// associated with [gardenID].
   ///
   /// Calls the given [callback] method whenever a change is made.
   Future<Function> subscribeTo(String gardenID, Function callback) async {

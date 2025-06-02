@@ -23,15 +23,13 @@ import 'package:plural_app/src/features/authentication/domain/app_user_settings.
 // Gardens
 import 'package:plural_app/src/features/gardens/data/gardens_api.dart';
 
-// Utils
-import 'package:plural_app/src/utils/app_form.dart';
-import 'package:plural_app/src/utils/app_state.dart';
-
 // Localization
 import 'package:plural_app/src/localization/lang_en.dart';
 
 // Utils
 import 'package:plural_app/src/utils/app_dialog_router.dart';
+import 'package:plural_app/src/utils/app_form.dart';
+import 'package:plural_app/src/utils/app_state.dart';
 
 Future createUserSettingsDialog(BuildContext context) async {
   final user = GetIt.instance<AppState>().currentUser!;
