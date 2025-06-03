@@ -1,6 +1,7 @@
 import 'package:go_router/go_router.dart';
 
 // Constants
+import 'package:plural_app/src/constants/query_parameters.dart';
 import 'package:plural_app/src/constants/routes.dart';
 
 // Auth
@@ -22,7 +23,7 @@ class AppRouter {
         GoRoute(
           path: Routes.landing,
           builder: (_, state) => LandingPage(
-            exitedGardenID: state.uri.queryParameters["exitedGardenID"],
+            exitedGardenID: state.uri.queryParameters[QueryParameters.exitedGardenID],
           ),
         ),
         GoRoute(

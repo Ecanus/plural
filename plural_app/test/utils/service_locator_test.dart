@@ -67,8 +67,17 @@ void main() {
         (_) async => tc.getUserSettingsRecordModel()
       );
 
+      // Check values not yet registered
+      expect(getIt.isRegistered<PocketBase>(), false);
+      expect(getIt.isRegistered<AppDialogRouter>(), false);
+      expect(getIt.isRegistered<AsksRepository>(), false);
+      expect(getIt.isRegistered<AuthRepository>(), false);
+      expect(getIt.isRegistered<GardensRepository>(), false);
+      expect(getIt.isRegistered<AppState>(), false);
+
       await registerGetItInstances(pb);
 
+      // Check values are registered
       expect(getIt.isRegistered<PocketBase>(), true);
       expect(getIt.isRegistered<AppDialogRouter>(), true);
       expect(getIt.isRegistered<AsksRepository>(), true);

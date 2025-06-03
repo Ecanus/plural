@@ -88,6 +88,7 @@ class AppState with ChangeNotifier {
   /// and no reroute will take place.
   Future<void> setGardenAndReroute(BuildContext context, Garden newGarden) async {
     // TODO: check on a valid UserGardenRecord before redirecting
+    // TODO: If fails, reload the page (i.e. reroute. Consider adding in the currentRoute as a parameter)
     // Check there exists a UserGardenRecord corresponding to _currentUser and newGarden
     final hasUserGardenRecord = true;
 

@@ -43,6 +43,28 @@ class TestDeleteAccountButton extends StatelessWidget {
   }
 }
 
+class TestContextDependantFunctionWidget extends StatelessWidget {
+  const TestContextDependantFunctionWidget({
+    required this.callback
+  });
+
+  final Function callback;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Builder(
+        builder: (BuildContext context) {
+          return ElevatedButton(
+            onPressed: () => callback(context),
+            child: Text("The ElevatedButton")
+          );
+        }
+      ),
+    );
+  }
+}
+
 class TestLogin extends StatelessWidget {
   TestLogin({
     required this.appForm,

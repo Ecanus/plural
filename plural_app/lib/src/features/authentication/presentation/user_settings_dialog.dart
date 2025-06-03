@@ -136,11 +136,8 @@ class _UserSettingsListState extends State<UserSettingsList> {
             AppDialogFooterBufferSubmitButton(
               callback: submitUpdateSettings,
               positionalArguments: [
-                context,
-                _formKey,
-                _userAppForm,
-                _userSettingsAppForm,
-                Routes.garden]
+                context, _formKey, _userAppForm, _userSettingsAppForm],
+              namedArguments: {#currentRoute: Routes.garden}
             ),
           ]
         ),

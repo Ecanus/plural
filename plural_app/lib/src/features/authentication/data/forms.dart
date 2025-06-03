@@ -29,9 +29,9 @@ Future<void> submitUpdateSettings(
   BuildContext context,
   GlobalKey<FormState> formKey,
   AppForm userAppForm,
-  AppForm userSettingsAppForm,
-  String currentRoute,
-) async {
+  AppForm userSettingsAppForm, {
+  required String currentRoute,
+}) async {
   if (formKey.currentState!.validate()) {
     // Save form
     formKey.currentState!.save();
@@ -50,26 +50,19 @@ Future<void> submitUpdateSettings(
 
       // Display Success Snackbar
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
-
-      switch(currentRoute) {
-        case Routes.garden:
-          // Reload Dialog (and reacquire user settings)
-          GetIt.instance<AppDialogRouter>().routeToUserSettingsDialogView();
-        default:
-          return;
-      }
     } else {
       // Add errors to corresponding fields
       userAppForm.setErrors(errorsMap: userErrorsMap);
       userSettingsAppForm.setErrors(errorsMap: userSettingsErrorsMap);
+    }
 
-      switch(currentRoute) {
-        case Routes.garden:
-          // Reload Dialog (and reacquire user settings)
-          GetIt.instance<AppDialogRouter>().routeToUserSettingsDialogView();
-        default:
-          return;
-      }
+    // Determine next steps using currentRoute
+    switch(currentRoute) {
+      case Routes.garden:
+        // Reload Dialog (and reacquire user settings)
+        GetIt.instance<AppDialogRouter>().routeToUserSettingsDialogView();
+      default:
+        return;
     }
   }
 }

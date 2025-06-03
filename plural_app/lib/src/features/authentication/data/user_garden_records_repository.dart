@@ -59,7 +59,7 @@ class UserGardenRecordsRepository implements Repository {
   }
 
   @override
-  Future<RecordModel?> getFirstListItem({
+  Future<RecordModel> getFirstListItem({
     required String filter,
   }) async {
     try {
@@ -74,7 +74,7 @@ class UserGardenRecordsRepository implements Repository {
         error: e,
       );
 
-      return null;
+      rethrow;
     }
   }
 

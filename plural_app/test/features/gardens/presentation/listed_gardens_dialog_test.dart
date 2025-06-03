@@ -85,7 +85,8 @@ void main() {
               }
             ),
           ),
-        ));
+        )
+      );
 
       // Check GardenDialogList not yet displayed
       expect(find.byType(GardenDialogList), findsNothing);

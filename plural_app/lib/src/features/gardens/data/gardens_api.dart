@@ -6,6 +6,7 @@ import 'package:plural_app/src/utils/app_state.dart';
 // Constants
 import 'package:plural_app/src/constants/fields.dart';
 import 'package:plural_app/src/constants/pocketbase.dart';
+import 'package:plural_app/src/constants/query_parameters.dart';
 import 'package:plural_app/src/constants/routes.dart';
 
 // Asks
@@ -70,7 +71,7 @@ Future<void> rerouteToLandingAndPrepareGardenExit(BuildContext context) async {
       Uri(
         path: Routes.landing,
         queryParameters: {
-          "exitedGardenID": exitedGardenID}
+          QueryParameters.exitedGardenID: exitedGardenID}
       ).toString()
     );
   }
@@ -104,7 +105,7 @@ Future<void> removeUserFromGarden(
       "&& ${UserGardenRecordField.garden} = '$exitedGardenID'"
   );
 
-  await GetIt.instance<UserGardenRecordsRepository>().delete(id: userGardenRecord!.id);
+  await GetIt.instance<UserGardenRecordsRepository>().delete(id: userGardenRecord.id);
 
   callback();
 }

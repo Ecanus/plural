@@ -20,8 +20,8 @@ import 'package:plural_app/src/features/asks/data/asks_repository.dart';
 
 // Auth
 import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
-import 'package:plural_app/src/features/authentication/data/users_repository.dart';
 import 'package:plural_app/src/features/authentication/data/user_settings_repository.dart';
+import 'package:plural_app/src/features/authentication/data/users_repository.dart';
 import 'package:plural_app/src/features/authentication/domain/app_user.dart';
 
 // Localization

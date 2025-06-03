@@ -84,7 +84,8 @@ class _LandingPageSettingsTabState extends State<LandingPageSettingsTab> {
         gapH30,
         AppElevatedButton(
           callback: submitUpdateSettings,
-          positionalArguments: [context, _formKey, _appForm, Routes.landing],
+          positionalArguments: [context, _formKey, _appForm],
+          namedArguments: {#currentRoute: Routes.landing},
           label: LandingPageText.saveChanges,
         ),
         gapH10,

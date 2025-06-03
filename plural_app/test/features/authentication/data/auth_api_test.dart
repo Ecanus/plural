@@ -13,6 +13,8 @@ import 'package:plural_app/src/features/asks/data/asks_repository.dart';
 // Auth
 import 'package:plural_app/src/features/authentication/data/auth_api.dart';
 import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
+import 'package:plural_app/src/features/authentication/data/user_settings_repository.dart';
+import 'package:plural_app/src/features/authentication/data/users_repository.dart';
 
 // Utils
 import 'package:plural_app/src/utils/app_state.dart';
@@ -23,6 +25,220 @@ import '../../../test_mocks.dart';
 
 void main() {
   group("Auth api test", () {
+    test("getUserByID", () async {
+      final tc = TestContext();
+
+      final getIt = GetIt.instance;
+      final pb = MockPocketBase();
+      final recordService = MockRecordService();
+
+      getIt.registerLazySingleton<UsersRepository>(
+        () => UsersRepository(pb: pb)
+      );
+
+      // pb.collection()
+      when(
+        () => pb.collection(Collection.users)
+      ).thenAnswer(
+        (_) => recordService as RecordService
+      );
+
+      // RecordService.getFirstListItem()
+      when(
+        () => recordService.getFirstListItem("${GenericField.id} = '${tc.user.id}'")
+      ).thenAnswer(
+        (_) async => tc.getUserRecordModel()
+      );
+
+      final appUser = await getUserByID(tc.user.id);
+
+      expect(appUser.id, tc.user.id);
+      expect(appUser.email, tc.user.email);
+      expect(appUser.firstName, tc.user.firstName);
+      expect(appUser.lastName, tc.user.lastName);
+      expect(appUser.username, tc.user.username);
+    });
+
+    tearDown(() => GetIt.instance.reset());
+
+    test("updateUser", () async {
+      final tc = TestContext();
+      final map = {
+        GenericField.id: tc.user.id,
+        UserField.firstName: tc.user.firstName,
+        UserField.lastName: tc.user.lastName,
+      };
+
+      final getIt = GetIt.instance;
+      final pb = MockPocketBase();
+      final recordService = MockRecordService();
+
+      getIt.registerLazySingleton<UsersRepository>(
+        () => UsersRepository(pb: pb)
+      );
+
+      // pb.collection()
+      when(
+        () => pb.collection(Collection.users)
+      ).thenAnswer(
+        (_) => recordService as RecordService
+      );
+
+      // RecordService.update()
+      when(
+        () => recordService.update(
+          map[GenericField.id]!,
+          body: {
+            UserField.firstName: map[UserField.firstName],
+            UserField.lastName: map[UserField.lastName],
+          }
+        )
+      ).thenAnswer(
+        (_) async => tc.getUserRecordModel()
+      );
+
+      final (isValid, errors) = await updateUser(map);
+
+      expect(isValid, true);
+      expect(errors.isEmpty, true);
+    });
+
+    tearDown(() => GetIt.instance.reset());
+
+    test("updateUser exception", () async {
+      final tc = TestContext();
+      final map = {
+        GenericField.id: tc.user.id,
+        UserField.firstName: tc.user.firstName,
+        UserField.lastName: tc.user.lastName,
+      };
+
+      final getIt = GetIt.instance;
+      final pb = MockPocketBase();
+      final recordService = MockRecordService();
+
+      getIt.registerLazySingleton<UsersRepository>(
+        () => UsersRepository(pb: pb)
+      );
+
+      // pb.collection()
+      when(
+        () => pb.collection(Collection.users)
+      ).thenAnswer(
+        (_) => recordService as RecordService
+      );
+
+      // RecordService.update()
+      when(
+        () => recordService.update(
+          map[GenericField.id]!,
+          body: {
+            UserField.firstName: map[UserField.firstName],
+            UserField.lastName: map[UserField.lastName],
+          }
+        )
+      ).thenThrow(
+        tc.clientException
+      );
+
+      final (isValid, errors) = await updateUser(map);
+
+      expect(isValid, false);
+      expect(errors.isNotEmpty, true);
+    });
+
+    tearDown(() => GetIt.instance.reset());
+
+    test("updateUserSettings", () async {
+      final tc = TestContext();
+      final map = {
+        GenericField.id: tc.user.id,
+        UserSettingsField.defaultCurrency: tc.userSettings.defaultCurrency,
+        UserSettingsField.defaultInstructions: tc.userSettings.defaultInstructions,
+      };
+
+      final getIt = GetIt.instance;
+      final pb = MockPocketBase();
+      final recordService = MockRecordService();
+
+      getIt.registerLazySingleton<UserSettingsRepository>(
+        () => UserSettingsRepository(pb: pb)
+      );
+
+      // pb.collection()
+      when(
+        () => pb.collection(Collection.userSettings)
+      ).thenAnswer(
+        (_) => recordService as RecordService
+      );
+
+      // RecordService.update()
+      when(
+        () => recordService.update(
+          map[GenericField.id]!,
+          body: {
+            UserSettingsField.defaultCurrency: map[UserSettingsField.defaultCurrency],
+            UserSettingsField.defaultInstructions: map[
+              UserSettingsField.defaultInstructions],
+          }
+        )
+      ).thenAnswer(
+        (_) async => tc.getUserSettingsRecordModel()
+      );
+
+      final (isValid, errors) = await updateUserSettings(map);
+
+      expect(isValid, true);
+      expect(errors.isEmpty, true);
+    });
+
+    tearDown(() => GetIt.instance.reset());
+
+    test("updateUserSettings exception", () async {
+      final tc = TestContext();
+      final map = {
+        GenericField.id: tc.user.id,
+        UserSettingsField.defaultCurrency: tc.userSettings.defaultCurrency,
+        UserSettingsField.defaultInstructions: tc.userSettings.defaultInstructions,
+      };
+
+      final getIt = GetIt.instance;
+      final pb = MockPocketBase();
+      final recordService = MockRecordService();
+
+      getIt.registerLazySingleton<UserSettingsRepository>(
+        () => UserSettingsRepository(pb: pb)
+      );
+
+      // pb.collection()
+      when(
+        () => pb.collection(Collection.userSettings)
+      ).thenAnswer(
+        (_) => recordService as RecordService
+      );
+
+      // RecordService.update()
+      when(
+        () => recordService.update(
+          map[GenericField.id]!,
+          body: {
+            UserSettingsField.defaultCurrency: map[UserSettingsField.defaultCurrency],
+            UserSettingsField.defaultInstructions: map[
+              UserSettingsField.defaultInstructions],
+          }
+        )
+      ).thenThrow(
+        tc.clientException
+      );
+
+      final (isValid, errors) = await updateUserSettings(map);
+
+      expect(isValid, false);
+      expect(errors.isNotEmpty, true);
+    });
+
+    tearDown(() => GetIt.instance.reset());
+
     test("login", () async {
       final tc = TestContext();
       final pb = MockPocketBase();
@@ -92,8 +308,6 @@ void main() {
       var loginStatus2 = await login("username", "password", pb);
       expect(loginStatus2, false);
     });
-
-    tearDown(() => GetIt.instance.reset());
 
     test("logout", () async {
       final tc = TestContext();

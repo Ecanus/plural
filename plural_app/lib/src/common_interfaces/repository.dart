@@ -9,7 +9,7 @@ abstract class Repository {
     required String id,
   });
 
-  Future<RecordModel?> getFirstListItem({
+  Future<RecordModel> getFirstListItem({
     required String filter,
   });
 
