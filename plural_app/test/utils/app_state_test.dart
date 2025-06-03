@@ -132,7 +132,7 @@ void main() {
       // refreshTimelineAsks() should clear AppState._timelineAsks
       // (update shouldn't occur though because nothing to notify)
       appState.refreshTimelineAsks();
-      expect(asks.length, 0);
+      expect(asks.isEmpty, true);
     });
 
     tearDown(() => GetIt.instance.reset());

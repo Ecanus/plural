@@ -144,7 +144,7 @@ class TileBackground extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppBorderRadii.r25),
           ),
-          child: TileContents(ask: ask, hideContent: true)
+          child: TileContents(ask: ask, hasHiddenContent: true)
         ),
       ),
     );
@@ -177,15 +177,15 @@ class TileForeground extends StatelessWidget {
 class TileContents extends StatelessWidget {
   const TileContents({
     required this.ask,
-    this.hideContent = false,
+    this.hasHiddenContent = false,
   });
 
   final Ask ask;
-  final bool hideContent;
+  final bool hasHiddenContent;
 
   @override
   Widget build(BuildContext context) {
-    final textColor = hideContent ?
+    final textColor = hasHiddenContent ?
       Colors.transparent : Theme.of(context).colorScheme.onPrimary;
 
     return Column(
@@ -220,7 +220,7 @@ class TileContents extends StatelessWidget {
               ),
               gapH20,
               TileIsSponsoredIcon(
-                hideContent: !ask.isSponsoredByCurrentUser || hideContent, // Always "show" the icon else the icon in the TileViewButton will misalign on redraws of the GardenTimeline
+                hasHiddenContent: !ask.isSponsoredByCurrentUser || hasHiddenContent, // Always "show" the icon else the icon in the TileViewButton will misalign on redraws of the GardenTimeline
               )
             ]
           ),
@@ -284,14 +284,14 @@ class TileEditAskButton extends StatelessWidget {
 
 class TileIsSponsoredIcon extends StatelessWidget {
   const TileIsSponsoredIcon({
-    this.hideContent = false,
+    this.hasHiddenContent = false,
   });
 
-  final bool hideContent;
+  final bool hasHiddenContent;
 
   @override
   Widget build(BuildContext context) {
-    final textColor = hideContent ?
+    final textColor = hasHiddenContent ?
       Colors.transparent : Theme.of(context).colorScheme.onSecondary;
 
     return Icon(

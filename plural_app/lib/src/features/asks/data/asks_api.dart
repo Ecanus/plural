@@ -18,7 +18,7 @@ import 'package:plural_app/src/localization/lang_en.dart';
 // Utils
 import 'package:plural_app/src/utils/exceptions.dart';
 
-/// Iterates over the given [query] to generate a list of [Ask] instances.
+/// Iterates over [query] to generate a list of [Ask] instances.
 ///
 /// Returns a list of the created [Ask] instances.
 Future<List<Ask>> createAskInstancesFromQuery(
@@ -73,7 +73,7 @@ Future<List<Ask>> createAskInstancesFromQuery(
 }
 
 /// Queries on the [Ask] collection to create a list of all Asks
-/// corresponding to the given [userID] and the current [Garden]
+/// corresponding to [userID] and the current [Garden].
 ///
 /// Returns the list of all related Asks.
 Future<List<Ask>> getAsksForListedAsksDialog({
@@ -112,6 +112,7 @@ Future<List<Ask>> getAsksForListedAsksDialog({
 }
 
 /// Checks if [boon] is strictly less than [targetSum].
+///
 /// Else, throws a [ClientException]
 void checkBoonCeiling(int boon, int targetSum) {
   if (boon >= targetSum) {

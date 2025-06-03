@@ -17,11 +17,11 @@ import 'package:plural_app/src/constants/styles.dart';
 // Authentication
 import 'package:plural_app/src/features/authentication/presentation/forgot_password_dialog.dart';
 
-// Utils
-import 'package:plural_app/src/utils/app_form.dart';
-
 // Localization
 import 'package:plural_app/src/localization/lang_en.dart';
+
+// Utils
+import 'package:plural_app/src/utils/app_form.dart';
 
 class LogInPasswordFormField extends StatefulWidget {
   const LogInPasswordFormField({
@@ -50,7 +50,8 @@ class _LogInPasswordFormFieldState extends State<LogInPasswordFormField> {
     super.dispose();
   }
 
-  @override void initState() {
+  @override
+  void initState() {
     super.initState();
 
     _controller.text = "";

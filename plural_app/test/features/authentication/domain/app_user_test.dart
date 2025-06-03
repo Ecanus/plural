@@ -11,7 +11,9 @@ void main() {
     test("constructor", () {
       final user = AppUser(
         email: "test2@user.com",
+        firstName: "FirstName2",
         id: "TESTUSER2",
+        lastName: "LastName2",
         username: "testuser2"
       );
 
@@ -29,7 +31,9 @@ void main() {
 
       final otherUserSameIDAndEmail = AppUser(
         email: user.email,
+        firstName: "OtherSameIDAndEmailFirst",
         id: user.id,
+        lastName: "OtherSameIDAndEmailLast",
         username: "testotheruser"
       );
 
@@ -37,7 +41,9 @@ void main() {
 
       final otherUserDifferentIDAndEmail = AppUser(
         email: "test@otheruser.com",
+        firstName: "OtherFirst",
         id: "TESTUSER2",
+        lastName: "OtherLast",
         username: "testotheruser"
       );
 
@@ -45,6 +51,8 @@ void main() {
 
       final otherUserSameIDAndDifferentEmail = AppUser(
         email: "test@otheruser.com",
+        firstName: "OtherSameIDEmailDiffFirst",
+        lastName: "OtherSameIDEmailDiffLast",
         id: user.id,
         username: "testotheruser"
       );
@@ -53,6 +61,8 @@ void main() {
 
       final otherUserDifferentIDAndSameEmail = AppUser(
         email: user.email,
+        firstName: "OtherDiffIDSameEmailFirst",
+        lastName: "OtherDiffIDSameEmailLast",
         id: "TESTUSER2",
         username: "testotheruser"
       );

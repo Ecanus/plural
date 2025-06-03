@@ -9,13 +9,13 @@ import 'package:plural_app/src/common_interfaces/repository.dart';
 import 'package:plural_app/src/constants/fields.dart';
 import 'package:plural_app/src/constants/pocketbase.dart';
 
-class UsersRepository implements Repository {
-  UsersRepository({
+class UserSettingsRepository implements Repository {
+  UserSettingsRepository({
     required this.pb,
   });
 
   final PocketBase pb;
-  final _collection = Collection.users;
+  final _collection = Collection.userSettings;
 
   @override
   Future<void> bulkDelete({

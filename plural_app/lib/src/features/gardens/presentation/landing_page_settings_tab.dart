@@ -17,6 +17,7 @@ import 'package:plural_app/src/common_widgets/log_out_button.dart';
 
 // Auth
 import 'package:plural_app/src/features/authentication/data/forms.dart';
+import 'package:plural_app/src/features/authentication/domain/app_user.dart';
 import 'package:plural_app/src/features/authentication/domain/app_user_settings.dart';
 
 // Localization
@@ -32,19 +33,24 @@ class LandingPageSettingsTab extends StatefulWidget {
 }
 
 class _LandingPageSettingsTabState extends State<LandingPageSettingsTab> {
-  late AppForm _appForm;
+  late AppForm _userAppForm;
+  late AppForm _userSettingsAppForm;
   late GlobalKey<FormState> _formKey;
+  late AppUser _user;
   late AppUserSettings _userSettings;
 
   @override
   void initState() {
     super.initState();
 
+    _user = GetIt.instance<AppState>().currentUser!;
     _userSettings = GetIt.instance<AppState>().currentUserSettings!;
+
     _formKey = GlobalKey<FormState>();
 
-    // AppForm
-    _appForm = AppForm.fromMap(_userSettings.toMap());
+    // AppForms
+    _userAppForm = AppForm.fromMap(_user.toMap());
+    _userSettingsAppForm = AppForm.fromMap(_userSettings.toMap());
   }
 
 
@@ -59,13 +65,13 @@ class _LandingPageSettingsTabState extends State<LandingPageSettingsTab> {
               padding: const EdgeInsets.all(AppPaddings.p35),
               children: [
                 AppCurrencyPickerFormField(
-                  appForm: _appForm,
+                  appForm: _userSettingsAppForm,
                   fieldName: UserSettingsField.defaultCurrency,
                   initialValue: _userSettings.defaultCurrency,
                   label: UserSettingsDialogText.defaultCurrency,
                 ),
                 AppTextFormField(
-                  appForm: _appForm,
+                  appForm: _userSettingsAppForm,
                   fieldName: UserSettingsField.defaultInstructions,
                   initialValue: _userSettings.defaultInstructions,
                   label: UserSettingsDialogText.defaultInstructions,
@@ -73,8 +79,27 @@ class _LandingPageSettingsTabState extends State<LandingPageSettingsTab> {
                   maxLines: null,
                   suffixIcon: Tooltip(
                         message: AskDialogText.tooltipInstructions,
-                        child: AppTooltipIcon(dark: false),
+                        child: AppTooltipIcon(isDark: false),
                       ),
+                ),
+                gapH30,
+                AppTextFormField(
+                  appForm: _userAppForm,
+                  fieldName: UserField.firstName,
+                  initialValue: _user.firstName,
+                  label: UserSettingsDialogText.firstName,
+                  maxLength: AppMaxLengths.max200,
+                  maxLines: null,
+                  paddingTop: AppPaddings.p0,
+                ),
+                AppTextFormField(
+                  appForm: _userAppForm,
+                  fieldName: UserField.lastName,
+                  initialValue: _user.lastName,
+                  label: UserSettingsDialogText.lastName,
+                  maxLength: AppMaxLengths.max200,
+                  maxLines: null,
+                  paddingTop: AppPaddings.p0,
                 ),
                 DeleteAccountButton(),
               ],
@@ -84,7 +109,8 @@ class _LandingPageSettingsTabState extends State<LandingPageSettingsTab> {
         gapH30,
         AppElevatedButton(
           callback: submitUpdateSettings,
-          positionalArguments: [context, _formKey, _appForm, Routes.landing],
+          positionalArguments: [context, _formKey, _userAppForm, _userSettingsAppForm],
+          namedArguments: {#currentRoute: Routes.landing},
           label: LandingPageText.saveChanges,
         ),
         gapH10,

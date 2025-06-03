@@ -343,7 +343,7 @@ void main() {
 
       // AsksRepository.update()
       when(
-        () => mockAsksRepository.update(appForm.fields)
+        () => mockAsksRepository.updateWithMap(appForm.fields)
       ).thenAnswer(
         (_) async => (true, {})
       );
@@ -381,7 +381,7 @@ void main() {
       expect(testList.isNotEmpty, true);
 
       // Check no method calls before submit; no snackbar
-      verifyNever(() => mockAsksRepository.update(appForm.fields));
+      verifyNever(() => mockAsksRepository.updateWithMap(appForm.fields));
 
       // Tap ElevatedButton (to call submitUpdate)
       await tester.tap(ft.find.byType(ElevatedButton));
@@ -392,7 +392,7 @@ void main() {
 
       // Check methods were called
       // NOTE: cannot check on formKey.currentState or Snackbar due to inner Navigator.pop()
-      verify(() => mockAsksRepository.update(appForm.fields)).called(1);
+      verify(() => mockAsksRepository.updateWithMap(appForm.fields)).called(1);
 
       // Check testList still has values (no error)
       expect(testList.isNotEmpty, true);
@@ -419,7 +419,7 @@ void main() {
 
       // AsksRepository.update()
       when(
-        () => mockAsksRepository.update(appForm.fields)
+        () => mockAsksRepository.updateWithMap(appForm.fields)
       ).thenAnswer(
         (_) async => (false, {"field2": "Error for field2"})
       );
@@ -457,7 +457,7 @@ void main() {
       expect(testList.isEmpty, false);
 
       // Check no method calls before submit
-      verifyNever(() => mockAsksRepository.update(appForm.fields));
+      verifyNever(() => mockAsksRepository.updateWithMap(appForm.fields));
 
       // Tap ElevatedButton (to call submitUpdate)
       await tester.tap(ft.find.byType(ElevatedButton));
@@ -471,7 +471,7 @@ void main() {
 
       // Check methods were called
       // NOTE: cannot check on formKey.currentState due to inner Navigator.pop()
-      verify(() => mockAsksRepository.update(appForm.fields)).called(1);
+      verify(() => mockAsksRepository.updateWithMap(appForm.fields)).called(1);
 
       // Check error added to appForm; check testList is empty (error)
       expect(appForm.getError(fieldName: "field2"), "Error for field2");
@@ -499,7 +499,7 @@ void main() {
 
       // AsksRepository.update()
       when(
-        () => mockAsksRepository.update(appForm.fields)
+        () => mockAsksRepository.updateWithMap(appForm.fields)
       ).thenAnswer(
         (_) async => (true, {})
       );
@@ -537,7 +537,7 @@ void main() {
       expect(testList.isNotEmpty, true);
 
       // Check no method calls before submit
-      verifyNever(() => mockAsksRepository.update(appForm.fields));
+      verifyNever(() => mockAsksRepository.updateWithMap(appForm.fields));
 
       // Tap ElevatedButton (to call submitUpdate)
       await tester.tap(ft.find.byType(ElevatedButton));
@@ -550,7 +550,7 @@ void main() {
       expect(appForm.getValue(fieldName: fieldName), null);
 
       // Check methods never called
-      verifyNever(() => mockAsksRepository.update(appForm.fields));
+      verifyNever(() => mockAsksRepository.updateWithMap(appForm.fields));
 
       // Check error added to appForm; check testList is empty (error)
       expect(appForm.getError(fieldName: "field2"), null);
@@ -574,7 +574,7 @@ void main() {
 
       // AsksRepository.delete()
       when(
-        () => mockAsksRepository.delete(appForm.fields)
+        () => mockAsksRepository.deleteWithMap(appForm.fields)
       ).thenAnswer(
         (_) async => (true, {})
       );
@@ -605,7 +605,7 @@ void main() {
       );
 
       // Check no method calls before submit; no snackbar
-      verifyNever(() => mockAsksRepository.delete(appForm.fields));
+      verifyNever(() => mockAsksRepository.deleteWithMap(appForm.fields));
 
       // Tap ElevatedButton (to call submitDelete)
       await tester.tap(ft.find.byType(ElevatedButton));
@@ -613,7 +613,7 @@ void main() {
 
       // Check methods were called
       // NOTE: Can't check Snackbar due to inner Navigator.pop()
-      verify(() => mockAsksRepository.delete(appForm.fields)).called(1);
+      verify(() => mockAsksRepository.deleteWithMap(appForm.fields)).called(1);
     });
 
     tearDown(() => GetIt.instance.reset());
@@ -631,7 +631,7 @@ void main() {
 
       // AsksRepository.delete()
       when(
-        () => mockAsksRepository.delete(appForm.fields)
+        () => mockAsksRepository.deleteWithMap(appForm.fields)
       ).thenAnswer(
         (_) async => (false, {})
       );
@@ -662,7 +662,7 @@ void main() {
       );
 
       // Check no method calls before submit; no snackbar
-      verifyNever(() => mockAsksRepository.delete(appForm.fields));
+      verifyNever(() => mockAsksRepository.deleteWithMap(appForm.fields));
 
       // Tap ElevatedButton (to call submitDelete)
       await tester.tap(ft.find.byType(ElevatedButton));
@@ -670,7 +670,7 @@ void main() {
 
       // Check methods were called
       // NOTE: Can't check Snackbar due to inner Navigator.pop()
-      verify(() => mockAsksRepository.delete(appForm.fields)).called(1);
+      verify(() => mockAsksRepository.deleteWithMap(appForm.fields)).called(1);
     });
 
     tearDown(() => GetIt.instance.reset());

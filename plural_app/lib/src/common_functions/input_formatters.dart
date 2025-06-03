@@ -5,7 +5,7 @@ enum TextFieldType {
   digitsOnly
 }
 
-/// Checks on the given [fieldType] to determine which
+/// Checks [fieldType] to determine which
 /// [FilteringTextInputFormatter] to retrieve.
 ///
 /// Returns a list with the correct [TextInputFormatter] values if one is found,

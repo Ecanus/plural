@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:pocketbase/pocketbase.dart';
 
-// Constants
-import 'package:plural_app/src/constants/fields.dart';
-
 // Common Widgets
 import 'package:plural_app/src/common_widgets/delete_account_button.dart';
+
+// Constants
+import 'package:plural_app/src/constants/fields.dart';
 
 // Auth
 import 'package:plural_app/src/features/authentication/data/forms.dart';
@@ -39,6 +39,28 @@ class TestDeleteAccountButton extends StatelessWidget {
           return DeleteAccountButton();
         },
       )
+    );
+  }
+}
+
+class TestContextDependantFunctionWidget extends StatelessWidget {
+  const TestContextDependantFunctionWidget({
+    required this.callback
+  });
+
+  final Function callback;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Builder(
+        builder: (BuildContext context) {
+          return ElevatedButton(
+            onPressed: () => callback(context),
+            child: Text("The ElevatedButton")
+          );
+        }
+      ),
     );
   }
 }

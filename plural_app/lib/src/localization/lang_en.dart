@@ -119,17 +119,17 @@ class LandingPageText {
 }
 
 class SignInPageText {
-  static const email = "Email Address";
+  static const email = "Email address";
 
-  static const firstName = "First Name";
-  static const forgotPassword = "Forgot Password";
+  static const firstName = "First name";
+  static const forgotPassword = "Forgot password";
 
-  static const lastName = "Last Name";
+  static const lastName = "Last name";
   static const logIn = "Log In";
   static const logOut = "Log Out";
 
   static const password = "Password";
-  static const passwordConfirm = "Confirm Password";
+  static const passwordConfirm = "Confirm password";
   static const passwordLength = "Between 9 and 64 characters";
   static const passwordLowercase = "A lowercase character";
   static const passwordMatch = "Passwords match";
@@ -138,7 +138,7 @@ class SignInPageText {
   static const passwordSpecial = "A special character";
   static const passwordUppercase = "An uppercase character";
 
-  static const sendEmail = "Send Email";
+  static const sendEmail = "Send email";
   static const signUp = "Sign Up";
   static const submit = "Submit";
 
@@ -156,6 +156,9 @@ class SnackbarText {
   static const deletedUserAccountFailed = ""
     "An error occurred while trying to delete your account";
 
+  static const invalidGardenPermissions = ""
+    "You do not have access to this Garden.";
+
   static const sentPasswordResetEmail = "Password reset instructions have been sent to";
   static const sentUserVerificationEmail = "A verification email has been sent to";
 
@@ -166,6 +169,18 @@ class SnackbarText {
 }
 
 class UserSettingsDialogText {
+  static const cancelConfirmExitGarden = "Cancel";
+  static const confirmExitGarden = "Are you sure?";
+  static const confirmExitGardenSubtitle = ""
+    "Leaving will permanently remove you from this Garden."
+    "\n\nAll your Asks—fulfilled or unfulfilled—will be deleted, "
+    "and you will need a new invitation to return.";
+
   static const defaultCurrency = "Default currency";
   static const defaultInstructions = "Default instructions";
+
+  static const firstName = "First name";
+
+  static const lastName = "Last name";
+  static const exitGarden = "Leave Garden";
 }

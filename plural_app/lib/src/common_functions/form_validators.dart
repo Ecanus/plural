@@ -7,7 +7,7 @@ import 'package:plural_app/src/constants/currencies.dart';
 // Localization
 import 'package:plural_app/src/localization/lang_en.dart';
 
-/// Validates that the given [value] is valid for a CheckboxFormField.
+/// Validates that [value] is valid for a CheckboxFormField.
 ///
 /// Returns null if valid, else returns a String.
 String? validateCheckboxFormField(bool? value) {
@@ -16,7 +16,7 @@ String? validateCheckboxFormField(bool? value) {
   return null;
 }
 
-/// Validates that the given [value] matches the [compareValue].
+/// Validates that [value] matches the [compareValue].
 ///
 /// Returns null if valid, else returns a String.
 String? validateConfirmNewPassword(String? value, String? confirmValue) {
@@ -26,7 +26,7 @@ String? validateConfirmNewPassword(String? value, String? confirmValue) {
   return null;
 }
 
-/// Validates that the given [value] is a valid currency code contained in Currencies.
+/// Validates that [value] is a valid currency code contained in Currencies.
 ///
 /// Returns null if valid, else returns a String.
 String? validateCurrency(String? value) {
@@ -37,7 +37,7 @@ String? validateCurrency(String? value) {
   return null;
 }
 
-/// Checks that the given [value] is valid for a DatePickerFormField.
+/// Checks that [value] is valid for a DatePickerFormField.
 ///
 /// Returns null if valid, else returns a String.
 String? validateDatePickerFormField(String? value) {
@@ -46,7 +46,7 @@ String? validateDatePickerFormField(String? value) {
   return null;
 }
 
-/// Validates that the given [value] is valid for a TextFormField of
+/// Validates that [value] is valid for a TextFormField of
 /// TextFieldType.digitsOnly.
 ///
 /// Returns null if valid, else returns a String.
@@ -58,7 +58,7 @@ String? validateDigitsOnly(String? value) {
   return null;
 }
 
-/// Validates that the given [value] is valid for an Email.
+/// Validates that [value] is valid for an Email.
 ///
 /// Returns null if valid, else returns a String.
 String? validateEmail(String? value) {
@@ -67,7 +67,7 @@ String? validateEmail(String? value) {
   return null;
 }
 
-/// Validates that the given [value] is valid for a New Password.
+/// Validates that [value] is valid for a New Password.
 ///
 /// Returns null if valid, else returns a String.
 String? validateNewPassword(String? value) {
@@ -87,7 +87,7 @@ String? validateNewPassword(String? value) {
   return null;
 }
 
-/// Validates that the given [value] is valid for a TextFormField of
+/// Validates that [value] is valid for a TextFormField of
 /// TextFieldType.text.
 ///
 /// Returns null if valid, else returns a String.
@@ -97,7 +97,7 @@ String? validateText(String? value) {
   return null;
 }
 
-/// Validates that the given [value] is valid for a Username or Email.
+/// Validates that [value] is valid for a Username or Email.
 ///
 /// Returns null if valid, else returns a String.
 String? validateUsernameOrEmail(String? value) {
@@ -106,7 +106,7 @@ String? validateUsernameOrEmail(String? value) {
   return null;
 }
 
-/// Checks that the given [value] contains at least one lowercase character.
+/// Checks that [value] contains at least one lowercase character.
 ///
 /// Returns true if valid, else false.
 bool checkHasLowercase(String? value) {
@@ -115,7 +115,7 @@ bool checkHasLowercase(String? value) {
   return value.contains(RegExp(r'[a-z]'));
 }
 
-/// Checks that the given [value] contains at least one numeric character.
+/// Checks that [value] contains at least one numeric character.
 ///
 /// Returns true if valid, else false.
 bool checkHasNumber(String? value) {
@@ -124,7 +124,7 @@ bool checkHasNumber(String? value) {
   return value.contains(RegExp(r'[0-9]'));
 }
 
-/// Checks that the given [value] contains at least one special character.
+/// Checks that [value] contains at least one special character.
 ///
 /// Returns true if valid, else false.
 bool checkHasSpecialCharacter(String? value) {
@@ -133,7 +133,7 @@ bool checkHasSpecialCharacter(String? value) {
   return value.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'));
 }
 
-/// Checks that the given [value] contains at least one uppercase character.
+/// Checks that [value] contains at least one uppercase character.
 ///
 /// Returns true if valid, else false.
 bool checkHasUppercase(String? value) {
@@ -142,7 +142,7 @@ bool checkHasUppercase(String? value) {
   return value.contains(RegExp(r'[A-Z]'));
 }
 
-/// Checks that the given [valueA] is equivalent to [valueB].
+/// Checks that [valueA] is equivalent to [valueB].
 ///
 /// Returns true if valid, else false.
 bool checkPasswordsMatch(String? valueA, String? valueB) {
@@ -153,7 +153,7 @@ bool checkPasswordsMatch(String? valueA, String? valueB) {
   return valueA == valueB;
 }
 
-/// Checks that the given [value] has value within the minimum and maximum
+/// Checks that [value] is within the minimum and maximum
 /// length of an accepted password.
 ///
 /// Returns true valid, else false.

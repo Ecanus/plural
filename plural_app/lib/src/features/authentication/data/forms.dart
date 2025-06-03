@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pocketbase/pocketbase.dart';
 
 // Common Widgets
 import 'package:plural_app/src/common_widgets/app_snackbars.dart';
@@ -13,7 +14,6 @@ import 'package:plural_app/src/constants/routes.dart';
 
 // Auth
 import 'package:plural_app/src/features/authentication/data/auth_api.dart';
-import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
 import 'package:plural_app/src/features/authentication/domain/constants.dart';
 
 // Localization
@@ -22,25 +22,27 @@ import 'package:plural_app/src/localization/lang_en.dart';
 // Utils
 import 'package:plural_app/src/utils/app_dialog_router.dart';
 import 'package:plural_app/src/utils/app_form.dart';
-import 'package:pocketbase/pocketbase.dart';
+import 'package:plural_app/src/utils/app_state.dart';
 
 /// Validates and submits form data to update an existing [UserSettings] record
 /// in the database.
 Future<void> submitUpdateSettings(
   BuildContext context,
   GlobalKey<FormState> formKey,
-  AppForm appForm,
-  String currentRoute,
-) async {
+  AppForm userAppForm,
+  AppForm userSettingsAppForm, {
+  required String currentRoute,
+}) async {
   if (formKey.currentState!.validate()) {
     // Save form
     formKey.currentState!.save();
 
-    // Update DB (should also rebuild Garden Timeline via SubscribeTo)
-    var (isValid, errorsMap) =
-      await GetIt.instance<AuthRepository>().updateUserSettings(appForm.fields);
+    // If in a Garden, subscribeTo() will prompt timeline refresh and currentUser reload
+    var (isUserValid, userErrorsMap) = await updateUser(userAppForm.fields);
+    var (isUserSettingsValid, userSettingsErrorsMap) =
+      await updateUserSettings(userSettingsAppForm.fields);
 
-    if (isValid && context.mounted) {
+    if (isUserValid && isUserSettingsValid && context.mounted) {
       var snackBar = AppSnackbars.getSnackbar(
         SnackbarText.updateUserSettingsSuccess,
         showCloseIcon: false,
@@ -49,25 +51,25 @@ Future<void> submitUpdateSettings(
 
       // Display Success Snackbar
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
-
-      switch(currentRoute) {
-        case Routes.garden:
-          // Reload Dialog (and reacquire user settings)
-          GetIt.instance<AppDialogRouter>().routeToUserSettingsDialogView();
-        default:
-          return;
-      }
     } else {
       // Add errors to corresponding fields
-      appForm.setErrors(errorsMap: errorsMap);
+      userAppForm.setErrors(errorsMap: userErrorsMap);
+      userSettingsAppForm.setErrors(errorsMap: userSettingsErrorsMap);
+    }
 
-      switch(currentRoute) {
-        case Routes.garden:
-          // Reload Dialog (and reacquire user settings)
-          GetIt.instance<AppDialogRouter>().routeToUserSettingsDialogView();
-        default:
-          return;
-      }
+    // Determine next steps using currentRoute
+    switch(currentRoute) {
+      case Routes.garden:
+        // Reload Dialog (and reacquire user settings)
+        GetIt.instance<AppDialogRouter>().routeToUserSettingsDialogView();
+      case Routes.landing:
+        // Force reload value of currentUser
+        // (because no garden-specific subscriptions are set in the landing page)
+        GetIt.instance<AppState>().currentUser = await getUserByID(
+          userAppForm.getValue(fieldName: GenericField.id)
+        );
+      default:
+        return;
     }
   }
 }

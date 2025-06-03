@@ -7,6 +7,7 @@ import 'package:plural_app/src/features/asks/data/asks_repository.dart';
 // Auth
 import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
 import 'package:plural_app/src/features/authentication/data/user_garden_records_repository.dart';
+import 'package:plural_app/src/features/authentication/data/user_settings_repository.dart';
 import 'package:plural_app/src/features/authentication/data/users_repository.dart';
 
 // Gardens
@@ -44,13 +45,18 @@ Future<void> registerGetItInstances(PocketBase pb) async {
       pb: getIt<PocketBase>(),
     )
   );
+  getIt.registerLazySingleton<UserGardenRecordsRepository>(
+    () => UserGardenRecordsRepository(
+      pb: getIt<PocketBase>(),
+    )
+  );
   getIt.registerLazySingleton<UsersRepository>(
     () => UsersRepository(
       pb: getIt<PocketBase>(),
     )
   );
-  getIt.registerLazySingleton<UserGardenRecordsRepository>(
-    () => UserGardenRecordsRepository(
+  getIt.registerLazySingleton<UserSettingsRepository>(
+    () => UserSettingsRepository(
       pb: getIt<PocketBase>(),
     )
   );
@@ -72,8 +78,7 @@ Future<void> registerGetItInstances(PocketBase pb) async {
 }
 
 
-/// Assigns values to the global [AppState] instance using the given
-/// [userID].
+/// Assigns values to the global [AppState] instance using [userID].
 Future<void> setInitialAppStateValues(userID) async {
   var appState = GetIt.instance<AppState>();
 

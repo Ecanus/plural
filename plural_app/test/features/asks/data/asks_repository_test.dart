@@ -284,7 +284,7 @@ void main() {
       map[AskField.boon] = 5;
       map[AskField.targetSum] = 10;
 
-      var (isValid1, errorsMap1) = await asksRepository.update(map);
+      var (isValid1, errorsMap1) = await asksRepository.updateWithMap(map);
       expect(isValid1, true);
       expect(errorsMap1, {});
 
@@ -292,7 +292,7 @@ void main() {
       map[AskField.boon] = 5;
       map[AskField.targetSum] = 4;
 
-      var (isValid2, errorsMap2) = await asksRepository.update(map);
+      var (isValid2, errorsMap2) = await asksRepository.updateWithMap(map);
       expect(isValid2, false);
       expect(errorsMap2.isNotEmpty, true);
 
@@ -306,7 +306,7 @@ void main() {
       map[AskField.boon] = 5;
       map[AskField.targetSum] = 10;
 
-      var (isValid3, errorsMap3) = await asksRepository.update(map);
+      var (isValid3, errorsMap3) = await asksRepository.updateWithMap(map);
       expect(isValid3, false);
       expect(errorsMap3.isNotEmpty, true);
     });
@@ -345,7 +345,7 @@ void main() {
         (_) async {}
       );
 
-      var (isValid1, errorsMap1) = await asksRepository.delete(map);
+      var (isValid1, errorsMap1) = await asksRepository.deleteWithMap(map);
       expect(isValid1, true);
       expect(errorsMap1, {});
 
@@ -356,7 +356,7 @@ void main() {
         clientException
       );
 
-      var (isValid2, errorsMap2) = await asksRepository.delete(map);
+      var (isValid2, errorsMap2) = await asksRepository.deleteWithMap(map);
       expect(isValid2, false);
       expect(errorsMap2, {});
     });

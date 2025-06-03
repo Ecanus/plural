@@ -16,11 +16,11 @@ import 'package:plural_app/src/constants/fields.dart';
 import 'package:plural_app/src/features/authentication/data/forms.dart';
 import 'package:plural_app/src/features/authentication/presentation/log_in_password_form_field.dart';
 
-// Utils
-import 'package:plural_app/src/utils/app_form.dart';
-
 // Localization
 import 'package:plural_app/src/localization/lang_en.dart';
+
+// Utils
+import 'package:plural_app/src/utils/app_form.dart';
 
 class LogInTab extends StatelessWidget {
   const LogInTab({

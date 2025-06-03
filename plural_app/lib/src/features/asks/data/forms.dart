@@ -66,7 +66,7 @@ Future<void> submitUpdate(
 
     // Update DB (should also rebuild Garden Timeline via SubscribeTo)
     var (isValid, errorsMap) =
-      await GetIt.instance<AsksRepository>().update(appForm.fields);
+      await GetIt.instance<AsksRepository>().updateWithMap(appForm.fields);
 
     if (isValid && context.mounted) {
       var snackBar = AppSnackbars.getSnackbar(
@@ -97,7 +97,7 @@ Future<void> submitDelete(
 ) async {
   // Update DB (should also rebuild Garden Timeline via SubscribeTo)
   var (isValid, errorsMap) =
-    await GetIt.instance<AsksRepository>().delete(appForm.fields);
+    await GetIt.instance<AsksRepository>().deleteWithMap(appForm.fields);
 
   if (isValid && context.mounted) {
     var snackBar = AppSnackbars.getSnackbar(

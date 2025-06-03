@@ -6,6 +6,7 @@ import 'package:plural_app/src/constants/app_sizes.dart';
 
 // Auth
 import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
+import 'package:plural_app/src/features/gardens/data/gardens_api.dart';
 
 // Gardens
 import 'package:plural_app/src/features/gardens/presentation/landing_page_settings_tab.dart';
@@ -16,16 +17,37 @@ import 'package:plural_app/src/localization/lang_en.dart';
 import 'package:plural_app/src/utils/app_state.dart';
 
 class LandingPage extends StatefulWidget {
+  const LandingPage({
+    required this.exitedGardenID,
+  });
+
+  final String? exitedGardenID;
+
   @override
   State<LandingPage> createState() => _LandingPageState();
 }
 
 class _LandingPageState extends State<LandingPage> {
+  bool _canQueryGardens = false;
   late List<Tab> _tabs;
 
   @override
   void initState() {
     super.initState();
+    final appState = GetIt.instance<AppState>();
+
+    // exitedGardenID handling
+    if (widget.exitedGardenID == null) {
+      setState(() => _canQueryGardens = true);
+    } else {
+      // LandingPageSettingsTab() should not display until the currentUser
+      // has been successfully removed from the Garden with exitedGardenID
+      removeUserFromGarden(
+        appState.currentUser!.id,
+        widget.exitedGardenID!,
+        () => setState(() => _canQueryGardens = true)
+      );
+    }
 
     _tabs = <Tab>[
       Tab(text: LandingPageText.gardens),
@@ -57,7 +79,8 @@ class _LandingPageState extends State<LandingPage> {
               ),
               body: TabBarView(
                 children: [
-                  LandingPageGardensTab(),
+                  _canQueryGardens ?
+                    LandingPageGardensTab() : BlankLandingPageGardensTab(),
                   LandingPageSettingsTab(),
                 ]
               ),

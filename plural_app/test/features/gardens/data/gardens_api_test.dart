@@ -1,10 +1,19 @@
+import 'package:flutter_test/flutter_test.dart' as ft;
+
+import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:pocketbase/pocketbase.dart';
 import 'package:test/test.dart';
 
 // Constants
 import 'package:plural_app/src/constants/fields.dart';
+import 'package:plural_app/src/constants/query_parameters.dart';
+import 'package:plural_app/src/constants/routes.dart';
+
+// Asks
+import 'package:plural_app/src/features/asks/data/asks_repository.dart';
 
 // Auth
 import 'package:plural_app/src/features/authentication/data/user_garden_records_repository.dart';
@@ -20,6 +29,7 @@ import 'package:plural_app/src/utils/app_state.dart';
 // Tests
 import '../../../test_context.dart';
 import '../../../test_mocks.dart';
+import '../../../test_widgets.dart';
 
 void main() {
   group("Gardens api test", () {
@@ -63,7 +73,7 @@ void main() {
 
       // getGardensByUser
       List<Garden> gardens = await getGardensByUser(
-        tc.user.id, excludeCurrentGarden: false
+        tc.user.id, excludesCurrentGarden: false
       );
 
       // Check that 3 gardens created
@@ -123,7 +133,7 @@ void main() {
 
       // getGardensByUser
       List<Garden> gardens = await getGardensByUser(
-        tc.user.id, excludeCurrentGarden: true
+        tc.user.id, excludesCurrentGarden: true
       );
 
       // Check 3 gardens created
@@ -141,5 +151,130 @@ void main() {
     });
 
     tearDown(() => GetIt.instance.reset());
+
+  ft.testWidgets("rerouteToLandingAndPrepareGardenExit", (tester) async {
+    final tc = TestContext();
+    final appState = AppState.skipSubscribe()
+                      ..currentGarden = tc.garden;
+
+    final getIt = GetIt.instance;
+    getIt.registerLazySingleton<AppState>(() => appState);
+
+    var testRouter = GoRouter(
+      routes: [
+        GoRoute(
+          path: "/",
+          builder: (_, __) => TestContextDependantFunctionWidget(
+            callback: rerouteToLandingAndPrepareGardenExit
+          )
+        ),
+        GoRoute(
+          path: Routes.landing,
+          builder: (_, state) => BlankPage(
+            widget: Text(
+              "exitedGardenID is: "
+              "${state.uri.queryParameters[QueryParameters.exitedGardenID]}")
+            )
+        )
+      ]
+    );
+
+    await tester.pumpWidget(
+      MaterialApp.router(
+        routerConfig: testRouter,
+      )
+    );
+
+    // Check not yet redirected (Text does not render)
+    expect(ft.find.text("exitedGardenID is: ${tc.garden.id}"), ft.findsNothing);
+
+    // Tap ElevatedButton (to call rerouteToLandingAndPrepareGardenExit)
+    await tester.tap(ft.find.byType(ElevatedButton));
+    await tester.pumpAndSettle();
+
+    // Check redirected (Text should now appear)
+    expect(ft.find.text("exitedGardenID is: ${tc.garden.id}"), ft.findsOneWidget);
+  });
+
+  tearDown(() => GetIt.instance.reset());
+
+  test("removeUserFromGarden", () async {
+    final testList = ["a", "b"];
+
+    void testFunc() {
+      testList.clear();
+    }
+
+    final tc = TestContext();
+
+    final getIt = GetIt.instance;
+    final pb = MockPocketBase();
+    final recordService = MockRecordService();
+
+    getIt.registerLazySingleton<AsksRepository>(() => AsksRepository(pb: pb));
+    getIt.registerLazySingleton<UserGardenRecordsRepository>(
+      () => UserGardenRecordsRepository(pb: pb));
+
+    // pb.collection()
+    when(
+      () => pb.collection(any())
+    ).thenAnswer(
+      (_) => recordService as RecordService
+    );
+
+    // RecordService.getList() - AsksRepository
+    when(
+      () => recordService.getList(
+        expand: any(named: "expand"),
+        filter: any(named: "filter"),
+        sort: any(named: "sort")
+      )
+    ).thenAnswer(
+      (_) async => ResultList<RecordModel>(items: [tc.getAskRecordModel()])
+    );
+    // RecordService.getFirstListItem() - UserGardenRecordsRepository
+    when(
+      () => recordService.getFirstListItem(any())
+    ).thenAnswer(
+      (_) async => tc.getGardenRecordRecordModel()
+    );
+    // RecordService.delete() - AsksRepository & UserGardenRecordsRepository
+    when(
+      () => recordService.delete(any())
+    ).thenAnswer(
+      (_) async => {}
+    );
+
+    // Check testList still has values (function not yet called)
+    expect(testList.isEmpty, false);
+
+    // Check database methods not yet called
+    verifyNever(() =>  recordService.getList(
+        expand: any(named: "expand"),
+        filter: any(named: "filter"),
+        sort: any(named: "sort")
+      )
+    );
+    verifyNever(() => recordService.getFirstListItem(any()));
+    verifyNever(() => recordService.delete(any()));
+
+    await removeUserFromGarden(tc.user.id, tc.garden.id, testFunc);
+
+    // Check testList no longer has values (function called)
+    expect(testList.isEmpty, true);
+
+    // Check database methods each called
+    verify(() =>  recordService.getList(
+        expand: any(named: "expand"),
+        filter: any(named: "filter"),
+        sort: any(named: "sort")
+      )
+    ).called(1);
+    verify(() => recordService.getFirstListItem(any())).called(1);
+    verify(() => recordService.delete(any())).called(2); // 1 for Ask, 1 for UserGardenRecord
+  });
+
+  tearDown(() => GetIt.instance.reset());
+
   });
 }

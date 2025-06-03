@@ -14,14 +14,12 @@ import 'package:plural_app/src/constants/formats.dart';
 import 'package:plural_app/src/features/asks/data/asks_api.dart';
 import 'package:plural_app/src/features/asks/presentation/listed_ask_tile.dart';
 
-// Utils
-import 'package:plural_app/src/utils/app_state.dart';
-
 // Localization
 import 'package:plural_app/src/localization/lang_en.dart';
 
 // Utils
 import 'package:plural_app/src/utils/app_dialog_router.dart';
+import 'package:plural_app/src/utils/app_state.dart';
 
 Future createListedAsksDialog(BuildContext context) async {
   final currentUserID = GetIt.instance<AppState>().currentUserID!;

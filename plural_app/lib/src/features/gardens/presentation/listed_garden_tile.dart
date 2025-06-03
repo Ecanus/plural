@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:go_router/go_router.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
-import 'package:plural_app/src/constants/routes.dart';
 
 // Gardens
 import 'package:plural_app/src/features/gardens/domain/garden.dart';
@@ -60,9 +58,7 @@ class LandingPageListedGardenTile extends StatelessWidget {
           style: TextStyle(fontWeight: FontWeight.w500),
         ),
         onTap: () {
-          // Update AppState.currentGarden (should also rebuild Garden Timeline via notifyListeners())
-          GetIt.instance<AppState>().currentGarden = garden;
-          GoRouter.of(context).go(Routes.garden);
+          GetIt.instance<AppState>().setGardenAndReroute(context, garden);
         }
       ),
     );

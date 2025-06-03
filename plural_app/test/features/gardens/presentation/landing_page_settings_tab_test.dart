@@ -23,6 +23,7 @@ void main() {
     testWidgets("widgets", (tester) async {
       final tc = TestContext();
       final appState = AppState()
+                        ..currentUser = tc.user
                         ..currentUserSettings = tc.userSettings;
 
       final getIt = GetIt.instance;
@@ -37,7 +38,7 @@ void main() {
 
       // Check widgets are rendered
       expect(find.byType(AppCurrencyPickerFormField), findsOneWidget);
-      expect(find.byType(AppTextFormField), findsOneWidget);
+      expect(find.byType(AppTextFormField), findsNWidgets(3));
       expect(find.byType(AppElevatedButton), findsOneWidget);
       expect(find.byType(DeleteAccountButton), findsOneWidget);
       expect(find.byType(LogOutButton), findsOneWidget);

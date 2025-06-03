@@ -92,7 +92,7 @@ class _AskDialogCreateFormState extends State<AskDialogCreateForm> {
                             maxLength: AppMaxLengths.max4,
                             suffixIcon: Tooltip(
                               message: AskDialogText.tooltipBoon,
-                              child: AppTooltipIcon(dark: false),
+                              child: AppTooltipIcon(isDark: false),
                             ),
                             textFieldType: TextFieldType.digitsOnly,
                           ),
@@ -117,7 +117,7 @@ class _AskDialogCreateFormState extends State<AskDialogCreateForm> {
                       maxLines: null,
                       suffixIcon: Tooltip(
                         message: AskDialogText.urlFormattingText,
-                        child: AppTooltipIcon(dark: false),
+                        child: AppTooltipIcon(isDark: false),
                       ),
                     ),
                     AppTextFormField(
@@ -129,7 +129,7 @@ class _AskDialogCreateFormState extends State<AskDialogCreateForm> {
                       maxLines: null,
                       suffixIcon: Tooltip(
                         message: AskDialogText.tooltipInstructions,
-                        child: AppTooltipIcon(dark: false),
+                        child: AppTooltipIcon(isDark: false),
                       ),
                     ),
                     Visibility.maintain( // Hidden form field. Always saves type == monetary for now

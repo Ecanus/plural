@@ -31,7 +31,9 @@ class TestContext {
   TestContext() {
     user = AppUser(
       email: "test@user.com",
+      firstName: "MyFirstName",
       id: "TESTUSER1",
+      lastName: "MyLastName",
       username: "testuser"
     );
 
@@ -166,6 +168,8 @@ class TestContext {
             GenericField.id: user.id,
             GenericField.created: "1992-12-23",
             UserField.email: user.email,
+            UserField.firstName: user.firstName,
+            UserField.lastName: user.lastName,
             UserField.username: user.username
           },
         };
@@ -194,6 +198,8 @@ class TestContext {
   RecordModel getUserRecordModel({
     String? id,
     String? email,
+    String? firstName,
+    String? lastName,
     String? username,
   }) {
     return RecordModel({
@@ -201,6 +207,8 @@ class TestContext {
       "created": "1992-12-23",
       "collectionName": Collection.users,
       UserField.email: email ?? user.email,
+      UserField.firstName: firstName ?? user.firstName,
+      UserField.lastName: lastName ?? user.lastName,
       UserField.username: username ?? user.username,
     });
   }
@@ -213,6 +221,23 @@ class TestContext {
       UserSettingsField.defaultCurrency: "GHS",
       UserSettingsField.defaultInstructions: "UserSettings record instructions",
       UserSettingsField.user: user.id,
-  });
+    });
+  }
+
+  ClientException getClientException({
+    originalError = "Original error message",
+    fieldKey = "FieldKey",
+    message = "The inner map message of signup()"
+  }) {
+    return ClientException(
+      originalError: originalError,
+      response: {
+        dataKey: {
+          fieldKey: {
+            messageKey: message
+          }
+        }
+      },
+    );
   }
 }

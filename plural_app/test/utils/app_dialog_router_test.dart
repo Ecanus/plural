@@ -110,9 +110,9 @@ void main() {
       final tc = TestContext();
 
       final getIt = GetIt.instance;
-      final appState =
-              AppState()
-              ..currentUserSettings = tc.userSettings;
+      final appState = AppState()
+                        ..currentUser = tc.user
+                        ..currentUserSettings = tc.userSettings;
 
       getIt.registerLazySingleton<AppState>(() => appState);
 

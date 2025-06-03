@@ -10,8 +10,8 @@ import 'package:plural_app/src/features/asks/data/asks_repository.dart';
 
 // Auth
 import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
-import 'package:plural_app/src/features/authentication/data/users_repository.dart';
 import 'package:plural_app/src/features/authentication/data/user_garden_records_repository.dart';
+import 'package:plural_app/src/features/authentication/data/users_repository.dart';
 
 // Gardens
 import 'package:plural_app/src/features/gardens/data/gardens_repository.dart';

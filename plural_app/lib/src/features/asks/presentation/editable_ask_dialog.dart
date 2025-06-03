@@ -115,7 +115,7 @@ class _AskDialogEditFormState extends State<AskDialogEditForm> {
                             maxLength: AppMaxLengths.max4,
                             suffixIcon: Tooltip(
                               message: AskDialogText.tooltipBoon,
-                              child: AppTooltipIcon(dark: false),
+                              child: AppTooltipIcon(isDark: false),
                             ),
                             textFieldType: TextFieldType.digitsOnly,
                           ),
@@ -141,7 +141,7 @@ class _AskDialogEditFormState extends State<AskDialogEditForm> {
                       maxLines: null,
                       suffixIcon: Tooltip(
                         message: AskDialogText.urlFormattingText,
-                        child: AppTooltipIcon(dark: false),
+                        child: AppTooltipIcon(isDark: false),
                       ),
                     ),
                     AppTextFormField(
@@ -153,7 +153,7 @@ class _AskDialogEditFormState extends State<AskDialogEditForm> {
                       maxLines: null,
                       suffixIcon: Tooltip(
                         message: AskDialogText.tooltipInstructions,
-                        child: AppTooltipIcon(dark: false),
+                        child: AppTooltipIcon(isDark: false),
                       ),
                     ),
                     gapH30,
@@ -295,6 +295,7 @@ class ConfirmDeleteAskDialog extends StatelessWidget {
                   child: FilledButton(
                     onPressed: () {
                       Navigator.pop(context);
+                      // TODO: Remove appForm from ask deletion
                       submitDelete(context, appForm);
                     },
                     style: ButtonStyle(
@@ -307,7 +308,7 @@ class ConfirmDeleteAskDialog extends StatelessWidget {
                         )
                       ),
                     ),
-                    child: const Text(AskDialogText.confirmDeleteAsk)
+                    child: const Text(AskDialogText.deleteAsk)
                   ),
                 )
               ],

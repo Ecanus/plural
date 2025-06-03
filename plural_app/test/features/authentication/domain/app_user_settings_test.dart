@@ -52,7 +52,9 @@ void main() {
 
       final differentUser = AppUser(
         email: "other@email.com",
+        firstName: "DifferentFirst",
         id: "OTHERID",
+        lastName: "DifferentLast",
         username: "otheruser"
       );
 

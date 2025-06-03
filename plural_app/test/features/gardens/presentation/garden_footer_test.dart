@@ -104,6 +104,7 @@ void main() {
     testWidgets("createUserSettingsDialog", (tester) async {
       final tc = TestContext();
       final appState = AppState()
+                        ..currentUser = tc.user
                         ..currentUserSettings = tc.userSettings;
 
       final getIt = GetIt.instance;

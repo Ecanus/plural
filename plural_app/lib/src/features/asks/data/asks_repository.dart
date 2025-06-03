@@ -3,6 +3,9 @@ import 'dart:developer' as developer;
 import 'package:pocketbase/pocketbase.dart';
 import 'package:get_it/get_it.dart';
 
+// Common Interfaces
+import 'package:plural_app/src/common_interfaces/repository.dart';
+
 // Constants
 import 'package:plural_app/src/constants/fields.dart';
 import 'package:plural_app/src/constants/pocketbase.dart';
@@ -15,15 +18,130 @@ import 'package:plural_app/src/features/asks/domain/ask.dart';
 import 'package:plural_app/src/utils/app_state.dart';
 import 'package:plural_app/src/utils/exceptions.dart';
 
-class AsksRepository {
+class AsksRepository implements Repository {
   AsksRepository({
     required this.pb,
   });
 
   final PocketBase pb;
+  final _collection = Collection.asks;
 
-  /// Queries on the [Ask] collection to retrieve records corresponding to the
-  /// given [gardenID], [filterString] and [sortString].
+  @override
+  Future<void> bulkDelete({
+    required ResultList records,
+  }) async {
+    try {
+      for (final record in records.items) {
+        await pb.collection(_collection).delete(record.toJson()[GenericField.id]);
+      }
+    } on ClientException catch(e) {
+      developer.log(
+        ""
+        "--\n"
+        "$runtimeType.bulkDelete(), "
+        "\n--",
+        error: e,
+      );
+
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> delete({
+    required String id,
+  }) async {
+    try {
+      await pb.collection(_collection).delete(id);
+    } on ClientException catch(e) {
+      developer.log(
+        ""
+        "--\n"
+        "$runtimeType.delete(), "
+        "id: $id"
+        "\n--",
+        error: e,
+      );
+
+      rethrow;
+    }
+  }
+
+  @override
+  Future<RecordModel> getFirstListItem({
+    required String filter,
+  }) async {
+    try {
+      return await pb.collection(_collection).getFirstListItem(filter);
+    } on ClientException catch(e) {
+      developer.log(
+        ""
+        "--\n"
+        "$runtimeType.getFirstListItem(), "
+        "filter: $filter"
+        "\n--",
+        error: e,
+      );
+
+      rethrow;
+    }
+  }
+
+  @override
+  Future<ResultList> getList({
+    String expand = "",
+    String filter = "",
+    String sort = "",
+  }) async {
+    try {
+      return await pb.collection(_collection).getList(
+        expand: expand,
+        filter: filter,
+        sort: sort,
+      );
+    } on ClientException catch(e) {
+      developer.log(
+        ""
+        "--\n"
+        "$runtimeType.getList(), "
+        "expand: $expand, "
+        "filter: $filter, "
+        "sort: $sort, "
+        "\n--",
+        error: e,
+      );
+
+      rethrow;
+    }
+  }
+
+  @override
+  Future<RecordModel> update({
+    required String id,
+    Map<String, dynamic> body = const {},
+  }) async {
+    try {
+      return await pb.collection(_collection).update(
+        id,
+        body: body
+      );
+    } on ClientException catch(e) {
+      developer.log(
+        ""
+        "--\n"
+        "$runtimeType.update(), "
+        "id: $id, "
+        "body: $body, "
+        "\n--",
+        error: e,
+      );
+
+      rethrow;
+    }
+  }
+
+  /// Queries on the [Ask] collection to retrieve records corresponding to [gardenID],
+  /// [filterString] and [sortString].
   ///
   /// Returns the list of retrieved [Ask]s up to [count].
   Future<List<Ask>> getAsksByGardenID({
@@ -44,7 +162,7 @@ class AsksRepository {
   }
 
   /// Queries on the [Ask] collection to retrieve all records corresponding
-  /// to the given [userID], [filterString], [sortString], and the current [Garden].
+  /// to [userID], [filterString], [sortString], and the current [Garden].
   ///
   /// Returns the list of retrieved [Ask]s.
   Future<List<Ask>> getAsksByUserID({
@@ -66,7 +184,7 @@ class AsksRepository {
     return await createAskInstancesFromQuery(result);
   }
 
-  /// Deletes all [Ask] records associated with [AppState].currentUser
+  /// Deletes all [Ask] records associated with [AppState].currentUser.
   Future<void> deleteCurrentUserAsks() async {
     final currentUser = GetIt.instance<AppState>().currentUser!;
 
@@ -79,8 +197,8 @@ class AsksRepository {
     }
   }
 
-  /// Appends the [User] record which corresponds to the given [userID] to the list
-  /// of sponsors of the [Ask] record which corresponds to the given [askID].
+  /// Appends the [User] record which corresponds to [userID] to the list
+  /// of sponsors of the [Ask] record which corresponds to [askID].
   Future<void> addSponsor(String askID, String userID) async {
     var result = await pb.collection(Collection.asks).getList(
       filter: "${GenericField.id}='$askID'"
@@ -102,8 +220,8 @@ class AsksRepository {
     );
   }
 
-  /// Removes the [User] record which corresponds to the given [userID] from the list
-  /// of sponsors of the [Ask] record which corresponds to the given [askID].
+  /// Removes the [User] record which corresponds to [userID] from the list
+  /// of sponsors of the [Ask] record which corresponds to [askID].
   Future<void> removeSponsor(String askID, String userID) async {
     var result = await pb.collection(Collection.asks).getList(
       filter: "${GenericField.id}='$askID'"
@@ -173,7 +291,7 @@ class AsksRepository {
   ///
   /// Returns (true, {}) if updated successfully, else false
   /// and a map of the errors.
-  Future<(bool, Map)> update(Map map) async {
+  Future<(bool, Map)> updateWithMap(Map map) async {
     try {
       var boon = map[AskField.boon];
       var targetSum = map[AskField.targetSum];
@@ -216,7 +334,7 @@ class AsksRepository {
   ///
   /// Returns (true, {}) if deleted successfully, else false
   /// and a map of the errors.
-  Future<(bool, Map)> delete(Map map) async {
+  Future<(bool, Map)> deleteWithMap(Map map) async {
     try {
       // Delete Ask
       await pb.collection(Collection.asks).delete(map[GenericField.id]);
@@ -234,7 +352,7 @@ class AsksRepository {
   }
 
   /// Subscribes to any changes made in the [Ask] collection for any [Ask] record
-  /// associated with the given [gardenID].
+  /// associated with [gardenID].
   ///
   /// Calls the given [callback] method whenever a change is made.
   Future<Function> subscribeTo(String gardenID, Function callback) async {

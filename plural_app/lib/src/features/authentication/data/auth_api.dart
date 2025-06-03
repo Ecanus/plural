@@ -5,6 +5,9 @@ import 'package:go_router/go_router.dart';
 import 'package:get_it/get_it.dart';
 import 'package:pocketbase/pocketbase.dart';
 
+// Common Widgets
+import 'package:plural_app/src/common_widgets/app_snackbars.dart';
+
 // Constants
 import 'package:plural_app/src/constants/app_values.dart';
 import 'package:plural_app/src/constants/environments.dart';
@@ -12,14 +15,12 @@ import 'package:plural_app/src/constants/fields.dart';
 import 'package:plural_app/src/constants/pocketbase.dart';
 import 'package:plural_app/src/constants/routes.dart';
 
-// Common Widgets
-import 'package:plural_app/src/common_widgets/app_snackbars.dart';
-
 // Asks
 import 'package:plural_app/src/features/asks/data/asks_repository.dart';
 
 // Auth
 import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
+import 'package:plural_app/src/features/authentication/data/user_settings_repository.dart';
 import 'package:plural_app/src/features/authentication/data/users_repository.dart';
 import 'package:plural_app/src/features/authentication/domain/app_user.dart';
 
@@ -41,8 +42,66 @@ Future<AppUser> getUserByID(String userID) async {
   return AppUser.fromJson(query.toJson());
 }
 
-/// Attempts to log into the database with the given [usernameOrEmail]
-/// and [password] parameters and create all necessary [GetIt] instances.
+/// Attempts to update the [User] record that matches the values passed
+/// in the given [map] parameter.
+///
+/// Returns true and an empty map if updated successfully,
+/// else false and a map of the errors.
+Future<(bool, Map)> updateUser(Map map) async {
+  try {
+    await GetIt.instance<UsersRepository>().update(
+      id: map[GenericField.id],
+      body: {
+        UserField.firstName: map[UserField.firstName],
+        UserField.lastName: map[UserField.lastName],
+      }
+    );
+
+    return (true, {});
+  } on ClientException catch(e) {
+    var errorsMap = getErrorsMapFromClientException(e);
+
+      // Log error
+      developer.log(
+        "updateUser() error",
+        error: e,
+      );
+
+      return (false, errorsMap);
+  }
+}
+
+/// Attempts to update the [UserSettings] record that matches the values passed
+/// in the given [map] parameter.
+///
+/// Returns true and an empty map if updated successfully,
+/// else false and a map of the errors.
+Future<(bool, Map)> updateUserSettings(Map map) async {
+  try {
+    await GetIt.instance<UserSettingsRepository>().update(
+      id: map[GenericField.id],
+      body: {
+        UserSettingsField.defaultCurrency: map[UserSettingsField.defaultCurrency],
+        UserSettingsField.defaultInstructions: map[UserSettingsField.defaultInstructions],
+      }
+    );
+
+    return (true, {});
+  } on ClientException catch(e) {
+    var errorsMap = getErrorsMapFromClientException(e);
+
+      // Log error
+      developer.log(
+        "updateUser() error",
+        error: e,
+      );
+
+      return (false, errorsMap);
+  }
+}
+
+/// Attempts to log in to the database with [usernameOrEmail]
+/// and [password] parameters, and creates all necessary [GetIt] instances.
 ///
 /// Returns true if log in is successful, else false.
 Future<bool> login(
@@ -95,7 +154,7 @@ Future<void> logout(
   }
 }
 
-/// Attempts to create a new [User] record in the database with the given
+/// Attempts to create a new [User] record in the database with the
 /// [firstName], [lastName], [username], [email], and [password] parameters.
 ///
 /// Returns (true, {}) if sign up is successful, else (false, errorsMap)
@@ -155,8 +214,8 @@ Future<(bool, Map)> signup(
   }
 }
 
-/// Attempts to send an email to the given [email] containing instructions
-/// to reset the account password corresponding to [email].
+/// Attempts to send an email to [email] containing instructions
+/// to reset the account password corresponding to that account.
 ///
 /// Returns true if the email is successfully sent, else false.
 Future<bool> sendPasswordResetCode(
