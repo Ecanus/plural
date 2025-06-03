@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:plural_app/src/utils/app_state.dart';
 import 'package:pocketbase/pocketbase.dart';
 import 'package:test/test.dart';
 
@@ -253,12 +254,18 @@ void main() {
             fieldName: UserSettingsField.defaultInstructions,
             value: "testInstructions");
 
+      // AppState
+      final AppState appState = AppState.skipSubscribe()
+                                ..currentUser = tc.user;
+
       // GetIt
       final getIt = GetIt.instance;
       final pb = MockPocketBase();
       final recordService = MockRecordService();
       final mockAppDialogRouter = MockAppDialogRouter();
+
       getIt.registerLazySingleton<AppDialogRouter>(() => mockAppDialogRouter);
+      getIt.registerLazySingleton<AppState>(() => appState);
       getIt.registerLazySingleton<UsersRepository>(() => UsersRepository(pb: pb));
       getIt.registerLazySingleton<UserSettingsRepository>(
         () => UserSettingsRepository(pb: pb));
@@ -295,6 +302,12 @@ void main() {
         )
       ).thenAnswer(
         (_) async => tc.getUserSettingsRecordModel()
+      );
+      // RecordService.getFirstListItem() - UsersRepository
+      when(
+        () => recordService.getFirstListItem("${GenericField.id} = 'userAppFormID'")
+      ).thenAnswer(
+        (_) async => tc.getUserRecordModel()
       );
 
       // AppDialogRouter.routeToUserSettingsDialogView()
@@ -403,9 +416,10 @@ void main() {
       expect(formKey.currentState!.validate(), true);
       expect(ft.find.byType(SnackBar), ft.findsOneWidget);
 
-      // Check no route call was made
-      // (i.e. should only be called if currentRoute == Routes.garden)
+      // Check no route call was made; check getUserByID was called once
       verifyNever(() => mockAppDialogRouter.routeToUserSettingsDialogView());
+      verify(() => recordService.getFirstListItem(
+        "${GenericField.id} = 'userAppFormID'")).called(1);
     });
 
     tearDown(() => GetIt.instance.reset());

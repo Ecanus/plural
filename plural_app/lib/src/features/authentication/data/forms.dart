@@ -22,6 +22,7 @@ import 'package:plural_app/src/localization/lang_en.dart';
 // Utils
 import 'package:plural_app/src/utils/app_dialog_router.dart';
 import 'package:plural_app/src/utils/app_form.dart';
+import 'package:plural_app/src/utils/app_state.dart';
 
 /// Validates and submits form data to update an existing [UserSettings] record
 /// in the database.
@@ -36,7 +37,7 @@ Future<void> submitUpdateSettings(
     // Save form
     formKey.currentState!.save();
 
-    // Update DB (should also rebuild Garden Timeline via SubscribeTo)
+    // If in a Garden, subscribeTo() will prompt timeline refresh and currentUser reload
     var (isUserValid, userErrorsMap) = await updateUser(userAppForm.fields);
     var (isUserSettingsValid, userSettingsErrorsMap) =
       await updateUserSettings(userSettingsAppForm.fields);
@@ -61,6 +62,12 @@ Future<void> submitUpdateSettings(
       case Routes.garden:
         // Reload Dialog (and reacquire user settings)
         GetIt.instance<AppDialogRouter>().routeToUserSettingsDialogView();
+      case Routes.landing:
+        // Force reload value of currentUser
+        // (because no garden-specific subscriptions are set in the landing page)
+        GetIt.instance<AppState>().currentUser = await getUserByID(
+          userAppForm.getValue(fieldName: GenericField.id)
+        );
       default:
         return;
     }
