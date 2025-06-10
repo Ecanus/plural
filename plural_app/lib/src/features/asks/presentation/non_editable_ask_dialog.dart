@@ -11,9 +11,9 @@ import 'package:plural_app/src/common_widgets/app_tooltip_icon.dart';
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
 import 'package:plural_app/src/constants/themes.dart';
+import 'package:plural_app/src/features/asks/data/asks_api.dart';
 
 // Ask
-import 'package:plural_app/src/features/asks/data/asks_repository.dart';
 import 'package:plural_app/src/features/asks/domain/ask.dart';
 import 'package:plural_app/src/features/asks/presentation/ask_time_left_text.dart';
 
@@ -125,11 +125,10 @@ class _NonEditableAskHeaderState extends State<NonEditableAskHeader> {
   Widget build(BuildContext context) {
 
     Future<void> isSponsoredToggle(bool value) async {
-      var asksRepository = GetIt.instance<AsksRepository>();
       var currentUserID = GetIt.instance<AppState>().currentUserID!;
 
       if (value) {
-        await asksRepository.addSponsor(widget.ask.id, currentUserID);
+        await addSponsor(widget.ask.id, currentUserID);
 
         var snackBar = AppSnackbars.getSnackbar(
           SnackbarText.askSponsored,
@@ -139,7 +138,7 @@ class _NonEditableAskHeaderState extends State<NonEditableAskHeader> {
 
         if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(snackBar);
       } else {
-        await asksRepository.removeSponsor(widget.ask.id, currentUserID);
+        await removeSponsor(widget.ask.id, currentUserID);
       }
 
       setState(() { _isSponsored = value; });

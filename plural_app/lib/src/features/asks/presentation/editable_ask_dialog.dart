@@ -66,7 +66,8 @@ class _AskDialogEditFormState extends State<AskDialogEditForm> {
     _appForm = AppForm.fromMap(widget.ask.toMap());
     _appForm.setValue(
       fieldName: AppFormFields.rebuild,
-      value: () { setState(() {}); }
+      value: () { setState(() {}); },
+      isAux: true,
     );
 
     _formKey = GlobalKey<FormState>();
@@ -178,7 +179,7 @@ class _AskDialogEditFormState extends State<AskDialogEditForm> {
                         label: AskDialogText.type,
                       ),
                     ),
-                    DeleteAskButton(appForm: _appForm),
+                    DeleteAskButton(askID: widget.ask.id),
                   ],
                 ),
               ),
@@ -202,10 +203,10 @@ class _AskDialogEditFormState extends State<AskDialogEditForm> {
 
 class DeleteAskButton extends StatelessWidget {
   const DeleteAskButton({
-    required this.appForm,
+    required this.askID,
   });
 
-  final AppForm appForm;
+  final String askID;
 
   @override
   Widget build(BuildContext context) {
@@ -217,7 +218,7 @@ class DeleteAskButton extends StatelessWidget {
       child: FilledButton.icon(
         icon: const Icon(Icons.delete),
         label: const Text(AskDialogText.deleteAsk),
-        onPressed: () => showConfirmDeleteAskDialog(context, appForm),
+        onPressed: () => showConfirmDeleteAskDialog(context, askID),
         style: ButtonStyle(
           backgroundColor: WidgetStateProperty.all<Color>(
            Theme.of(context).colorScheme.error
@@ -235,10 +236,10 @@ class DeleteAskButton extends StatelessWidget {
 
 class ConfirmDeleteAskDialog extends StatelessWidget {
   const ConfirmDeleteAskDialog({
-    required this.appForm
+    required this.askID
   });
 
-  final AppForm appForm;
+  final String askID;
 
   @override
   Widget build(BuildContext context) {
@@ -295,8 +296,7 @@ class ConfirmDeleteAskDialog extends StatelessWidget {
                   child: FilledButton(
                     onPressed: () {
                       Navigator.pop(context);
-                      // TODO: Remove appForm from ask deletion
-                      submitDelete(context, appForm);
+                      submitDelete(context, askID);
                     },
                     style: ButtonStyle(
                       backgroundColor: WidgetStateProperty.all<Color>(
@@ -322,12 +322,12 @@ class ConfirmDeleteAskDialog extends StatelessWidget {
 
 Future<void> showConfirmDeleteAskDialog(
   BuildContext context,
-  AppForm appForm
+  String askID
 ) async {
   await showDialog(
     context: context,
     builder: (BuildContext context) {
-      return ConfirmDeleteAskDialog(appForm: appForm);
+      return ConfirmDeleteAskDialog(askID: askID);
     }
   );
 }

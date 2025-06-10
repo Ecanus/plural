@@ -41,7 +41,8 @@ class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateM
     _appForm = AppForm();
     _appForm.setValue(
       fieldName: AppFormFields.rebuild,
-      value: () {setState( () {}); }
+      value: () {setState( () {}); },
+      isAux: true
     );
 
     // FormKey
@@ -58,7 +59,8 @@ class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateM
     _tabController.addListener(_clearAppFormErrors);
     _appForm.setValue(
       fieldName: AppFormFields.tabController,
-      value: _tabController
+      value: _tabController,
+      isAux: true,
     );
   }
 

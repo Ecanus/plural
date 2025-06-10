@@ -256,7 +256,7 @@ class ConfirmExitGardenDialog extends StatelessWidget {
                   constraints: BoxConstraints(minHeight: AppHeights.h40),
                   child: FilledButton(
                     onPressed: () {
-                      rerouteToLandingAndPrepareGardenExit(context);
+                      rerouteToLandingPageWithExitedGardenID(context);
                     },
                     style: ButtonStyle(
                       backgroundColor: WidgetStateProperty.all<Color>(

@@ -17,7 +17,13 @@ class AppUserSettings {
   final String id;
   final AppUser user;
 
-  Map toMap() {
+  AppUserSettings.fromJson(Map<String, dynamic> json, AppUser settingsUser) :
+    defaultCurrency = json[UserSettingsField.defaultCurrency],
+    defaultInstructions = json[UserSettingsField.defaultInstructions],
+    id = json[GenericField.id],
+    user = settingsUser;
+
+  Map<String, dynamic> toMap() {
     return {
       UserSettingsField.defaultCurrency: defaultCurrency,
       UserSettingsField.defaultInstructions: defaultInstructions,

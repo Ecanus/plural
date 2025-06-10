@@ -1,114 +1,47 @@
+import 'dart:math';
+
 import 'package:pocketbase/pocketbase.dart';
 import 'package:get_it/get_it.dart';
 
 // Constants
 import 'package:plural_app/src/constants/fields.dart';
-import 'package:plural_app/src/constants/pocketbase.dart';
 
 // Asks
 import 'package:plural_app/src/features/asks/data/asks_repository.dart';
 import 'package:plural_app/src/features/asks/domain/ask.dart';
 
 // Auth
-import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
+import 'package:plural_app/src/features/authentication/data/auth_api.dart';
 
 // Localization
 import 'package:plural_app/src/localization/lang_en.dart';
 
 // Utils
+import 'package:plural_app/src/utils/app_state.dart';
 import 'package:plural_app/src/utils/exceptions.dart';
 
-/// Iterates over [query] to generate a list of [Ask] instances.
-///
-/// Returns a list of the created [Ask] instances.
-Future<List<Ask>> createAskInstancesFromQuery(
-  query,
-  { int? count }
-) async {
-    final authRepository = GetIt.instance<AuthRepository>();
+final asksRepository = GetIt.instance<AsksRepository>();
 
-    var records = query.toJson()[QueryKey.items];
-
-    if (count != null && records.length >= count) {
-      records = records.sublist(0, count);
-    }
-
-    List<Ask> instances = [];
-
-    for (var record in records) {
-      // Parse targetMetDate if non-null
-      String targetMetDateString = record[AskField.targetMetDate];
-      DateTime? parsedTargetMetDate = targetMetDateString.isNotEmpty ?
-        DateTime.parse(targetMetDateString) : null;
-
-      // Get AppUser that created the Ask
-      var creatorID = record[AskField.creator];
-      var creator = await authRepository.getUserByID(creatorID);
-
-      // Get type enum from the record (a string)
-      var askTypeFromString = AskType.values.firstWhere(
-        (a) => a.name == "AskType.${record[AskField.type]}",
-        orElse: () => AskType.monetary
-      );
-
-      var newAsk = Ask(
-        id: record[GenericField.id],
-        boon: record[AskField.boon],
-        creator: creator,
-        creationDate: DateTime.parse(record[GenericField.created]),
-        currency: record[AskField.currency],
-        description: record[AskField.description],
-        deadlineDate: DateTime.parse(record[AskField.deadlineDate]),
-        instructions: record[AskField.instructions],
-        targetSum: record[AskField.targetSum],
-        targetMetDate: parsedTargetMetDate,
-        type: askTypeFromString
-      );
-
-      newAsk.sponsorIDS = List<String>.from(record[AskField.sponsors]);
-      instances.add(newAsk);
-    }
-
-    return instances;
-}
-
-/// Queries on the [Ask] collection to create a list of all Asks
-/// corresponding to [userID] and the current [Garden].
-///
-/// Returns the list of all related Asks.
-Future<List<Ask>> getAsksForListedAsksDialog({
-  required String userID,
-  required String nowString,
-}) async {
-  // Target not met, deadline not passed
-  final filterString = ""
-    "&& ${AskField.targetMetDate} = null"
-    "&& ${AskField.deadlineDate} > '$nowString'";
-  final asks = await GetIt.instance<AsksRepository>().getAsksByUserID(
-    filterString: filterString,
-    sortString: GenericField.created,
-    userID: userID,
+/// Appends the [User] record that corresponds to [userID] to the list
+/// of sponsors of the [Ask] record which corresponds to [askID].
+Future<void> addSponsor(String askID, String userID) async {
+  final resultList = await asksRepository.getList(
+    filter: "${GenericField.id} = '$askID'"
   );
 
-  // Target not met, deadline passed
-  final deadlinePassedFilterString = ""
-    "&& ${AskField.targetMetDate} = null"
-    "&& ${AskField.deadlineDate} <= '$nowString'";
-  final deadlinePassedAsks = await GetIt.instance<AsksRepository>().getAsksByUserID(
-    filterString: deadlinePassedFilterString,
-    sortString: GenericField.created,
-    userID: userID,
-  );
+  // If ask already contains sponsor, return
+  final askSponsorsString = resultList.items.first.toJson()[AskField.sponsors];
+  var currentSponsors = List<String>.from(askSponsorsString);
+  if (currentSponsors.contains(userID)) return;
 
-  // Target met
-  final targetMetFilterString = "&& ${AskField.targetMetDate} != null";
-  final targetMetAsks = await GetIt.instance<AsksRepository>().getAsksByUserID(
-    filterString: targetMetFilterString,
-    sortString: GenericField.created,
-    userID: userID,
-  );
+  // Else, update
+  currentSponsors.add(userID);
+  final body = { AskField.sponsors: currentSponsors};
 
-  return asks + deadlinePassedAsks + targetMetAsks;
+  await asksRepository.update(
+    id: askID,
+    body: body,
+  );
 }
 
 /// Checks if [boon] is strictly less than [targetSum].
@@ -126,4 +59,174 @@ void checkBoonCeiling(int boon, int targetSum) {
 
     throw ClientException(response: response);
   }
+}
+
+/// Deletes all [Ask] records associated with the currentUser.
+Future<void> deleteCurrentUserAsks() async {
+  final currentUser = GetIt.instance<AppState>().currentUser!;
+
+  var resultList = await asksRepository.getList(
+    filter: "${AskField.creator} = '${currentUser.id}'"
+  );
+
+  await asksRepository.bulkDelete(resultList: resultList);
+}
+
+/// Queries on the [Ask] collection to retrieve records corresponding to [gardenID],
+/// [filter] and [sort].
+///
+/// Returns the list of retrieved [Ask]s up to [count], if count is non-null,
+/// else returns all retrieved Asks.
+Future<List<Ask>> getAsksByGardenID({
+  required String gardenID,
+  int? count,
+  String filter = "",
+  String sort = "${AskField.deadlineDate},${GenericField.created}",
+  }) async {
+    List<Ask> asks = [];
+
+    var finalFilter = "${AskField.garden} = '$gardenID' $filter".trim();
+
+    // Query
+    var resultList = await asksRepository.getList(
+      filter: finalFilter,
+      sort: sort
+    );
+
+    // Create instances
+    for (var record in resultList.items) {
+      final recordJson = record.toJson();
+      final creator = await getUserByID(recordJson[AskField.creator]);
+      final ask = Ask.fromJson(recordJson, creator);
+
+      asks.add(ask);
+    }
+
+    // If count is non-null, return a sublist up to the lesser of count or asks.length
+    final limit = count != null ? min(count, asks.length) : asks.length;
+    return asks.sublist(0, limit);
+}
+
+/// Queries on the [Ask] collection to retrieve all records corresponding
+/// to [userID], [filter], [sort], and the current [Garden].
+///
+/// Returns the list of retrieved [Ask]s.
+Future<List<Ask>> getAsksByUserID({
+  required String userID,
+  String filter = "",
+  String sort = "",
+}) async {
+  List<Ask> asks = [];
+
+  final currentGarden = GetIt.instance<AppState>().currentGarden!;
+  var finalFilter = """
+        ${AskField.creator} = '$userID' &&
+        ${AskField.garden} = '${currentGarden.id}' $filter
+        """.trim();
+
+  // Query
+  var resultList = await asksRepository.getList(
+      filter: finalFilter,
+      sort: sort,
+    );
+
+  // Create instances
+  for (var record in resultList.items) {
+    final creator = await getUserByID(userID);
+    final ask = Ask.fromJson(record.toJson(), creator);
+
+    asks.add(ask);
+  }
+
+  return asks;
+}
+
+/// Queries on the [Ask] collection to create a list of all Asks
+/// corresponding to [userID] and the current [Garden].
+///
+/// Returns the list of all related Asks.
+Future<List<Ask>> getAsksForListedAsksDialog({
+  required String userID,
+  required String nowString,
+}) async {
+  // Target not met, deadline not passed
+  final filterString = ""
+    "&& ${AskField.targetMetDate} = null"
+    "&& ${AskField.deadlineDate} > '$nowString'";
+  final asks = await getAsksByUserID(
+    filter: filterString,
+    sort: GenericField.created,
+    userID: userID,
+  );
+
+  // Target not met, deadline passed
+  final deadlinePassedFilterString = ""
+    "&& ${AskField.targetMetDate} = null"
+    "&& ${AskField.deadlineDate} <= '$nowString'";
+  final deadlinePassedAsks = await getAsksByUserID(
+    filter: deadlinePassedFilterString,
+    sort: GenericField.created,
+    userID: userID,
+  );
+
+  // Target met
+  final targetMetFilterString = "&& ${AskField.targetMetDate} != null";
+  final targetMetAsks = await getAsksByUserID(
+    filter: targetMetFilterString,
+    sort: GenericField.created,
+    userID: userID,
+  );
+
+  return asks + deadlinePassedAsks + targetMetAsks;
+}
+
+/// Returns the [AskType] enum that corresponds to [askTypeString].
+AskType getAskTypeFromString(String askTypeString) {
+  return AskType.values.firstWhere(
+    (a) => a.name == "AskType.$askTypeString",
+    orElse: () => AskType.monetary
+  );
+}
+
+/// Checks if [targetMetDateString] is non-empty, and returns a DateTime
+/// if true, else returns null.
+DateTime? getParsedTargetMetDate(String targetMetDateString) {
+  return targetMetDateString.isNotEmpty ?
+    DateTime.parse(targetMetDateString) : null;
+}
+
+  /// Removes the [User] record which corresponds to [userID] from the list
+  /// of sponsors of the [Ask] record which corresponds to [askID].
+  Future<void> removeSponsor(String askID, String userID) async {
+    var resultList = await asksRepository.getList(
+      filter: "${GenericField.id} = '$askID'"
+    );
+
+    // If ask does not contain sponsor, return
+    final askSponsorsString = resultList.items.first.toJson()[AskField.sponsors];
+    var currentSponsors = List<String>.from(askSponsorsString);
+    if (!currentSponsors.contains(userID)) return;
+
+    // Else, update
+    currentSponsors.remove(userID);
+    final body = { AskField.sponsors: currentSponsors};
+
+    await asksRepository.update(
+      id: askID,
+      body: body,
+    );
+  }
+
+/// Subscribes to any changes made in the [Ask] collection for any [Ask] record
+/// associated with [gardenID].
+///
+/// Calls the given [callback] method whenever a change is made.
+Future<Function> subscribeTo(
+  String gardenID,
+  Function callback
+  ) async {
+    await asksRepository.unsubscribe();
+    Future<Function> unsubscribeFunc = asksRepository.subscribe(gardenID, callback);
+
+    return unsubscribeFunc;
 }

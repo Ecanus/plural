@@ -23,7 +23,7 @@ class AppUser {
     lastName = json[UserField.lastName] as String,
     username = json[UserField.username] as String;
 
-  Map toMap() {
+  Map<String, dynamic> toMap() {
     return {
       UserField.email: email,
       UserField.firstName: firstName,

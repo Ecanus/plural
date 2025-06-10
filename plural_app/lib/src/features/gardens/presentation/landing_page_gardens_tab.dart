@@ -20,7 +20,7 @@ class LandingPageGardensTab extends StatelessWidget {
     return Column(
       children: [
         FutureBuilder<List<Garden>>(
-          future: getGardensByUser(appState.currentUserID!, excludesCurrentGarden: false),
+          future: getGardensByUserID(appState.currentUserID!, excludesCurrentGarden: false),
           builder: (BuildContext context, AsyncSnapshot<List<Garden>> snapshot) {
             if (snapshot.hasData) {
               return LandingPageGardensList(gardens: snapshot.data!);

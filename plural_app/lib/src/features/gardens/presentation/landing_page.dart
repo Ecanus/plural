@@ -5,10 +5,10 @@ import 'package:get_it/get_it.dart';
 import 'package:plural_app/src/constants/app_sizes.dart';
 
 // Auth
-import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
-import 'package:plural_app/src/features/gardens/data/gardens_api.dart';
+import 'package:plural_app/src/features/authentication/data/auth_api.dart';
 
 // Gardens
+import 'package:plural_app/src/features/gardens/data/gardens_api.dart';
 import 'package:plural_app/src/features/gardens/presentation/landing_page_settings_tab.dart';
 import 'package:plural_app/src/features/gardens/presentation/landing_page_gardens_tab.dart';
 
@@ -55,7 +55,7 @@ class _LandingPageState extends State<LandingPage> {
     ];
 
     // Subscribe to UserSettings
-    GetIt.instance<AuthRepository>().subscribeToUserSettings();
+    subscribeToUserSettings();
 
     // Always set currentGarden to null and
     // clear garden-specific database subscriptions when loading this page

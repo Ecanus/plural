@@ -8,7 +8,6 @@ import 'package:plural_app/src/common_widgets/app_snackbars.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_values.dart';
-import 'package:plural_app/src/constants/environments.dart';
 import 'package:plural_app/src/constants/fields.dart';
 import 'package:plural_app/src/constants/routes.dart';
 
@@ -84,19 +83,10 @@ Future<void> submitLogIn(
     // Save form
     formKey.currentState!.save();
 
-    // Get database
-    PocketBase pb;
-    try {
-      pb = GetIt.instance<PocketBase>(); // primarily for testing
-    } on StateError catch(_) {
-      pb = PocketBase(Environments.pocketbaseUrl);
-    }
-
     // Login
     var isValid = await login(
       appForm.getValue(fieldName: SignInField.usernameOrEmail),
-      appForm.getValue(fieldName: UserField.password),
-      pb,
+      appForm.getValue(fieldName: UserField.password)
     );
 
     if (isValid && context.mounted) {
@@ -114,7 +104,9 @@ Future<void> submitLogIn(
       );
 
       // Rebuild widget
-      appForm.getValue(fieldName: AppFormFields.rebuild)();
+      appForm.getValue(
+        fieldName: AppFormFields.rebuild,
+        isAux: true)();
     }
   }
 }
@@ -123,29 +115,21 @@ Future<void> submitLogIn(
 Future<void> submitSignUp(
   BuildContext context,
   GlobalKey<FormState> formKey,
-  AppForm appForm, {
-  // primarily for testing
-  PocketBase? database,
-}) async {
+  AppForm appForm
+  ) async {
   if (formKey.currentState!.validate()) {
     // Save form
     formKey.currentState!.save();
 
-    // Signup
-    var (isValid, errorsMap) = await signup(
-      appForm.getValue(fieldName: UserField.firstName),
-      appForm.getValue(fieldName: UserField.lastName),
-      appForm.getValue(fieldName: UserField.username),
-      appForm.getValue(fieldName: UserField.email),
-      appForm.getValue(fieldName: UserField.password),
-      appForm.getValue(fieldName: UserField.passwordConfirm),
-      database: database,
-    );
+    // Sign up
+    var (isValid, errorsMap) = await signup(appForm.fields);
 
     if (isValid && context.mounted) {
       // Go to log in tab
-      appForm.getValue(fieldName: AppFormFields.tabController).animateTo(
-        AuthConstants.logInTabIndex);
+      appForm.getValue(
+        fieldName: AppFormFields.tabController,
+        isAux: true)
+      .animateTo(AuthConstants.logInTabIndex);
 
       var snackBar = AppSnackbars.getSnackbar(
         SnackbarText.sentUserVerificationEmail,
@@ -161,7 +145,9 @@ Future<void> submitSignUp(
       appForm.setErrors(errorsMap: errorsMap);
 
       // Rebuild widget
-      appForm.getValue(fieldName: AppFormFields.rebuild)();
+      appForm.getValue(
+        fieldName: AppFormFields.rebuild,
+        isAux: true)();
     }
   }
 }
@@ -173,7 +159,7 @@ Future<void> submitForgotPassword(
   GlobalKey<FormState> formKey,
   AppForm appForm, {
   // primarily for testing
-  PocketBase? database,
+  PocketBase? database
 }) async {
   if (formKey.currentState!.validate()) {
     // Save form

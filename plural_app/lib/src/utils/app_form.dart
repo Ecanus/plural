@@ -12,13 +12,14 @@ enum FormFieldType {
 }
 
 class AppForm {
-  Map fields = {};
-  Map errors = {};
+  Map<String, dynamic> auxiliaryFields = {}; // For any values used during the instance's lifetime, unrelated to the model being represented
+  Map<String, dynamic> fields = {};
+  Map<String, dynamic> errors = {};
 
   // Constructors
   AppForm();
 
-  AppForm.fromMap(Map initialMap) {
+  AppForm.fromMap(Map<String, dynamic> initialMap) {
     fields = initialMap;
     errors = {};
 
@@ -37,8 +38,13 @@ class AppForm {
   }
 
   /// Retrieves the value in [fields] associated with [fieldName].
-  dynamic getValue({required String fieldName}) {
-    return fields[fieldName];
+  ///
+  /// If [isAux] is true, retrieves the value from [auxiliaryFields] instead.
+  dynamic getValue({
+    required String fieldName,
+    bool isAux = false
+  }) {
+    return isAux ? auxiliaryFields[fieldName] : fields[fieldName];
   }
 
   /// Creates a new key-value pairing in [errors] where [fieldName]
@@ -69,11 +75,18 @@ class AppForm {
 
   /// Assigns [value] to the value of the key-value pairing in [fields]
   /// with a key that matches [fieldName].
+  ///
+  /// if [isAux] is true, assigns the value to [auxiliaryFields] instead.
   void setValue({
     required String fieldName,
     required dynamic value,
+    bool isAux = false
   }) {
-    fields[fieldName] = value;
+    if (isAux) {
+      auxiliaryFields[fieldName] = value;
+    } else {
+      fields[fieldName] = value;
+    }
   }
 
   /// Saves [value] into this AppForm instance's [fields]

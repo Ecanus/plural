@@ -22,7 +22,7 @@ import 'package:plural_app/src/utils/app_dialog_router.dart';
 import 'package:plural_app/src/utils/app_state.dart';
 
 Future createListedGardensDialog(BuildContext context) async {
-  final gardens = await getGardensByUser(GetIt.instance<AppState>().currentUserID!);
+  final gardens = await getGardensByUserID(GetIt.instance<AppState>().currentUserID!);
 
   if (context.mounted) {
     return showDialog(
