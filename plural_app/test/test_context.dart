@@ -117,6 +117,7 @@ class TestContext {
     DateTime? deadlineDate,
     String? description,
     String? instructions,
+    DateTime? targetMetDate,
     int? targetSum,
     List<String> sponsors = const []
   }) {
@@ -133,7 +134,8 @@ class TestContext {
       AskField.instructions: instructions ?? ask.instructions,
       AskField.sponsors: sponsors,
       AskField.targetSum: targetSum ?? ask.targetSum,
-      AskField.targetMetDate: ask.targetMetDate ?? "",
+      AskField.targetMetDate: targetMetDate == null ? "" :
+        DateFormat(Formats.dateYMMdd).format(targetMetDate),
       AskField.type: "monetary"
     });
   }
@@ -148,9 +150,11 @@ class TestContext {
     });
   }
 
-  RecordModel getGardenRecordRecordModel() {
+  RecordModel getUserGardenRecordRecordModel({
+    String? id
+  }) {
     return RecordModel({
-      "id": userGardenRecord.id,
+      "id": id ?? userGardenRecord.id,
       "created": "1999-10-08",
       "collectionName": Collection.userGardenRecords,
       UserGardenRecordField.user: user.id,
@@ -158,7 +162,7 @@ class TestContext {
     });
   }
 
-  RecordModel getGardenRecordRecordModelFromJson(String expand) {
+  RecordModel getExpandUserGardenRecordRecordModel(String expand) {
     Map<String, dynamic> map;
 
     switch (expand) {
@@ -213,14 +217,19 @@ class TestContext {
     });
   }
 
-  RecordModel getUserSettingsRecordModel() {
+  RecordModel getUserSettingsRecordModel({
+    String? defaultCurrency,
+    String? defaultInstructions,
+    String? userID,
+  }) {
     return RecordModel({
       "id": userSettings.id,
       "created": "2001-01-03",
       "collectionName": Collection.userSettings,
-      UserSettingsField.defaultCurrency: "GHS",
-      UserSettingsField.defaultInstructions: "UserSettings record instructions",
-      UserSettingsField.user: user.id,
+      UserSettingsField.defaultCurrency: defaultCurrency ?? "GHS",
+      UserSettingsField.defaultInstructions:
+        defaultInstructions ?? "UserSettings record instructions",
+      UserSettingsField.user: userID ?? user.id,
     });
   }
 

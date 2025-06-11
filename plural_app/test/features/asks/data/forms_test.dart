@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart' as ft;
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:pocketbase/pocketbase.dart';
 import 'package:test/test.dart';
 
 // Constants
@@ -11,6 +12,9 @@ import 'package:plural_app/src/constants/fields.dart';
 // Asks
 import 'package:plural_app/src/features/asks/data/asks_repository.dart';
 import 'package:plural_app/src/features/asks/data/forms.dart';
+
+// Auth
+import 'package:plural_app/src/features/authentication/data/users_repository.dart';
 
 // Utils
 import 'package:plural_app/src/utils/app_dialog_router.dart';
@@ -42,29 +46,40 @@ void main() {
       final getIt = GetIt.instance;
       final mockAppDialogRouter = MockAppDialogRouter();
       final mockAsksRepository = MockAsksRepository();
+      final mockUsersRepository = MockUsersRepository();
       getIt.registerLazySingleton<AppState>(() => appState);
       getIt.registerLazySingleton<AppDialogRouter>(() => mockAppDialogRouter);
       getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
+      getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
+
+      // AsksRepository.create()
+      when(
+        () => mockAsksRepository.create(body: appForm.fields)
+      ).thenAnswer(
+        (_) async => (tc.getUserRecordModel(), {})
+      );
+
+      // AsksRepository.getList()
+      when(
+        () => mockAsksRepository.getList(
+          filter: any(named: "filter"), sort: any(named: "sort")
+        )
+      ).thenAnswer(
+        (_) async => ResultList<RecordModel>(items: [tc.getAskRecordModel()])
+      );
+
+      // UsersRepository.getFirstListItem()
+      when(
+        () => mockUsersRepository.getFirstListItem(filter: any(named: "filter"))
+      ).thenAnswer(
+        (_) async => tc.getUserRecordModel()
+      );
 
       // AppDialogRouter.routeToAskDialogListView()
       when(
         () => mockAppDialogRouter.routeToAskDialogListView()
       ).thenAnswer(
         (_) async => {}
-      );
-
-      // AsksRepository.create()
-      when(
-        () => mockAsksRepository.create(appForm.fields)
-      ).thenAnswer(
-        (_) async => (true, {})
-      );
-
-      // AsksRepository.getAsksByUserID()
-      when(
-        () => mockAsksRepository.getAsksByUserID(userID: tc.user.id)
-      ).thenAnswer(
-        (_) async => [tc.ask]
       );
 
       await tester.pumpWidget(
@@ -100,7 +115,13 @@ void main() {
       expect(testList.isNotEmpty, true);
 
       // Check no method calls before submit; no snackbar
-      verifyNever(() => mockAsksRepository.create(appForm.fields));
+      verifyNever(() => mockAsksRepository.create(body: appForm.fields));
+      verifyNever(() => mockAsksRepository.getList(
+        filter: any(named: "filter"), sort: any(named: "sort"))
+      );
+      verifyNever(() => mockUsersRepository.getFirstListItem(
+        filter: any(named: "filter"))
+      );
       verifyNever(() => mockAppDialogRouter.routeToAskDialogListView());
       expect(ft.find.byType(SnackBar), ft.findsNothing);
 
@@ -112,7 +133,13 @@ void main() {
       expect(appForm.getValue(fieldName: fieldName), "New Value!");
 
       // Check methods were called; check expected values are found
-      verify(() => mockAsksRepository.create(appForm.fields)).called(1);
+      verify(() => mockAsksRepository.create(body: appForm.fields)).called(1);
+      verify(() => mockAsksRepository.getList(
+        filter: any(named: "filter"), sort: any(named: "sort"))
+      ).called(1);
+      verify(() => mockUsersRepository.getFirstListItem(
+        filter: any(named: "filter"))
+      ).called(1);
       verify(() => mockAppDialogRouter.routeToAskDialogListView()).called(1);
       expect(formKey.currentState!.validate(), true);
       expect(ft.find.byType(SnackBar), ft.findsOneWidget);
@@ -133,7 +160,7 @@ void main() {
       // AppForm
       const fieldName = "fields";
       final appForm = AppForm()
-                      ..setValue(fieldName: AppFormFields.rebuild, value: func)
+                      ..setValue(fieldName: AppFormFields.rebuild, value: func, isAux: true)
                       ..setValue(fieldName: fieldName, value: null);
       final appState = AppState()
                       ..currentUser = tc.user;
@@ -146,25 +173,18 @@ void main() {
       getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
       getIt.registerLazySingleton<AppDialogRouter>(() => mockAppDialogRouter);
 
+      // AsksRepository.create()
+      when(
+        () => mockAsksRepository.create(body: appForm.fields)
+      ).thenAnswer(
+        (_) async => (null, {"field1": "Error for field1"})
+      );
+
       // AppDialogRouter.routeToAskDialogListView()
       when(
         () => mockAppDialogRouter.routeToAskDialogListView()
       ).thenAnswer(
         (_) async => {}
-      );
-
-      // AsksRepository.create()
-      when(
-        () => mockAsksRepository.create(appForm.fields)
-      ).thenAnswer(
-        (_) async => (false, {"field1": "Error for field1"})
-      );
-
-      // AsksRepository.getAsksByUserID()
-      when(
-        () => mockAsksRepository.getAsksByUserID(userID: tc.user.id)
-      ).thenAnswer(
-        (_) async => [tc.ask]
       );
 
       await tester.pumpWidget(
@@ -201,7 +221,7 @@ void main() {
       expect(testList.isEmpty, false);
 
       // Check no method calls before submit; no snackbar
-      verifyNever(() => mockAsksRepository.create(appForm.fields));
+      verifyNever(() => mockAsksRepository.create(body: appForm.fields));
       verifyNever(() => mockAppDialogRouter.routeToAskDialogListView());
       expect(ft.find.byType(SnackBar), ft.findsNothing);
 
@@ -214,7 +234,7 @@ void main() {
 
       // Check methods were called; check expected values are found
       expect(formKey.currentState!.validate(), true);
-      verify(() => mockAsksRepository.create(appForm.fields)).called(1);
+      verify(() => mockAsksRepository.create(body: appForm.fields)).called(1);
 
       // Check error added to appForm; check testList is empty (error was found)
       expect(appForm.getError(fieldName: "field1"), "Error for field1");
@@ -233,7 +253,7 @@ void main() {
 
       final tc = TestContext();
       final appForm = AppForm()
-                      ..setValue(fieldName: AppFormFields.rebuild, value: func);
+                      ..setValue(fieldName: AppFormFields.rebuild, value: func, isAux: true);
       final appState = AppState()
                       ..currentUser = tc.user;
 
@@ -243,29 +263,40 @@ void main() {
       final getIt = GetIt.instance;
       final mockAsksRepository = MockAsksRepository();
       final mockAppDialogRouter = MockAppDialogRouter();
+      final mockUsersRepository = MockUsersRepository();
       getIt.registerLazySingleton<AppState>(() => appState);
       getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
       getIt.registerLazySingleton<AppDialogRouter>(() => mockAppDialogRouter);
+      getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
+
+      // AsksRepository.create()
+      when(
+        () => mockAsksRepository.create(body: appForm.fields)
+      ).thenAnswer(
+        (_) async => (null, {"field1": "Error for field1"})
+      );
+
+      // AsksRepository.getList()
+      when(
+        () => mockAsksRepository.getList(
+          filter: any(named: "filter"), sort: any(named: "sort")
+        )
+      ).thenAnswer(
+        (_) async => ResultList<RecordModel>(items: [tc.getAskRecordModel()])
+      );
+
+      // UsersRepository.getFirstListItem()
+      when(
+        () => mockUsersRepository.getFirstListItem(filter: any(named: "filter"))
+      ).thenAnswer(
+        (_) async => tc.getUserRecordModel()
+      );
 
       // AppDialogRouter.routeToAskDialogListView()
       when(
         () => mockAppDialogRouter.routeToAskDialogListView()
       ).thenAnswer(
         (_) async => {}
-      );
-
-      // AsksRepository.create()
-      when(
-        () => mockAsksRepository.create(appForm.fields)
-      ).thenAnswer(
-        (_) async => (false, {"field1": "Error for field1"})
-      );
-
-      // AsksRepository.getAsksByUserID()
-      when(
-        () => mockAsksRepository.getAsksByUserID(userID: tc.user.id)
-      ).thenAnswer(
-        (_) async => [tc.ask]
       );
 
       await tester.pumpWidget(
@@ -297,7 +328,13 @@ void main() {
       expect(testList.isEmpty, false);
 
       // Check no methods called before submit; no snackbar
-      verifyNever(() => mockAsksRepository.create(appForm.fields));
+      verifyNever(() => mockAsksRepository.create(body: appForm.fields));
+      verifyNever(() => mockAsksRepository.getList(
+          filter: any(named: "filter"), sort: any(named: "sort"))
+      );
+      verifyNever(() => mockUsersRepository.getFirstListItem(
+        filter: any(named: "filter"))
+      );
       verifyNever(() => mockAppDialogRouter.routeToAskDialogListView());
       expect(ft.find.byType(SnackBar), ft.findsNothing);
 
@@ -309,7 +346,13 @@ void main() {
       expect(formKey.currentState!.validate(), false);
 
       // Check still no method called
-      verifyNever(() => mockAsksRepository.create(appForm.fields));
+      verifyNever(() => mockAsksRepository.create(body: appForm.fields));
+      verifyNever(() => mockAsksRepository.getList(
+          filter: any(named: "filter"), sort: any(named: "sort"))
+      );
+      verifyNever(() => mockUsersRepository.getFirstListItem(
+        filter: any(named: "filter"))
+      );
 
       // Check no error added to appForm; check testList still has values
       expect(appForm.getError(fieldName: "field1"), null);
@@ -328,12 +371,14 @@ void main() {
       final testList = [1, 2, 3];
       void func() => testList.clear();
 
+      final tc = TestContext();
       final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
       // AppForm
       const fieldName = "champs";
       final appForm = AppForm()
-                      ..setValue(fieldName: AppFormFields.rebuild, value: func)
+                      ..setValue(fieldName: GenericField.id, value: "ID")
+                      ..setValue(fieldName: AppFormFields.rebuild, value: func, isAux: true)
                       ..setValue(fieldName: fieldName, value: null);
 
       // GetIt
@@ -343,9 +388,12 @@ void main() {
 
       // AsksRepository.update()
       when(
-        () => mockAsksRepository.updateWithMap(appForm.fields)
+        () => mockAsksRepository.update(
+          id: "ID",
+          body: appForm.fields
+        )
       ).thenAnswer(
-        (_) async => (true, {})
+        (_) async => (tc.getAskRecordModel(), {})
       );
 
       await tester.pumpWidget(
@@ -381,7 +429,10 @@ void main() {
       expect(testList.isNotEmpty, true);
 
       // Check no method calls before submit; no snackbar
-      verifyNever(() => mockAsksRepository.updateWithMap(appForm.fields));
+      verifyNever(() => mockAsksRepository.update(
+        id: "ID",
+        body: appForm.fields
+      ));
 
       // Tap ElevatedButton (to call submitUpdate)
       await tester.tap(ft.find.byType(ElevatedButton));
@@ -392,7 +443,10 @@ void main() {
 
       // Check methods were called
       // NOTE: cannot check on formKey.currentState or Snackbar due to inner Navigator.pop()
-      verify(() => mockAsksRepository.updateWithMap(appForm.fields)).called(1);
+      verify(() => mockAsksRepository.update(
+        id: "ID",
+        body: appForm.fields
+      )).called(1);
 
       // Check testList still has values (no error)
       expect(testList.isNotEmpty, true);
@@ -409,7 +463,8 @@ void main() {
       // AppForm
       const fieldName = "champs";
       final appForm = AppForm()
-                      ..setValue(fieldName: AppFormFields.rebuild, value: func)
+                      ..setValue(fieldName: GenericField.id, value: "ID")
+                      ..setValue(fieldName: AppFormFields.rebuild, value: func, isAux: true)
                       ..setValue(fieldName: fieldName, value: null);
 
       // GetIt
@@ -419,9 +474,12 @@ void main() {
 
       // AsksRepository.update()
       when(
-        () => mockAsksRepository.updateWithMap(appForm.fields)
+        () => mockAsksRepository.update(
+          id: "ID",
+          body: appForm.fields
+        )
       ).thenAnswer(
-        (_) async => (false, {"field2": "Error for field2"})
+        (_) async => (null, {"field2": "Error for field2"})
       );
 
       await tester.pumpWidget(
@@ -457,7 +515,10 @@ void main() {
       expect(testList.isEmpty, false);
 
       // Check no method calls before submit
-      verifyNever(() => mockAsksRepository.updateWithMap(appForm.fields));
+      verifyNever(() => mockAsksRepository.update(
+        id: "ID",
+        body: appForm.fields
+      ));
 
       // Tap ElevatedButton (to call submitUpdate)
       await tester.tap(ft.find.byType(ElevatedButton));
@@ -471,7 +532,10 @@ void main() {
 
       // Check methods were called
       // NOTE: cannot check on formKey.currentState due to inner Navigator.pop()
-      verify(() => mockAsksRepository.updateWithMap(appForm.fields)).called(1);
+      verify(() => mockAsksRepository.update(
+        id: "ID",
+        body: appForm.fields
+      )).called(1);
 
       // Check error added to appForm; check testList is empty (error)
       expect(appForm.getError(fieldName: "field2"), "Error for field2");
@@ -484,12 +548,14 @@ void main() {
       final testList = [1, 2, 3];
       void func() => testList.clear();
 
+      final tc = TestContext();
       final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
       // AppForm
       const fieldName = "champs";
       final appForm = AppForm()
-                      ..setValue(fieldName: AppFormFields.rebuild, value: func)
+                      ..setValue(fieldName: GenericField.id, value: "ID")
+                      ..setValue(fieldName: AppFormFields.rebuild, value: func, isAux: true)
                       ..setValue(fieldName: fieldName, value: null);
 
       // GetIt
@@ -499,9 +565,12 @@ void main() {
 
       // AsksRepository.update()
       when(
-        () => mockAsksRepository.updateWithMap(appForm.fields)
+        () => mockAsksRepository.update(
+          id: "ID",
+          body: appForm.fields
+        )
       ).thenAnswer(
-        (_) async => (true, {})
+        (_) async => (tc.getAskRecordModel(), {})
       );
 
       await tester.pumpWidget(
@@ -537,7 +606,10 @@ void main() {
       expect(testList.isNotEmpty, true);
 
       // Check no method calls before submit
-      verifyNever(() => mockAsksRepository.updateWithMap(appForm.fields));
+      verifyNever(() => mockAsksRepository.update(
+        id: "ID",
+        body: appForm.fields
+      ));
 
       // Tap ElevatedButton (to call submitUpdate)
       await tester.tap(ft.find.byType(ElevatedButton));
@@ -550,9 +622,12 @@ void main() {
       expect(appForm.getValue(fieldName: fieldName), null);
 
       // Check methods never called
-      verifyNever(() => mockAsksRepository.updateWithMap(appForm.fields));
+      verifyNever(() => mockAsksRepository.update(
+        id: "ID",
+        body: appForm.fields
+      ));
 
-      // Check error added to appForm; check testList is empty (error)
+      // Check no error added to appForm; check testList is not empty (method not called)
       expect(appForm.getError(fieldName: "field2"), null);
       expect(testList.isNotEmpty, true);
     });
@@ -562,6 +637,8 @@ void main() {
 
   group("Ask submitDelete", () {
     ft.testWidgets("valid delete", (tester) async {
+      final tc = TestContext();
+
       // AppForm
       const fieldName = "champs";
       final appForm = AppForm()
@@ -574,7 +651,7 @@ void main() {
 
       // AsksRepository.delete()
       when(
-        () => mockAsksRepository.deleteWithMap(appForm.fields)
+        () => mockAsksRepository.delete(id: tc.ask.id)
       ).thenAnswer(
         (_) async => (true, {})
       );
@@ -594,7 +671,7 @@ void main() {
                       validator: (value) => null,
                     ),
                     ElevatedButton(
-                      onPressed: () => submitDelete(context, appForm),
+                      onPressed: () => submitDelete(context, tc.ask.id),
                       child: Text("x")
                     ),
                   ],
@@ -605,7 +682,7 @@ void main() {
       );
 
       // Check no method calls before submit; no snackbar
-      verifyNever(() => mockAsksRepository.deleteWithMap(appForm.fields));
+      verifyNever(() => mockAsksRepository.delete(id: tc.ask.id));
 
       // Tap ElevatedButton (to call submitDelete)
       await tester.tap(ft.find.byType(ElevatedButton));
@@ -613,12 +690,14 @@ void main() {
 
       // Check methods were called
       // NOTE: Can't check Snackbar due to inner Navigator.pop()
-      verify(() => mockAsksRepository.deleteWithMap(appForm.fields)).called(1);
+      verify(() => mockAsksRepository.delete(id: tc.ask.id)).called(1);
     });
 
     tearDown(() => GetIt.instance.reset());
 
     ft.testWidgets("invalid delete", (tester) async {
+      final tc = TestContext();
+
       // AppForm
       const fieldName = "champs";
       final appForm = AppForm()
@@ -631,7 +710,7 @@ void main() {
 
       // AsksRepository.delete()
       when(
-        () => mockAsksRepository.deleteWithMap(appForm.fields)
+        () => mockAsksRepository.delete(id: tc.ask.id)
       ).thenAnswer(
         (_) async => (false, {})
       );
@@ -651,7 +730,7 @@ void main() {
                       validator: (value) => null,
                     ),
                     ElevatedButton(
-                      onPressed: () => submitDelete(context, appForm),
+                      onPressed: () => submitDelete(context, tc.ask.id),
                       child: Text("x")
                     ),
                   ],
@@ -662,7 +741,7 @@ void main() {
       );
 
       // Check no method calls before submit; no snackbar
-      verifyNever(() => mockAsksRepository.deleteWithMap(appForm.fields));
+      verifyNever(() => mockAsksRepository.delete(id: tc.ask.id));
 
       // Tap ElevatedButton (to call submitDelete)
       await tester.tap(ft.find.byType(ElevatedButton));
@@ -670,7 +749,7 @@ void main() {
 
       // Check methods were called
       // NOTE: Can't check Snackbar due to inner Navigator.pop()
-      verify(() => mockAsksRepository.deleteWithMap(appForm.fields)).called(1);
+      verify(() => mockAsksRepository.delete(id: tc.ask.id)).called(1);
     });
 
     tearDown(() => GetIt.instance.reset());

@@ -99,7 +99,7 @@ Future<void> deleteCurrentUserGardenRecords() async {
   final userGardenRecordsRepository = GetIt.instance<UserGardenRecordsRepository>();
   final currentUser = GetIt.instance<AppState>().currentUser!;
 
-  var resultList = await userGardenRecordsRepository.getList(
+  final resultList = await userGardenRecordsRepository.getList(
     filter: "${UserGardenRecordField.user} = '${currentUser.id}'",
   );
 
@@ -115,7 +115,6 @@ Future<void> deleteCurrentUser() async {
 /// Deletes the [UserSettings] record corresponding to [AppState].currentUser.id
 Future<void> deleteCurrentUserSettings() async {
   final currentUserSettings = GetIt.instance<AppState>().currentUserSettings!;
-
   await GetIt.instance<UserSettingsRepository>().delete(id: currentUserSettings.id);
 }
 
@@ -130,7 +129,7 @@ Future<List<AppUser>> getCurrentGardenUsers() async {
   final resultList = await GetIt.instance<UserGardenRecordsRepository>().getList(
     expand: UserGardenRecordField.user,
     filter: "${UserGardenRecordField.garden} = '$currentGardenID'",
-    sort: "user.username"
+    sort: "${UserGardenRecordField.user}.${UserField.username}"
   );
 
   for (var record in resultList.items) {
@@ -174,25 +173,27 @@ Future<AppUser> getUserByID(String userID) async {
 ///
 /// Returns an [AppUserGardenRecord] instance corresponding to the retrieved
 /// UserGardenRecord if one is found. Else, returns null.
-Future<AppUserGardenRecord?> getUserGardenRecord({
+Future<AppUserGardenRecord> getUserGardenRecord({
   required String userID,
   required String gardenID,
   sort = "-updated"
 }) async {
   var resultList = await GetIt.instance<UserGardenRecordsRepository>().getList(
-    filter: "user = '$userID' && garden = '$gardenID'",
+    filter: ""
+      "${UserGardenRecordField.user} = '$userID' && "
+      "${UserGardenRecordField.garden} = '$gardenID'",
     sort: sort,
   );
 
   final record = resultList.items.first.toJson();
 
-  var garden = await getGardenByID(gardenID);
-  var user = await getUserByID(userID);
+  final garden = await getGardenByID(gardenID);
+  final user = await getUserByID(userID);
 
   return AppUserGardenRecord(
     id: record[GenericField.id],
+    garden: garden,
     user: user,
-    garden: garden
   );
 }
 
@@ -208,7 +209,7 @@ Future<bool> login(
   try {
     final pb = database ?? PocketBase(Environments.pocketbaseUrl); // Must use pb because GetIt not yet initialised
 
-    await pb.collection(Collection.users).authWithPassword( // Must user pb because GetIt not yet initialised
+    await pb.collection(Collection.users).authWithPassword( // Must use pb because GetIt not yet initialised
       usernameOrEmail, password);
 
     await clearGetItInstance();

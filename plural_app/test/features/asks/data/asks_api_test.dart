@@ -14,12 +14,13 @@ import 'package:plural_app/src/features/asks/data/asks_repository.dart';
 import 'package:plural_app/src/features/asks/domain/ask.dart';
 
 // Auth
-import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
+import 'package:plural_app/src/features/authentication/data/users_repository.dart';
 
 // Localization
 import 'package:plural_app/src/localization/lang_en.dart';
 
 // Utils
+import 'package:plural_app/src/utils/app_state.dart';
 import 'package:plural_app/src/utils/exceptions.dart';
 
 // Tests
@@ -27,145 +28,42 @@ import '../../../test_context.dart';
 import '../../../test_mocks.dart';
 
 void main() {
-    group("Asks api test", () {
-    test("createAskInstancesFromQuery", () async {
+  group("Asks api test", () {
+    test("addSponsor", () async {
       final tc = TestContext();
-      final getIt = GetIt.instance;
-      final mockAuthRepository = MockAuthRepository();
-
-      getIt.registerLazySingleton<AuthRepository>(() => mockAuthRepository);
-      when(() => mockAuthRepository.getUserByID(any())).thenAnswer((_) async => tc.user);
-
-      var resultList = ResultList(items: [tc.getAskRecordModel()]);
-      var listAsks = await createAskInstancesFromQuery(resultList);
-
-      expect(listAsks.length, 1);
-
-      var createdAsk = listAsks.first;
-      expect(createdAsk, isA<Ask>());
-      expect(createdAsk.id, "TESTASK1");
-      expect(createdAsk.boon, 15);
-      expect(createdAsk.creator, tc.user);
-      expect(createdAsk.creationDate, DateTime(1995, 6, 13));
-      expect(createdAsk.currency, "GHS");
-      expect(createdAsk.description, "Test description of TESTASK1");
-      expect(createdAsk.deadlineDate, DateTime(1995, 7, 24));
-      expect(createdAsk.instructions, "Test instructions of TESTASK1");
-      expect(createdAsk.sponsorIDS.isEmpty, true);
-      expect(createdAsk.targetSum, 160);
-      expect(createdAsk.targetMetDate, null);
-      expect(createdAsk.type, AskType.monetary);
-    });
-
-    tearDown(() => GetIt.instance.reset());
-
-    test("createAskInstancesFromQuery count", () async {
-      final tc = TestContext();
-      final getIt = GetIt.instance;
-      final mockAuthRepository = MockAuthRepository();
-
-      getIt.registerLazySingleton<AuthRepository>(() => mockAuthRepository);
-      when(() => mockAuthRepository.getUserByID(any())).thenAnswer((_) async => tc.user);
-
-      var resultList = ResultList(
-        items: [
-          tc.getAskRecordModel(id: "ASK002"),
-          tc.getAskRecordModel(id: "ASK003"),
-          tc.getAskRecordModel(id: "ASK004"),
-          tc.getAskRecordModel(id: "ASK005"),
-          tc.getAskRecordModel(id: "ASK006"),
-          tc.getAskRecordModel(id: "ASK007"),
-        ]
-      );
-
-      var listAsks = await createAskInstancesFromQuery(resultList);
-      expect(resultList.items.length, 6);
-      expect(listAsks.length, 6);
-
-      listAsks = await createAskInstancesFromQuery(resultList, count: 2);
-      expect(resultList.items.length, 6);
-      expect(listAsks.length, 2);
-
-      listAsks = await createAskInstancesFromQuery(resultList, count: 4);
-      expect(resultList.items.length, 6);
-      expect(listAsks.length, 4);
-    });
-
-    test("getAsksForListedAsksDialog", () async {
-      final tc = TestContext();
-      final user = tc.user;
 
       final getIt = GetIt.instance;
       final mockAsksRepository = MockAsksRepository();
       getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
 
-      final nowString = DateFormat(Formats.dateYMMddHms).format(DateTime.now());
+      const existingUserID = "EXISTINGUSERID";
+      final recordModel = tc.getAskRecordModel(sponsors: [existingUserID]);
 
-      // AsksRepository.getAsksByUserID(), target not met and deadline not passed
-      final ask1 = tc.getNewAsk(
-        id: "ASK001",
-        targetMetDate: null,
-        deadlineDate: DateTime.now().add(Duration(days: 50))
-      );
-      final filterString = ""
-        "&& ${AskField.targetMetDate} = null"
-        "&& ${AskField.deadlineDate} > '$nowString'";
+      // AsksRepository.getList()
       when(
-        () => mockAsksRepository.getAsksByUserID(
-          filterString: filterString,
-          sortString: GenericField.created,
-          userID: user.id
-        )
+        () => mockAsksRepository.getList(filter: any(named: "filter"))
       ).thenAnswer(
-        (_) async => [ask1]
-      );
-      // AsksRepository.getAsksByUserID(), target not met and deadline passed
-      final ask2 = tc.getNewAsk(
-        id: "ASK002",
-        targetMetDate: null,
-        deadlineDate: DateTime.now().add(Duration(days: -50))
-      );
-      final deadlinePassedFilterString = ""
-        "&& ${AskField.targetMetDate} = null"
-        "&& ${AskField.deadlineDate} <= '$nowString'";
-      when(
-        () => mockAsksRepository.getAsksByUserID(
-          filterString: deadlinePassedFilterString,
-          sortString: GenericField.created,
-          userID: user.id
-        )
-      ).thenAnswer(
-        (_) async => [ask2]
-      );
-      // AsksRepository.getAsksByUserID(), target met
-      final ask3 = tc.getNewAsk(
-        id: "ASK003",
-        targetMetDate: DateTime.now(),
-        deadlineDate: DateTime.now().add(Duration(days: 50))
-      );
-      var targetMetFilterString = "&& ${AskField.targetMetDate} != null";
-      when(
-        () => mockAsksRepository.getAsksByUserID(
-          filterString: targetMetFilterString,
-          sortString: GenericField.created,
-          userID: user.id
-        )
-      ).thenAnswer(
-        (_) async => [ask3]
+        (_) async => ResultList<RecordModel>(items: [recordModel])
       );
 
-      final asks = await getAsksForListedAsksDialog(
-        userID: user.id, nowString: nowString
+      // AsksRepository.update()
+      when(
+        () => mockAsksRepository.update(
+          id: any(named: "id"), body: any(named: "body"))
+      ).thenAnswer(
+        (_) async => (recordModel, {})
       );
 
-      // Check length and order is correct
-      expect(asks.length, 3);
-      expect(asks[0].id, ask1.id);
-      expect(asks[1].id, ask2.id);
-      expect(asks[2].id, ask3.id);
+      // Existing ID, update() not called
+      await addSponsor("", "EXISTINGUSERID");
+      verifyNever(() => mockAsksRepository.update(
+        id: any(named: "id"), body: any(named: "body")));
+
+      // New ID, update() called
+      await addSponsor("", "NEWUSERID");
+      verify(() => mockAsksRepository.update(
+        id: any(named: "id"), body: any(named: "body"))).called(1);
     });
-
-    tearDown(() => GetIt.instance.reset());
 
     test("checkBoonCeiling", () async {
       // boon == targetSum, raise error
@@ -194,5 +92,287 @@ void main() {
       expect(() => checkBoonCeiling(50, 100), returnsNormally);
     });
 
+    test("deleteCurrentUserAsks", () async {
+      final tc = TestContext();
+
+      final appState = AppState.skipSubscribe()
+                        ..currentUser = tc.user;
+
+      final getIt = GetIt.instance;
+      final mockAsksRepository = MockAsksRepository();
+      getIt.registerLazySingleton<AppState>(() => appState);
+      getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
+
+      final resultList = ResultList<RecordModel>(items: [tc.getAskRecordModel()]);
+
+      // mockAsksRepository.getList()
+      when(
+        () => mockAsksRepository.getList(filter: any(named: "filter"))
+      ).thenAnswer(
+        (_) async => resultList
+      );
+      // mockAsksRepository.bulkDelete()
+      when(
+        () => mockAsksRepository.bulkDelete(resultList: resultList)
+      ).thenAnswer(
+        (_) async => {}
+      );
+
+      // Check no calls made yet
+      verifyNever(() => mockAsksRepository.getList(filter: any(named: "filter")));
+      verifyNever(() => mockAsksRepository.bulkDelete(resultList: resultList));
+
+      await deleteCurrentUserAsks();
+
+      // Check calls were made
+      verify(() => mockAsksRepository.getList(filter: any(named: "filter"))).called(1);
+      verify(() => mockAsksRepository.bulkDelete(resultList: resultList)).called(1);
+    });
+
+    tearDown(() => GetIt.instance.reset());
+
+    test("getAsksByGardenID", () async {
+      final tc = TestContext();
+
+      final getIt = GetIt.instance;
+      final mockAsksRepository = MockAsksRepository();
+      final mockUsersRepository = MockUsersRepository();
+      getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
+      getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
+
+      // mockAsksRepository.getList()
+      when(
+        () => mockAsksRepository.getList(
+          filter: any(named: "filter"), sort: any(named: "sort")
+        )
+      ).thenAnswer(
+        (_) async => ResultList<RecordModel>(items: [
+          tc.getAskRecordModel(),
+          tc.getAskRecordModel(),
+          tc.getAskRecordModel(),
+        ])
+      );
+
+      // UsersRepository.getFirstListItem()
+      when(
+        () => mockUsersRepository.getFirstListItem(
+          filter: any(named: "filter")
+        )
+      ).thenAnswer(
+        (_) async => tc.getUserRecordModel()
+      );
+
+      // No count. Returns resultList.length
+      final asksList1 = await getAsksByGardenID(gardenID: "");
+      expect(asksList1.length, 3);
+      expect(asksList1.first, isA<Ask>());
+
+      // count == 2. Returns 2
+      final asksList2 = await getAsksByGardenID(gardenID: "", count: 2);
+      expect(asksList2.length, 2);
+
+      // count > resultList.length. Returns resultList.length
+      final asksList3 = await getAsksByGardenID(gardenID: "", count: 7);
+      expect(asksList3.length, 3);
+    });
+
+    tearDown(() => GetIt.instance.reset());
+
+    test("getAsksByUserID", () async {
+      final tc = TestContext();
+
+      final appState = AppState.skipSubscribe()
+                        ..currentGarden = tc.garden;
+
+      // GetIt
+      final getIt = GetIt.instance;
+      final mockAsksRepository = MockAsksRepository();
+      final mockUsersRepository = MockUsersRepository();
+      getIt.registerLazySingleton<AppState>(() => appState);
+      getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
+      getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
+
+      // mockAsksRepository.getList()
+      when(
+        () => mockAsksRepository.getList(
+          filter: any(named: "filter"), sort: any(named: "sort"))
+      ).thenAnswer(
+        (_) async => ResultList<RecordModel>(items: [
+          tc.getAskRecordModel(),
+          tc.getAskRecordModel(),
+        ])
+      );
+
+      // mockUsersRepository.getFirstListItem()
+      when(
+        () => mockUsersRepository.getFirstListItem(
+          filter: any(named: "filter")
+        )
+      ).thenAnswer(
+        (_) async => tc.getUserRecordModel()
+      );
+
+      var asksList = await getAsksByUserID(userID: "");
+
+      expect(asksList.length, 2);
+      expect(asksList.first, isA<Ask>());
+    });
+
+    tearDown(() => GetIt.instance.reset());
+
+    test("getAsksForListedAsksDialog", () async {
+      final tc = TestContext();
+
+      final appState = AppState.skipSubscribe()
+                        ..currentGarden = tc.garden
+                        ..currentUser = tc.user;
+
+      final getIt = GetIt.instance;
+      final mockAsksRepository = MockAsksRepository();
+      final mockUsersRepository = MockUsersRepository();
+      getIt.registerLazySingleton<AppState>(() => appState);
+      getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
+      getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
+
+      final nowString = DateFormat(Formats.dateYMMddHms).format(DateTime.now());
+
+      String formatFilterString(String filter) {
+        return """
+        ${AskField.creator} = '${appState.currentUser!.id}' &&
+        ${AskField.garden} = '${appState.currentGarden!.id}' $filter
+        """.trim();
+      }
+
+      // AsksRepository.getList(), target not met and deadline not passed
+      final filterString = formatFilterString(""
+        "&& ${AskField.targetMetDate} = null"
+        "&& ${AskField.deadlineDate} > '$nowString'");
+      when(
+        () => mockAsksRepository.getList(
+          filter: filterString,
+          sort: GenericField.created,
+        )
+      ).thenAnswer(
+        (_) async => ResultList<RecordModel>(items: [tc.getAskRecordModel(
+          id: "ASK001",
+          targetMetDate: null,
+          deadlineDate: DateTime.now().add(Duration(days: 50))
+        )])
+      );
+      // AsksRepository.getList(), target not met and deadline passed
+      final deadlinePassedFilterString = formatFilterString(""
+        "&& ${AskField.targetMetDate} = null"
+        "&& ${AskField.deadlineDate} <= '$nowString'");
+      when(
+        () => mockAsksRepository.getList(
+          filter: deadlinePassedFilterString,
+          sort: GenericField.created,
+        )
+      ).thenAnswer(
+        (_) async => ResultList<RecordModel>(items: [tc.getAskRecordModel(
+          id: "ASK002",
+          targetMetDate: null,
+          deadlineDate: DateTime.now().add(Duration(days: -50))
+        )])
+      );
+      // AsksRepository.getList(), target met
+      final targetMetFilterString = formatFilterString(
+        "&& ${AskField.targetMetDate} != null");
+      when(
+        () => mockAsksRepository.getList(
+          filter: targetMetFilterString,
+          sort: GenericField.created,
+        )
+      ).thenAnswer(
+        (_) async => ResultList<RecordModel>(items: [tc.getAskRecordModel(
+          id: "ASK003",
+          targetMetDate: DateTime.now(),
+          deadlineDate: DateTime.now().add(Duration(days: 50))
+        )])
+      );
+
+      // UsersRepository.getFirstListItem()
+      when(
+        () => mockUsersRepository.getFirstListItem(
+          filter: "${GenericField.id} = '${tc.user.id}'",
+        )
+      ).thenAnswer(
+        (_) async => tc.getUserRecordModel(
+          id: tc.user.id,
+          email: tc.user.email,
+          firstName: tc.user.firstName,
+          lastName: tc.user.lastName,
+          username: tc.user.username
+        )
+      );
+
+      final asks = await getAsksForListedAsksDialog(
+        userID: tc.user.id, nowString: nowString
+      );
+
+      // Check length and order is correct
+      expect(asks.length, 3);
+      expect(asks[0].id, "ASK001");
+      expect(asks[1].id, "ASK002");
+      expect(asks[2].id, "ASK003");
+    });
+
+    tearDown(() => GetIt.instance.reset());
+
+    test("getAskTypeFromString", () async {
+      final askType1 = getAskTypeFromString("monetary");
+      expect(askType1, AskType.monetary);
+
+      // Check that fallback value is monetary (for now)
+      final askType2 = getAskTypeFromString("invalidValue");
+      expect(askType2, AskType.monetary);
+    });
+
+    test("getParsedTargetMetDate", () async {
+      // Check returns null if empty string given
+      final parsedDateTime1 = getParsedTargetMetDate("");
+      expect(parsedDateTime1, null);
+
+      final parsedDateTime2 = getParsedTargetMetDate("1995-06-13");
+      expect(parsedDateTime2, DateTime(1995, 06, 13));
+    });
+
+    test("removeSponsor", () async {
+      final tc = TestContext();
+
+      final getIt = GetIt.instance;
+      final mockAsksRepository = MockAsksRepository();
+      getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
+
+      const existingUserID = "EXISTINGUSERID";
+      final recordModel = tc.getAskRecordModel(sponsors: [existingUserID]);
+
+      // mockAsksRepository.getList()
+      when(
+        () => mockAsksRepository.getList(filter: any(named: "filter"))
+      ).thenAnswer(
+        (_) async => ResultList<RecordModel>(items: [recordModel])
+      );
+
+      // mockAsksRepository.update()
+      when(
+        () => mockAsksRepository.update(
+          id: any(named: "id"), body: any(named: "body"))
+      ).thenAnswer(
+        (_) async => (recordModel, {})
+      );
+
+      // Existing ID, update() called
+      await removeSponsor("", "EXISTINGUSERID");
+      verify(() => mockAsksRepository.update(
+        id: any(named: "id"), body: any(named: "body"))).called(1);
+
+      // New ID, update() not called
+      await removeSponsor("", "NEWUSERID");
+      verifyNever(() => mockAsksRepository.update(
+        id: any(named: "id"), body: any(named: "body")));
+    });
+
+    tearDown(() => GetIt.instance.reset());
   });
 }

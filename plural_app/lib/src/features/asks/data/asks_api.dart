@@ -65,7 +65,7 @@ void checkBoonCeiling(int boon, int targetSum) {
 Future<void> deleteCurrentUserAsks() async {
   final currentUser = GetIt.instance<AppState>().currentUser!;
 
-  var resultList = await asksRepository.getList(
+  final resultList = await asksRepository.getList(
     filter: "${AskField.creator} = '${currentUser.id}'"
   );
 
@@ -119,7 +119,7 @@ Future<List<Ask>> getAsksByUserID({
   List<Ask> asks = [];
 
   final currentGarden = GetIt.instance<AppState>().currentGarden!;
-  var finalFilter = """
+  final finalFilter = """
         ${AskField.creator} = '$userID' &&
         ${AskField.garden} = '${currentGarden.id}' $filter
         """.trim();
@@ -189,33 +189,33 @@ AskType getAskTypeFromString(String askTypeString) {
 }
 
 /// Checks if [targetMetDateString] is non-empty, and returns a DateTime
-/// if true, else returns null.
+/// of the parsed string if true, else returns null.
 DateTime? getParsedTargetMetDate(String targetMetDateString) {
   return targetMetDateString.isNotEmpty ?
     DateTime.parse(targetMetDateString) : null;
 }
 
-  /// Removes the [User] record which corresponds to [userID] from the list
-  /// of sponsors of the [Ask] record which corresponds to [askID].
-  Future<void> removeSponsor(String askID, String userID) async {
-    var resultList = await asksRepository.getList(
-      filter: "${GenericField.id} = '$askID'"
-    );
+/// Removes the [User] record which corresponds to [userID] from the list
+/// of sponsors of the [Ask] record which corresponds to [askID].
+Future<void> removeSponsor(String askID, String userID) async {
+  var resultList = await asksRepository.getList(
+    filter: "${GenericField.id} = '$askID'"
+  );
 
-    // If ask does not contain sponsor, return
-    final askSponsorsString = resultList.items.first.toJson()[AskField.sponsors];
-    var currentSponsors = List<String>.from(askSponsorsString);
-    if (!currentSponsors.contains(userID)) return;
+  // If ask does not contain sponsor, return
+  final askSponsorsString = resultList.items.first.toJson()[AskField.sponsors];
+  var currentSponsors = List<String>.from(askSponsorsString);
+  if (!currentSponsors.contains(userID)) return;
 
-    // Else, update
-    currentSponsors.remove(userID);
-    final body = { AskField.sponsors: currentSponsors};
+  // Else, update
+  currentSponsors.remove(userID);
+  final body = { AskField.sponsors: currentSponsors};
 
-    await asksRepository.update(
-      id: askID,
-      body: body,
-    );
-  }
+  await asksRepository.update(
+    id: askID,
+    body: body,
+  );
+}
 
 /// Subscribes to any changes made in the [Ask] collection for any [Ask] record
 /// associated with [gardenID].

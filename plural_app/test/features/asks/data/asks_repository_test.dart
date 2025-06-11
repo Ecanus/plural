@@ -1,4 +1,3 @@
-import 'package:get_it/get_it.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:pocketbase/pocketbase.dart';
 import 'package:test/test.dart';
@@ -9,173 +8,63 @@ import 'package:plural_app/src/constants/pocketbase.dart';
 
 // Asks
 import 'package:plural_app/src/features/asks/data/asks_repository.dart';
-import 'package:plural_app/src/features/asks/domain/ask.dart';
-
-// Auth
-import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
-
-// Utils
-import 'package:plural_app/src/utils/app_state.dart';
 
 // Tests
 import '../../../test_context.dart';
 import '../../../test_mocks.dart';
 
 void main() {
-  group("Asks repository test", () {
-    test("getAsksByGardenID", () async {
+  group("AsksRepository tests", () {
+    test("bulkDelete", () async {
       final tc = TestContext();
-      final getIt = GetIt.instance;
-      final pb = MockPocketBase();
-      final mockAuthRepository = MockAuthRepository();
-      final recordService = MockRecordService();
-      final asksRepository = AsksRepository(pb: pb);
 
-      getIt.registerLazySingleton(() => mockAuthRepository as AuthRepository);
-      when(() => mockAuthRepository.getUserByID(any())).thenAnswer((_) async => tc.user);
-
-      // pb.collection()
-      when(
-        () => pb.collection(Collection.asks)
-      ).thenAnswer(
-        (_) => recordService as RecordService
-      );
-
-      // RecordService.getList()
-      when(
-        () => recordService.getList(
-          filter: any(named: "filter"), sort: any(named: "sort"))
-      ).thenAnswer(
-        (_) async => ResultList<RecordModel>(items: [tc.getAskRecordModel()])
-      );
-
-      var listAsks = await asksRepository.getAsksByGardenID(gardenID: "");
-
-      expect(listAsks.length, 1);
-      expect(listAsks.first, isA<Ask>());
-    });
-
-    tearDown(() => GetIt.instance.reset());
-
-    test("getAsksByUserID", () async {
-      final tc = TestContext();
-      final getIt = GetIt.instance;
-      final pb = MockPocketBase();
-      final mockAuthRepository = MockAuthRepository();
-      final recordService = MockRecordService();
-      final asksRepository = AsksRepository(pb: pb);
-
-      // GetIt
-      getIt.registerLazySingleton<AppState>(
-        () => AppState.skipSubscribe()
-      );
-      GetIt.instance<AppState>().currentGarden = tc.garden;
-      getIt.registerLazySingleton(() => mockAuthRepository as AuthRepository);
-      when(() => mockAuthRepository.getUserByID(any())).thenAnswer((_) async => tc.user);
-
-      // pb.collection()
-      when(
-        () => pb.collection(Collection.asks)
-      ).thenAnswer(
-        (_) => recordService as RecordService
-      );
-
-      // RecordService.getList()
-      when(
-        () => recordService.getList(
-          filter: any(named: "filter"), sort: any(named: "sort"))
-      ).thenAnswer(
-        (_) async => ResultList<RecordModel>(items: [tc.getAskRecordModel()])
-      );
-
-      var listAsks = await asksRepository.getAsksByUserID(userID: "");
-
-      expect(listAsks.length, 1);
-      expect(listAsks.first, isA<Ask>());
-    });
-
-    tearDown(() => GetIt.instance.reset());
-
-    test("addSponsor", () async {
-      final tc = TestContext();
       final pb = MockPocketBase();
       final recordService = MockRecordService();
       final asksRepository = AsksRepository(pb: pb);
 
-      const existingUserID = "EXISTINGUSERID";
-      final recordModel = tc.getAskRecordModel(sponsors: [existingUserID]);
-
       // pb.collection()
       when(
-        () => pb.collection(Collection.asks)
+        () => pb.collection(any())
       ).thenAnswer(
         (_) => recordService as RecordService
       );
 
-      // RecordService.getList()
+      // RecordService.delete()
       when(
-        () => recordService.getList(filter: any(named: "filter"))
+        () => recordService.delete(any())
       ).thenAnswer(
-        (_) async => ResultList<RecordModel>(items: [recordModel])
+        (_) async => {}
       );
 
-      // RecordService.update()
-      when(
-        () => recordService.update(any(), body: any(named: "body"))
-      ).thenAnswer(
-        (_) async => recordModel
+      final resultList = ResultList<RecordModel>(
+        items: [
+          tc.getAskRecordModel(),
+          tc.getAskRecordModel(),
+          tc.getAskRecordModel(),
+        ]
       );
 
-      // Existing ID, update() not called
-      await asksRepository.addSponsor("", "EXISTINGUSERID");
-      verifyNever(() => recordService.update(any(), body: any(named: "body")));
+      await asksRepository.bulkDelete(resultList: resultList);
 
-      // New ID, update() called
-      await asksRepository.addSponsor("", "NEWUSERID");
-      verify(() => recordService.update(any(), body: any(named: "body"))).called(1);
-    });
+      // Check delete called as many times as results
+      verify(() => recordService.delete(any())).called(resultList.items.length);
 
-    test("removeSponsor", () async {
-      final tc = TestContext();
-      final pb = MockPocketBase();
-      final recordService = MockRecordService();
-      final asksRepository = AsksRepository(pb: pb);
-
-      const existingUserID = "EXISTINGUSERID";
-      final recordModel = tc.getAskRecordModel(sponsors: [existingUserID]);
-
-      // pb.collection()
+      // RecordService.delete(). Now throws exception
       when(
-        () => pb.collection(Collection.asks)
-      ).thenAnswer(
-        (_) => recordService as RecordService
+        () => recordService.delete(any())
+      ).thenThrow(
+        tc.clientException
       );
 
-      // RecordService.getList()
-      when(
-        () => recordService.getList(filter: any(named: "filter"))
-      ).thenAnswer(
-        (_) async => ResultList<RecordModel>(items: [recordModel])
+      // Check a ClientException is thrown
+      expect(
+        () async => await asksRepository.bulkDelete(resultList: resultList),
+        throwsA(predicate((e) => e is ClientException))
       );
-
-      // RecordService.update()
-      when(
-        () => recordService.update(any(), body: any(named: "body"))
-      ).thenAnswer(
-        (_) async => recordModel
-      );
-
-      // Existing ID, update() called
-      await asksRepository.removeSponsor("", "EXISTINGUSERID");
-      verify(() => recordService.update(any(), body: any(named: "body"))).called(1);
-
-      // New ID, update() not called
-      await asksRepository.removeSponsor("", "NEWUSERID");
-      verifyNever(() => recordService.update(any(), body: any(named: "body")));
     });
 
     test("create", () async {
-      var map = {
+      final body = {
         AskField.boon: 0,
         AskField.currency: "",
         AskField.description: "",
@@ -190,16 +79,6 @@ void main() {
       final recordService = MockRecordService();
       final asksRepository = AsksRepository(pb: pb);
 
-      // GetIt
-      final getIt = GetIt.instance;
-      getIt.registerLazySingleton<AppState>(
-        () => AppState.skipSubscribe()
-      );
-      GetIt.instance<AppState>().currentUser = tc.user;
-      GetIt.instance<AppState>().currentGarden = tc.garden;
-
-      final recordModel = tc.getAskRecordModel();
-
       // pb.collection()
       when(
         () => pb.collection(Collection.asks)
@@ -207,126 +86,196 @@ void main() {
         (_) => recordService as RecordService
       );
 
-      // RecordService.create() No Exception
+      // RecordService.create(), No Exception
       when(
         () => recordService.create(body: any(named: "body"))
       ).thenAnswer(
-        (_) async => recordModel
+        (_) async => tc.getAskRecordModel()
       );
 
-      // boon < targetSum. No Exception
-      map[AskField.boon] = 5;
-      map[AskField.targetSum] = 10;
+      // boon < targetSum. Check errors map is empty
+      body[AskField.boon] = 5;
+      body[AskField.targetSum] = 10;
 
-      var (isValid1, errorsMap1) = await asksRepository.create(map);
-      expect(isValid1, true);
-      expect(errorsMap1, {});
+      var (record1, errorsMap1) = await asksRepository.create(body: body);
+      expect(record1, isNotNull);
+      expect(errorsMap1.isEmpty, true);
 
-      // boon >= targetSum. Raise Exception
-      map[AskField.boon] = 5;
-      map[AskField.targetSum] = 5;
+      // boon >= targetSum. Check errors map is not empty
+      body[AskField.boon] = 5;
+      body[AskField.targetSum] = 5;
 
-      var (isValid2, errorsMap2) = await asksRepository.create(map);
-      expect(isValid2, false);
-      expect(errorsMap2.isNotEmpty, true);
+      var (record2, errorsMap2) = await asksRepository.create(body: body);
+      expect(record2, null);
+      expect(errorsMap2.isEmpty, false);
 
-      // boon < targetSum. RecordService.create() Raise Exception
+      // RecordService.create() Raise Exception
       when(
         () => recordService.create(body: any(named: "body"))
       ).thenThrow(
         tc.clientException
       );
 
-      map[AskField.boon] = 5;
-      map[AskField.targetSum] = 10;
+      // boon < targetSum
+      body[AskField.boon] = 5;
+      body[AskField.targetSum] = 10;
 
-      var (isValid3, errorsMap3) = await asksRepository.create(map);
-      expect(isValid3, false);
-      expect(errorsMap3.isNotEmpty, true);
-    });
-
-    tearDown(() => GetIt.instance.reset());
-
-    test("update", () async {
-      var map = {
-        GenericField.id: "UPDATEDASKID",
-        AskField.boon: 0,
-        AskField.currency: "",
-        AskField.description: "",
-        AskField.deadlineDate: "",
-        AskField.instructions: "",
-        AskField.targetSum: 10,
-        AskField.type: "",
-      };
-
-      final tc = TestContext();
-      final pb = MockPocketBase();
-      final recordService = MockRecordService();
-      final asksRepository = AsksRepository(pb: pb);
-
-      final recordModel = tc.getAskRecordModel();
-
-      // pb.collection()
-      when(
-        () => pb.collection(Collection.asks)
-      ).thenAnswer(
-        (_) => recordService as RecordService
-      );
-
-      // RecordService.update() No Exception
-      when(
-        () => recordService.update(any(), body: any(named: "body"))
-      ).thenAnswer(
-        (_) async => recordModel
-      );
-
-      // boon < targetSum. No Exception
-      map[AskField.boon] = 5;
-      map[AskField.targetSum] = 10;
-
-      var (isValid1, errorsMap1) = await asksRepository.updateWithMap(map);
-      expect(isValid1, true);
-      expect(errorsMap1, {});
-
-      // boon >= targetSum. Raise Exception
-      map[AskField.boon] = 5;
-      map[AskField.targetSum] = 4;
-
-      var (isValid2, errorsMap2) = await asksRepository.updateWithMap(map);
-      expect(isValid2, false);
-      expect(errorsMap2.isNotEmpty, true);
-
-      // boon < targetSum. RecordService.update() Raise Exception
-      when(
-        () => recordService.update(any(), body: any(named: "body"))
-      ).thenThrow(
-        tc.clientException
-      );
-
-      map[AskField.boon] = 5;
-      map[AskField.targetSum] = 10;
-
-      var (isValid3, errorsMap3) = await asksRepository.updateWithMap(map);
-      expect(isValid3, false);
-      expect(errorsMap3.isNotEmpty, true);
+      var (record3, errorsMap3) = await asksRepository.create(body: body);
+      expect(record3, null);
+      expect(errorsMap3.isEmpty, false);
     });
 
     test("delete", () async {
-      var map = {
-        GenericField.id: "UPDATEDASKID",
-      };
+      final tc = TestContext();
 
-      var clientException = ClientException(
-        originalError: "Original error message",
-        response: {
-          "data": {
-            "FieldKey": {
-              "message": "The inner map message of delete()"
-            }
-          }
-        },
+      final pb = MockPocketBase();
+      final recordService = MockRecordService();
+      final asksRepository = AsksRepository(pb: pb);
+
+      // pb.collection()
+      when(
+        () => pb.collection(any())
+      ).thenAnswer(
+        (_) => recordService as RecordService
       );
 
+      // RecordService.delete()
+      when(
+        () => recordService.delete(any())
+      ).thenAnswer(
+        (_) async => {}
+      );
+
+      await asksRepository.delete(id: tc.ask.id);
+
+      // Check delete is called once
+      verify(() => recordService.delete(any())).called(1);
+
+      // RecordService.delete(). Now throws exception
+      when(
+        () => recordService.delete(any())
+      ).thenThrow(
+        tc.clientException
+      );
+
+      // Check a ClientException is thrown
+      expect(
+        () async => await asksRepository.delete(id: tc.user.id),
+        throwsA(predicate((e) => e is ClientException))
+      );
+    });
+
+    test("getFirstListItem", () async {
+      final tc = TestContext();
+
+      final pb = MockPocketBase();
+      final recordService = MockRecordService();
+      final asksRepository = AsksRepository(pb: pb);
+
+      // pb.collection()
+      when(
+        () => pb.collection(any())
+      ).thenAnswer(
+        (_) => recordService as RecordService
+      );
+
+      // RecordService.getFirstListItem()
+      when(
+        () => recordService.getFirstListItem(any())
+      ).thenAnswer(
+        (_) async => tc.getUserRecordModel()
+      );
+
+      await asksRepository.getFirstListItem(filter: "");
+
+      // Check getFirstListItem called once
+      verify(() => recordService.getFirstListItem(any())).called(1);
+
+      // RecordService.getFirstListItem(). Now throws exception
+      when(
+        () => recordService.getFirstListItem(any())
+      ).thenThrow(
+        tc.clientException
+      );
+
+      // Check a ClientException is thrown
+      expect(
+        () async => await asksRepository.getFirstListItem(filter: ""),
+        throwsA(predicate((e) => e is ClientException))
+      );
+    });
+
+    test("getList", () async {
+      final tc = TestContext();
+
+      final pb = MockPocketBase();
+      final recordService = MockRecordService();
+      final asksRepository = AsksRepository(pb: pb);
+
+      // pb.collection()
+      when(
+        () => pb.collection(any())
+      ).thenAnswer(
+        (_) => recordService as RecordService
+      );
+
+      // RecordService.getList()
+      when(
+        () => recordService.getList(
+          expand: any(named: "expand"),
+          filter: any(named: "filter"),
+          sort: any(named: "sort"),
+        )
+      ).thenAnswer(
+        (_) async => ResultList<RecordModel>(
+          items: [
+            tc.getUserRecordModel(),
+            tc.getUserRecordModel(),
+            tc.getUserRecordModel(),
+          ]
+        )
+      );
+
+      await asksRepository.getList();
+
+      // Check getList called once
+      verify(() => recordService.getList(
+        expand: any(named: "expand"),
+        filter: any(named: "filter"),
+        sort: any(named: "sort"),
+      )).called(1);
+
+      // RecordService.getList(). Now throws exception
+      when(
+        () => recordService.getList(
+          expand: any(named: "expand"),
+          filter: any(named: "filter"),
+          sort: any(named: "sort"),
+        )
+      ).thenThrow(
+        tc.clientException
+      );
+
+      // Check a ClientException is thrown
+      expect(
+        () async => await asksRepository.getList(),
+        throwsA(predicate((e) => e is ClientException))
+      );
+
+    });
+
+    test("update", () async {
+      final body = {
+        AskField.boon: 0,
+        AskField.currency: "",
+        AskField.description: "",
+        AskField.deadlineDate: "",
+        AskField.instructions: "",
+        AskField.targetSum: 10,
+        AskField.type: "",
+      };
+
+      final tc = TestContext();
       final pb = MockPocketBase();
       final recordService = MockRecordService();
       final asksRepository = AsksRepository(pb: pb);
@@ -338,27 +287,43 @@ void main() {
         (_) => recordService as RecordService
       );
 
-      // RecordService.delete() No Exception
+      // RecordService.update(), No Exception
       when(
-        () => recordService.delete(any())
+        () => recordService.update(any(), body: any(named: "body"))
       ).thenAnswer(
-        (_) async {}
+        (_) async => tc.getAskRecordModel()
       );
 
-      var (isValid1, errorsMap1) = await asksRepository.deleteWithMap(map);
-      expect(isValid1, true);
-      expect(errorsMap1, {});
+      // boon < targetSum. Check errors map is empty
+      body[AskField.boon] = 5;
+      body[AskField.targetSum] = 10;
 
-      // RecordService.delete() Raise Exception
+      var (record1, errorsMap1) = await asksRepository.update(id: tc.ask.id, body: body);
+      expect(record1, isNotNull);
+      expect(errorsMap1.isEmpty, true);
+
+      // boon >= targetSum. Check errors map is not empty
+      body[AskField.boon] = 5;
+      body[AskField.targetSum] = 5;
+
+      var (record2, errorsMap2) = await asksRepository.update(id: tc.ask.id, body: body);
+      expect(record2, null);
+      expect(errorsMap2.isEmpty, false);
+
+      // RecordService.update() Raise Exception
       when(
-        () => recordService.delete(any())
+        () => recordService.update(any(), body: any(named: "body"))
       ).thenThrow(
-        clientException
+        tc.clientException
       );
 
-      var (isValid2, errorsMap2) = await asksRepository.deleteWithMap(map);
-      expect(isValid2, false);
-      expect(errorsMap2, {});
+      // boon < targetSum
+      body[AskField.boon] = 5;
+      body[AskField.targetSum] = 10;
+
+      var (record3, errorsMap3) = await asksRepository.update(id: tc.ask.id, body: body);
+      expect(record3, null);
+      expect(errorsMap3.isEmpty, false);
     });
   });
 }

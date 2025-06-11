@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:pocketbase/pocketbase.dart';
 
 // Common Widgets
 import 'package:plural_app/src/common_widgets/app_dialog_footer.dart';
@@ -112,9 +113,17 @@ void main() {
 
       // AsksRepository.addSponsor()
       when(
-        () => mockAsksRepository.addSponsor(any(), any())
+        () => mockAsksRepository.getList(filter: any(named: "filter"))
       ).thenAnswer(
-        (_) async => tc.ask.sponsorIDS.add(tc.user.id)
+        (_) async =>  ResultList<RecordModel>(items: [tc.getAskRecordModel()])
+      );
+
+      // AsksRepository.update()
+      when(
+        () => mockAsksRepository.update(
+          id: any(named: "id"), body: any(named: "body"))
+      ).thenAnswer(
+        (_) async => (tc.getAskRecordModel(), {})
       );
 
       await tester.pumpWidget(
