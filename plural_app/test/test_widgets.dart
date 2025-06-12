@@ -68,13 +68,13 @@ class TestContextDependantFunctionWidget extends StatelessWidget {
 class TestLogin extends StatelessWidget {
   TestLogin({
     required this.appForm,
-    required this.fieldName,
+    this.database,
     required this.formKey,
     this.validatorReturnVal,
   });
 
   final AppForm appForm;
-  final String fieldName;
+  final PocketBase? database;
   final GlobalKey<FormState> formKey;
   final String? validatorReturnVal;
 
@@ -88,14 +88,12 @@ class TestLogin extends StatelessWidget {
             child: ListView(
               children: [
                 TextFormField(
-                  onSaved: (value) => appForm.save(
-                    fieldName: fieldName,
-                    value: "New Settings Value!",
-                  ),
+                  onSaved: (_) => {},
                   validator: (value) => validatorReturnVal,
                 ),
                 ElevatedButton(
-                  onPressed: () => submitLogIn(context, formKey, appForm),
+                  onPressed: () => submitLogIn(
+                    context, formKey, appForm, database: database),
                   child: Text("x")
                 ),
               ],
@@ -110,14 +108,12 @@ class TestLogin extends StatelessWidget {
 class TestTabView extends StatefulWidget {
   TestTabView({
     required this.appForm,
-    required this.fieldName,
     required this.formKey,
     required this.pb,
     this.validatorReturnVal,
   });
 
   final AppForm appForm;
-  final String fieldName;
   final GlobalKey<FormState> formKey;
   final PocketBase pb;
   final String? validatorReturnVal;
@@ -144,7 +140,8 @@ class _TestTabViewState extends State<TestTabView> with SingleTickerProviderStat
     _tabController = TabController(initialIndex: 1, length: _tabs.length, vsync: this);
     widget.appForm.setValue(
       fieldName: AppFormFields.tabController,
-      value: _tabController
+      value: _tabController,
+      isAux: true,
     );
   }
 
@@ -168,7 +165,6 @@ class _TestTabViewState extends State<TestTabView> with SingleTickerProviderStat
                         BlankPage(),
                         TestSignUpTab(
                           appForm: widget.appForm,
-                          fieldName: widget.fieldName,
                           formKey: widget.formKey,
                           pb: widget.pb,
                           validatorReturnVal: widget.validatorReturnVal,
@@ -189,14 +185,12 @@ class _TestTabViewState extends State<TestTabView> with SingleTickerProviderStat
 class TestSignUpTab extends StatelessWidget {
   TestSignUpTab({
     required this.appForm,
-    required this.fieldName,
     required this.formKey,
     required this.pb,
     this.validatorReturnVal,
   });
 
   final AppForm appForm;
-  final String fieldName;
   final GlobalKey<FormState> formKey;
   final PocketBase pb;
   final String? validatorReturnVal;
@@ -206,10 +200,7 @@ class TestSignUpTab extends StatelessWidget {
     return ListView(
       children: [
         TextFormField(
-          onSaved: (value) => appForm.save(
-            fieldName: fieldName,
-            value: "New TestSignUp Value!",
-          ),
+          onSaved: (_) => {},
           validator: (value) => validatorReturnVal,
         ),
         ElevatedButton(

@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:pocketbase/pocketbase.dart';
 import 'package:test/test.dart';
+
+// Constants
+import 'package:plural_app/src/constants/fields.dart';
 
 // Asks
 import 'package:plural_app/src/features/asks/data/asks_repository.dart';
@@ -10,12 +14,12 @@ import 'package:plural_app/src/features/asks/presentation/editable_ask_dialog.da
 import 'package:plural_app/src/features/asks/presentation/listed_asks_dialog.dart';
 
 // Auth
-import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
+import 'package:plural_app/src/features/authentication/data/user_garden_records_repository.dart';
+import 'package:plural_app/src/features/authentication/data/users_repository.dart';
 import 'package:plural_app/src/features/authentication/presentation/listed_users_dialog.dart';
 import 'package:plural_app/src/features/authentication/presentation/user_settings_dialog.dart';
 
 // Gardens
-import 'package:plural_app/src/features/gardens/data/gardens_repository.dart';
 import 'package:plural_app/src/features/gardens/presentation/listed_gardens_dialog.dart';
 
 // Utils
@@ -56,23 +60,34 @@ void main() {
     test("routeToAskDialogListView", () async {
       final tc = TestContext();
 
+      final appState = AppState.skipSubscribe()
+                        ..currentGarden = tc.garden // for getAsksByUserID
+                        ..currentUser = tc.user;
+
       final getIt = GetIt.instance;
       final mockAsksRepository = MockAsksRepository();
-      final appState =
-              AppState()
-              ..currentUser = tc.user;
-
+      final mockUsersRepository = MockUsersRepository();
       getIt.registerLazySingleton<AppState>(() => appState);
       getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
+      getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
 
+      // AsksRepository.getList()
       when(
-        () => mockAsksRepository.getAsksByUserID(
-          filterString: any(named: "filterString"),
-          sortString: any(named: "sortString"),
-          userID: any(named: "userID")
+        () => mockAsksRepository.getList(
+          filter: any(named: "filter"),
+          sort: any(named: "sort"),
         )
       ).thenAnswer(
-        (_) async => []
+        (_) async => ResultList<RecordModel>(items: [tc.getAskRecordModel()])
+      );
+
+      // UsersRepository.getFirstListItem()
+      when(
+        () => mockUsersRepository.getFirstListItem(
+          filter: any(named: "filter")
+        )
+      ).thenAnswer(
+        (_) async => tc.getUserRecordModel()
       );
 
       final appDialogRouter = AppDialogRouter();
@@ -86,15 +101,28 @@ void main() {
 
     test("routeToUserDialogListView", () async {
       final tc = TestContext();
+
+      final appState = AppState.skipSubscribe()
+                        ..currentGarden = tc.garden // for getCurrentGardenUsers()
+                        ..currentUser = tc.user;
+
       final getIt = GetIt.instance;
-      final mockAuthRepository = MockAuthRepository();
+      final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
+      getIt.registerLazySingleton<AppState>(() => appState);
+      getIt.registerLazySingleton<UserGardenRecordsRepository>(
+        () => mockUserGardenRecordsRepository);
 
-      getIt.registerLazySingleton<AuthRepository>(() => mockAuthRepository);
-
+      // UserGardenRecordsRepository.getList()
       when(
-        () => mockAuthRepository.getCurrentGardenUsers()
+        () => mockUserGardenRecordsRepository.getList(
+          expand: any(named: "expand"),
+          filter: any(named: "filter"),
+          sort: any(named: "sort")
+        )
       ).thenAnswer(
-        (_) async => [tc.user]
+        (_) async => ResultList<RecordModel>(items: [
+          tc.getExpandUserGardenRecordRecordModel(UserGardenRecordField.user)
+        ])
       );
 
       final appDialogRouter = AppDialogRouter();
@@ -109,11 +137,11 @@ void main() {
     test("routeToUserSettingsDialogView", () async {
       final tc = TestContext();
 
-      final getIt = GetIt.instance;
       final appState = AppState()
                         ..currentUser = tc.user
                         ..currentUserSettings = tc.userSettings;
 
+      final getIt = GetIt.instance;
       getIt.registerLazySingleton<AppState>(() => appState);
 
       final appDialogRouter = AppDialogRouter();
@@ -128,19 +156,39 @@ void main() {
     test("routeToGardenDialogListView", () async {
       final tc = TestContext();
 
+      final appState = AppState.skipSubscribe()
+                        ..currentGarden = tc.garden // for excludesCurrentGarden
+                        ..currentUser = tc.user;
+
       final getIt = GetIt.instance;
-      final mockGardensRepository = MockGardensRepository();
-      final appState =
-              AppState()
-              ..currentUser = tc.user;
+      final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
+      final mockUsersRepository = MockUsersRepository();
 
       getIt.registerLazySingleton<AppState>(() => appState);
-      getIt.registerLazySingleton<GardensRepository>(() => mockGardensRepository);
+      getIt.registerLazySingleton<UserGardenRecordsRepository>(
+        () => mockUserGardenRecordsRepository);
+      getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
 
+      // UserGardenRecordsRepository.getList()
       when(
-        () => mockGardensRepository.getGardensByUser(tc.user.id)
+        () => mockUserGardenRecordsRepository.getList(
+          expand: any(named: "expand"),
+          filter: any(named: "filter"),
+          sort: any(named: "sort")
+        )
       ).thenAnswer(
-        (_) async => [tc.garden]
+        (_) async => ResultList<RecordModel>(items: [
+          tc.getExpandUserGardenRecordRecordModel(UserGardenRecordField.garden)
+        ])
+      );
+
+      // UsersRepository.getFirstListItem()
+      when(
+        () => mockUsersRepository.getFirstListItem(
+          filter: any(named: "filter")
+        )
+      ).thenAnswer(
+        (_) async => tc.getUserRecordModel()
       );
 
       final appDialogRouter = AppDialogRouter();

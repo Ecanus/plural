@@ -55,7 +55,7 @@ void main() {
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(
           items: [
-            tc.getGardenRecordRecordModelFromJson(UserGardenRecordField.garden),
+            tc.getExpandUserGardenRecordRecordModel(UserGardenRecordField.garden),
           ]
         )
       );

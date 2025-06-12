@@ -226,6 +226,7 @@ class UsersRepository implements Repository {
         final userID = e.record!.toJson()[GenericField.id];
 
         // Only respond to changes to users in the given gardenID
+        // TODO: have getUserGardenRecord() return null if no records found
         final gardenRecord = await getUserGardenRecord(
           userID: userID,
           gardenID: gardenID
@@ -235,7 +236,7 @@ class UsersRepository implements Repository {
 
         switch (e.action) {
           case EventAction.update:
-            // Get new values farom db, if currentUser was updated
+            // Get new values from db, if currentUser was updated
             if (userID == currentUser.id) {
               GetIt.instance<AppState>().currentUser = await getUserByID(userID);
             }

@@ -2,17 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:pocketbase/pocketbase.dart';
 
 // Common Widgets
 import 'package:plural_app/src/common_widgets/app_dialog_footer.dart';
 
+// Constants
+import 'package:plural_app/src/constants/fields.dart';
+
 // Auth
-import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
+import 'package:plural_app/src/features/authentication/data/user_garden_records_repository.dart';
 import 'package:plural_app/src/features/authentication/presentation/listed_user_tile.dart';
 import 'package:plural_app/src/features/authentication/presentation/listed_users_dialog.dart';
 
 // Utils
 import 'package:plural_app/src/utils/app_dialog_router.dart';
+import 'package:plural_app/src/utils/app_state.dart';
 
 // Tests
 import '../../../test_context.dart';
@@ -23,17 +28,33 @@ void main() {
     testWidgets("widgets", (tester) async {
       final tc = TestContext();
 
+      final appState = AppState.skipSubscribe()
+                        ..currentGarden = tc.garden;
+
       // GetIt
       final getIt = GetIt.instance;
-      final mockAuthRepository = MockAuthRepository();
+      final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
+      getIt.registerLazySingleton<AppState>(() => appState);
       getIt.registerLazySingleton<AppDialogRouter>(() => AppDialogRouter());
-      getIt.registerLazySingleton<AuthRepository>(() => mockAuthRepository);
+      getIt.registerLazySingleton<UserGardenRecordsRepository>(
+        () => mockUserGardenRecordsRepository);
 
-      // AuthRepository.getCurrentGardenUsers()
+      // UserGardenRecordsRepository.getList()
       when(
-        () => mockAuthRepository.getCurrentGardenUsers()
+        () => mockUserGardenRecordsRepository.getList(
+          expand: UserGardenRecordField.user,
+          filter: "${UserGardenRecordField.garden} = '${tc.garden.id}'",
+          sort: "${UserGardenRecordField.user}.${UserField.username}"
+        )
       ).thenAnswer(
-        (_) async => [tc.user, tc.user, tc.user, tc.user]
+        (_) async => ResultList<RecordModel>(
+          items: [
+            tc.getExpandUserGardenRecordRecordModel(UserGardenRecordField.user),
+            tc.getExpandUserGardenRecordRecordModel(UserGardenRecordField.user),
+            tc.getExpandUserGardenRecordRecordModel(UserGardenRecordField.user),
+            tc.getExpandUserGardenRecordRecordModel(UserGardenRecordField.user),
+          ]
+        )
       );
 
       await tester.pumpWidget(

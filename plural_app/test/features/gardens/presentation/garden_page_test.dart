@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:pocketbase/pocketbase.dart';
 
 // Asks
 import 'package:plural_app/src/features/asks/data/asks_repository.dart';
 
 // Auth
-import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
+import 'package:plural_app/src/features/authentication/data/users_repository.dart';
 
 // Gardens
 import 'package:plural_app/src/features/gardens/data/gardens_repository.dart';
@@ -32,22 +33,31 @@ void main() {
 
       final getIt = GetIt.instance;
       final mockAsksRepository = MockAsksRepository();
-      final mockAuthRepository = MockAuthRepository();
+      final mockUsersRepository = MockUsersRepository();
       final mockGardensRepository = MockGardensRepository();
-      getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
-      getIt.registerLazySingleton<AuthRepository>(() => mockAuthRepository);
-      getIt.registerLazySingleton<GardensRepository>(() => mockGardensRepository);
-      getIt.registerLazySingleton<AppState>(() => appState);
 
-      // AsksRepository.getAsksByGardenID()
+      getIt.registerLazySingleton<AppState>(() => appState);
+      getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
+      getIt.registerLazySingleton<GardensRepository>(() => mockGardensRepository);
+      getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
+
+      // AsksRepository.getList()
       when(
-        () => mockAsksRepository.getAsksByGardenID(
-          gardenID: any(named: "gardenID"),
-          count: any(named: "count"),
-          filterString: any(named: "filterString")
+        () => mockAsksRepository.getList(
+          filter: any(named: "filter"),
+          sort: any(named: "sort"),
         )
       ).thenAnswer(
-        (_) async => [tc.ask]
+        (_) async => ResultList<RecordModel>(items: [tc.getAskRecordModel()])
+      );
+
+      // mockUsersRepository.getFirstListItem()
+      when(
+        () => mockUsersRepository.getFirstListItem(
+          filter: any(named: "filter")
+        )
+      ).thenAnswer(
+        (_) async => tc.getUserRecordModel()
       );
 
       await tester.pumpWidget(

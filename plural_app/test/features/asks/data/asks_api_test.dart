@@ -65,6 +65,8 @@ void main() {
         id: any(named: "id"), body: any(named: "body"))).called(1);
     });
 
+    tearDown(() => GetIt.instance.reset());
+
     test("checkBoonCeiling", () async {
       // boon == targetSum, raise error
       expect(

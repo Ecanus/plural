@@ -20,12 +20,10 @@ import 'package:plural_app/src/localization/lang_en.dart';
 import 'package:plural_app/src/utils/app_state.dart';
 import 'package:plural_app/src/utils/exceptions.dart';
 
-final asksRepository = GetIt.instance<AsksRepository>();
-
 /// Appends the [User] record that corresponds to [userID] to the list
 /// of sponsors of the [Ask] record which corresponds to [askID].
 Future<void> addSponsor(String askID, String userID) async {
-  final resultList = await asksRepository.getList(
+  final resultList = await GetIt.instance<AsksRepository>().getList(
     filter: "${GenericField.id} = '$askID'"
   );
 
@@ -38,7 +36,7 @@ Future<void> addSponsor(String askID, String userID) async {
   currentSponsors.add(userID);
   final body = { AskField.sponsors: currentSponsors};
 
-  await asksRepository.update(
+  await GetIt.instance<AsksRepository>().update(
     id: askID,
     body: body,
   );
@@ -65,11 +63,11 @@ void checkBoonCeiling(int boon, int targetSum) {
 Future<void> deleteCurrentUserAsks() async {
   final currentUser = GetIt.instance<AppState>().currentUser!;
 
-  final resultList = await asksRepository.getList(
+  final resultList = await GetIt.instance<AsksRepository>().getList(
     filter: "${AskField.creator} = '${currentUser.id}'"
   );
 
-  await asksRepository.bulkDelete(resultList: resultList);
+  await GetIt.instance<AsksRepository>().bulkDelete(resultList: resultList);
 }
 
 /// Queries on the [Ask] collection to retrieve records corresponding to [gardenID],
@@ -88,7 +86,7 @@ Future<List<Ask>> getAsksByGardenID({
     var finalFilter = "${AskField.garden} = '$gardenID' $filter".trim();
 
     // Query
-    var resultList = await asksRepository.getList(
+    var resultList = await GetIt.instance<AsksRepository>().getList(
       filter: finalFilter,
       sort: sort
     );
@@ -125,10 +123,10 @@ Future<List<Ask>> getAsksByUserID({
         """.trim();
 
   // Query
-  var resultList = await asksRepository.getList(
-      filter: finalFilter,
-      sort: sort,
-    );
+  var resultList = await GetIt.instance<AsksRepository>().getList(
+    filter: finalFilter,
+    sort: sort,
+  );
 
   // Create instances
   for (var record in resultList.items) {
@@ -198,7 +196,7 @@ DateTime? getParsedTargetMetDate(String targetMetDateString) {
 /// Removes the [User] record which corresponds to [userID] from the list
 /// of sponsors of the [Ask] record which corresponds to [askID].
 Future<void> removeSponsor(String askID, String userID) async {
-  var resultList = await asksRepository.getList(
+  var resultList = await GetIt.instance<AsksRepository>().getList(
     filter: "${GenericField.id} = '$askID'"
   );
 
@@ -211,7 +209,7 @@ Future<void> removeSponsor(String askID, String userID) async {
   currentSponsors.remove(userID);
   final body = { AskField.sponsors: currentSponsors};
 
-  await asksRepository.update(
+  await GetIt.instance<AsksRepository>().update(
     id: askID,
     body: body,
   );
@@ -225,8 +223,9 @@ Future<Function> subscribeTo(
   String gardenID,
   Function callback
   ) async {
-    await asksRepository.unsubscribe();
-    Future<Function> unsubscribeFunc = asksRepository.subscribe(gardenID, callback);
+    await GetIt.instance<AsksRepository>().unsubscribe();
+    Future<Function> unsubscribeFunc = GetIt.instance<AsksRepository>().subscribe(
+      gardenID, callback);
 
     return unsubscribeFunc;
 }

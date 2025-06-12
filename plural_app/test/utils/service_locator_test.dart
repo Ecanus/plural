@@ -11,7 +11,9 @@ import 'package:plural_app/src/constants/pocketbase.dart';
 import 'package:plural_app/src/features/asks/data/asks_repository.dart';
 
 // Auth
-import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
+import 'package:plural_app/src/features/authentication/data/user_garden_records_repository.dart';
+import 'package:plural_app/src/features/authentication/data/user_settings_repository.dart';
+import 'package:plural_app/src/features/authentication/data/users_repository.dart';
 
 // Gardens
 import 'package:plural_app/src/features/gardens/data/gardens_repository.dart';
@@ -29,9 +31,11 @@ void main() {
   group("Service locator test", () {
     test("registerGetItInstances", () async {
       final tc = TestContext();
+
       final pb = MockPocketBase();
-      final getIt = GetIt.instance;
       final recordService = MockRecordService();
+
+      final getIt = GetIt.instance;
 
       // pb.authStore
       final authStore = AuthStore();
@@ -71,7 +75,9 @@ void main() {
       expect(getIt.isRegistered<PocketBase>(), false);
       expect(getIt.isRegistered<AppDialogRouter>(), false);
       expect(getIt.isRegistered<AsksRepository>(), false);
-      expect(getIt.isRegistered<AuthRepository>(), false);
+      expect(getIt.isRegistered<UserGardenRecordsRepository>(), false);
+      expect(getIt.isRegistered<UserSettingsRepository>(), false);
+      expect(getIt.isRegistered<UsersRepository>(), false);
       expect(getIt.isRegistered<GardensRepository>(), false);
       expect(getIt.isRegistered<AppState>(), false);
 
@@ -81,7 +87,9 @@ void main() {
       expect(getIt.isRegistered<PocketBase>(), true);
       expect(getIt.isRegistered<AppDialogRouter>(), true);
       expect(getIt.isRegistered<AsksRepository>(), true);
-      expect(getIt.isRegistered<AuthRepository>(), true);
+      expect(getIt.isRegistered<UserGardenRecordsRepository>(), true);
+      expect(getIt.isRegistered<UserSettingsRepository>(), true);
+      expect(getIt.isRegistered<UsersRepository>(), true);
       expect(getIt.isRegistered<GardensRepository>(), true);
 
       expect(getIt.isRegistered<AppState>(), true);
@@ -105,8 +113,14 @@ void main() {
       getIt.registerLazySingleton<AsksRepository>(
         () => AsksRepository(pb: pb)
       );
-      getIt.registerLazySingleton<AuthRepository>(
-        () => AuthRepository(pb: pb)
+      getIt.registerLazySingleton<UserGardenRecordsRepository>(
+        () => UserGardenRecordsRepository(pb: pb)
+      );
+      getIt.registerLazySingleton<UserSettingsRepository>(
+        () => UserSettingsRepository(pb: pb)
+      );
+      getIt.registerLazySingleton<UsersRepository>(
+        () => UsersRepository(pb: pb)
       );
       getIt.registerLazySingleton<GardensRepository>(
         () => GardensRepository(pb: pb)
@@ -118,7 +132,9 @@ void main() {
       expect(getIt.isRegistered<PocketBase>(), true);
       expect(getIt.isRegistered<AppDialogRouter>(), true);
       expect(getIt.isRegistered<AsksRepository>(), true);
-      expect(getIt.isRegistered<AuthRepository>(), true);
+      expect(getIt.isRegistered<UserGardenRecordsRepository>(), true);
+      expect(getIt.isRegistered<UserSettingsRepository>(), true);
+      expect(getIt.isRegistered<UsersRepository>(), true);
       expect(getIt.isRegistered<GardensRepository>(), true);
       expect(getIt.isRegistered<AppState>(), true);
 
@@ -127,7 +143,9 @@ void main() {
       expect(getIt.isRegistered<PocketBase>(), false);
       expect(getIt.isRegistered<AppDialogRouter>(), false);
       expect(getIt.isRegistered<AsksRepository>(), false);
-      expect(getIt.isRegistered<AuthRepository>(), false);
+      expect(getIt.isRegistered<UserGardenRecordsRepository>(), false);
+      expect(getIt.isRegistered<UserSettingsRepository>(), false);
+      expect(getIt.isRegistered<UsersRepository>(), false);
       expect(getIt.isRegistered<GardensRepository>(), false);
       expect(getIt.isRegistered<AppState>(), false);
     });

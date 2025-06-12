@@ -72,7 +72,7 @@ Future<bool> deleteCurrentUserAccount({BuildContext? context}) async {
     }
 
     return true;
-  } on ClientException catch(e) {
+  } on ClientException catch (e) {
     // Log error
     developer.log(
       "auth_api.deleteCurrentUserAccount() error",
@@ -216,7 +216,7 @@ Future<bool> login(
     await registerGetItInstances(pb);
 
     return true;
-  } on ClientException catch(e) {
+  } on ClientException catch (e) {
     // Log error
     developer.log(
       "auth_api.login() error",
@@ -231,7 +231,7 @@ Future<void> logout(
   context, {
   // primarily for testing
   GoRouter? goRouter
-  }) async {
+}) async {
   final usersRepository = GetIt.instance<UsersRepository>();
 
   // Clear all database subscriptions
@@ -266,7 +266,7 @@ Future<bool> sendPasswordResetCode(
 
     // Return
     return true;
-  } on ClientException catch(e) {
+  } on ClientException catch (e) {
     // Log error
     developer.log(
       "auth_api.sendPasswordResetCode() error",
@@ -298,24 +298,23 @@ Future<(bool, Map)> signup(
         UserSettingsField.defaultCurrency: "",
         UserSettingsField.defaultInstructions: "",
         UserSettingsField.user: userRecord.id
-      }
-    );
+    });
 
     // Send verification email
     await pb.collection(Collection.users).requestVerification(map[UserField.email]);
 
     // Return
     return (true, {});
-  } on ClientException catch(e) {
+  } on ClientException catch (e) {
     var errorsMap = getErrorsMapFromClientException(e);
 
-      // Log error
-      developer.log(
+    // Log error
+    developer.log(
       "auth_api.signup() error",
       error: e,
     );
 
-      return (false, errorsMap);
+    return (false, errorsMap);
   }
 }
 
@@ -348,57 +347,31 @@ Future<Function> subscribeToUserSettings() async {
 /// Attempts to update the [User] record that matches the values passed
 /// in the given [map] parameter.
 ///
-/// Returns true and an empty map if updated successfully,
-/// else false and a map of the errors.
-Future<(bool, Map)> updateUser(Map map) async {
-  try {
-    await GetIt.instance<UsersRepository>().update(
-      id: map[GenericField.id],
-      body: {
-        UserField.firstName: map[UserField.firstName],
-        UserField.lastName: map[UserField.lastName],
-      }
-    );
+/// Returns the updated [RecordModel] and an empty map if updated successfully,
+/// else null and a map of the errors.
+Future<(RecordModel?, Map)> updateUser(Map map) async {
+  final (record, errorsMap) = await GetIt.instance<UsersRepository>().update(
+    id: map[GenericField.id],
+    body: {
+      UserField.firstName: map[UserField.firstName],
+      UserField.lastName: map[UserField.lastName],
+  });
 
-    return (true, {});
-  } on ClientException catch(e) {
-    var errorsMap = getErrorsMapFromClientException(e);
-
-      // Log error
-      developer.log(
-        "updateUser() error",
-        error: e,
-      );
-
-      return (false, errorsMap);
-  }
+  return (record, errorsMap);
 }
 
 /// Attempts to update the [UserSettings] record that matches the values passed
 /// in the given [map] parameter.
 ///
-/// Returns true and an empty map if updated successfully,
-/// else false and a map of the errors.
-Future<(bool, Map)> updateUserSettings(Map map) async {
-  try {
-    await GetIt.instance<UserSettingsRepository>().update(
-      id: map[GenericField.id],
-      body: {
-        UserSettingsField.defaultCurrency: map[UserSettingsField.defaultCurrency],
-        UserSettingsField.defaultInstructions: map[UserSettingsField.defaultInstructions],
-      }
-    );
+/// Returns the updated [RecordModel] and an empty map if updated successfully,
+/// else null and a map of the errors.
+Future<(RecordModel?, Map)> updateUserSettings(Map map) async {
+  final (record, errorsMap) = await GetIt.instance<UserSettingsRepository>().update(
+    id: map[GenericField.id],
+    body: {
+      UserSettingsField.defaultCurrency: map[UserSettingsField.defaultCurrency],
+      UserSettingsField.defaultInstructions: map[UserSettingsField.defaultInstructions],
+  });
 
-    return (true, {});
-  } on ClientException catch(e) {
-    var errorsMap = getErrorsMapFromClientException(e);
-
-      // Log error
-      developer.log(
-        "updateUser() error",
-        error: e,
-      );
-
-      return (false, errorsMap);
-  }
+  return (record, errorsMap);
 }

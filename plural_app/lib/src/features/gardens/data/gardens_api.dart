@@ -20,22 +20,19 @@ import 'package:plural_app/src/features/authentication/data/user_garden_records_
 import 'package:plural_app/src/features/gardens/data/gardens_repository.dart';
 import 'package:plural_app/src/features/gardens/domain/garden.dart';
 
-final gardensRepository = GetIt.instance<GardensRepository>();
-
 /// Queries on the [Garden] collection to retrieve the record corresponding to
 /// [gardenID].
 ///
 /// Returns a [Garden] instance.
 Future<Garden> getGardenByID(String gardenID) async {
-
-  var result = await gardensRepository.getFirstListItem(
+  final record = await GetIt.instance<GardensRepository>().getFirstListItem(
     filter: "${GenericField.id} = '$gardenID'"
   );
 
-  final record = result.toJson();
-  final creator = await getUserByID(record[GardenField.creator]);
+  final recordJson = record.toJson();
+  final creator = await getUserByID(recordJson[GardenField.creator]);
 
-  return Garden.fromJson(record, creator);
+  return Garden.fromJson(recordJson, creator);
 }
 
 /// Returns a list of [Garden] instances corresponding to [Garden] records from the
@@ -135,7 +132,7 @@ Future<void> rerouteToLandingPageWithExitedGardenID(BuildContext context) async 
 /// Updates the value of [AppState] currentGarden whenever a change is made.
 Future<Function> subscribeTo(String gardenID) async {
   // Always clear before setting new subscription
-  await gardensRepository.unsubscribe();
+  await GetIt.instance<GardensRepository>().unsubscribe();
 
-  return gardensRepository.subscribe(gardenID);
+  return GetIt.instance<GardensRepository>().subscribe(gardenID);
 }

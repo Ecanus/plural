@@ -37,18 +37,18 @@ void main() {
       // AppForm
       const fieldName = "champs";
       final appForm = AppForm()
-                      ..setValue(fieldName: AppFormFields.rebuild, value: func)
+                      ..setValue(fieldName: AppFormFields.rebuild, value: func, isAux: true)
                       ..setValue(fieldName: fieldName, value: null);
-      final appState = AppState()
+      final appState = AppState.skipSubscribe()
+                      ..currentGarden = tc.garden // for getAsksByUserID
                       ..currentUser = tc.user;
 
       // GetIt
       final getIt = GetIt.instance;
-      final mockAppDialogRouter = MockAppDialogRouter();
       final mockAsksRepository = MockAsksRepository();
       final mockUsersRepository = MockUsersRepository();
       getIt.registerLazySingleton<AppState>(() => appState);
-      getIt.registerLazySingleton<AppDialogRouter>(() => mockAppDialogRouter);
+      getIt.registerLazySingleton<AppDialogRouter>(() => AppDialogRouter());
       getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
       getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
 
@@ -56,7 +56,7 @@ void main() {
       when(
         () => mockAsksRepository.create(body: appForm.fields)
       ).thenAnswer(
-        (_) async => (tc.getUserRecordModel(), {})
+        (_) async => (tc.getAskRecordModel(), {})
       );
 
       // AsksRepository.getList()
@@ -73,13 +73,6 @@ void main() {
         () => mockUsersRepository.getFirstListItem(filter: any(named: "filter"))
       ).thenAnswer(
         (_) async => tc.getUserRecordModel()
-      );
-
-      // AppDialogRouter.routeToAskDialogListView()
-      when(
-        () => mockAppDialogRouter.routeToAskDialogListView()
-      ).thenAnswer(
-        (_) async => {}
       );
 
       await tester.pumpWidget(
@@ -122,7 +115,6 @@ void main() {
       verifyNever(() => mockUsersRepository.getFirstListItem(
         filter: any(named: "filter"))
       );
-      verifyNever(() => mockAppDialogRouter.routeToAskDialogListView());
       expect(ft.find.byType(SnackBar), ft.findsNothing);
 
       // Tap ElevatedButton (to call submitCreate)
@@ -136,11 +128,10 @@ void main() {
       verify(() => mockAsksRepository.create(body: appForm.fields)).called(1);
       verify(() => mockAsksRepository.getList(
         filter: any(named: "filter"), sort: any(named: "sort"))
-      ).called(1);
+      ).called(3);
       verify(() => mockUsersRepository.getFirstListItem(
         filter: any(named: "filter"))
-      ).called(1);
-      verify(() => mockAppDialogRouter.routeToAskDialogListView()).called(1);
+      ).called(3);
       expect(formKey.currentState!.validate(), true);
       expect(ft.find.byType(SnackBar), ft.findsOneWidget);
 

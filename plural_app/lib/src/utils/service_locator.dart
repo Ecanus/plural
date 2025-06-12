@@ -34,26 +34,18 @@ Future<void> registerGetItInstances(PocketBase pb) async {
 
   // AsksRepository
   getIt.registerLazySingleton<AsksRepository>(
-    () => AsksRepository(
-      pb: getIt<PocketBase>(),
-    )
+    () => AsksRepository(pb: getIt<PocketBase>())
   );
 
   // Authentication
   getIt.registerLazySingleton<UserGardenRecordsRepository>(
-    () => UserGardenRecordsRepository(
-      pb: getIt<PocketBase>(),
-    )
-  );
-  getIt.registerLazySingleton<UsersRepository>(
-    () => UsersRepository(
-      pb: getIt<PocketBase>(),
-    )
+    () => UserGardenRecordsRepository(pb: getIt<PocketBase>())
   );
   getIt.registerLazySingleton<UserSettingsRepository>(
-    () => UserSettingsRepository(
-      pb: getIt<PocketBase>(),
-    )
+    () => UserSettingsRepository(pb: getIt<PocketBase>())
+  );
+  getIt.registerLazySingleton<UsersRepository>(
+    () => UsersRepository(pb: getIt<PocketBase>())
   );
 
   // GardensRepository

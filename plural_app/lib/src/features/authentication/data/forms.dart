@@ -36,12 +36,13 @@ Future<void> submitUpdateSettings(
     // Save form
     formKey.currentState!.save();
 
+    // Update.
     // If in a Garden, subscribeTo() will prompt timeline refresh and currentUser reload
-    var (isUserValid, userErrorsMap) = await updateUser(userAppForm.fields);
-    var (isUserSettingsValid, userSettingsErrorsMap) =
+    var (userRecord, userErrorsMap) = await updateUser(userAppForm.fields);
+    var (userSettingsRecord, userSettingsErrorsMap) =
       await updateUserSettings(userSettingsAppForm.fields);
 
-    if (isUserValid && isUserSettingsValid && context.mounted) {
+    if (userRecord != null && userSettingsRecord != null && context.mounted) {
       var snackBar = AppSnackbars.getSnackbar(
         SnackbarText.updateUserSettingsSuccess,
         showCloseIcon: false,
@@ -77,8 +78,9 @@ Future<void> submitUpdateSettings(
 Future<void> submitLogIn(
   BuildContext context,
   GlobalKey<FormState> formKey,
-  AppForm appForm,
-) async {
+  AppForm appForm, {
+  PocketBase? database, // primarily for testing
+}) async {
   if (formKey.currentState!.validate()) {
     // Save form
     formKey.currentState!.save();
@@ -86,7 +88,8 @@ Future<void> submitLogIn(
     // Login
     var isValid = await login(
       appForm.getValue(fieldName: SignInField.usernameOrEmail),
-      appForm.getValue(fieldName: UserField.password)
+      appForm.getValue(fieldName: UserField.password),
+      database: database
     );
 
     if (isValid && context.mounted) {
@@ -115,14 +118,15 @@ Future<void> submitLogIn(
 Future<void> submitSignUp(
   BuildContext context,
   GlobalKey<FormState> formKey,
-  AppForm appForm
-  ) async {
+  AppForm appForm, {
+  PocketBase? database,
+}) async {
   if (formKey.currentState!.validate()) {
     // Save form
     formKey.currentState!.save();
 
     // Sign up
-    var (isValid, errorsMap) = await signup(appForm.fields);
+    var (isValid, errorsMap) = await signup(appForm.fields, database: database);
 
     if (isValid && context.mounted) {
       // Go to log in tab

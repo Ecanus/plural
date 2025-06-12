@@ -46,68 +46,54 @@ void main() {
       final userAppForm =
         AppForm()
           ..setValue(
-            fieldName: GenericField.id,
-            value: "userAppFormID")
+              fieldName: GenericField.id,
+              value: "userAppFormID")
           ..setValue(
-            fieldName: UserField.firstName,
-            value: oldFirstNameValue)
+              fieldName: UserField.firstName,
+              value: oldFirstNameValue)
           ..setValue(
-            fieldName: UserField.lastName,
-            value: "lastNameTest");
+              fieldName: UserField.lastName,
+              value: "lastNameTest");
       final userSettingsAppForm =
         AppForm()
           ..setValue(
-            fieldName: GenericField.id,
-            value: "userSettingsAppFormID")
+              fieldName: GenericField.id,
+              value: "userSettingsAppFormID")
           ..setValue(
-            fieldName: UserSettingsField.defaultCurrency,
-            value: oldCurrencyValue)
+              fieldName: UserSettingsField.defaultCurrency,
+              value: oldCurrencyValue)
           ..setValue(
-            fieldName: UserSettingsField.defaultInstructions,
-            value: "testInstructions");
+              fieldName: UserSettingsField.defaultInstructions,
+              value: "testInstructions");
 
       // GetIt
       final getIt = GetIt.instance;
-      final pb = MockPocketBase();
-      final recordService = MockRecordService();
       final mockAppDialogRouter = MockAppDialogRouter();
+      final mockUserSettingsRepository = MockUserSettingsRepository();
+      final mockUsersRepository = MockUsersRepository();
       getIt.registerLazySingleton<AppDialogRouter>(() => mockAppDialogRouter);
-      getIt.registerLazySingleton<UsersRepository>(() => UsersRepository(pb: pb));
+      getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
       getIt.registerLazySingleton<UserSettingsRepository>(
-        () => UserSettingsRepository(pb: pb));
+        () => mockUserSettingsRepository);
 
-      // pb.collection()
+      // UsersRepository.update()
       when(
-        () => pb.collection(any())
-      ).thenAnswer(
-        (_) => recordService as RecordService
-      );
-
-      // RecordService.update() - UsersRepository
-      when(
-        () => recordService.update(
-          userAppForm.getValue(fieldName: GenericField.id),
-          body: {
-            UserField.firstName: newFirstNameValue,
-            UserField.lastName: userAppForm.getValue(
-              fieldName: UserField.lastName)
-          }
+        () => mockUsersRepository.update(
+          id: any(named: "id"),
+          body: any(named: "body")
         )
       ).thenAnswer(
-        (_) async => tc.getUserRecordModel()
+        (_) async => (tc.getUserRecordModel(), {})
       );
-      // RecordService.update() - UserSettingsRepository
+
+      // UserSettingsRepository.update()
       when(
-        () => recordService.update(
-          userSettingsAppForm.getValue(fieldName: GenericField.id),
-          body: {
-            UserSettingsField.defaultCurrency: newCurrencyValue,
-            UserSettingsField.defaultInstructions: userSettingsAppForm.getValue(
-              fieldName: UserSettingsField.defaultInstructions)
-          }
+        () => mockUserSettingsRepository.update(
+          id: any(named: "id"),
+          body: any(named: "body")
         )
       ).thenAnswer(
-        (_) async => tc.getUserSettingsRecordModel()
+        (_) async => (tc.getUserSettingsRecordModel(), {})
       );
 
       // AppDialogRouter.routeToUserSettingsDialogView()
@@ -165,24 +151,12 @@ void main() {
       // Check no method calls before submit; no snackbar
       expect(ft.find.byType(SnackBar), ft.findsNothing);
       verifyNever(() => mockAppDialogRouter.routeToUserSettingsDialogView());
-      verifyNever(() => recordService.update(
-          userAppForm.getValue(fieldName: GenericField.id),
-          body: {
-            UserField.firstName: newFirstNameValue,
-            UserField.lastName: userAppForm.getValue(
-              fieldName: UserField.lastName)
-          }
-        )
-      );
-      verifyNever(() => recordService.update(
-          userSettingsAppForm.getValue(fieldName: GenericField.id),
-          body: {
-            UserSettingsField.defaultCurrency: newFirstNameValue,
-            UserSettingsField.defaultInstructions: userSettingsAppForm.getValue(
-              fieldName: UserSettingsField.defaultInstructions)
-          }
-        )
-      );
+      verifyNever(() => mockUsersRepository.update(
+        id: any(named: "id"), body: any(named: "body")
+      ));
+      verifyNever(() => mockUserSettingsRepository.update(
+        id: any(named: "id"), body: any(named: "body")
+      ));
 
       // Tap ElevatedButton (to call submitCreate)
       await tester.tap(ft.find.byType(ElevatedButton));
@@ -194,24 +168,12 @@ void main() {
         fieldName: UserSettingsField.defaultCurrency), newCurrencyValue);
 
       // Check methods were called; check expected values are found
-      verify(() => recordService.update(
-          userAppForm.getValue(fieldName: GenericField.id),
-          body: {
-            UserField.firstName: newFirstNameValue,
-            UserField.lastName: userAppForm.getValue(
-              fieldName: UserField.lastName)
-          }
-        )
-      ).called(1);
-      verify(() => recordService.update(
-          userSettingsAppForm.getValue(fieldName: GenericField.id),
-          body: {
-            UserSettingsField.defaultCurrency: newCurrencyValue,
-            UserSettingsField.defaultInstructions: userSettingsAppForm.getValue(
-              fieldName: UserSettingsField.defaultInstructions)
-          }
-        )
-      ).called(1);
+      verify(() => mockUsersRepository.update(
+        id: any(named: "id"), body: any(named: "body")
+      )).called(1);
+      verify(() => mockUserSettingsRepository.update(
+        id: any(named: "id"), body: any(named: "body")
+      )).called(1);
 
       verify(() => mockAppDialogRouter.routeToUserSettingsDialogView()).called(1);
       expect(formKey.currentState!.validate(), true);
@@ -234,25 +196,25 @@ void main() {
       final userAppForm =
         AppForm()
           ..setValue(
-            fieldName: GenericField.id,
-            value: "userAppFormID")
+              fieldName: GenericField.id,
+              value: "userAppFormID")
           ..setValue(
-            fieldName: UserField.firstName,
-            value: oldFirstNameValue)
+              fieldName: UserField.firstName,
+              value: oldFirstNameValue)
           ..setValue(
-            fieldName: UserField.lastName,
-            value: "lastNameTest");
+              fieldName: UserField.lastName,
+              value: "lastNameTest");
       final userSettingsAppForm =
         AppForm()
           ..setValue(
-            fieldName: GenericField.id,
-            value: "userSettingsAppFormID")
+              fieldName: GenericField.id,
+              value: "userSettingsAppFormID")
           ..setValue(
-            fieldName: UserSettingsField.defaultCurrency,
-            value: oldCurrencyValue)
+              fieldName: UserSettingsField.defaultCurrency,
+              value: oldCurrencyValue)
           ..setValue(
-            fieldName: UserSettingsField.defaultInstructions,
-            value: "testInstructions");
+              fieldName: UserSettingsField.defaultInstructions,
+              value: "testInstructions");
 
       // AppState
       final AppState appState = AppState.skipSubscribe()
@@ -260,54 +222,33 @@ void main() {
 
       // GetIt
       final getIt = GetIt.instance;
-      final pb = MockPocketBase();
-      final recordService = MockRecordService();
       final mockAppDialogRouter = MockAppDialogRouter();
-
+      final mockUserSettingsRepository = MockUserSettingsRepository();
+      final mockUsersRepository = MockUsersRepository();
       getIt.registerLazySingleton<AppDialogRouter>(() => mockAppDialogRouter);
       getIt.registerLazySingleton<AppState>(() => appState);
-      getIt.registerLazySingleton<UsersRepository>(() => UsersRepository(pb: pb));
+      getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
       getIt.registerLazySingleton<UserSettingsRepository>(
-        () => UserSettingsRepository(pb: pb));
+        () => mockUserSettingsRepository);
 
-      // pb.collection()
+      // UsersRepository.update()
       when(
-        () => pb.collection(any())
-      ).thenAnswer(
-        (_) => recordService as RecordService
-      );
-
-      // RecordService.update() - UsersRepository
-      when(
-        () => recordService.update(
-          userAppForm.getValue(fieldName: GenericField.id),
-          body: {
-            UserField.firstName: newFirstNameValue,
-            UserField.lastName: userAppForm.getValue(
-              fieldName: UserField.lastName)
-          }
+        () => mockUsersRepository.update(
+          id: any(named: "id"),
+          body: any(named: "body")
         )
       ).thenAnswer(
-        (_) async => tc.getUserRecordModel()
+        (_) async => (tc.getUserRecordModel(), {})
       );
-      // RecordService.update() - UserSettingsRepository
+
+      // UserSettingsRepository.update()
       when(
-        () => recordService.update(
-          userSettingsAppForm.getValue(fieldName: GenericField.id),
-          body: {
-            UserSettingsField.defaultCurrency: newCurrencyValue,
-            UserSettingsField.defaultInstructions: userSettingsAppForm.getValue(
-              fieldName: UserSettingsField.defaultInstructions)
-          }
+        () => mockUserSettingsRepository.update(
+          id: any(named: "id"),
+          body: any(named: "body")
         )
       ).thenAnswer(
-        (_) async => tc.getUserSettingsRecordModel()
-      );
-      // RecordService.getFirstListItem() - UsersRepository
-      when(
-        () => recordService.getFirstListItem("${GenericField.id} = 'userAppFormID'")
-      ).thenAnswer(
-        (_) async => tc.getUserRecordModel()
+        (_) async => (tc.getUserSettingsRecordModel(), {})
       );
 
       // AppDialogRouter.routeToUserSettingsDialogView()
@@ -315,6 +256,15 @@ void main() {
         () => mockAppDialogRouter.routeToUserSettingsDialogView()
       ).thenAnswer(
         (_) async => {}
+      );
+
+      // UsersRepository.getFirstListItem()
+      when(
+        () => mockUsersRepository.getFirstListItem(
+          filter: any(named: "filter")
+        )
+      ).thenAnswer(
+        (_) async => tc.getUserRecordModel()
       );
 
       await tester.pumpWidget(
@@ -365,24 +315,12 @@ void main() {
       // Check no method calls before submit; no snackbar
       expect(ft.find.byType(SnackBar), ft.findsNothing);
       verifyNever(() => mockAppDialogRouter.routeToUserSettingsDialogView());
-      verifyNever(() => recordService.update(
-          userAppForm.getValue(fieldName: GenericField.id),
-          body: {
-            UserField.firstName: newFirstNameValue,
-            UserField.lastName: userAppForm.getValue(
-              fieldName: UserField.lastName)
-          }
-        )
-      );
-      verifyNever(() => recordService.update(
-          userSettingsAppForm.getValue(fieldName: GenericField.id),
-          body: {
-            UserSettingsField.defaultCurrency: newFirstNameValue,
-            UserSettingsField.defaultInstructions: userSettingsAppForm.getValue(
-              fieldName: UserSettingsField.defaultInstructions)
-          }
-        )
-      );
+      verifyNever(() => mockUsersRepository.update(
+        id: any(named: "id"), body: any(named: "body")
+      ));
+      verifyNever(() => mockUserSettingsRepository.update(
+        id: any(named: "id"), body: any(named: "body")
+      ));
 
       // Tap ElevatedButton (to call submitCreate)
       await tester.tap(ft.find.byType(ElevatedButton));
@@ -394,32 +332,22 @@ void main() {
         fieldName: UserSettingsField.defaultCurrency), newCurrencyValue);
 
       // Check methods were called; check expected values are found
-      verify(() => recordService.update(
-          userAppForm.getValue(fieldName: GenericField.id),
-          body: {
-            UserField.firstName: newFirstNameValue,
-            UserField.lastName: userAppForm.getValue(
-              fieldName: UserField.lastName)
-          }
-        )
-      ).called(1);
-      verify(() => recordService.update(
-          userSettingsAppForm.getValue(fieldName: GenericField.id),
-          body: {
-            UserSettingsField.defaultCurrency: newCurrencyValue,
-            UserSettingsField.defaultInstructions: userSettingsAppForm.getValue(
-              fieldName: UserSettingsField.defaultInstructions)
-          }
-        )
-      ).called(1);
+      verify(() => mockUsersRepository.update(
+        id: any(named: "id"), body: any(named: "body")
+      )).called(1);
+      verify(() => mockUserSettingsRepository.update(
+        id: any(named: "id"), body: any(named: "body")
+      )).called(1);
 
       expect(formKey.currentState!.validate(), true);
       expect(ft.find.byType(SnackBar), ft.findsOneWidget);
 
-      // Check no route call was made; check getUserByID was called once
+      // Check no route call was made; check UsersRepository.getFirstListItem()
+      // was called once, due to updating the AppState.currentUser
       verifyNever(() => mockAppDialogRouter.routeToUserSettingsDialogView());
-      verify(() => recordService.getFirstListItem(
-        "${GenericField.id} = 'userAppFormID'")).called(1);
+      verify(() => mockUsersRepository.getFirstListItem(
+        filter: any(named: "filter")
+      )).called(1);
     });
 
     tearDown(() => GetIt.instance.reset());
@@ -438,71 +366,59 @@ void main() {
       final userAppForm =
         AppForm()
           ..setValue(
-            fieldName: GenericField.id,
-            value: "userAppFormID")
+              fieldName: GenericField.id,
+              value: "userAppFormID")
           ..setValue(
-            fieldName: UserField.firstName,
-            value: oldFirstNameValue)
+              fieldName: UserField.firstName,
+              value: oldFirstNameValue)
           ..setValue(
-            fieldName: UserField.lastName,
-            value: "lastNameTest");
+              fieldName: UserField.lastName,
+              value: "lastNameTest");
       final userSettingsAppForm =
         AppForm()
           ..setValue(
-            fieldName: GenericField.id,
-            value: "userSettingsAppFormID")
+              fieldName: GenericField.id,
+              value: "userSettingsAppFormID")
           ..setValue(
-            fieldName: UserSettingsField.defaultCurrency,
-            value: oldCurrencyValue)
+              fieldName: UserSettingsField.defaultCurrency,
+              value: oldCurrencyValue)
           ..setValue(
-            fieldName: UserSettingsField.defaultInstructions,
-            value: "testInstructions");
+              fieldName: UserSettingsField.defaultInstructions,
+              value: "testInstructions");
 
       // GetIt
       final getIt = GetIt.instance;
-      final pb = MockPocketBase();
-      final recordService = MockRecordService();
       final mockAppDialogRouter = MockAppDialogRouter();
+      final mockUserSettingsRepository = MockUserSettingsRepository();
+      final mockUsersRepository = MockUsersRepository();
       getIt.registerLazySingleton<AppDialogRouter>(() => mockAppDialogRouter);
-      getIt.registerLazySingleton<UsersRepository>(() => UsersRepository(pb: pb));
+      getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
       getIt.registerLazySingleton<UserSettingsRepository>(
-        () => UserSettingsRepository(pb: pb));
+        () => mockUserSettingsRepository);
 
-      // pb.collection()
+      // UsersRepository.update(), Returns null record, and non-empty errorsMap
       when(
-        () => pb.collection(any())
-      ).thenAnswer(
-        (_) => recordService as RecordService
-      );
-
-      // RecordService.update() - UsersRepository - raise error
-      when(
-        () => recordService.update(
-          userAppForm.getValue(fieldName: GenericField.id),
-          body: {
-            UserField.firstName: newFirstNameValue,
-            UserField.lastName: userAppForm.getValue(
-              fieldName: UserField.lastName)
-          }
-        )
-      ).thenThrow(
-        tc.getClientException(
-          fieldKey: UserField.firstName,
-          message: "Error for firstName"
-        )
-      );
-      // RecordService.update() - UserSettingsRepository
-      when(
-        () => recordService.update(
-          userSettingsAppForm.getValue(fieldName: GenericField.id),
-          body: {
-            UserSettingsField.defaultCurrency: newCurrencyValue,
-            UserSettingsField.defaultInstructions: userSettingsAppForm.getValue(
-              fieldName: UserSettingsField.defaultInstructions)
-          }
+        () => mockUsersRepository.update(
+          id: any(named: "id"),
+          body: any(named: "body")
         )
       ).thenAnswer(
-        (_) async => tc.getUserSettingsRecordModel()
+        (_) async => (
+          null,
+          {
+            UserField.firstName: "Error for firstName"
+          }
+        )
+      );
+
+      // UserSettingsRepository.update()
+      when(
+        () => mockUserSettingsRepository.update(
+          id: any(named: "id"),
+          body: any(named: "body")
+        )
+      ).thenAnswer(
+        (_) async => (tc.getUserSettingsRecordModel(), {})
       );
 
       // AppDialogRouter.routeToUserSettingsDialogView()
@@ -560,24 +476,12 @@ void main() {
       // Check no method calls before submit; no snackbar
       expect(ft.find.byType(SnackBar), ft.findsNothing);
       verifyNever(() => mockAppDialogRouter.routeToUserSettingsDialogView());
-      verifyNever(() => recordService.update(
-          userAppForm.getValue(fieldName: GenericField.id),
-          body: {
-            UserField.firstName: newFirstNameValue,
-            UserField.lastName: userAppForm.getValue(
-              fieldName: UserField.lastName)
-          }
-        )
-      );
-      verifyNever(() => recordService.update(
-          userSettingsAppForm.getValue(fieldName: GenericField.id),
-          body: {
-            UserSettingsField.defaultCurrency: newFirstNameValue,
-            UserSettingsField.defaultInstructions: userSettingsAppForm.getValue(
-              fieldName: UserSettingsField.defaultInstructions)
-          }
-        )
-      );
+      verifyNever(() => mockUsersRepository.update(
+        id: any(named: "id"), body: any(named: "body")
+      ));
+      verifyNever(() => mockUserSettingsRepository.update(
+        id: any(named: "id"), body: any(named: "body")
+      ));
 
       // Tap ElevatedButton (to call submitCreate)
       await tester.tap(ft.find.byType(ElevatedButton));
@@ -616,68 +520,54 @@ void main() {
       final userAppForm =
         AppForm()
           ..setValue(
-            fieldName: GenericField.id,
-            value: "userAppFormID")
+              fieldName: GenericField.id,
+              value: "userAppFormID")
           ..setValue(
-            fieldName: UserField.firstName,
-            value: oldFirstNameValue)
+              fieldName: UserField.firstName,
+              value: oldFirstNameValue)
           ..setValue(
-            fieldName: UserField.lastName,
-            value: "lastNameTest");
+              fieldName: UserField.lastName,
+              value: "lastNameTest");
       final userSettingsAppForm =
         AppForm()
           ..setValue(
-            fieldName: GenericField.id,
-            value: "userSettingsAppFormID")
+              fieldName: GenericField.id,
+              value: "userSettingsAppFormID")
           ..setValue(
-            fieldName: UserSettingsField.defaultCurrency,
-            value: oldCurrencyValue)
+              fieldName: UserSettingsField.defaultCurrency,
+              value: oldCurrencyValue)
           ..setValue(
-            fieldName: UserSettingsField.defaultInstructions,
-            value: "testInstructions");
+              fieldName: UserSettingsField.defaultInstructions,
+              value: "testInstructions");
 
       // GetIt
       final getIt = GetIt.instance;
-      final pb = MockPocketBase();
-      final recordService = MockRecordService();
       final mockAppDialogRouter = MockAppDialogRouter();
+      final mockUserSettingsRepository = MockUserSettingsRepository();
+      final mockUsersRepository = MockUsersRepository();
       getIt.registerLazySingleton<AppDialogRouter>(() => mockAppDialogRouter);
-      getIt.registerLazySingleton<UsersRepository>(() => UsersRepository(pb: pb));
+      getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
       getIt.registerLazySingleton<UserSettingsRepository>(
-        () => UserSettingsRepository(pb: pb));
+        () => mockUserSettingsRepository);
 
-      // pb.collection()
+      // UsersRepository.update()
       when(
-        () => pb.collection(any())
-      ).thenAnswer(
-        (_) => recordService as RecordService
-      );
-
-      // RecordService.update() - UsersRepository
-      when(
-        () => recordService.update(
-          userAppForm.getValue(fieldName: GenericField.id),
-          body: {
-            UserField.firstName: newFirstNameValue,
-            UserField.lastName: userAppForm.getValue(
-              fieldName: UserField.lastName)
-          }
+        () => mockUsersRepository.update(
+          id: any(named: "id"),
+          body: any(named: "body")
         )
       ).thenAnswer(
-        (_) async => tc.getUserRecordModel()
+        (_) async => (tc.getUserRecordModel(), {})
       );
-      // RecordService.update() - UserSettingsRepository
+
+      // UserSettingsRepository.update()
       when(
-        () => recordService.update(
-          userSettingsAppForm.getValue(fieldName: GenericField.id),
-          body: {
-            UserSettingsField.defaultCurrency: newCurrencyValue,
-            UserSettingsField.defaultInstructions: userSettingsAppForm.getValue(
-              fieldName: UserSettingsField.defaultInstructions)
-          }
+        () => mockUserSettingsRepository.update(
+          id: any(named: "id"),
+          body: any(named: "body")
         )
       ).thenAnswer(
-        (_) async => tc.getUserSettingsRecordModel()
+        (_) async => (tc.getUserSettingsRecordModel(), {})
       );
 
       // AppDialogRouter.routeToUserSettingsDialogView()
@@ -735,24 +625,12 @@ void main() {
        // Check no method calls before submit; no snackbar
       expect(ft.find.byType(SnackBar), ft.findsNothing);
       verifyNever(() => mockAppDialogRouter.routeToUserSettingsDialogView());
-      verifyNever(() => recordService.update(
-          userAppForm.getValue(fieldName: GenericField.id),
-          body: {
-            UserField.firstName: newFirstNameValue,
-            UserField.lastName: userAppForm.getValue(
-              fieldName: UserField.lastName)
-          }
-        )
-      );
-      verifyNever(() => recordService.update(
-          userSettingsAppForm.getValue(fieldName: GenericField.id),
-          body: {
-            UserSettingsField.defaultCurrency: newFirstNameValue,
-            UserSettingsField.defaultInstructions: userSettingsAppForm.getValue(
-              fieldName: UserSettingsField.defaultInstructions)
-          }
-        )
-      );
+      verifyNever(() => mockUsersRepository.update(
+        id: any(named: "id"), body: any(named: "body")
+      ));
+      verifyNever(() => mockUserSettingsRepository.update(
+        id: any(named: "id"), body: any(named: "body")
+      ));
 
       // Tap ElevatedButton (to call submitCreate)
       await tester.tap(ft.find.byType(ElevatedButton));
@@ -771,24 +649,12 @@ void main() {
       // Check no method calls after submit; no snackbar
       expect(ft.find.byType(SnackBar), ft.findsNothing);
       verifyNever(() => mockAppDialogRouter.routeToUserSettingsDialogView());
-      verifyNever(() => recordService.update(
-          userAppForm.getValue(fieldName: GenericField.id),
-          body: {
-            UserField.firstName: newFirstNameValue,
-            UserField.lastName: userAppForm.getValue(
-              fieldName: UserField.lastName)
-          }
-        )
-      );
-      verifyNever(() => recordService.update(
-          userSettingsAppForm.getValue(fieldName: GenericField.id),
-          body: {
-            UserSettingsField.defaultCurrency: newFirstNameValue,
-            UserSettingsField.defaultInstructions: userSettingsAppForm.getValue(
-              fieldName: UserSettingsField.defaultInstructions)
-          }
-        )
-      );
+      verifyNever(() => mockUsersRepository.update(
+        id: any(named: "id"), body: any(named: "body")
+      ));
+      verifyNever(() => mockUserSettingsRepository.update(
+        id: any(named: "id"), body: any(named: "body")
+      ));
     });
 
     tearDown(() => GetIt.instance.reset());
@@ -800,13 +666,12 @@ void main() {
       final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
       // AppForm
-      const fieldName = "champs";
       final testList = [1, 2, 3];
       void func() => testList.clear();
 
       final appForm =
         AppForm()
-        ..setValue(fieldName: AppFormFields.rebuild, value: func)
+        ..setValue(fieldName: AppFormFields.rebuild, value: func, isAux: true)
         ..setValue(fieldName: SignInField.usernameOrEmail, value: "username")
         ..setValue(fieldName: UserField.password, value: "password");
 
@@ -865,8 +730,8 @@ void main() {
             path: "/",
             builder: (_, __) => TestLogin(
               appForm: appForm,
-              fieldName: fieldName,
               formKey: formKey,
+              database: pb,
             )
           ),
           GoRoute(
@@ -917,13 +782,12 @@ void main() {
       final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
       // AppForm
-      const fieldName = "champs";
       final testList = [1, 2, 3];
       void func() => testList.clear();
 
       final appForm =
         AppForm()
-        ..setValue(fieldName: AppFormFields.rebuild, value: func)
+        ..setValue(fieldName: AppFormFields.rebuild, value: func, isAux: true)
         ..setValue(fieldName: SignInField.usernameOrEmail, value: "username")
         ..setValue(fieldName: UserField.password, value: "password");
 
@@ -982,8 +846,8 @@ void main() {
             path: "/",
             builder: (_, __) => TestLogin(
               appForm: appForm,
-              fieldName: fieldName,
               formKey: formKey,
+              database: pb,
             )
           ),
           GoRoute(
@@ -1044,13 +908,12 @@ void main() {
       final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
       // AppForm
-      const fieldName = "champs";
       final testList = [1, 2, 3];
       void func() => testList.clear();
 
       final appForm =
         AppForm()
-        ..setValue(fieldName: AppFormFields.rebuild, value: func)
+        ..setValue(fieldName: AppFormFields.rebuild, value: func, isAux: true)
         ..setValue(fieldName: SignInField.usernameOrEmail, value: "username")
         ..setValue(fieldName: UserField.password, value: "password");
 
@@ -1109,7 +972,6 @@ void main() {
             path: "/",
             builder: (_, __) => TestLogin(
               appForm: appForm,
-              fieldName: fieldName,
               formKey: formKey,
               validatorReturnVal: "error!"
             )
@@ -1167,14 +1029,13 @@ void main() {
       final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
       // AppForm
-      const fieldName = "champs";
       const email = "testEmail";
       final testList = [1, 2, 3];
-      void func() => testList.clear();
+      void testFunc() => testList.clear();
 
       final appForm =
         AppForm()
-        ..setValue(fieldName: AppFormFields.rebuild, value: func)
+        ..setValue(fieldName: AppFormFields.rebuild, value: testFunc, isAux: true)
         ..setValue(fieldName: UserField.firstName, value: "firstName")
         ..setValue(fieldName: UserField.lastName, value: "lastName")
         ..setValue(fieldName: UserField.username, value: "username")
@@ -1234,7 +1095,6 @@ void main() {
       await tester.pumpWidget(
         TestTabView(
           appForm: appForm,
-          fieldName: fieldName,
           formKey: formKey,
           pb: pb)
       );
@@ -1282,14 +1142,13 @@ void main() {
       final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
       // AppForm
-      const fieldName = "champs";
       const email = "testEmail";
       final testList = [1, 2, 3];
       void func() => testList.clear();
 
       final appForm =
         AppForm()
-        ..setValue(fieldName: AppFormFields.rebuild, value: func)
+        ..setValue(fieldName: AppFormFields.rebuild, value: func, isAux: true)
         ..setValue(fieldName: UserField.firstName, value: "firstName")
         ..setValue(fieldName: UserField.lastName, value: "lastName")
         ..setValue(fieldName: UserField.username, value: "username")
@@ -1325,7 +1184,6 @@ void main() {
       await tester.pumpWidget(
         TestTabView(
           appForm: appForm,
-          fieldName: fieldName,
           formKey: formKey,
           pb: pb)
       );
@@ -1365,14 +1223,13 @@ void main() {
       final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
       // AppForm
-      const fieldName = "champs";
       const email = "testEmail";
       final testList = [1, 2, 3];
       void func() => testList.clear();
 
       final appForm =
         AppForm()
-        ..setValue(fieldName: AppFormFields.rebuild, value: func)
+        ..setValue(fieldName: AppFormFields.rebuild, value: func, isAux: true)
         ..setValue(fieldName: UserField.firstName, value: "firstName")
         ..setValue(fieldName: UserField.lastName, value: "lastName")
         ..setValue(fieldName: UserField.username, value: "username")
@@ -1408,7 +1265,6 @@ void main() {
       await tester.pumpWidget(
         TestTabView(
           appForm: appForm,
-          fieldName: fieldName,
           formKey: formKey,
           pb: pb,
           validatorReturnVal: "error",

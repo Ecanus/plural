@@ -1,3 +1,5 @@
+import 'package:plural_app/src/utils/exceptions.dart' as exceptions;
+
 import 'package:intl/intl.dart';
 import 'package:pocketbase/pocketbase.dart';
 
@@ -16,9 +18,6 @@ import 'package:plural_app/src/features/authentication/domain/app_user_settings.
 
 // Gardens
 import 'package:plural_app/src/features/gardens/domain/garden.dart';
-
-// Utils
-import 'package:plural_app/src/utils/exceptions.dart';
 
 class TestContext {
   late Ask ask;
@@ -73,9 +72,9 @@ class TestContext {
     clientException = ClientException(
       originalError: "Original error message",
       response: {
-        dataKey: {
+        exceptions.dataKey: {
           "FieldKey": {
-            messageKey: "The inner map message of signup()"
+            exceptions.messageKey: "The inner map message of signup()"
           }
         }
       },
@@ -140,13 +139,17 @@ class TestContext {
     });
   }
 
-  RecordModel getGardenRecordModel() {
+  RecordModel getGardenRecordModel({
+    String? creatorID,
+    String? id,
+    String? name,
+  }) {
     return RecordModel({
-      "id": garden.id,
+      "id": id ?? garden.id,
       "created": "1990-10-16",
       "collectionName": Collection.gardens,
-      GardenField.creator: user.id,
-      GardenField.name: garden.name,
+      GardenField.creator: creatorID ?? user.id,
+      GardenField.name: name ?? garden.name,
     });
   }
 
@@ -234,16 +237,16 @@ class TestContext {
   }
 
   ClientException getClientException({
-    originalError = "Original error message",
-    fieldKey = "FieldKey",
-    message = "The inner map message of signup()"
+    String originalError = "Original error message",
+    String fieldKey = "FieldKey",
+    String message = "The inner map message of signup()"
   }) {
     return ClientException(
       originalError: originalError,
       response: {
-        dataKey: {
+        exceptions.dataKey: {
           fieldKey: {
-            messageKey: message
+            exceptions.messageKey: message
           }
         }
       },

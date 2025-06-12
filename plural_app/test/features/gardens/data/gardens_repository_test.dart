@@ -1,124 +1,239 @@
-import 'package:get_it/get_it.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:pocketbase/pocketbase.dart';
 import 'package:test/test.dart';
 
-// Constants
-import 'package:plural_app/src/constants/fields.dart';
-import 'package:plural_app/src/constants/pocketbase.dart';
-
-// Auth
-import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
-
 // Gardens
 import 'package:plural_app/src/features/gardens/data/gardens_repository.dart';
-import 'package:plural_app/src/features/gardens/domain/garden.dart';
 
 // Tests
 import '../../../test_context.dart';
 import '../../../test_mocks.dart';
 
 void main() {
-  group("Gardens repository test", () {
-    test("getGardenByID", () async {
+  group("GardensRepository tests", () {
+    test("bulkDelete", () async {
       final tc = TestContext();
+
       final pb = MockPocketBase();
-      final getIt = GetIt.instance;
-
-      final gardensRepository = GardensRepository(pb: pb);
-
       final recordService = MockRecordService();
-
-      // GetIt
-      getIt.registerLazySingleton<AuthRepository>(
-        () => AuthRepository(pb: pb)
-      );
+      final gardensRepository = GardensRepository(pb: pb);
 
       // pb.collection()
       when(
-        () => pb.collection(Collection.gardens)
+        () => pb.collection(any())
       ).thenAnswer(
         (_) => recordService as RecordService
       );
+
+      // RecordService.delete()
       when(
-        () => pb.collection(Collection.users)
+        () => recordService.delete(any())
+      ).thenAnswer(
+        (_) async => {}
+      );
+
+      final resultList = ResultList<RecordModel>(
+        items: [
+          tc.getGardenRecordModel(),
+          tc.getGardenRecordModel(),
+          tc.getGardenRecordModel(),
+          tc.getGardenRecordModel(),
+        ]
+      );
+
+      await gardensRepository.bulkDelete(resultList: resultList);
+
+      // Check delete called as many times as results
+      verify(() => recordService.delete(any())).called(resultList.items.length);
+
+      // RecordService.delete()
+      when(
+        () => recordService.delete(any())
+      ).thenThrow(
+        tc.clientException
+      );
+
+      // Check a ClientException is thrown
+      expect(
+        () async => await gardensRepository.bulkDelete(resultList: resultList),
+        throwsA(predicate((e) => e is ClientException))
+      );
+    });
+
+    test("delete", () async {
+      final tc = TestContext();
+
+      final pb = MockPocketBase();
+      final recordService = MockRecordService();
+      final gardensRepository = GardensRepository(pb: pb);
+
+      // pb.collection()
+      when(
+        () => pb.collection(any())
+      ).thenAnswer(
+        (_) => recordService as RecordService
+      );
+
+      // RecordService.delete()
+      when(
+        () => recordService.delete(any())
+      ).thenAnswer(
+        (_) async => {}
+      );
+
+      await gardensRepository.delete(id: tc.user.id);
+
+      // Check delete called once
+      verify(() => recordService.delete(any())).called(1);
+
+      // RecordService.delete(). Now throws exception
+      when(
+        () => recordService.delete(any())
+      ).thenThrow(
+        tc.clientException
+      );
+
+      // Check a ClientException is thrown
+      expect(
+        () async => await gardensRepository.delete(id: tc.user.id),
+        throwsA(predicate((e) => e is ClientException))
+      );
+    });
+
+    test("getFirstListItem", () async {
+      final tc = TestContext();
+
+      final pb = MockPocketBase();
+      final recordService = MockRecordService();
+      final gardensRepository = GardensRepository(pb: pb);
+
+      // pb.collection()
+      when(
+        () => pb.collection(any())
       ).thenAnswer(
         (_) => recordService as RecordService
       );
 
       // RecordService.getFirstListItem()
       when(
-        () => recordService.getFirstListItem("${GenericField.id} = '${tc.garden.id}'")
+        () => recordService.getFirstListItem(any())
       ).thenAnswer(
         (_) async => tc.getGardenRecordModel()
       );
+
+      await gardensRepository.getFirstListItem(filter: "");
+
+      // Check getFirstListItem is called once
+      verify(() => recordService.getFirstListItem(any())).called(1);
+
+      // RecordService.getFirstListItem(). Now throws exception
       when(
-        () => recordService.getFirstListItem("${GenericField.id} = '${tc.user.id}'")
-      ).thenAnswer(
-        (_) async => tc.getUserRecordModel()
+        () => recordService.getFirstListItem(any())
+      ).thenThrow(
+        tc.clientException
       );
 
-      var garden = await gardensRepository.getGardenByID(tc.garden.id);
-      expect(garden.id, tc.garden.id);
-      expect(garden.creator, tc.garden.creator);
-      expect(garden.name, tc.garden.name);
+      // Check a ClientException is thrown
+      expect(
+        () async => await gardensRepository.getFirstListItem(filter: ""),
+        throwsA(predicate((e) => e is ClientException))
+      );
     });
 
-    tearDown(() => GetIt.instance.reset());
-
-    test("getGardensByUser", () async {
+    test("getList", () async {
       final tc = TestContext();
+
       final pb = MockPocketBase();
-      final getIt = GetIt.instance;
-
-      final gardensRepository = GardensRepository(pb: pb);
       final recordService = MockRecordService();
-
-      // GetIt
-      getIt.registerLazySingleton<AuthRepository>(
-        () => AuthRepository(pb: pb)
-      );
+      final gardensRepository = GardensRepository(pb: pb);
 
       // pb.collection()
       when(
-        () => pb.collection(Collection.userGardenRecords)
+        () => pb.collection(any())
       ).thenAnswer(
         (_) => recordService as RecordService
-      );
-      when(
-        () => pb.collection(Collection.users)
-      ).thenAnswer(
-        (_) => recordService as RecordService
-      );
-
-      // RecordService.getFirstListItem()
-      when(
-        () => recordService.getFirstListItem("${GenericField.id} = '${tc.user.id}'")
-      ).thenAnswer(
-        (_) async => tc.getUserRecordModel()
       );
 
       // RecordService.getList()
       when(
         () => recordService.getList(
-          expand: UserGardenRecordField.garden,
-          filter: "${UserGardenRecordField.user} = '${tc.user.id}'",
-          sort: any(named: "sort"))
+          expand: any(named: "expand"),
+          filter: any(named: "filter"),
+          sort: any(named: "sort"),
+        )
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(
-          items: [tc.getGardenRecordRecordModelFromJson(UserGardenRecordField.garden)])
+          items: [
+            tc.getGardenRecordModel(),
+            tc.getGardenRecordModel(),
+            tc.getGardenRecordModel(),
+          ]
+        )
       );
 
-      var gardens = await gardensRepository.getGardensByUser(tc.user.id);
-      expect(gardens.length, 1);
+      await gardensRepository.getList();
 
-      var garden = gardens.first;
-      expect(garden, isA<Garden>());
-      expect(garden.id, tc.garden.id);
-      expect(garden.creator, tc.user);
-      expect(garden.name, tc.garden.name);
+      // Check getList is called once
+      verify(() => recordService.getList(
+        expand: any(named: "expand"),
+        filter: any(named: "filter"),
+        sort: any(named: "sort"),
+      )).called(1);
+
+      // RecordService.getList(). Now throws exception
+      when(
+        () => recordService.getList(
+          expand: any(named: "expand"),
+          filter: any(named: "filter"),
+          sort: any(named: "sort"),
+        )
+      ).thenThrow(
+        tc.clientException
+      );
+
+      // Check a ClientException is thrown
+      expect(
+        () async => await gardensRepository.getList(),
+        throwsA(predicate((e) => e is ClientException))
+      );
     });
 
-    tearDown(() => GetIt.instance.reset());
+    test("update", () async {
+      final tc = TestContext();
+
+      final pb = MockPocketBase();
+      final recordService = MockRecordService();
+      final gardensRepository = GardensRepository(pb: pb);
+
+      // pb.collection()
+      when(
+        () => pb.collection(any())
+      ).thenAnswer(
+        (_) => recordService as RecordService
+      );
+
+      // RecordService.update()
+      when(
+        () => recordService.update(any())
+      ).thenAnswer(
+        (_) async => tc.getGardenRecordModel()
+      );
+
+      await gardensRepository.update(id: tc.garden.id);
+
+      verify(() => recordService.update(any())).called(1);
+
+      // RecordService.update(). Throws exception
+      when(
+        () => recordService.update(any())
+      ).thenThrow(
+        tc.clientException
+      );
+
+      // Check record is null, errorsMap is not empty
+      final (record, errorsMap) = await gardensRepository.update(id: tc.garden.id);
+      expect(record, null);
+      expect(errorsMap.isEmpty, false);
+    });
   });
 }

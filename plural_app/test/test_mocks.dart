@@ -9,7 +9,6 @@ import 'package:url_launcher_platform_interface/url_launcher_platform_interface.
 import 'package:plural_app/src/features/asks/data/asks_repository.dart';
 
 // Auth
-import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
 import 'package:plural_app/src/features/authentication/data/user_garden_records_repository.dart';
 import 'package:plural_app/src/features/authentication/data/user_settings_repository.dart';
 import 'package:plural_app/src/features/authentication/data/users_repository.dart';
@@ -24,7 +23,6 @@ import 'package:plural_app/src/utils/app_state.dart';
 class MockAppDialogRouter extends Mock implements AppDialogRouter {}
 class MockAppState extends Mock implements AppState {}
 class MockAsksRepository extends Mock implements AsksRepository {}
-class MockAuthRepository extends Mock implements AuthRepository {}
 class MockBuildContext extends Mock implements BuildContext {}
 class MockGardensRepository extends Mock implements GardensRepository {}
 class MockGoRouter extends Mock implements GoRouter {}
