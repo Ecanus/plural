@@ -12,7 +12,6 @@ import 'package:plural_app/src/features/asks/data/asks_repository.dart';
 import 'package:plural_app/src/features/asks/presentation/listed_asks_dialog.dart';
 
 // Auth
-import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
 import 'package:plural_app/src/features/authentication/data/user_garden_records_repository.dart';
 import 'package:plural_app/src/features/authentication/data/users_repository.dart';
 import 'package:plural_app/src/features/authentication/presentation/listed_users_dialog.dart';
@@ -53,24 +52,33 @@ void main() {
 
     testWidgets("createListedAsksDialog", (tester) async {
       final tc = TestContext();
-      final appState = AppState()
+      final appState = AppState.skipSubscribe()
+                        ..currentGarden = tc.garden
                         ..currentUser = tc.user;
 
       final getIt = GetIt.instance;
       final mockAsksRepository = MockAsksRepository();
+      final mockUsersRepository = MockUsersRepository();
       getIt.registerLazySingleton<AppState>(() => appState);
       getIt.registerLazySingleton<AppDialogRouter>(() => AppDialogRouter());
       getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
+      getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
 
-      // AsksRepository.getAsksByUserID()
+      // AsksRepository.getList()
       when(
-        () => mockAsksRepository.getAsksByUserID(
-          filterString: any(named: "filterString"),
-          sortString: any(named: "sortString"),
-          userID: tc.user.id,
+        () => mockAsksRepository.getList(
+          filter: any(named: "filter"),
+          sort: any(named: "sort"),
         )
       ).thenAnswer(
-        (_) async => [tc.ask]
+        (_) async => ResultList<RecordModel>(items: [tc.getAskRecordModel()])
+      );
+
+      // UsersRepository.getFirstListItem()
+      when(
+        () => mockUsersRepository.getFirstListItem(filter: any(named: "filter"))
+      ).thenAnswer(
+        (_) async => tc.getUserRecordModel()
       );
 
       await tester.pumpWidget(
@@ -142,16 +150,27 @@ void main() {
     testWidgets("createListedUsersDialog", (tester) async {
       final tc = TestContext();
 
-      final getIt = GetIt.instance;
-      final mockAuthRepository = MockAuthRepository();
-      getIt.registerLazySingleton<AppDialogRouter>(() => AppDialogRouter());
-      getIt.registerLazySingleton<AuthRepository>(() => mockAuthRepository);
+      final appState = AppState.skipSubscribe()
+                        ..currentGarden = tc.garden;
 
-      // AuthRepository.getCurrentGardenUsers()
+      final getIt = GetIt.instance;
+      final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
+      getIt.registerLazySingleton<AppDialogRouter>(() => AppDialogRouter());
+      getIt.registerLazySingleton<AppState>(() => appState);
+      getIt.registerLazySingleton<UserGardenRecordsRepository>(
+        () => mockUserGardenRecordsRepository);
+
+      // UserGardenRecordsRepository.getList()
       when(
-        () => mockAuthRepository.getCurrentGardenUsers()
+        () => mockUserGardenRecordsRepository.getList(
+          expand: UserGardenRecordField.user,
+          filter: "${UserGardenRecordField.garden} = '${tc.garden.id}'",
+          sort: "${UserGardenRecordField.user}.${UserField.username}"
+        )
       ).thenAnswer(
-        (_) async => [tc.user, tc.user, tc.user, tc.user]
+        (_) async => ResultList<RecordModel>(items: [
+          tc.getExpandUserGardenRecordRecordModel(UserGardenRecordField.user)
+        ])
       );
 
       await tester.pumpWidget(
@@ -215,8 +234,8 @@ void main() {
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(
           items: [
-            tc.getGardenRecordRecordModelFromJson(UserGardenRecordField.garden),
-            tc.getGardenRecordRecordModelFromJson(UserGardenRecordField.garden),
+            tc.getExpandUserGardenRecordRecordModel(UserGardenRecordField.garden),
+            tc.getExpandUserGardenRecordRecordModel(UserGardenRecordField.garden),
           ]
         )
       );

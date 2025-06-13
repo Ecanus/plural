@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:pocketbase/pocketbase.dart';
 
 // Common Widgets
 import 'package:plural_app/src/common_widgets/app_dialog_footer.dart';
@@ -11,6 +12,9 @@ import 'package:plural_app/src/features/asks/data/asks_repository.dart';
 import 'package:plural_app/src/features/asks/presentation/creatable_ask_dialog.dart';
 import 'package:plural_app/src/features/asks/presentation/listed_ask_tile.dart';
 import 'package:plural_app/src/features/asks/presentation/listed_asks_dialog.dart';
+
+// Auth
+import 'package:plural_app/src/features/authentication/data/users_repository.dart';
 
 // Utils
 import 'package:plural_app/src/utils/app_dialog_router.dart';
@@ -24,26 +28,37 @@ void main() {
   group("AskDialogList test", () {
     testWidgets("widgets", (tester) async {
       final tc = TestContext();
-      final appState = AppState()
+      final appState = AppState.skipSubscribe()
+                        ..currentGarden = tc.garden
                         ..currentUser = tc.user
-                        ..currentUserSettings = tc.userSettings;
+                        ..currentUserSettings = tc.userSettings; // for initialValue of AppCurrencyPickerFormField
 
       // GetIt
       final getIt = GetIt.instance;
       final mockAsksRepository = MockAsksRepository();
+      final mockUsersRepository = MockUsersRepository();
       getIt.registerLazySingleton<AppState>(() => appState);
       getIt.registerLazySingleton<AppDialogRouter>(() => AppDialogRouter());
       getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
+      getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
 
       // AsksRepository.getAsksByUserID()
       when(
-        () => mockAsksRepository.getAsksByUserID(
-          filterString: any(named: "filterString"),
-          sortString: any(named: "sortString"),
-          userID: tc.user.id,
+        () => mockAsksRepository.getList(
+          filter: any(named: "filter"),
+          sort: any(named: "sort"),
         )
       ).thenAnswer(
-        (_) async => [tc.ask]
+        (_) async => ResultList<RecordModel>(items: [tc.getAskRecordModel()])
+      );
+
+      // UsersRepository.getFirstListItem()
+      when(
+        () => mockUsersRepository.getFirstListItem(
+          filter: any(named: "filter")
+        )
+      ).thenAnswer(
+        (_) async => tc.getUserRecordModel()
       );
 
       await tester.pumpWidget(

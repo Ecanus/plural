@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pocketbase/pocketbase.dart';
 
 // Common Functions
 import 'package:plural_app/src/common_functions/form_validators.dart';
@@ -25,10 +26,12 @@ import 'package:plural_app/src/utils/app_form.dart';
 class SignUpTab extends StatelessWidget {
   const SignUpTab({
     required this.appForm,
+    this.database, // primarily for testing
     required this.formKey,
   });
 
   final AppForm appForm;
+  final PocketBase? database;
   final GlobalKey<FormState> formKey;
 
   @override
@@ -87,6 +90,7 @@ class SignUpTab extends StatelessWidget {
           callback: submitSignUp,
           label: SignInPageText.signUp,
           positionalArguments: [context, formKey, appForm],
+          namedArguments: {#database: database},
         ),
       ],
     );

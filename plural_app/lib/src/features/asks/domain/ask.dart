@@ -10,6 +10,9 @@ import 'package:plural_app/src/constants/app_values.dart';
 import 'package:plural_app/src/constants/fields.dart';
 import 'package:plural_app/src/constants/formats.dart';
 
+// Asks
+import 'package:plural_app/src/features/asks/data/asks_api.dart';
+
 // Auth
 import 'package:plural_app/src/features/authentication/domain/app_user.dart';
 
@@ -44,6 +47,20 @@ class Ask {
   DateTime? targetMetDate;
   int targetSum;
   AskType type;
+
+  Ask.fromJson(Map<String, dynamic> json, AppUser user) :
+    id = json[GenericField.id] as String,
+    boon = json[AskField.boon] as int,
+    creator = user,
+    creationDate = DateTime.parse(json[GenericField.created]),
+    currency = json[AskField.currency],
+    description = json[AskField.description],
+    deadlineDate = DateTime.parse(json[AskField.deadlineDate]),
+    instructions = json[AskField.instructions],
+    targetSum = json[AskField.targetSum],
+    targetMetDate = getParsedTargetMetDate(json[AskField.targetMetDate]),
+    type = getAskTypeFromString(json[AskField.type]),
+    sponsorIDS = List<String>.from(json[AskField.sponsors]);
 
   List<String> sponsorIDS = [];
 
@@ -126,7 +143,7 @@ class Ask {
     return sponsorIDS.contains(userID);
   }
 
-  Map toMap() {
+  Map<String, dynamic> toMap() {
     return {
       GenericField.id: id,
       AskField.boon: boon,
@@ -141,7 +158,7 @@ class Ask {
     };
   }
 
-  static Map emptyMap() {
+  static Map<String, dynamic> emptyMap() {
     return {
       GenericField.id: null,
       AskField.boon: null,

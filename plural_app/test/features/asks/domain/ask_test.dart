@@ -1,10 +1,14 @@
 import 'package:test/test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:pocketbase/pocketbase.dart';
 
 // Asks
 import 'package:plural_app/src/features/asks/data/asks_repository.dart';
 import 'package:plural_app/src/features/asks/domain/ask.dart';
+
+// Auth
+import 'package:plural_app/src/features/authentication/data/users_repository.dart';
 
 // Utils
 import 'package:plural_app/src/utils/app_state.dart';
@@ -83,34 +87,45 @@ void main() {
 
     test("isOnTimeline", () async {
       final tc = TestContext();
-      final ask = tc.ask;
-      final mockAsksRepository = MockAsksRepository();
 
       // GetIt
       final getIt = GetIt.instance;
       final appState = AppState.skipSubscribe()
                         ..currentGarden = tc.garden;
 
+      final mockAsksRepository = MockAsksRepository();
+      final mockUsersRepository = MockUsersRepository();
       getIt.registerLazySingleton<AppState>(() => appState);
       getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
+      getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
 
-      // AsksRepository.getAsksByGardenID()
+      // AsksRepository.getList()
       when(
-        () => mockAsksRepository.getAsksByGardenID(
-          gardenID: any(named: "gardenID"),
-          count: any(named: "count"),
-          filterString: any(named: "filterString")
+        () => mockAsksRepository.getList(
+          filter: any(named: "filter"),
+          sort: any(named: "sort")
         )
       ).thenAnswer(
-        (_) async => [ask]
+        (_) async => ResultList<RecordModel>(items: [
+          tc.getAskRecordModel(id: tc.ask.id), // Set ID so comparison is possible
+        ])
       );
 
-      expect(ask.isOnTimeline, false);
+      // mockUsersRepository.getFirstListItem()
+      when(
+        () => mockUsersRepository.getFirstListItem(
+          filter: any(named: "filter")
+        )
+      ).thenAnswer(
+        (_) async => tc.getUserRecordModel()
+      );
+
+      expect(tc.ask.isOnTimeline, false);
 
       // Call AppState.getTimelineAsks() to populate its _timelineAsks
       await GetIt.instance<AppState>().getTimelineAsks();
 
-      expect(ask.isOnTimeline, true);
+      expect(tc.ask.isOnTimeline, true);
     });
 
     tearDown(() => GetIt.instance.reset());

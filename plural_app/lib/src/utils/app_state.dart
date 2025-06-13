@@ -1,3 +1,6 @@
+import 'package:plural_app/src/features/asks/data/asks_api.dart' as asks_api;
+import 'package:plural_app/src/features/gardens/data/gardens_api.dart' as gardens_api;
+
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
@@ -15,16 +18,14 @@ import 'package:plural_app/src/constants/pocketbase.dart';
 import 'package:plural_app/src/constants/routes.dart';
 
 // Asks
-import 'package:plural_app/src/features/asks/data/asks_repository.dart';
 import 'package:plural_app/src/features/asks/domain/ask.dart';
 
 // Auth
-import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
+import 'package:plural_app/src/features/authentication/data/auth_api.dart';
 import 'package:plural_app/src/features/authentication/domain/app_user.dart';
 import 'package:plural_app/src/features/authentication/domain/app_user_settings.dart';
 
 // Gardens
-import 'package:plural_app/src/features/gardens/data/gardens_repository.dart';
 import 'package:plural_app/src/features/gardens/domain/constants.dart';
 import 'package:plural_app/src/features/gardens/domain/garden.dart';
 
@@ -126,16 +127,19 @@ class AppState with ChangeNotifier {
   /// the value of [_currentGarden]
   Future<void> updateSubscriptions(Garden newGarden) async {
     // Set new database subscriptions
-    GetIt.instance<AsksRepository>().subscribeTo(
+    // Asks
+    asks_api.subscribeTo(
       newGarden.id,
       notifyAllListeners
     );
 
-    GetIt.instance<GardensRepository>().subscribeTo(
+    // Gardens
+    gardens_api.subscribeTo(
       newGarden.id
     );
 
-    GetIt.instance<AuthRepository>().subscribeToUsers(
+    // Users
+    subscribeToUsers(
       newGarden.id,
       notifyAllListeners
     );
@@ -150,10 +154,10 @@ class AppState with ChangeNotifier {
       "&& ${AskField.targetMetDate} = null"
       "&& ${AskField.deadlineDate} > '$nowString'";
 
-    List<Ask> asks = await GetIt.instance<AsksRepository>().getAsksByGardenID(
+    List<Ask> asks = await asks_api.getAsksByGardenID(
       gardenID: currentGarden!.id,
       count: GardenConstants.numTimelineAsks,
-      filterString: filterString
+      filter: filterString
     );
 
     _timelineAsksList = asks;

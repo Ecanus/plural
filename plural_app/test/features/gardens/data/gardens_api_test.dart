@@ -21,6 +21,7 @@ import 'package:plural_app/src/features/authentication/data/users_repository.dar
 
 // Gardens
 import 'package:plural_app/src/features/gardens/data/gardens_api.dart';
+import 'package:plural_app/src/features/gardens/data/gardens_repository.dart';
 import 'package:plural_app/src/features/gardens/domain/garden.dart';
 
 // Utils
@@ -33,7 +34,42 @@ import '../../../test_widgets.dart';
 
 void main() {
   group("Gardens api test", () {
-    test("getGardensByUser !excludeCurrentGarden", () async {
+    test("getGardenByID", () async {
+      final tc = TestContext();
+
+      final getIt = GetIt.instance;
+      final mockGardensRepository = MockGardensRepository();
+      final mockUsersRepository = MockUsersRepository();
+      getIt.registerLazySingleton<GardensRepository>(() => mockGardensRepository);
+      getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
+
+      // GardensRepository.getFirstListItem()
+      when(
+        () => mockGardensRepository.getFirstListItem(filter: any(named: "filter"))
+      ).thenAnswer(
+        (_) async => tc.getGardenRecordModel(
+          creatorID: tc.user.id,
+          id: tc.garden.id,
+          name: "TestGarden"
+        )
+      );
+
+      // UsersRepository.getFirstListItem()
+      when(
+        () => mockUsersRepository.getFirstListItem(filter: any(named: "filter"))
+      ).thenAnswer(
+        (_) async => tc.getUserRecordModel()
+      );
+
+      final garden = await getGardenByID(tc.garden.id);
+      expect(garden, isA<Garden>());
+      expect(garden.creator, tc.user);
+      expect(garden.id, tc.garden.id);
+      expect(garden.name, "TestGarden");
+
+    });
+
+    test("getGardensByUserID !excludeCurrentGarden", () async {
       final tc = TestContext();
       var appState = AppState.skipSubscribe()
                       ..currentUser = tc.user;
@@ -42,10 +78,10 @@ void main() {
       final mockUsersRepository = MockUsersRepository();
       final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
       getIt.registerLazySingleton<AppState>(() => appState);
-      getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
       getIt.registerLazySingleton<UserGardenRecordsRepository>(
         () => mockUserGardenRecordsRepository
       );
+      getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
 
       // UsersRepository.getFirstListItem()
       when(
@@ -64,15 +100,15 @@ void main() {
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(
           items: [
-            tc.getGardenRecordRecordModelFromJson(UserGardenRecordField.garden),
-            tc.getGardenRecordRecordModelFromJson(UserGardenRecordField.garden),
-            tc.getGardenRecordRecordModelFromJson(UserGardenRecordField.garden),
+            tc.getExpandUserGardenRecordRecordModel(UserGardenRecordField.garden),
+            tc.getExpandUserGardenRecordRecordModel(UserGardenRecordField.garden),
+            tc.getExpandUserGardenRecordRecordModel(UserGardenRecordField.garden),
           ]
         )
       );
 
       // getGardensByUser
-      List<Garden> gardens = await getGardensByUser(
+      List<Garden> gardens = await getGardensByUserID(
         tc.user.id, excludesCurrentGarden: false
       );
 
@@ -90,7 +126,7 @@ void main() {
 
     tearDown(() => GetIt.instance.reset());
 
-    test("getGardensByUser excludeCurrentGarden", () async {
+    test("getGardensByUserID excludeCurrentGarden", () async {
       final tc = TestContext();
       var appState = AppState.skipSubscribe()
         ..currentUser = tc.user
@@ -124,15 +160,15 @@ void main() {
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(
           items: [
-            tc.getGardenRecordRecordModelFromJson(UserGardenRecordField.garden),
-            tc.getGardenRecordRecordModelFromJson(UserGardenRecordField.garden),
-            tc.getGardenRecordRecordModelFromJson(UserGardenRecordField.garden),
+            tc.getExpandUserGardenRecordRecordModel(UserGardenRecordField.garden),
+            tc.getExpandUserGardenRecordRecordModel(UserGardenRecordField.garden),
+            tc.getExpandUserGardenRecordRecordModel(UserGardenRecordField.garden),
           ]
         )
       );
 
       // getGardensByUser
-      List<Garden> gardens = await getGardensByUser(
+      List<Garden> gardens = await getGardensByUserID(
         tc.user.id, excludesCurrentGarden: true
       );
 
@@ -152,129 +188,130 @@ void main() {
 
     tearDown(() => GetIt.instance.reset());
 
-  ft.testWidgets("rerouteToLandingAndPrepareGardenExit", (tester) async {
-    final tc = TestContext();
-    final appState = AppState.skipSubscribe()
-                      ..currentGarden = tc.garden;
+    test("removeUserFromGarden", () async {
+      final testList = ["a", "b"];
 
-    final getIt = GetIt.instance;
-    getIt.registerLazySingleton<AppState>(() => appState);
+      void testFunc() {
+        testList.clear();
+      }
 
-    var testRouter = GoRouter(
-      routes: [
-        GoRoute(
-          path: "/",
-          builder: (_, __) => TestContextDependantFunctionWidget(
-            callback: rerouteToLandingAndPrepareGardenExit
-          )
-        ),
-        GoRoute(
-          path: Routes.landing,
-          builder: (_, state) => BlankPage(
-            widget: Text(
-              "exitedGardenID is: "
-              "${state.uri.queryParameters[QueryParameters.exitedGardenID]}")
-            )
+      final tc = TestContext();
+
+      final getIt = GetIt.instance;
+      final pb = MockPocketBase();
+      final recordService = MockRecordService();
+
+      getIt.registerLazySingleton<AsksRepository>(() => AsksRepository(pb: pb));
+      getIt.registerLazySingleton<UserGardenRecordsRepository>(
+        () => UserGardenRecordsRepository(pb: pb));
+
+      // pb.collection()
+      when(
+        () => pb.collection(any())
+      ).thenAnswer(
+        (_) => recordService as RecordService
+      );
+
+      // RecordService.getList() - AsksRepository
+      when(
+        () => recordService.getList(
+          expand: any(named: "expand"),
+          filter: any(named: "filter"),
+          sort: any(named: "sort")
         )
-      ]
-    );
+      ).thenAnswer(
+        (_) async => ResultList<RecordModel>(items: [tc.getAskRecordModel()])
+      );
+      // RecordService.getFirstListItem() - UserGardenRecordsRepository
+      when(
+        () => recordService.getFirstListItem(any())
+      ).thenAnswer(
+        (_) async => tc.getUserGardenRecordRecordModel()
+      );
+      // RecordService.delete() - AsksRepository & UserGardenRecordsRepository
+      when(
+        () => recordService.delete(any())
+      ).thenAnswer(
+        (_) async => {}
+      );
 
-    await tester.pumpWidget(
-      MaterialApp.router(
-        routerConfig: testRouter,
-      )
-    );
+      // Check testList still has values (function not yet called)
+      expect(testList.isEmpty, false);
 
-    // Check not yet redirected (Text does not render)
-    expect(ft.find.text("exitedGardenID is: ${tc.garden.id}"), ft.findsNothing);
+      // Check database methods not yet called
+      verifyNever(() =>  recordService.getList(
+          expand: any(named: "expand"),
+          filter: any(named: "filter"),
+          sort: any(named: "sort")
+        )
+      );
+      verifyNever(() => recordService.getFirstListItem(any()));
+      verifyNever(() => recordService.delete(any()));
 
-    // Tap ElevatedButton (to call rerouteToLandingAndPrepareGardenExit)
-    await tester.tap(ft.find.byType(ElevatedButton));
-    await tester.pumpAndSettle();
+      await removeUserFromGarden(tc.user.id, tc.garden.id, testFunc);
 
-    // Check redirected (Text should now appear)
-    expect(ft.find.text("exitedGardenID is: ${tc.garden.id}"), ft.findsOneWidget);
-  });
+      // Check testList no longer has values (function called)
+      expect(testList.isEmpty, true);
 
-  tearDown(() => GetIt.instance.reset());
+      // Check database methods each called
+      verify(() =>  recordService.getList(
+          expand: any(named: "expand"),
+          filter: any(named: "filter"),
+          sort: any(named: "sort")
+        )
+      ).called(1);
+      verify(() => recordService.getFirstListItem(any())).called(1);
+      verify(() => recordService.delete(any())).called(2); // 1 for Ask, 1 for UserGardenRecord
+    });
 
-  test("removeUserFromGarden", () async {
-    final testList = ["a", "b"];
+    tearDown(() => GetIt.instance.reset());
 
-    void testFunc() {
-      testList.clear();
-    }
 
-    final tc = TestContext();
+    ft.testWidgets("rerouteToLandingPageWithExitedGardenID", (tester) async {
+      final tc = TestContext();
+      final appState = AppState.skipSubscribe()
+                        ..currentGarden = tc.garden;
 
-    final getIt = GetIt.instance;
-    final pb = MockPocketBase();
-    final recordService = MockRecordService();
+      final getIt = GetIt.instance;
+      getIt.registerLazySingleton<AppState>(() => appState);
 
-    getIt.registerLazySingleton<AsksRepository>(() => AsksRepository(pb: pb));
-    getIt.registerLazySingleton<UserGardenRecordsRepository>(
-      () => UserGardenRecordsRepository(pb: pb));
+      var testRouter = GoRouter(
+        routes: [
+          GoRoute(
+            path: "/",
+            builder: (_, __) => TestContextDependantFunctionWidget(
+              callback: rerouteToLandingPageWithExitedGardenID
+            )
+          ),
+          GoRoute(
+            path: Routes.landing,
+            builder: (_, state) => BlankPage(
+              widget: Text(
+                "exitedGardenID is: "
+                "${state.uri.queryParameters[QueryParameters.exitedGardenID]}")
+              )
+          )
+        ]
+      );
 
-    // pb.collection()
-    when(
-      () => pb.collection(any())
-    ).thenAnswer(
-      (_) => recordService as RecordService
-    );
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routerConfig: testRouter,
+        )
+      );
 
-    // RecordService.getList() - AsksRepository
-    when(
-      () => recordService.getList(
-        expand: any(named: "expand"),
-        filter: any(named: "filter"),
-        sort: any(named: "sort")
-      )
-    ).thenAnswer(
-      (_) async => ResultList<RecordModel>(items: [tc.getAskRecordModel()])
-    );
-    // RecordService.getFirstListItem() - UserGardenRecordsRepository
-    when(
-      () => recordService.getFirstListItem(any())
-    ).thenAnswer(
-      (_) async => tc.getGardenRecordRecordModel()
-    );
-    // RecordService.delete() - AsksRepository & UserGardenRecordsRepository
-    when(
-      () => recordService.delete(any())
-    ).thenAnswer(
-      (_) async => {}
-    );
+      // Check not yet redirected (Text does not render)
+      expect(ft.find.text("exitedGardenID is: ${tc.garden.id}"), ft.findsNothing);
 
-    // Check testList still has values (function not yet called)
-    expect(testList.isEmpty, false);
+      // Tap ElevatedButton (to call rerouteToLandingAndPrepareGardenExit)
+      await tester.tap(ft.find.byType(ElevatedButton));
+      await tester.pumpAndSettle();
 
-    // Check database methods not yet called
-    verifyNever(() =>  recordService.getList(
-        expand: any(named: "expand"),
-        filter: any(named: "filter"),
-        sort: any(named: "sort")
-      )
-    );
-    verifyNever(() => recordService.getFirstListItem(any()));
-    verifyNever(() => recordService.delete(any()));
+      // Check redirected (Text should now appear)
+      expect(ft.find.text("exitedGardenID is: ${tc.garden.id}"), ft.findsOneWidget);
+    });
 
-    await removeUserFromGarden(tc.user.id, tc.garden.id, testFunc);
-
-    // Check testList no longer has values (function called)
-    expect(testList.isEmpty, true);
-
-    // Check database methods each called
-    verify(() =>  recordService.getList(
-        expand: any(named: "expand"),
-        filter: any(named: "filter"),
-        sort: any(named: "sort")
-      )
-    ).called(1);
-    verify(() => recordService.getFirstListItem(any())).called(1);
-    verify(() => recordService.delete(any())).called(2); // 1 for Ask, 1 for UserGardenRecord
-  });
-
-  tearDown(() => GetIt.instance.reset());
+    tearDown(() => GetIt.instance.reset());
 
   });
 }

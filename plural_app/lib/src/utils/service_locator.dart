@@ -5,7 +5,7 @@ import 'package:pocketbase/pocketbase.dart';
 import 'package:plural_app/src/features/asks/data/asks_repository.dart';
 
 // Auth
-import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
+import 'package:plural_app/src/features/authentication/data/auth_api.dart';
 import 'package:plural_app/src/features/authentication/data/user_garden_records_repository.dart';
 import 'package:plural_app/src/features/authentication/data/user_settings_repository.dart';
 import 'package:plural_app/src/features/authentication/data/users_repository.dart';
@@ -34,31 +34,18 @@ Future<void> registerGetItInstances(PocketBase pb) async {
 
   // AsksRepository
   getIt.registerLazySingleton<AsksRepository>(
-    () => AsksRepository(
-      pb: getIt<PocketBase>(),
-    )
+    () => AsksRepository(pb: getIt<PocketBase>())
   );
 
   // Authentication
-  getIt.registerLazySingleton<AuthRepository>(
-    () => AuthRepository(
-      pb: getIt<PocketBase>(),
-    )
-  );
   getIt.registerLazySingleton<UserGardenRecordsRepository>(
-    () => UserGardenRecordsRepository(
-      pb: getIt<PocketBase>(),
-    )
-  );
-  getIt.registerLazySingleton<UsersRepository>(
-    () => UsersRepository(
-      pb: getIt<PocketBase>(),
-    )
+    () => UserGardenRecordsRepository(pb: getIt<PocketBase>())
   );
   getIt.registerLazySingleton<UserSettingsRepository>(
-    () => UserSettingsRepository(
-      pb: getIt<PocketBase>(),
-    )
+    () => UserSettingsRepository(pb: getIt<PocketBase>())
+  );
+  getIt.registerLazySingleton<UsersRepository>(
+    () => UsersRepository(pb: getIt<PocketBase>())
   );
 
   // GardensRepository
@@ -83,11 +70,11 @@ Future<void> setInitialAppStateValues(userID) async {
   var appState = GetIt.instance<AppState>();
 
   // User
-  var user = await GetIt.instance<AuthRepository>().getUserByID(userID);
+  var user = await getUserByID(userID);
   appState.currentUser = user;
 
   // User Settings
-  var userSettings = await GetIt.instance<AuthRepository>().getCurrentUserSettings();
+  var userSettings = await getCurrentUserSettings();
   appState.currentUserSettings = userSettings;
 }
 

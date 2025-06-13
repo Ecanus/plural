@@ -2,6 +2,9 @@ import 'package:mocktail/mocktail.dart';
 import 'package:pocketbase/pocketbase.dart';
 import 'package:test/test.dart';
 
+// Constants
+import 'package:plural_app/src/constants/fields.dart';
+
 // Auth
 import 'package:plural_app/src/features/authentication/data/user_settings_repository.dart';
 
@@ -16,7 +19,7 @@ void main() {
 
       final pb = MockPocketBase();
       final recordService = MockRecordService();
-      final repository = UserSettingsRepository(pb: pb);
+      final userSettingsRepository = UserSettingsRepository(pb: pb);
 
       // pb.collection()
       when(
@@ -32,7 +35,7 @@ void main() {
         (_) async => {}
       );
 
-      final records = ResultList<RecordModel>(
+      final resultList = ResultList<RecordModel>(
         items: [
           tc.getUserSettingsRecordModel(),
           tc.getUserSettingsRecordModel(),
@@ -42,17 +45,35 @@ void main() {
         ]
       );
 
-      await repository.bulkDelete(records: records);
+      // Check delete() is called the right number of times, at the right time
+      verifyNever(() => recordService.delete(any()));
+      await userSettingsRepository.bulkDelete(resultList: resultList);
+      verify(() => recordService.delete(any())).called(resultList.items.length);
 
-      verify(() => recordService.delete(any())).called(5);
+      // RecordService.delete(), Now throws exception
+      when(
+        () => recordService.delete(any())
+      ).thenThrow(
+        tc.clientException
+      );
+      // Check a ClientException is thrown
+      expect(
+        () async => await userSettingsRepository.bulkDelete(resultList: resultList),
+        throwsA(predicate((e) => e is ClientException))
+      );
     });
 
-    test("bulkDelete exception", () async {
+    test("create", () async {
       final tc = TestContext();
+
+      final body = {
+        UserSettingsField.defaultCurrency: "GHS",
+        UserSettingsField.defaultInstructions: "test instructions",
+      };
 
       final pb = MockPocketBase();
       final recordService = MockRecordService();
-      final repository = UserSettingsRepository(pb: pb);
+      final userSettingsRepository = UserSettingsRepository(pb: pb);
 
       // pb.collection()
       when(
@@ -61,28 +82,28 @@ void main() {
         (_) => recordService as RecordService
       );
 
-      // RecordService.delete()
+      // RecordService.create()
       when(
-        () => recordService.delete(any())
+        () => recordService.create(body: any(named: "body"))
+      ).thenAnswer(
+        (_) async => tc.getUserSettingsRecordModel()
+      );
+
+      // Check record is not null, and errorsMap is empty
+      final (record, errorsMap) = await userSettingsRepository.create(body: body);
+      expect(record, isNotNull);
+      expect(errorsMap.isEmpty, true);
+
+      // RecordService.create(), Now throws exception
+      when(
+        () => recordService.create(body: any(named: "body"))
       ).thenThrow(
         tc.clientException
       );
-
-      final records = ResultList<RecordModel>(
-        items: [
-          tc.getUserSettingsRecordModel(),
-          tc.getUserSettingsRecordModel(),
-          tc.getUserSettingsRecordModel(),
-          tc.getUserSettingsRecordModel(),
-          tc.getUserSettingsRecordModel(),
-        ]
-      );
-
-      // Check a ClientException is thrown
-      expect(
-        () async => await repository.bulkDelete(records: records),
-        throwsA(predicate((e) => e is ClientException))
-      );
+      // Check record is null, errorsMap is not empty
+      final (record2, errorsMap2) = await userSettingsRepository.create(body: body);
+      expect(record2, null);
+      expect(errorsMap2.isEmpty, false);
     });
 
     test("delete", () async {
@@ -90,7 +111,7 @@ void main() {
 
       final pb = MockPocketBase();
       final recordService = MockRecordService();
-      final repository = UserSettingsRepository(pb: pb);
+      final userSettingsRepository = UserSettingsRepository(pb: pb);
 
       // pb.collection()
       when(
@@ -106,35 +127,20 @@ void main() {
         (_) async => {}
       );
 
-      await repository.delete(id: tc.userSettings.id);
-
+      // Check delete() called at the right time
+      verifyNever(() => recordService.delete(any()));
+      await userSettingsRepository.delete(id: tc.userSettings.id);
       verify(() => recordService.delete(any())).called(1);
-    });
 
-    test("delete exception", () async {
-      final tc = TestContext();
-
-      final pb = MockPocketBase();
-      final recordService = MockRecordService();
-      final repository = UserSettingsRepository(pb: pb);
-
-      // pb.collection()
-      when(
-        () => pb.collection(any())
-      ).thenAnswer(
-        (_) => recordService as RecordService
-      );
-
-      // RecordService.delete()
+      // RecordService.delete(), Now throws exception
       when(
         () => recordService.delete(any())
       ).thenThrow(
         tc.clientException
       );
-
       // Check a ClientException is thrown
       expect(
-        () async => await repository.delete(id: tc.userSettings.id),
+        () async => await userSettingsRepository.delete(id: tc.userSettings.id),
         throwsA(predicate((e) => e is ClientException))
       );
     });
@@ -144,7 +150,7 @@ void main() {
 
       final pb = MockPocketBase();
       final recordService = MockRecordService();
-      final repository = UserSettingsRepository(pb: pb);
+      final userSettingsRepository = UserSettingsRepository(pb: pb);
 
       // pb.collection()
       when(
@@ -160,35 +166,20 @@ void main() {
         (_) async => tc.getUserSettingsRecordModel()
       );
 
-      await repository.getFirstListItem(filter: "");
-
+      // Check getFirstListItem() called at the right time
+      verifyNever(() => recordService.getFirstListItem(any()));
+      await userSettingsRepository.getFirstListItem(filter: "");
       verify(() => recordService.getFirstListItem(any())).called(1);
-    });
 
-    test("getFirstListItem exception", () async {
-      final tc = TestContext();
-
-      final pb = MockPocketBase();
-      final recordService = MockRecordService();
-      final repository = UserSettingsRepository(pb: pb);
-
-      // pb.collection()
-      when(
-        () => pb.collection(any())
-      ).thenAnswer(
-        (_) => recordService as RecordService
-      );
-
-      // RecordService.getFirstListItem()
+      // RecordService.getFirstListItem(), Now throws exception
       when(
         () => recordService.getFirstListItem(any())
       ).thenThrow(
         tc.clientException
       );
-
       // Check a ClientException is thrown
       expect(
-        () async => await repository.getFirstListItem(filter: ""),
+        () async => await userSettingsRepository.getFirstListItem(filter: ""),
         throwsA(predicate((e) => e is ClientException))
       );
     });
@@ -198,7 +189,7 @@ void main() {
 
       final pb = MockPocketBase();
       final recordService = MockRecordService();
-      final repository = UserSettingsRepository(pb: pb);
+      final userSettingsRepository = UserSettingsRepository(pb: pb);
 
       // pb.collection()
       when(
@@ -224,30 +215,22 @@ void main() {
         )
       );
 
-      await repository.getList();
+      // Check getList() called at the right time
+      verifyNever(() => recordService.getList(
+        expand: any(named: "expand"),
+        filter: any(named: "filter"),
+        sort: any(named: "sort"),
+      ));
+
+      await userSettingsRepository.getList();
 
       verify(() => recordService.getList(
         expand: any(named: "expand"),
         filter: any(named: "filter"),
         sort: any(named: "sort"),
       )).called(1);
-    });
 
-    test("getList exception", () async {
-      final tc = TestContext();
-
-      final pb = MockPocketBase();
-      final recordService = MockRecordService();
-      final repository = UserSettingsRepository(pb: pb);
-
-      // pb.collection()
-      when(
-        () => pb.collection(any())
-      ).thenAnswer(
-        (_) => recordService as RecordService
-      );
-
-      // RecordService.getList()
+      // RecordService.getList(), Now throws exception
       when(
         () => recordService.getList(
           expand: any(named: "expand"),
@@ -260,7 +243,7 @@ void main() {
 
       // Check a ClientException is thrown
       expect(
-        () async => await repository.getList(),
+        () async => await userSettingsRepository.getList(),
         throwsA(predicate((e) => e is ClientException))
       );
     });
@@ -268,9 +251,14 @@ void main() {
     test("update", () async {
       final tc = TestContext();
 
+      final body = {
+        UserSettingsField.defaultCurrency: "GHS",
+        UserSettingsField.defaultInstructions: "test instructions",
+      };
+
       final pb = MockPocketBase();
       final recordService = MockRecordService();
-      final repository = UserSettingsRepository(pb: pb);
+      final userSettingsRepository = UserSettingsRepository(pb: pb);
 
       // pb.collection()
       when(
@@ -281,41 +269,28 @@ void main() {
 
       // RecordService.update()
       when(
-        () => recordService.update(any())
+        () => recordService.update(any(), body: any(named: "body"))
       ).thenAnswer(
         (_) async => tc.getUserSettingsRecordModel()
       );
 
-      await repository.update(id: tc.userSettings.id);
+      // Check record is not null, and errorsMap is empty
+      final (record, errorsMap) = await userSettingsRepository.update(
+        id: tc.userSettings.id, body: body);
+      expect(record, isNotNull);
+      expect(errorsMap.isEmpty, true);
 
-      verify(() => recordService.update(any())).called(1);
-    });
-    test("update exception", () async {
-      final tc = TestContext();
-
-      final pb = MockPocketBase();
-      final recordService = MockRecordService();
-      final repository = UserSettingsRepository(pb: pb);
-
-      // pb.collection()
+      // RecordService.update(), Now throws exception
       when(
-        () => pb.collection(any())
-      ).thenAnswer(
-        (_) => recordService as RecordService
-      );
-
-      // RecordService.update()
-      when(
-        () => recordService.update(any())
+        () => recordService.update(any(), body: any(named: "body"))
       ).thenThrow(
         tc.clientException
       );
-
-      // Check a ClientException is thrown
-      expect(
-        () async => await repository.update(id: tc.userSettings.id),
-        throwsA(predicate((e) => e is ClientException))
-      );
+      // Check record is null, errorsMap is not empty
+      final (record2, errorsMap2) = await userSettingsRepository.update(
+        id: tc.userSettings.id, body: body);
+      expect(record2, null);
+      expect(errorsMap2.isEmpty, false);
     });
   });
 }

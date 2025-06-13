@@ -17,14 +17,30 @@ import 'package:plural_app/src/features/authentication/data/auth_api.dart';
 import 'package:plural_app/src/features/authentication/data/user_garden_records_repository.dart';
 
 // Gardens
+import 'package:plural_app/src/features/gardens/data/gardens_repository.dart';
 import 'package:plural_app/src/features/gardens/domain/garden.dart';
+
+/// Queries on the [Garden] collection to retrieve the record corresponding to
+/// [gardenID].
+///
+/// Returns a [Garden] instance.
+Future<Garden> getGardenByID(String gardenID) async {
+  final record = await GetIt.instance<GardensRepository>().getFirstListItem(
+    filter: "${GenericField.id} = '$gardenID'"
+  );
+
+  final recordJson = record.toJson();
+  final creator = await getUserByID(recordJson[GardenField.creator]);
+
+  return Garden.fromJson(recordJson, creator);
+}
 
 /// Returns a list of [Garden] instances corresponding to [Garden] records from the
 /// database that [userID] belongs to.
 ///
 /// If [excludesCurrentGarden] is true, the [Garden] corresponding
 /// to [AppState].currentGarden will be excluded from the list of results.
-Future<List<Garden>> getGardensByUser(
+Future<List<Garden>> getGardensByUserID(
   String userID, {
   bool excludesCurrentGarden = true,
 }) async {
@@ -39,42 +55,22 @@ Future<List<Garden>> getGardensByUser(
       "$filter";
   }
 
-  final query = await GetIt.instance<UserGardenRecordsRepository>().getList(
+  final resultList = await GetIt.instance<UserGardenRecordsRepository>().getList(
     expand: UserGardenRecordField.garden,
     filter: filter,
     sort: "garden.name",
   );
 
-  for (final record in query.items) {
+  for (final record in resultList.items) {
     final creator = await getUserByID(userID);
-    final userGardenRecordJson =
+    final gardenRecord =
       record.toJson()[QueryKey.expand][UserGardenRecordField.garden];
+    final garden = Garden.fromJson(gardenRecord, creator);
 
-    final garden = Garden.fromJson(userGardenRecordJson, creator);
     gardens.add(garden);
   }
 
   return gardens;
-}
-
-/// Reroutes to the Landing page, with a non-null [exitedGardenID] value.
-///
-/// The value of [exitedGardenID] is the id of the [Garden] that
-/// the current [User] has just exited.
-Future<void> rerouteToLandingAndPrepareGardenExit(BuildContext context) async {
-  final appState = GetIt.instance<AppState>();
-  final exitedGardenID = appState.currentGarden!.id;
-
-  // Reroute
-  if (context.mounted) {
-    GoRouter.of(context).go(
-      Uri(
-        path: Routes.landing,
-        queryParameters: {
-          QueryParameters.exitedGardenID: exitedGardenID}
-      ).toString()
-    );
-  }
 }
 
 /// Deletes the [UserGardenRecord] record corresponding to the
@@ -96,7 +92,7 @@ Future<void> removeUserFromGarden(
     "${AskField.creator} = '$userID'"
     "&& ${AskField.garden} = '$exitedGardenID'"
   );
-  await asksRepository.bulkDelete(records: askRecords);
+  await asksRepository.bulkDelete(resultList: askRecords);
 
   // Delete UserGardenRecord corresponding to userID and exitedGardenID
   final userGardenRecord = await userGardenRecordsRepository.getFirstListItem(
@@ -105,7 +101,38 @@ Future<void> removeUserFromGarden(
       "&& ${UserGardenRecordField.garden} = '$exitedGardenID'"
   );
 
-  await GetIt.instance<UserGardenRecordsRepository>().delete(id: userGardenRecord.id);
+  await userGardenRecordsRepository.delete(id: userGardenRecord.id);
 
   callback();
+}
+
+/// Reroutes to the Landing page, with a non-null [exitedGardenID] value.
+///
+/// The value of [exitedGardenID] is the id of the [Garden] that
+/// the current [User] has just exited.
+Future<void> rerouteToLandingPageWithExitedGardenID(BuildContext context) async {
+  final appState = GetIt.instance<AppState>();
+  final exitedGardenID = appState.currentGarden!.id;
+
+  // Reroute
+  if (context.mounted) {
+    GoRouter.of(context).go(
+      Uri(
+        path: Routes.landing,
+        queryParameters: {
+          QueryParameters.exitedGardenID: exitedGardenID}
+      ).toString()
+    );
+  }
+}
+
+/// Subscribes to any changes made in the [Garden] collection for
+/// the [Garden] record with the corresponding [gardenID].
+///
+/// Updates the value of [AppState] currentGarden whenever a change is made.
+Future<Function> subscribeTo(String gardenID) async {
+  // Always clear before setting new subscription
+  await GetIt.instance<GardensRepository>().unsubscribe();
+
+  return GetIt.instance<GardensRepository>().subscribe(gardenID);
 }

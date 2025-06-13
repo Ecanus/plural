@@ -1,3 +1,5 @@
+import 'package:plural_app/src/utils/exceptions.dart' as exceptions;
+
 import 'package:intl/intl.dart';
 import 'package:pocketbase/pocketbase.dart';
 
@@ -16,9 +18,6 @@ import 'package:plural_app/src/features/authentication/domain/app_user_settings.
 
 // Gardens
 import 'package:plural_app/src/features/gardens/domain/garden.dart';
-
-// Utils
-import 'package:plural_app/src/utils/exceptions.dart';
 
 class TestContext {
   late Ask ask;
@@ -73,9 +72,9 @@ class TestContext {
     clientException = ClientException(
       originalError: "Original error message",
       response: {
-        dataKey: {
+        exceptions.dataKey: {
           "FieldKey": {
-            messageKey: "The inner map message of signup()"
+            exceptions.messageKey: "The inner map message of signup()"
           }
         }
       },
@@ -117,6 +116,7 @@ class TestContext {
     DateTime? deadlineDate,
     String? description,
     String? instructions,
+    DateTime? targetMetDate,
     int? targetSum,
     List<String> sponsors = const []
   }) {
@@ -133,24 +133,31 @@ class TestContext {
       AskField.instructions: instructions ?? ask.instructions,
       AskField.sponsors: sponsors,
       AskField.targetSum: targetSum ?? ask.targetSum,
-      AskField.targetMetDate: ask.targetMetDate ?? "",
+      AskField.targetMetDate: targetMetDate == null ? "" :
+        DateFormat(Formats.dateYMMdd).format(targetMetDate),
       AskField.type: "monetary"
     });
   }
 
-  RecordModel getGardenRecordModel() {
+  RecordModel getGardenRecordModel({
+    String? creatorID,
+    String? id,
+    String? name,
+  }) {
     return RecordModel({
-      "id": garden.id,
+      "id": id ?? garden.id,
       "created": "1990-10-16",
       "collectionName": Collection.gardens,
-      GardenField.creator: user.id,
-      GardenField.name: garden.name,
+      GardenField.creator: creatorID ?? user.id,
+      GardenField.name: name ?? garden.name,
     });
   }
 
-  RecordModel getGardenRecordRecordModel() {
+  RecordModel getUserGardenRecordRecordModel({
+    String? id
+  }) {
     return RecordModel({
-      "id": userGardenRecord.id,
+      "id": id ?? userGardenRecord.id,
       "created": "1999-10-08",
       "collectionName": Collection.userGardenRecords,
       UserGardenRecordField.user: user.id,
@@ -158,7 +165,7 @@ class TestContext {
     });
   }
 
-  RecordModel getGardenRecordRecordModelFromJson(String expand) {
+  RecordModel getExpandUserGardenRecordRecordModel(String expand) {
     Map<String, dynamic> map;
 
     switch (expand) {
@@ -213,28 +220,33 @@ class TestContext {
     });
   }
 
-  RecordModel getUserSettingsRecordModel() {
+  RecordModel getUserSettingsRecordModel({
+    String? defaultCurrency,
+    String? defaultInstructions,
+    String? userID,
+  }) {
     return RecordModel({
       "id": userSettings.id,
       "created": "2001-01-03",
       "collectionName": Collection.userSettings,
-      UserSettingsField.defaultCurrency: "GHS",
-      UserSettingsField.defaultInstructions: "UserSettings record instructions",
-      UserSettingsField.user: user.id,
+      UserSettingsField.defaultCurrency: defaultCurrency ?? "GHS",
+      UserSettingsField.defaultInstructions:
+        defaultInstructions ?? "UserSettings record instructions",
+      UserSettingsField.user: userID ?? user.id,
     });
   }
 
   ClientException getClientException({
-    originalError = "Original error message",
-    fieldKey = "FieldKey",
-    message = "The inner map message of signup()"
+    String originalError = "Original error message",
+    String fieldKey = "FieldKey",
+    String message = "The inner map message of signup()"
   }) {
     return ClientException(
       originalError: originalError,
       response: {
-        dataKey: {
+        exceptions.dataKey: {
           fieldKey: {
-            messageKey: message
+            exceptions.messageKey: message
           }
         }
       },

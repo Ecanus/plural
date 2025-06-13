@@ -6,20 +6,24 @@ import 'package:mocktail/mocktail.dart';
 
 // Common Widgets
 import 'package:plural_app/src/common_widgets/delete_account_button.dart';
+import 'package:plural_app/src/constants/fields.dart';
 
 // Constants
 import 'package:plural_app/src/constants/routes.dart';
 
 // Asks
 import 'package:plural_app/src/features/asks/data/asks_repository.dart';
-
-// Auth
-import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
+import 'package:plural_app/src/features/authentication/data/user_garden_records_repository.dart';
+import 'package:plural_app/src/features/authentication/data/user_settings_repository.dart';
+import 'package:plural_app/src/features/authentication/data/users_repository.dart';
 
 // Localization
 import 'package:plural_app/src/localization/lang_en.dart';
+import 'package:plural_app/src/utils/app_state.dart';
+import 'package:pocketbase/pocketbase.dart';
 
 // Tests
+import '../test_context.dart';
 import '../test_mocks.dart';
 import '../test_widgets.dart';
 
@@ -57,36 +61,71 @@ void main() {
     });
 
     testWidgets("submitDeleteAccount", (tester) async {
+      final tc = TestContext();
+
+      final appState = AppState.skipSubscribe()
+                        ..currentUser = tc.user // for deleteCurrentUserAsks()
+                        ..currentUserSettings = tc.userSettings;
+
       final mockAsksRepository = MockAsksRepository();
-      final mockAuthRepository = MockAuthRepository();
+      final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
+      final mockUserSettingsRepository = MockUserSettingsRepository();
+      final mockUsersRepository = MockUsersRepository();
 
       final getIt = GetIt.instance;
+      getIt.registerLazySingleton<AppState>(() => appState);
       getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
-      getIt.registerLazySingleton<AuthRepository>(() => mockAuthRepository);
+      getIt.registerLazySingleton<UserGardenRecordsRepository>(
+        () => mockUserGardenRecordsRepository);
+      getIt.registerLazySingleton<UserSettingsRepository>(
+        () => mockUserSettingsRepository);
+      getIt.registerLazySingleton<UsersRepository>(
+        () => mockUsersRepository);
 
-      // AsksRepository.deleteCurrentUserAsks()
+      // AsksRepository.getList()
+      final asksResultList = ResultList<RecordModel>(items: [tc.getAskRecordModel()]);
       when(
-        () => mockAsksRepository.deleteCurrentUserAsks()
+        () => mockAsksRepository.getList(filter: any(named: "filter"))
       ).thenAnswer(
-        (_) async => () {}
+        (_) async => asksResultList
       );
-      // AuthRepository.deleteCurrentUserGardenRecords()
+      // mockAsksRepository.bulkDelete()
       when(
-        () => mockAuthRepository.deleteCurrentUserGardenRecords()
+        () => mockAsksRepository.bulkDelete(resultList: asksResultList)
       ).thenAnswer(
-        (_) async => () {}
+        (_) async => {}
       );
-      // AuthRepository.deleteCurrentUserSettings()
-      when(
-        () => mockAuthRepository.deleteCurrentUserSettings()
-      ).thenAnswer(
-        (_) async => () {}
+
+      // UserGardenRecordsRepository.getList()
+      final userGardenRecordsResultList = ResultList<RecordModel>(
+        items: [tc.getUserGardenRecordRecordModel(), tc.getUserGardenRecordRecordModel()]
       );
-      // AuthRepository.deleteCurrentUser()
       when(
-        () => mockAuthRepository.deleteCurrentUser()
+        () => mockUserGardenRecordsRepository.getList(
+          filter: "${UserGardenRecordField.user} = '${tc.user.id}'")
       ).thenAnswer(
-        (_) async => () {}
+        (_) async => userGardenRecordsResultList
+      );
+      // UserGardenRecordsRepository.bulkDelete()
+      when(
+        () => mockUserGardenRecordsRepository.bulkDelete(
+          resultList: userGardenRecordsResultList)
+      ).thenAnswer(
+        (_) async => {}
+      );
+
+      // UserSettingsRepository.delete()
+      when(
+        () => mockUserSettingsRepository.delete(id: tc.userSettings.id)
+      ).thenAnswer(
+        (_) async => {}
+      );
+
+      // UsersRepository.delete()
+      when(
+        () => mockUsersRepository.delete(id: tc.user.id)
+      ).thenAnswer(
+        (_) async => {}
       );
 
       var testRouter = GoRouter(

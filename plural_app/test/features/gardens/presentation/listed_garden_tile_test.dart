@@ -3,7 +3,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:pocketbase/pocketbase.dart';
 
 // Constants
 import 'package:plural_app/src/constants/routes.dart';
@@ -12,7 +11,7 @@ import 'package:plural_app/src/constants/routes.dart';
 import 'package:plural_app/src/features/asks/data/asks_repository.dart';
 
 // Auth
-import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
+import 'package:plural_app/src/features/authentication/data/users_repository.dart';
 
 // Gardens
 import 'package:plural_app/src/features/gardens/data/gardens_repository.dart';
@@ -29,49 +28,54 @@ void main() {
   group("ListedGardenTile test", () {
     testWidgets("ListedGardenTile", (tester) async {
       final tc = TestContext();
+
       final appState = AppState()
                         ..currentGarden = null;
 
       final getIt = GetIt.instance;
-      final pb = MockPocketBase();
-      final recordService = MockRecordService();
       final mockAsksRepository = MockAsksRepository();
-      final mockAuthRepository = MockAuthRepository();
       final mockGardensRepository = MockGardensRepository();
-      getIt.registerLazySingleton(() => mockAsksRepository as AsksRepository);
-      getIt.registerLazySingleton(() => mockAuthRepository as AuthRepository);
-      getIt.registerLazySingleton<GardensRepository>(() => mockGardensRepository);
+      final mockUsersRepository = MockUsersRepository();
+      getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
       getIt.registerLazySingleton<AppState>(() => appState);
-      getIt.registerLazySingleton<PocketBase>(() => pb);
+      getIt.registerLazySingleton<GardensRepository>(() => mockGardensRepository);
+      getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
 
-      // pb.collection()
+      // AsksRepository.unsubscribe()
       when(
-        () => pb.collection(any())
+        () => mockAsksRepository.unsubscribe()
       ).thenAnswer(
-        (_) => recordService as RecordService
+        (_) async => {}
       );
-      // RecordService.unsubscribe()
+      // AsksRepository.subscribe()
       when(
-        () => recordService.unsubscribe()
+        () => mockAsksRepository.subscribe(any(), any())
       ).thenAnswer(
         (_) async => () {}
       );
 
-      // AsksRepository.subscribeTo()
+      // GardensRepository.unsubscribe()
       when(
-        () => mockAsksRepository.subscribeTo(any(), any())
+        () => mockGardensRepository.unsubscribe()
+      ).thenAnswer(
+        (_) async => {}
+      );
+      // GardensRepository.subscribe()
+      when(
+        () => mockGardensRepository.subscribe(any())
       ).thenAnswer(
         (_) async => () {}
       );
-      // AuthRepository.subscribeToUsers()
+
+      // UsersRepository.unsubscribe()
       when(
-        () => mockAuthRepository.subscribeToUsers(any(), any())
+        () => mockUsersRepository.unsubscribe()
       ).thenAnswer(
-        (_) async => () {}
+        (_) async => {}
       );
-      // GardensRepository.subscribeTo()
+      // UsersRepository.subscribe()
       when(
-        () => mockGardensRepository.subscribeTo(any())
+        () => mockUsersRepository.subscribe(any(), any())
       ).thenAnswer(
         (_) async => () {}
       );
@@ -103,49 +107,54 @@ void main() {
 
     testWidgets("LandingPageListedGardenTile", (tester) async {
       final tc = TestContext();
+
       final appState = AppState()
                         ..currentGarden = null;
 
       final getIt = GetIt.instance;
-      final pb = MockPocketBase();
-      final recordService = MockRecordService();
       final mockAsksRepository = MockAsksRepository();
-      final mockAuthRepository = MockAuthRepository();
       final mockGardensRepository = MockGardensRepository();
-      getIt.registerLazySingleton(() => mockAsksRepository as AsksRepository);
-      getIt.registerLazySingleton(() => mockAuthRepository as AuthRepository);
-      getIt.registerLazySingleton<GardensRepository>(() => mockGardensRepository);
+      final mockUsersRepository = MockUsersRepository();
+      getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
       getIt.registerLazySingleton<AppState>(() => appState);
-      getIt.registerLazySingleton<PocketBase>(() => pb);
+      getIt.registerLazySingleton<GardensRepository>(() => mockGardensRepository);
+      getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
 
-      // pb.collection()
+      // AsksRepository.unsubscribe()
       when(
-        () => pb.collection(any())
+        () => mockAsksRepository.unsubscribe()
       ).thenAnswer(
-        (_) => recordService as RecordService
+        (_) async => {}
       );
-      // RecordService.unsubscribe()
+      // AsksRepository.subscribe()
       when(
-        () => recordService.unsubscribe()
+        () => mockAsksRepository.subscribe(any(), any())
       ).thenAnswer(
         (_) async => () {}
       );
 
-      // AsksRepository.subscribeTo()
+      // GardensRepository.unsubscribe()
       when(
-        () => mockAsksRepository.subscribeTo(any(), any())
+        () => mockGardensRepository.unsubscribe()
+      ).thenAnswer(
+        (_) async => {}
+      );
+      // GardensRepository.subscribe()
+      when(
+        () => mockGardensRepository.subscribe(any())
       ).thenAnswer(
         (_) async => () {}
       );
-      // AuthRepository.subscribeToUsers()
+
+      // UsersRepository.unsubscribe()
       when(
-        () => mockAuthRepository.subscribeToUsers(any(), any())
+        () => mockUsersRepository.unsubscribe()
       ).thenAnswer(
-        (_) async => () {}
+        (_) async => {}
       );
-      // GardensRepository.subscribeTo()
+      // UsersRepository.subscribe()
       when(
-        () => mockGardensRepository.subscribeTo(any())
+        () => mockUsersRepository.subscribe(any(), any())
       ).thenAnswer(
         (_) async => () {}
       );

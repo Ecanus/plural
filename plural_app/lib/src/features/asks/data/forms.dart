@@ -29,10 +29,11 @@ Future<void> submitCreate(
     formKey.currentState!.save();
 
     // Update DB (should also rebuild Garden Timeline via SubscribeTo)
-    var (isValid, errorsMap) =
-      await GetIt.instance<AsksRepository>().create(appForm.fields);
+    var (record, errorsMap) = await GetIt.instance<AsksRepository>().create(
+      body: appForm.fields
+    );
 
-    if (isValid && context.mounted) {
+    if (record != null && context.mounted) {
       var snackBar = AppSnackbars.getSnackbar(
         SnackbarText.createAskSuccess,
         showCloseIcon: false,
@@ -49,7 +50,9 @@ Future<void> submitCreate(
       appForm.setErrors(errorsMap: errorsMap);
 
       // Rebuild dialog
-      appForm.getValue(fieldName: AppFormFields.rebuild)();
+      appForm.getValue(
+        fieldName: AppFormFields.rebuild,
+        isAux: true)();
     }
   }
 }
@@ -65,10 +68,12 @@ Future<void> submitUpdate(
     formKey.currentState!.save();
 
     // Update DB (should also rebuild Garden Timeline via SubscribeTo)
-    var (isValid, errorsMap) =
-      await GetIt.instance<AsksRepository>().updateWithMap(appForm.fields);
+    var (record, errorsMap) = await GetIt.instance<AsksRepository>().update(
+        id: appForm.getValue(fieldName: GenericField.id),
+        body: appForm.fields
+      );
 
-    if (isValid && context.mounted) {
+    if (record != null && context.mounted) {
       var snackBar = AppSnackbars.getSnackbar(
         SnackbarText.updateAskSuccess,
         showCloseIcon: false,
@@ -85,7 +90,9 @@ Future<void> submitUpdate(
       appForm.setErrors(errorsMap: errorsMap);
 
       // Rebuild dialog
-      appForm.getValue(fieldName: AppFormFields.rebuild)();
+      appForm.getValue(
+        fieldName: AppFormFields.rebuild,
+        isAux: true)();
     }
   }
 }
@@ -93,13 +100,12 @@ Future<void> submitUpdate(
 /// Submits form data to delete an existing [Ask] record in the database.
 Future<void> submitDelete(
   BuildContext context,
-  AppForm appForm,
+  String askID,
 ) async {
-  // Update DB (should also rebuild Garden Timeline via SubscribeTo)
-  var (isValid, errorsMap) =
-    await GetIt.instance<AsksRepository>().deleteWithMap(appForm.fields);
+  // Deletion should also rebuild Garden Timeline via SubscribeTo
+  await GetIt.instance<AsksRepository>().delete(id: askID);
 
-  if (isValid && context.mounted) {
+  if (context.mounted) {
     var snackBar = AppSnackbars.getSnackbar(
       SnackbarText.deleteAskSuccess,
       showCloseIcon: false,

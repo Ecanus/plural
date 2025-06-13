@@ -23,8 +23,10 @@ void main() {
   group("AskDialogCreateForm test", () {
     testWidgets("widgets", (tester) async {
       final tc = TestContext();
-      final appState = AppState()
-                        ..currentUserSettings = tc.userSettings;
+      final appState = AppState.skipSubscribe()
+                        ..currentGarden = tc.garden
+                        ..currentUserSettings = tc.userSettings
+                        ..currentUser = tc.user;
       // GetIt
       final getIt = GetIt.instance;
       getIt.registerLazySingleton<AppState>(() => appState);

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pocketbase/pocketbase.dart';
 
 // Common Classes
 import 'package:plural_app/src/utils/app_form.dart';
@@ -16,6 +17,12 @@ import 'package:plural_app/src/features/authentication/presentation/sign_up_tab.
 import 'package:plural_app/src/localization/lang_en.dart';
 
 class SignInPage extends StatefulWidget {
+  const SignInPage({
+    this.database, // primarily for testing
+  });
+
+  final PocketBase? database;
+
   @override
   State<SignInPage> createState() => _SignInPageState();
 }
@@ -41,7 +48,8 @@ class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateM
     _appForm = AppForm();
     _appForm.setValue(
       fieldName: AppFormFields.rebuild,
-      value: () {setState( () {}); }
+      value: () {setState( () {}); },
+      isAux: true
     );
 
     // FormKey
@@ -58,7 +66,8 @@ class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateM
     _tabController.addListener(_clearAppFormErrors);
     _appForm.setValue(
       fieldName: AppFormFields.tabController,
-      value: _tabController
+      value: _tabController,
+      isAux: true,
     );
   }
 
@@ -90,12 +99,14 @@ class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateM
                 controller: _tabController,
                 children: [
                   LogInTab(
+                    appForm: _appForm,
+                    database: widget.database,
                     formKey: _formKey,
-                    appForm: _appForm
                   ),
                   SignUpTab(
+                    appForm: _appForm,
+                    database: widget.database,
                     formKey: _formKey,
-                    appForm: _appForm
                   ),
                 ],
               ),

@@ -9,7 +9,7 @@ import 'package:plural_app/src/common_widgets/app_dialog_footer.dart';
 import 'package:plural_app/src/constants/app_sizes.dart';
 
 // Auth
-import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
+import 'package:plural_app/src/features/authentication/data/auth_api.dart';
 import 'package:plural_app/src/features/authentication/presentation/listed_user_tile.dart';
 
 // Localization
@@ -19,7 +19,7 @@ import 'package:plural_app/src/localization/lang_en.dart';
 import 'package:plural_app/src/utils/app_dialog_router.dart';
 
 Future createListedUsersDialog(BuildContext context) async {
-  final users = await GetIt.instance<AuthRepository>().getCurrentGardenUsers();
+  final users = await getCurrentGardenUsers();
 
   if (context.mounted) {
     return showDialog(

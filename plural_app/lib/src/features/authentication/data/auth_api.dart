@@ -16,232 +16,28 @@ import 'package:plural_app/src/constants/pocketbase.dart';
 import 'package:plural_app/src/constants/routes.dart';
 
 // Asks
+import 'package:plural_app/src/features/asks/data/asks_api.dart';
 import 'package:plural_app/src/features/asks/data/asks_repository.dart';
 
 // Auth
-import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
+import 'package:plural_app/src/features/authentication/data/user_garden_records_repository.dart';
 import 'package:plural_app/src/features/authentication/data/user_settings_repository.dart';
 import 'package:plural_app/src/features/authentication/data/users_repository.dart';
 import 'package:plural_app/src/features/authentication/domain/app_user.dart';
+import 'package:plural_app/src/features/authentication/domain/app_user_garden_record.dart';
+import 'package:plural_app/src/features/authentication/domain/app_user_settings.dart';
+
+// Gardens
+import 'package:plural_app/src/features/gardens/data/gardens_api.dart';
+import 'package:plural_app/src/features/gardens/data/gardens_repository.dart';
 
 // Localization
 import 'package:plural_app/src/localization/lang_en.dart';
 
 // Utils
+import 'package:plural_app/src/utils/app_state.dart';
 import 'package:plural_app/src/utils/exceptions.dart';
 import 'package:plural_app/src/utils/service_locator.dart';
-
-
-/// Returns an instance of [AppUser] corresponding to the [User] record
-/// from the database with the given [userID].
-Future<AppUser> getUserByID(String userID) async {
-  final query = await GetIt.instance<UsersRepository>().getFirstListItem(
-    filter: "${GenericField.id} = '$userID'",
-  );
-
-  return AppUser.fromJson(query.toJson());
-}
-
-/// Attempts to update the [User] record that matches the values passed
-/// in the given [map] parameter.
-///
-/// Returns true and an empty map if updated successfully,
-/// else false and a map of the errors.
-Future<(bool, Map)> updateUser(Map map) async {
-  try {
-    await GetIt.instance<UsersRepository>().update(
-      id: map[GenericField.id],
-      body: {
-        UserField.firstName: map[UserField.firstName],
-        UserField.lastName: map[UserField.lastName],
-      }
-    );
-
-    return (true, {});
-  } on ClientException catch(e) {
-    var errorsMap = getErrorsMapFromClientException(e);
-
-      // Log error
-      developer.log(
-        "updateUser() error",
-        error: e,
-      );
-
-      return (false, errorsMap);
-  }
-}
-
-/// Attempts to update the [UserSettings] record that matches the values passed
-/// in the given [map] parameter.
-///
-/// Returns true and an empty map if updated successfully,
-/// else false and a map of the errors.
-Future<(bool, Map)> updateUserSettings(Map map) async {
-  try {
-    await GetIt.instance<UserSettingsRepository>().update(
-      id: map[GenericField.id],
-      body: {
-        UserSettingsField.defaultCurrency: map[UserSettingsField.defaultCurrency],
-        UserSettingsField.defaultInstructions: map[UserSettingsField.defaultInstructions],
-      }
-    );
-
-    return (true, {});
-  } on ClientException catch(e) {
-    var errorsMap = getErrorsMapFromClientException(e);
-
-      // Log error
-      developer.log(
-        "updateUser() error",
-        error: e,
-      );
-
-      return (false, errorsMap);
-  }
-}
-
-/// Attempts to log in to the database with [usernameOrEmail]
-/// and [password] parameters, and creates all necessary [GetIt] instances.
-///
-/// Returns true if log in is successful, else false.
-Future<bool> login(
-  String usernameOrEmail,
-  String password,
-  PocketBase pb
-) async {
-  try {
-    // TODO: Move pb.collection call into a method in AuthRepository
-    await pb.collection(Collection.users).authWithPassword(
-      usernameOrEmail, password);
-
-    await clearGetItInstance();
-    await registerGetItInstances(pb);
-
-    return true;
-  } on ClientException catch(e) {
-    // Log error
-    developer.log(
-      "auth_api.login() error",
-      error: e,
-    );
-    return false;
-  }
-}
-
-/// Logs out of the database and clears all [GetIt] instances.
-Future<void> logout(
-  context, {
-  // primarily for testing
-  GoRouter? goRouter
-  }) async {
-  final pb = GetIt.instance<PocketBase>();
-
-  // Clear all database subscriptions
-  // TODO: Move pb.collection call into a method in AuthRepository
-  await pb.collection(Collection.asks).unsubscribe();
-  await pb.collection(Collection.gardens).unsubscribe();
-  await pb.collection(Collection.users).unsubscribe();
-  await pb.collection(Collection.userSettings).unsubscribe();
-
-  // Clear logged in credentials and GetIt instance
-  // TODO: Move pb.authStore call into a method in AuthRepository
-  pb.authStore.clear();
-  clearGetItInstance();
-
-  if (context.mounted) {
-    var router = goRouter ?? GoRouter.of(context);
-    router.go(Routes.signIn);
-  }
-}
-
-/// Attempts to create a new [User] record in the database with the
-/// [firstName], [lastName], [username], [email], and [password] parameters.
-///
-/// Returns (true, {}) if sign up is successful, else (false, errorsMap)
-Future<(bool, Map)> signup(
-  String firstName,
-  String lastName,
-  String username,
-  String email,
-  String password,
-  String passwordConfirm, {
-  // primarily for testing
-  PocketBase? database
-}) async {
-  var pb = database ?? PocketBase(Environments.pocketbaseUrl);
-
-  try {
-    // Create User
-    // TODO: Move pb.collection call into a method in AuthRepository
-    final userRecord = await pb.collection(Collection.users).create(
-      body: {
-        UserField.email: email,
-        UserField.firstName: firstName,
-        UserField.lastName: lastName,
-        UserField.password: password,
-        UserField.passwordConfirm: passwordConfirm,
-        UserField.username: username,
-        UserField.emailVisibility: false,
-      }
-    );
-
-    // Create UserSettings
-    // TODO: Move pb.collection call into a method in AuthRepository
-    await pb.collection(Collection.userSettings).create(
-      body: {
-        UserSettingsField.defaultCurrency: "",
-        UserSettingsField.defaultInstructions: "",
-        UserSettingsField.user: userRecord.id,
-      }
-    );
-
-    // Send verification email
-    // TODO: Move pb.collection call into a method in AuthRepository
-    await pb.collection(Collection.users).requestVerification(email);
-
-    // Return
-    return (true, {});
-  } on ClientException catch(e) {
-    var errorsMap = getErrorsMapFromClientException(e);
-
-      // Log error
-      developer.log(
-      "auth_api.signup() error",
-      error: e,
-    );
-
-      return (false, errorsMap);
-  }
-}
-
-/// Attempts to send an email to [email] containing instructions
-/// to reset the account password corresponding to that account.
-///
-/// Returns true if the email is successfully sent, else false.
-Future<bool> sendPasswordResetCode(
-  String email, {
-  // primarily for testing
-  PocketBase? database,
-}) async {
-  var pb = database ?? PocketBase(Environments.pocketbaseUrl);
-
-  try {
-    // Send password reset email
-    // TODO: Move pb.collection call into a method in AuthRepository
-    await pb.collection(Collection.users).requestPasswordReset(email);
-
-    // Return
-    return true;
-  } on ClientException catch(e) {
-    // Log error
-    developer.log(
-      "auth_api.sendPasswordResetCode() error",
-      error: e,
-    );
-
-    return false;
-  }
-}
 
 /// Attempts to delete a [User] record, by first deleting all associated records
 /// across all Collections, then deletes the [User] record itself.
@@ -250,16 +46,16 @@ Future<bool> sendPasswordResetCode(
 Future<bool> deleteCurrentUserAccount({BuildContext? context}) async {
   try {
     // Delete Asks
-    await GetIt.instance<AsksRepository>().deleteCurrentUserAsks();
+    await deleteCurrentUserAsks();
 
     // Delete UserGardenRecords
-    await GetIt.instance<AuthRepository>().deleteCurrentUserGardenRecords();
+    await deleteCurrentUserGardenRecords();
 
     // Delete UserSettings
-    await GetIt.instance<AuthRepository>().deleteCurrentUserSettings();
+    await deleteCurrentUserSettings();
 
     // Delete User
-    await GetIt.instance<AuthRepository>().deleteCurrentUser();
+    await deleteCurrentUser();
 
     if (context != null && context.mounted) {
       // Route to Sign in Page
@@ -276,7 +72,7 @@ Future<bool> deleteCurrentUserAccount({BuildContext? context}) async {
     }
 
     return true;
-  } on ClientException catch(e) {
+  } on ClientException catch (e) {
     // Log error
     developer.log(
       "auth_api.deleteCurrentUserAccount() error",
@@ -296,4 +92,281 @@ Future<bool> deleteCurrentUserAccount({BuildContext? context}) async {
 
     return false;
   }
+}
+
+/// Deletes the [UserGardenRecord] records corresponding to [AppState].currentUser.id
+Future<void> deleteCurrentUserGardenRecords() async {
+  final userGardenRecordsRepository = GetIt.instance<UserGardenRecordsRepository>();
+  final currentUser = GetIt.instance<AppState>().currentUser!;
+
+  final resultList = await userGardenRecordsRepository.getList(
+    filter: "${UserGardenRecordField.user} = '${currentUser.id}'",
+  );
+
+  await userGardenRecordsRepository.bulkDelete(resultList: resultList);
+}
+
+/// Deletes the [User] record corresponding to [AppState].currentUser
+Future<void> deleteCurrentUser() async {
+  final currentUser = GetIt.instance<AppState>().currentUser!;
+  await GetIt.instance<UsersRepository>().delete(id: currentUser.id);
+}
+
+/// Deletes the [UserSettings] record corresponding to [AppState].currentUser.id
+Future<void> deleteCurrentUserSettings() async {
+  final currentUserSettings = GetIt.instance<AppState>().currentUserSettings!;
+  await GetIt.instance<UserSettingsRepository>().delete(id: currentUserSettings.id);
+}
+
+/// Queries on the [UserGardenRecord] collection to retrieve all [User]s
+/// with the same [Garden] as the currentGarden.
+///
+/// Returns the list of retrieved [AppUser]s.
+Future<List<AppUser>> getCurrentGardenUsers() async {
+  String currentGardenID = GetIt.instance<AppState>().currentGarden!.id;
+  List<AppUser> users = [];
+
+  final resultList = await GetIt.instance<UserGardenRecordsRepository>().getList(
+    expand: UserGardenRecordField.user,
+    filter: "${UserGardenRecordField.garden} = '$currentGardenID'",
+    sort: "${UserGardenRecordField.user}.${UserField.username}"
+  );
+
+  for (var record in resultList.items) {
+    final userRecord = record.toJson()[QueryKey.expand][UserGardenRecordField.user];
+    final user = AppUser.fromJson(userRecord);
+
+    users.add(user);
+  }
+
+  return users;
+}
+
+/// Queries on the [UserSettings] collection to retrieve the record which
+/// corresponds to the [currentUser].
+///
+/// Returns an [AppUserSettings] instance.
+Future<AppUserSettings> getCurrentUserSettings() async {
+  final currentUser = GetIt.instance<AppState>().currentUser!;
+
+  var result = await GetIt.instance<UserSettingsRepository>().getFirstListItem(
+    filter: "${UserSettingsField.user} = '${currentUser.id}'"
+  );
+
+  return AppUserSettings.fromJson(result.toJson(), currentUser);
+}
+
+/// Returns an instance of [AppUser] corresponding to the [User] record
+/// from the database with the given [userID].
+Future<AppUser> getUserByID(String userID) async {
+  final query = await GetIt.instance<UsersRepository>().getFirstListItem(
+    filter: "${GenericField.id} = '$userID'",
+  );
+
+  return AppUser.fromJson(query.toJson());
+}
+
+/// Queries on the [UserGardenRecord] collection, to retrieve a UserGardenRecord
+/// corresponding to [userID] and [gardenID].
+Future<AppUserGardenRecord> getUserGardenRecord({
+  required String userID,
+  required String gardenID,
+  sort = "-updated"
+}) async {
+  var resultList = await GetIt.instance<UserGardenRecordsRepository>().getList(
+    filter: ""
+      "${UserGardenRecordField.user} = '$userID' && "
+      "${UserGardenRecordField.garden} = '$gardenID'",
+    sort: sort,
+  );
+
+  final record = resultList.items.first.toJson();
+
+  final garden = await getGardenByID(gardenID);
+  final user = await getUserByID(userID);
+
+  return AppUserGardenRecord(
+    id: record[GenericField.id],
+    garden: garden,
+    user: user,
+  );
+}
+
+/// Attempts to log in to the database with [usernameOrEmail]
+/// and [password] parameters, and creates all necessary [GetIt] instances.
+///
+/// Returns true if log in is successful, else false.
+Future<bool> login(
+  String usernameOrEmail,
+  String password, {
+  PocketBase? database
+}) async {
+  try {
+    final pb = database ?? PocketBase(Environments.pocketbaseUrl); // Must use pb because GetIt not yet initialised
+
+    await pb.collection(Collection.users).authWithPassword(
+      usernameOrEmail, password);
+
+    await clearGetItInstance();
+    await registerGetItInstances(pb);
+
+    return true;
+  } on ClientException catch (e) {
+    // Log error
+    developer.log(
+      "auth_api.login() error",
+      error: e,
+    );
+    return false;
+  }
+}
+
+/// Logs out of the database and clears all [GetIt] instances.
+Future<void> logout(
+  context, {
+  // primarily for testing
+  GoRouter? goRouter
+}) async {
+  final usersRepository = GetIt.instance<UsersRepository>();
+
+  // Clear all database subscriptions
+  await usersRepository.unsubscribe();
+  await GetIt.instance<AsksRepository>().unsubscribe();
+  await GetIt.instance<GardensRepository>().unsubscribe();
+  await GetIt.instance<UserSettingsRepository>().unsubscribe();
+
+  // Clear logged in credentials and GetIt instance
+  usersRepository.clearAuthStore();
+  clearGetItInstance();
+
+  if (context.mounted) {
+    var router = goRouter ?? GoRouter.of(context);
+    router.go(Routes.signIn);
+  }
+}
+
+/// Attempts to send an email to [email] containing instructions
+/// to reset the password corresponding to that account.
+///
+/// Returns true if the email is successfully sent, else false.
+Future<bool> sendPasswordResetCode(
+  String email, {
+  PocketBase? database,
+}) async {
+  try {
+    final pb = database ?? PocketBase(Environments.pocketbaseUrl); // Must use pb because GetIt not yet initialised
+
+    // Send password reset email
+    await pb.collection(Collection.users).requestPasswordReset(email);
+
+    // Return
+    return true;
+  } on ClientException catch (e) {
+    // Log error
+    developer.log(
+      "auth_api.sendPasswordResetCode() error",
+      error: e,
+    );
+
+    return false;
+  }
+}
+
+/// Attempts to create a new [User] record in the database with the
+/// [map] parameter.
+///
+/// Returns (true, {}) if sign up is successful, else (false, errorsMap)
+Future<(bool, Map)> signup(
+  Map<String, dynamic> map, {
+  PocketBase? database,
+}) async {
+  try {
+    final pb = database ?? PocketBase(Environments.pocketbaseUrl); // Must use pb because GetIt not yet initialised
+
+    // Create User
+    map[UserField.emailVisibility] = false;
+    final userRecord = await pb.collection(Collection.users).create(body: map);
+
+    // Create UserSettings
+    await pb.collection(Collection.userSettings).create(
+      body: {
+        UserSettingsField.defaultCurrency: "",
+        UserSettingsField.defaultInstructions: "",
+        UserSettingsField.user: userRecord.id
+    });
+
+    // Send verification email
+    await pb.collection(Collection.users).requestVerification(map[UserField.email]);
+
+    // Return
+    return (true, {});
+  } on ClientException catch (e) {
+    var errorsMap = getErrorsMapFromClientException(e);
+
+    // Log error
+    developer.log(
+      "auth_api.signup() error",
+      error: e,
+    );
+
+    return (false, errorsMap);
+  }
+}
+
+/// Subscribes to any changes made in the [User] collection for any [User] record
+/// associated with the given [gardenID].
+///
+/// Calls the [callback] function whenever a change is made.
+Future<Function> subscribeToUsers(String gardenID, Function callback) async {
+  final usersRepository = GetIt.instance<UsersRepository>();
+
+  // Always clear before setting new subscription
+  await usersRepository.unsubscribe();
+
+  return usersRepository.subscribe(gardenID, callback);
+}
+
+/// Subscribes to any changes made in the [UserSettings] collection to the
+/// [UserSettings] record stored in [AppState].currentUserSettings.
+///
+/// Updates the [AppState]'s currentUserSettings whenever a change is made.
+Future<Function> subscribeToUserSettings() async {
+  final userSettingsRepository = GetIt.instance<UserSettingsRepository>();
+  // Always clear before setting new subscription
+  await userSettingsRepository.unsubscribe();
+
+  Future<Function> unsubscribeFunc = userSettingsRepository.subscribe();
+  return unsubscribeFunc;
+}
+
+/// Attempts to update the [User] record that matches the values passed
+/// in the given [map] parameter.
+///
+/// Returns the updated [RecordModel] and an empty map if updated successfully,
+/// else null and a map of the errors.
+Future<(RecordModel?, Map)> updateUser(Map map) async {
+  final (record, errorsMap) = await GetIt.instance<UsersRepository>().update(
+    id: map[GenericField.id],
+    body: {
+      UserField.firstName: map[UserField.firstName],
+      UserField.lastName: map[UserField.lastName],
+  });
+
+  return (record, errorsMap);
+}
+
+/// Attempts to update the [UserSettings] record that matches the values passed
+/// in the given [map] parameter.
+///
+/// Returns the updated [RecordModel] and an empty map if updated successfully,
+/// else null and a map of the errors.
+Future<(RecordModel?, Map)> updateUserSettings(Map map) async {
+  final (record, errorsMap) = await GetIt.instance<UserSettingsRepository>().update(
+    id: map[GenericField.id],
+    body: {
+      UserSettingsField.defaultCurrency: map[UserSettingsField.defaultCurrency],
+      UserSettingsField.defaultInstructions: map[UserSettingsField.defaultInstructions],
+  });
+
+  return (record, errorsMap);
 }

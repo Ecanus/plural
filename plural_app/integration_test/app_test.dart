@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:get_it/get_it.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:pocketbase/pocketbase.dart';
@@ -70,10 +69,6 @@ void main() {
       // pb
       final pb = MockPocketBase();
       final recordService = MockRecordService();
-
-      // GetIt
-      final getIt = GetIt.instance;
-      getIt.registerLazySingleton<PocketBase>(() => pb);
 
       // pb.authStore
       var authStore = AuthStore();
@@ -151,7 +146,7 @@ void main() {
         )
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(
-          items: [tc.getGardenRecordRecordModelFromJson(UserGardenRecordField.garden)]
+          items: [tc.getExpandUserGardenRecordRecordModel(UserGardenRecordField.garden)]
         )
       );
       // RecordService.getList() - getGardensByUser(excludeCurrentGarden: false)
@@ -163,12 +158,13 @@ void main() {
         )
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(
-          items: [tc.getGardenRecordRecordModelFromJson(UserGardenRecordField.garden)]
+          items: [tc.getExpandUserGardenRecordRecordModel(UserGardenRecordField.garden)]
         )
       );
-      // recordService.getList() - getAsksByGardenID
+      // RecordService.getList() - getAsksByGardenID
       when(
         () => recordService.getList(
+          expand: any(named: "expand"),
           filter: any(named: "filter"), // use any() because internal nowString is down to the second (inconsistent to recreate)
           sort: "${AskField.deadlineDate},${GenericField.created}",
         )
@@ -191,6 +187,7 @@ void main() {
       // recordService.getList() - getAsksForListedAsksDialog()
       when(
         () => recordService.getList(
+          expand: any(named: "expand"),
           filter: any(named: "filter"), // Use any(). Copy pasting the filter string doesn't seem to work
           sort: GenericField.created,
         )
@@ -207,7 +204,7 @@ void main() {
         )
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(
-          items: [tc.getGardenRecordRecordModelFromJson(UserGardenRecordField.user)]
+          items: [tc.getExpandUserGardenRecordRecordModel(UserGardenRecordField.user)]
         )
       );
 
@@ -225,7 +222,7 @@ void main() {
         (_) async => () async {}
       );
 
-      await tester.pumpWidget(MyApp());
+      await tester.pumpWidget(MyApp(database: pb));
 
       // Enter username and password
       await tester.enterText(find.byType(AppTextFormField), tc.user.username);

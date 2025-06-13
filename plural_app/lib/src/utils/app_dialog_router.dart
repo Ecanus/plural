@@ -14,13 +14,13 @@ import 'package:plural_app/src/features/asks/presentation/listed_asks_dialog.dar
 import 'package:plural_app/src/features/asks/presentation/listed_ask_tile.dart';
 
 // Auth
-import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
+import 'package:plural_app/src/features/authentication/data/auth_api.dart';
 import 'package:plural_app/src/features/authentication/presentation/listed_users_dialog.dart';
 import 'package:plural_app/src/features/authentication/presentation/listed_user_tile.dart';
 import 'package:plural_app/src/features/authentication/presentation/user_settings_dialog.dart';
 
 // Gardens
-import 'package:plural_app/src/features/gardens/data/gardens_repository.dart';
+import 'package:plural_app/src/features/gardens/data/gardens_api.dart';
 import 'package:plural_app/src/features/gardens/presentation/listed_gardens_dialog.dart';
 import 'package:plural_app/src/features/gardens/presentation/listed_garden_tile.dart';
 
@@ -59,7 +59,7 @@ class AppDialogRouter {
 
   /// Auth
   Future<void> routeToUserDialogListView() async {
-    final users = await GetIt.instance<AuthRepository>().getCurrentGardenUsers();
+    final users = await getCurrentGardenUsers();
 
     viewNotifier.value = UserDialogList(
       listedUserTiles: [for (var user in users) ListedUserTile(user: user)]
@@ -77,7 +77,7 @@ class AppDialogRouter {
 
   /// Gardens
   Future<void> routeToGardenDialogListView() async {
-    final gardens = await GetIt.instance<GardensRepository>().getGardensByUser(
+    final gardens = await getGardensByUserID(
       GetIt.instance<AppState>().currentUserID!
     );
 

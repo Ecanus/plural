@@ -4,12 +4,16 @@ import 'package:get_it/get_it.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:pocketbase/pocketbase.dart';
 
+// Constants
+import 'package:plural_app/src/constants/fields.dart';
+
 // Asks
 import 'package:plural_app/src/features/asks/data/asks_repository.dart';
 
 // Auth
-import 'package:plural_app/src/features/authentication/data/auth_repository.dart';
 import 'package:plural_app/src/features/authentication/data/user_garden_records_repository.dart';
+import 'package:plural_app/src/features/authentication/data/user_settings_repository.dart';
+import 'package:plural_app/src/features/authentication/data/users_repository.dart';
 
 // Gardens
 import 'package:plural_app/src/features/gardens/data/gardens_repository.dart';
@@ -37,13 +41,20 @@ void main() {
 
       final pb = MockPocketBase();
       final recordService = MockRecordService();
+
       final getIt = GetIt.instance;
-      final mockAuthRepository = MockAuthRepository();
       final mockGardensRepository = MockGardensRepository();
+      final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
+      final mockUserSettingsRepository = MockUserSettingsRepository();
+      final mockUsersRepository = MockUsersRepository();
+
       getIt.registerLazySingleton<AppState>(() => appState);
-      getIt.registerLazySingleton<AuthRepository>(() => mockAuthRepository);
       getIt.registerLazySingleton<GardensRepository>(() => mockGardensRepository);
       getIt.registerLazySingleton<PocketBase>(() => pb);
+      getIt.registerLazySingleton<UserSettingsRepository>(() => mockUserSettingsRepository);
+      getIt.registerLazySingleton<UserGardenRecordsRepository>(
+        () => mockUserGardenRecordsRepository);
+      getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
 
       // pb.collection()
       when(
@@ -58,18 +69,39 @@ void main() {
         (_) async => () {}
       );
 
-      // AuthRepository.subscribeToUserSettings()
+      // UserSettingsRepository.unsubscribe()
       when(
-        () => mockAuthRepository.subscribeToUserSettings()
+        () => mockUserSettingsRepository.unsubscribe()
+      ).thenAnswer(
+        (_) async => {}
+      );
+      // UserSettingsRepository.subscribe()
+      when(
+        () => mockUserSettingsRepository.subscribe()
       ).thenAnswer(
         (_) async => () {}
       );
 
-      // GardensRepository.getGardensByUser()
+      // UserGardenRecordsRepository.getList()
       when(
-        () => mockGardensRepository.getGardensByUser(any())
+        () => mockUserGardenRecordsRepository.getList(
+          expand: any(named: "expand"),
+          filter: any(named: "filter"),
+          sort: any(named: "sort")
+        )
       ).thenAnswer(
-        (_) async => [tc.garden]
+        (_) async => ResultList<RecordModel>(items: [
+          tc.getExpandUserGardenRecordRecordModel(UserGardenRecordField.user)
+        ])
+      );
+
+      // UsersRepository.getFirstListItem()
+      when(
+        () => mockUsersRepository.getFirstListItem(
+          filter: any(named: "filter")
+        )
+      ).thenAnswer(
+        (_) async => tc.getUserRecordModel()
       );
 
       await tester.pumpWidget(
@@ -107,17 +139,22 @@ void main() {
 
       final pb = MockPocketBase();
       final recordService = MockRecordService();
-      final getIt = GetIt.instance;
-      final mockAuthRepository = MockAuthRepository();
-      final mockGardensRepository = MockGardensRepository();
 
-      getIt.registerLazySingleton<PocketBase>(() => pb);
+      final getIt = GetIt.instance;
+      final mockAsksRepository = MockAsksRepository();
+      final mockGardensRepository = MockGardensRepository();
+      final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
+      final mockUserSettingsRepository = MockUserSettingsRepository();
+      final mockUsersRepository = MockUsersRepository();
+
+      getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
       getIt.registerLazySingleton<AppState>(() => appState);
-      getIt.registerLazySingleton<AuthRepository>(() => mockAuthRepository);
       getIt.registerLazySingleton<GardensRepository>(() => mockGardensRepository);
-      getIt.registerLazySingleton<AsksRepository>(() => AsksRepository(pb: pb));
+      getIt.registerLazySingleton<PocketBase>(() => pb);
+      getIt.registerLazySingleton<UserSettingsRepository>(() => mockUserSettingsRepository);
       getIt.registerLazySingleton<UserGardenRecordsRepository>(
-        () => UserGardenRecordsRepository(pb: pb));
+        () => mockUserGardenRecordsRepository);
+      getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
 
       // pb.collection()
       when(
@@ -131,52 +168,83 @@ void main() {
       ).thenAnswer(
         (_) async => () {}
       );
-      // RecordService.getList() - AsksRepository
+
+      // AsksRepository.getList()
+      final asksResultList = ResultList<RecordModel>(items: [tc.getAskRecordModel()]);
       when(
-        () => recordService.getList(
-          expand: any(named: "expand"),
+        () => mockAsksRepository.getList(
           filter: any(named: "filter"),
-          sort: any(named: "sort")
         )
       ).thenAnswer(
-        (_) async => ResultList<RecordModel>(items: [tc.getAskRecordModel()])
+        (_) async => asksResultList
       );
-      // RecordService.getFirstListItem() - UserGardenRecordsRepository
+      // AsksRepository.bulkDelete()
       when(
-        () => recordService.getFirstListItem(any())
-      ).thenAnswer(
-        (_) async => tc.getGardenRecordRecordModel()
-      );
-      // RecordService.delete() - AsksRepository & UserGardenRecordsRepository
-      when(
-        () => recordService.delete(any())
+        () => mockAsksRepository.bulkDelete(
+          resultList: asksResultList,
+        )
       ).thenAnswer(
         (_) async => {}
       );
 
-      // AuthRepository.subscribeToUserSettings()
+      // UserSettingsRepository.unsubscribe()
       when(
-        () => mockAuthRepository.subscribeToUserSettings()
+        () => mockUserSettingsRepository.unsubscribe()
+      ).thenAnswer(
+        (_) async => {}
+      );
+      // UserSettingsRepository.subscribe()
+      when(
+        () => mockUserSettingsRepository.subscribe()
       ).thenAnswer(
         (_) async => () {}
       );
 
-      // GardensRepository.getGardensByUser()
+      // UserGardenRecordsRepository.getFirstListItem()
       when(
-        () => mockGardensRepository.getGardensByUser(any())
+        () => mockUserGardenRecordsRepository.getFirstListItem(
+          filter: any(named: "filter"),
+        )
       ).thenAnswer(
-        (_) async => [tc.garden]
+        (_) async => tc.getUserGardenRecordRecordModel()
       );
-
-      // Check database methods not yet called
-      verifyNever(() =>  recordService.getList(
+      // UserGardenRecordsRepository.delete()
+      when(
+        () => mockUserGardenRecordsRepository.delete(
+          id: any(named: "id"),
+        )
+      ).thenAnswer(
+        (_) async => {}
+      );
+      // UserGardenRecordsRepository.getList()
+      when(
+        () => mockUserGardenRecordsRepository.getList(
           expand: any(named: "expand"),
           filter: any(named: "filter"),
           sort: any(named: "sort")
         )
+      ).thenAnswer(
+        (_) async => ResultList<RecordModel>(items: [
+          tc.getExpandUserGardenRecordRecordModel(UserGardenRecordField.user)
+        ])
       );
-      verifyNever(() => recordService.getFirstListItem(any()));
-      verifyNever(() => recordService.delete(any()));
+
+      // UsersRepository.getFirstListItem()
+      when(
+        () => mockUsersRepository.getFirstListItem(
+          filter: any(named: "filter")
+        )
+      ).thenAnswer(
+        (_) async => tc.getUserRecordModel()
+      );
+
+      // Check database methods not yet called
+      verifyNever(() => mockAsksRepository.getList(filter: any(named: "filter")));
+      verifyNever(() => mockAsksRepository.bulkDelete(resultList: asksResultList));
+      verifyNever(() => mockUserGardenRecordsRepository.getFirstListItem(
+        filter: any(named: "filter")
+      ));
+      verifyNever(() => mockUserGardenRecordsRepository.delete(id: any(named: "id")));
 
       // Render Landing Page
       await tester.pumpWidget(
@@ -186,18 +254,16 @@ void main() {
       );
 
       // Check database methods each called
-      verify(() =>  recordService.getList(
-          expand: any(named: "expand"),
-          filter: any(named: "filter"),
-          sort: any(named: "sort")
-        )
-      ).called(1);
-      verify(() => recordService.getFirstListItem(any())).called(1);
-      verify(() => recordService.delete(any())).called(2); // 1 for Ask, 1 for UserGardenRecord
-
+      verify(() => mockAsksRepository.getList(filter: any(named: "filter"))).called(1);
+      verify(() => mockAsksRepository.bulkDelete(resultList: asksResultList)).called(1);
+      verify(() => mockUserGardenRecordsRepository.getFirstListItem(
+        filter: any(named: "filter")
+      )).called(1);
+      verify(() => mockUserGardenRecordsRepository.delete(
+        id: any(named: "id")
+      )).called(1);
     });
 
     tearDown(() => GetIt.instance.reset());
-
   });
 }
