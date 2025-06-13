@@ -12,7 +12,7 @@ enum FormFieldType {
 }
 
 class AppForm {
-  Map<String, dynamic> auxiliaryFields = {}; // For any values used during the instance's lifetime, unrelated to the model being represented
+  Map<String, dynamic> auxiliaryFields = {}; // For any values used during the instance's lifetime unrelated to the model being represented
   Map<String, dynamic> fields = {};
   Map<String, dynamic> errors = {};
 

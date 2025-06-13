@@ -3,9 +3,6 @@ import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:get_it/get_it.dart';
-import 'package:plural_app/src/constants/environments.dart';
-import 'package:plural_app/src/features/gardens/data/gardens_api.dart';
-import 'package:plural_app/src/utils/app_state.dart';
 import 'package:pocketbase/pocketbase.dart';
 
 // Common Widgets
@@ -13,6 +10,7 @@ import 'package:plural_app/src/common_widgets/app_snackbars.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_values.dart';
+import 'package:plural_app/src/constants/environments.dart';
 import 'package:plural_app/src/constants/fields.dart';
 import 'package:plural_app/src/constants/pocketbase.dart';
 import 'package:plural_app/src/constants/routes.dart';
@@ -30,12 +28,14 @@ import 'package:plural_app/src/features/authentication/domain/app_user_garden_re
 import 'package:plural_app/src/features/authentication/domain/app_user_settings.dart';
 
 // Gardens
+import 'package:plural_app/src/features/gardens/data/gardens_api.dart';
 import 'package:plural_app/src/features/gardens/data/gardens_repository.dart';
 
 // Localization
 import 'package:plural_app/src/localization/lang_en.dart';
 
 // Utils
+import 'package:plural_app/src/utils/app_state.dart';
 import 'package:plural_app/src/utils/exceptions.dart';
 import 'package:plural_app/src/utils/service_locator.dart';
 
@@ -94,7 +94,7 @@ Future<bool> deleteCurrentUserAccount({BuildContext? context}) async {
   }
 }
 
-/// Deletes the [UserGardenRecord] record corresponding to [AppState].currentUser.id
+/// Deletes the [UserGardenRecord] records corresponding to [AppState].currentUser.id
 Future<void> deleteCurrentUserGardenRecords() async {
   final userGardenRecordsRepository = GetIt.instance<UserGardenRecordsRepository>();
   final currentUser = GetIt.instance<AppState>().currentUser!;
@@ -168,11 +168,6 @@ Future<AppUser> getUserByID(String userID) async {
 
 /// Queries on the [UserGardenRecord] collection, to retrieve a UserGardenRecord
 /// corresponding to [userID] and [gardenID].
-///
-/// Sorted on the [sort] value.
-///
-/// Returns an [AppUserGardenRecord] instance corresponding to the retrieved
-/// UserGardenRecord if one is found. Else, returns null.
 Future<AppUserGardenRecord> getUserGardenRecord({
   required String userID,
   required String gardenID,
@@ -209,7 +204,7 @@ Future<bool> login(
   try {
     final pb = database ?? PocketBase(Environments.pocketbaseUrl); // Must use pb because GetIt not yet initialised
 
-    await pb.collection(Collection.users).authWithPassword( // Must use pb because GetIt not yet initialised
+    await pb.collection(Collection.users).authWithPassword(
       usernameOrEmail, password);
 
     await clearGetItInstance();
