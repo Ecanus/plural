@@ -1,4 +1,5 @@
 import 'package:go_router/go_router.dart';
+import 'package:pocketbase/pocketbase.dart';
 
 // Constants
 import 'package:plural_app/src/constants/query_parameters.dart';
@@ -12,7 +13,7 @@ import 'package:plural_app/src/features/gardens/presentation/garden_page.dart';
 import 'package:plural_app/src/features/gardens/presentation/landing_page.dart';
 
 class AppRouter {
-  AppRouter() {
+  AppRouter(PocketBase? database) {
     router = GoRouter(
       initialLocation: Routes.signIn,
       routes: [
@@ -28,7 +29,9 @@ class AppRouter {
         ),
         GoRoute(
           path: Routes.signIn,
-          builder: (_, __) => SignInPage(),
+          builder: (_, __) => SignInPage(
+            database: database
+          ),
         )
       ]
     );

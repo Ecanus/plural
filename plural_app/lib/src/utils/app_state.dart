@@ -1,3 +1,6 @@
+import 'package:plural_app/src/features/asks/data/asks_api.dart' as asks_api;
+import 'package:plural_app/src/features/gardens/data/gardens_api.dart' as gardens_api;
+
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
@@ -15,7 +18,6 @@ import 'package:plural_app/src/constants/pocketbase.dart';
 import 'package:plural_app/src/constants/routes.dart';
 
 // Asks
-import 'package:plural_app/src/features/asks/data/asks_api.dart' as asks_api;
 import 'package:plural_app/src/features/asks/domain/ask.dart';
 
 // Auth
@@ -24,7 +26,6 @@ import 'package:plural_app/src/features/authentication/domain/app_user.dart';
 import 'package:plural_app/src/features/authentication/domain/app_user_settings.dart';
 
 // Gardens
-import 'package:plural_app/src/features/gardens/data/gardens_api.dart' as gardens_api;
 import 'package:plural_app/src/features/gardens/domain/constants.dart';
 import 'package:plural_app/src/features/gardens/domain/garden.dart';
 
