@@ -41,7 +41,7 @@ class AskDialogText {
 
   static const emptyListedAskTilesMessage = "No Asks found";
   static const emptyListedAskTilesSubtitle = ""
-  "Click the '$createAsk' button below to get started.";
+    "Click the '$createAsk' button below to get started.";
 
   static const instructions = "Instructions";
 
