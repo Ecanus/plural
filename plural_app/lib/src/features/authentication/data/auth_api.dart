@@ -168,17 +168,20 @@ Future<AppUser> getUserByID(String userID) async {
 
 /// Queries on the [UserGardenRecord] collection, to retrieve a UserGardenRecord
 /// corresponding to [userID] and [gardenID].
-Future<AppUserGardenRecord> getUserGardenRecord({
+Future<AppUserGardenRecord?> getUserGardenRecord({
   required String userID,
   required String gardenID,
   sort = "-updated"
 }) async {
-  var resultList = await GetIt.instance<UserGardenRecordsRepository>().getList(
+  final resultList = await GetIt.instance<UserGardenRecordsRepository>().getList(
     filter: ""
       "${UserGardenRecordField.user} = '$userID' && "
       "${UserGardenRecordField.garden} = '$gardenID'",
     sort: sort,
   );
+
+  // Return null if no UserGardenRecord record is found
+  if (resultList.items.isEmpty) return null;
 
   final record = resultList.items.first.toJson();
 
@@ -224,8 +227,7 @@ Future<bool> login(
 /// Logs out of the database and clears all [GetIt] instances.
 Future<void> logout(
   context, {
-  // primarily for testing
-  GoRouter? goRouter
+  GoRouter? goRouter // primarily for testing
 }) async {
   final usersRepository = GetIt.instance<UsersRepository>();
 

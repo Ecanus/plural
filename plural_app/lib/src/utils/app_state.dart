@@ -86,27 +86,39 @@ class AppState with ChangeNotifier {
   /// Garden page.
   ///
   /// If no corresponding [UserGardenRecord] is found, an error Snackbar will appear,
-  /// and no reroute will take place.
-  Future<void> setGardenAndReroute(BuildContext context, Garden newGarden) async {
-    // TODO: check on a valid UserGardenRecord before redirecting
-    // TODO: If fails, reload the page (i.e. reroute. Consider adding in the currentRoute as a parameter)
-    // Check there exists a UserGardenRecord corresponding to _currentUser and newGarden
-    final hasUserGardenRecord = true;
+  /// and the page will be refreshed.
+  Future<void> setGardenAndReroute(
+    BuildContext context,
+    Garden newGarden, {
+    GoRouter? goRouter, // primarily for testing
+    bool showsSnackbar = true, // primarily for testing
+  }) async {
+    // Check there exists a UserGardenRecord corresponding to currentUser and newGarden
+    final userGardenRecord = await getUserGardenRecord(
+      userID: currentUser!.id,
+      gardenID: newGarden.id
+    );
 
-    // If exists corresponding UserGardenRecord, reroute
-    if (hasUserGardenRecord && context.mounted) {
-      currentGarden = newGarden; // will also call notifyListeners() and updateSubscriptions()
-      GoRouter.of(context).go(Routes.garden);
-    } else {
-      // Else, show Snackbar error
-      var snackBar = AppSnackbars.getSnackbar(
-          SnackbarText.invalidGardenPermissions,
-          duration: AppDurations.s9,
-          snackbarType: SnackbarType.error
-        );
+    if (context.mounted) {
+      final router = goRouter ?? GoRouter.of(context);
 
-        // Display error Snackbar
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      // If corresponding UserGardenRecord is found, reroute to garden
+      if (userGardenRecord != null) {
+        currentGarden = newGarden; // will also call notifyListeners() and updateSubscriptions()
+        router.go(Routes.garden);
+      } else {
+        var snackBar = AppSnackbars.getSnackbar(
+            SnackbarText.invalidGardenPermissions,
+            duration: AppDurations.s9,
+            snackbarType: SnackbarType.error
+          );
+
+          // Display error Snackbar
+          if (showsSnackbar) ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+          // Refresh
+          router.refresh();
+      }
     }
   }
 
