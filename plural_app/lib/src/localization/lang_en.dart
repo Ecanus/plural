@@ -39,6 +39,10 @@ class AskDialogText {
   static const deleteAsk = "Delete ask";
   static const description = "Description";
 
+  static const emptyListedAskTilesMessage = "No Asks found";
+  static const emptyListedAskTilesSubtitle = ""
+    "Click the '$createAsk' button below to get started.";
+
   static const instructions = "Instructions";
 
   static const listedAsks = "Go to Asks";
@@ -110,6 +114,8 @@ class LandingPageText {
   static const createGarden = "Create Garden";
 
   static const deleteAccount = "Delete account";
+
+  static const emptyLandingPageGardensListMessage = "No Gardens found";
 
   static const gardens = "Gardens";
 
