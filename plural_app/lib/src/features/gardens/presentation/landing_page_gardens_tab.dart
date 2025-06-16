@@ -9,6 +9,9 @@ import 'package:plural_app/src/features/gardens/data/gardens_api.dart';
 import 'package:plural_app/src/features/gardens/domain/garden.dart';
 import 'package:plural_app/src/features/gardens/presentation/listed_garden_tile.dart';
 
+// Localization
+import 'package:plural_app/src/localization/lang_en.dart';
+
 // Utils
 import 'package:plural_app/src/utils/app_state.dart';
 
@@ -46,12 +49,35 @@ class LandingPageGardensList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: ListView(
+      child: gardens.isEmpty ?
+      EmptyLandingPageGardensListMessage() :
+      ListView(
         padding: const EdgeInsets.all(AppPaddings.p35),
         children: [
           for (Garden garden in gardens) LandingPageListedGardenTile(garden: garden)
         ],
       ),
+    );
+  }
+}
+
+class EmptyLandingPageGardensListMessage extends StatelessWidget {
+  const EmptyLandingPageGardensListMessage({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            LandingPageText.emptyLandingPageGardensListMessage,
+            style: Theme.of(context).textTheme.headlineSmall,
+          ),
+        ],
+      )
     );
   }
 }

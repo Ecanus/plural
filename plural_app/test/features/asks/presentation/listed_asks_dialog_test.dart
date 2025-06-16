@@ -103,5 +103,74 @@ void main() {
     });
 
     tearDown(() => GetIt.instance.reset());
+
+    testWidgets("empty", (tester) async {
+      final tc = TestContext();
+      final appState = AppState.skipSubscribe()
+                        ..currentGarden = tc.garden
+                        ..currentUser = tc.user
+                        ..currentUserSettings = tc.userSettings; // for initialValue of AppCurrencyPickerFormField
+
+      // GetIt
+      final getIt = GetIt.instance;
+      final mockAsksRepository = MockAsksRepository();
+      getIt.registerLazySingleton<AppState>(() => appState);
+      getIt.registerLazySingleton<AppDialogRouter>(() => AppDialogRouter());
+      getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
+
+      // AsksRepository.getList()
+      when(
+        () => mockAsksRepository.getList(
+          filter: any(named: "filter"),
+          sort: any(named: "sort"),
+        )
+      ).thenAnswer(
+        (_) async => ResultList<RecordModel>(items: [])
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (BuildContext context) {
+                return ElevatedButton(
+                  onPressed: () => createListedAsksDialog(context),
+                  child: Text("The ElevatedButton")
+                );
+              }
+            )
+          ),
+        )
+      );
+
+      // Check widgets not yet displayed
+      expect(find.byType(AskDialogList), findsNothing);
+      expect(find.byType(EmptyListedAskTilesMessage), findsNothing);
+
+      // Tap ElevatedButton (to open dialog)
+      await tester.tap(find.byType(ElevatedButton));
+      await tester.pumpAndSettle();
+
+      // Check expected values are found
+      expect(find.byType(AskDialogList), findsOneWidget);
+      expect(find.byType(EmptyListedAskTilesMessage), findsOneWidget);
+      expect(find.byType(ListedAskTile), findsNothing);
+      expect(find.byType(AppDialogFooterBuffer), findsOneWidget);
+      expect(find.byType(AppDialogNavFooter), findsOneWidget);
+
+      // Check AskDialogCreateForm not yet in view
+      expect(find.byType(AskDialogCreateForm), findsNothing);
+
+      // Tap RouteToCreateAskViewButton (to route to another form view)
+      await tester.ensureVisible(find.byType(RouteToCreateAskViewButton));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byType(RouteToCreateAskViewButton));
+      await tester.pumpAndSettle();
+
+      // Check RouteToCreateAskViewButton has been created
+      expect(find.byType(AskDialogCreateForm), findsOneWidget);
+    });
+
+    tearDown(() => GetIt.instance.reset());
   });
 }

@@ -14,6 +14,7 @@ import 'package:plural_app/src/features/authentication/data/users_repository.dar
 // Gardens
 import 'package:plural_app/src/features/gardens/data/gardens_repository.dart';
 import 'package:plural_app/src/features/gardens/presentation/landing_page_gardens_tab.dart';
+import 'package:plural_app/src/features/gardens/presentation/listed_garden_tile.dart';
 
 // Utils
 import 'package:plural_app/src/utils/app_state.dart';
@@ -38,13 +39,6 @@ void main() {
         () => mockUserGardenRecordsRepository
       );
 
-      // UsersRepository.getFirstListItem()
-      when(
-        () => mockUsersRepository.getFirstListItem(filter: any(named: "filter"))
-      ).thenAnswer(
-        (_) async => tc.getUserRecordModel()
-      );
-
       // UserGardenRecordsRepository.getList()
       when(
         () => mockUserGardenRecordsRepository.getList(
@@ -56,7 +50,63 @@ void main() {
         (_) async => ResultList<RecordModel>(
           items: [
             tc.getExpandUserGardenRecordRecordModel(UserGardenRecordField.garden),
+            tc.getExpandUserGardenRecordRecordModel(UserGardenRecordField.garden),
           ]
+        )
+      );
+
+      // UsersRepository.getFirstListItem()
+      when(
+        () => mockUsersRepository.getFirstListItem(filter: any(named: "filter"))
+      ).thenAnswer(
+        (_) async => tc.getUserRecordModel()
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: LandingPageGardensTab()
+          )
+        ));
+
+      // Check that only LandingPageGardensListLoading is rendered
+      expect(find.byType(LandingPageGardensListLoading), findsOneWidget);
+      expect(find.byType(LandingPageGardensList), findsNothing);
+      expect(find.byType(LandingPageListedGardenTile), findsNothing);
+
+      // Finish animations
+      await tester.pumpAndSettle();
+
+      // Check that correct widgets are rendered next
+      expect(find.byType(LandingPageGardensListLoading), findsNothing);
+      expect(find.byType(LandingPageGardensList), findsOneWidget);
+      expect(find.byType(LandingPageListedGardenTile), findsNWidgets(2));
+    });
+
+    tearDown(() => GetIt.instance.reset());
+
+    testWidgets("empty", (tester) async {
+      final tc = TestContext();
+      final appState = AppState()
+                        ..currentUser = tc.user;
+
+      final getIt = GetIt.instance;
+      final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
+      getIt.registerLazySingleton<AppState>(() => appState);
+      getIt.registerLazySingleton<UserGardenRecordsRepository>(
+        () => mockUserGardenRecordsRepository
+      );
+
+      // UserGardenRecordsRepository.getList()
+      when(
+        () => mockUserGardenRecordsRepository.getList(
+          expand: any(named: "expand"),
+          filter: "${UserGardenRecordField.user} = '${tc.user.id}'",
+          sort: any(named: "sort"),
+        )
+      ).thenAnswer(
+        (_) async => ResultList<RecordModel>(
+          items: []
         )
       );
 
@@ -67,14 +117,20 @@ void main() {
           )
         ));
 
-      // Check that LandingPageGardensListLoading is rendered first
+      // Check that only LandingPageGardensListLoading is rendered
       expect(find.byType(LandingPageGardensListLoading), findsOneWidget);
+      expect(find.byType(LandingPageGardensList), findsNothing);
+      expect(find.byType(LandingPageListedGardenTile), findsNothing);
+      expect(find.byType(EmptyLandingPageGardensListMessage), findsNothing);
 
       // Finish animations
       await tester.pumpAndSettle();
 
-      // Check that LandingPageGardensList is rendered next
+      // Check that correct widgets are rendered next
+      expect(find.byType(LandingPageGardensListLoading), findsNothing);
       expect(find.byType(LandingPageGardensList), findsOneWidget);
+      expect(find.byType(LandingPageListedGardenTile), findsNothing);
+      expect(find.byType(EmptyLandingPageGardensListMessage), findsOneWidget);
     });
 
     tearDown(() => GetIt.instance.reset());

@@ -58,10 +58,12 @@ class AskDialogList extends StatelessWidget {
     return Column(
       children: [
         Expanded(
-          child: ListView(
-            padding: const EdgeInsets.all(AppPaddings.p35),
-            children: listedAskTiles,
-          ),
+          child: listedAskTiles.isEmpty ?
+            EmptyListedAskTilesMessage() :
+            ListView(
+              padding: const EdgeInsets.all(AppPaddings.p35),
+              children: listedAskTiles,
+            )
         ),
         AppDialogFooterBuffer(buttons: [RouteToCreateAskViewButton()],),
         AppDialogNavFooter(
@@ -100,3 +102,24 @@ class RouteToCreateAskViewButton extends StatelessWidget {
   }
 }
 
+class EmptyListedAskTilesMessage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            AskDialogText.emptyListedAskTilesMessage,
+            style: Theme.of(context).textTheme.headlineSmall
+          ),
+          gapH25,
+          Text(
+            AskDialogText.emptyListedAskTilesSubtitle,
+            style: Theme.of(context).textTheme.bodyMedium
+          ),
+        ],
+      ),
+    );
+  }
+}
