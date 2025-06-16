@@ -113,12 +113,13 @@ void main() {
         (_) async => RecordAuth()
       );
 
-      // RecordService.getFirstListItem()
+      // RecordService.getFirstListItem() - user
       when(
         () => recordService.getFirstListItem("${GenericField.id} = '${tc.user.id}'")
       ).thenAnswer(
         (_) async => tc.getUserRecordModel()
       );
+      // RecordService.getFirstListItem() - otherUser
       when(
         () => recordService.getFirstListItem("${GenericField.id} = '${otherUser.id}'")
       ).thenAnswer(
@@ -128,11 +129,19 @@ void main() {
           username: otherUser.username,
         )
       );
+      // RecordService.getFirstListItem() - userSettings
       when(
         () => recordService.getFirstListItem(
           "${UserSettingsField.user} = '${tc.user.id}'")
       ).thenAnswer(
         (_) async => tc.getUserSettingsRecordModel()
+      );
+      // RecordService.getFirstListItem() - garden
+      when(
+        () => recordService.getFirstListItem(
+          "${GenericField.id} = '${tc.garden.id}'")
+      ).thenAnswer(
+        (_) async => tc.getGardenRecordModel()
       );
 
       // RecordService.getList() - getGardensByUser(excludeCurrentGarden: true)
@@ -147,6 +156,20 @@ void main() {
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(
           items: [tc.getExpandUserGardenRecordRecordModel(UserGardenRecordField.garden)]
+        )
+      );
+      // RecordService.getList() - getUserGardenRecord()
+      when(
+        () => recordService.getList(
+          expand: any(named: "expand"),
+          filter: ""
+            "${UserGardenRecordField.user} = '${tc.user.id}' && "
+            "${UserGardenRecordField.garden} = '${tc.garden.id}'",
+          sort: "-updated",
+        )
+      ).thenAnswer(
+        (_) async => ResultList<RecordModel>(
+          items: [tc.getUserGardenRecordRecordModel()]
         )
       );
       // RecordService.getList() - getGardensByUser(excludeCurrentGarden: false)

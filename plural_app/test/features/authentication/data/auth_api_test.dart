@@ -406,10 +406,33 @@ void main() {
         gardenID: tc.garden.id
       );
 
-      expect(userGardenRecord, isA<AppUserGardenRecord>());
+      expect(userGardenRecord!, isA<AppUserGardenRecord>());
       expect(userGardenRecord.id, "TestGardenRecordID");
       expect(userGardenRecord.garden, tc.garden);
       expect(userGardenRecord.user, tc.user);
+
+      // UserGardenRecordsRepository.getList(), Now returns empty list
+      when(
+        () => mockUserGardenRecordsRepository.getList(
+          filter: ""
+            "${UserGardenRecordField.user} = '${tc.user.id}' && "
+            "${UserGardenRecordField.garden} = '${tc.garden.id}'",
+          sort: "-updated"
+        )
+      ).thenAnswer(
+        (_) async => ResultList<RecordModel>(
+          items: []
+        )
+      );
+
+      final userGardenRecord2 = await getUserGardenRecord(
+        userID: tc.user.id,
+        gardenID: tc.garden.id
+      );
+
+      // Check null is now returned
+      expect(userGardenRecord2, null);
+
     });
 
     tearDown(() => GetIt.instance.reset());
