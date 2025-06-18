@@ -41,8 +41,8 @@ class CurrentGardenDialogList extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.only(
-            left: AppPaddings.p40,
-            right: AppPaddings.p40,
+            left: AppPaddings.p35,
+            right: AppPaddings.p35,
             top: AppPaddings.p50,
             bottom: AppPaddings.p10,
           ),

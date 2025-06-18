@@ -31,7 +31,7 @@ class _GardenPageState extends State<GardenPage> {
               gapH30,
               GardenTimeline(),
               GardenFooter(),
-              gapH65
+              gapH35
             ],
           ),
         ),

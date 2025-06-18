@@ -6,6 +6,7 @@ class AppDurations {
   static const ms80 = Duration(milliseconds: 80);
   static const ms120 = Duration(milliseconds: 120);
   static const ms125 = Duration(milliseconds: 125);
+  static const ms250 = Duration(milliseconds: 250);
   static const s3 = Duration(seconds: 3);
   static const s9 = Duration(seconds: 9);
 }

@@ -1,7 +1,10 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
+import 'package:plural_app/src/constants/app_values.dart';
 
 // Asks
 import 'package:plural_app/src/features/asks/presentation/creatable_ask_dialog.dart';
@@ -15,54 +18,107 @@ import 'package:plural_app/src/features/gardens/presentation/current_garden_dial
 // Localization
 import 'package:plural_app/src/localization/lang_en.dart';
 
-class GardenFooter extends StatelessWidget {
-  final ValueNotifier<bool> _isFooterCollapsed = ValueNotifier<bool>(true);
+class GardenFooter extends StatefulWidget {
+  @override
+  State<GardenFooter> createState() => _GardenFooterState();
+}
 
-  bool _toggleIsFooterCollapsed () {
-    return _isFooterCollapsed.value = !_isFooterCollapsed.value;
+class _GardenFooterState extends State<GardenFooter>
+  with TickerProviderStateMixin{
+
+  // Left button
+  late final AnimationController _leftButtonAnimationController;
+  late final Animation<Offset> _leftButtonOffsetAnimation;
+
+  // Right button
+  late final AnimationController _rightButtonAnimationController;
+  late final Animation<Offset> _rightButtonOffsetAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // AnimationControllers
+    _leftButtonAnimationController = AnimationController(
+      duration: AppDurations.ms250,
+      vsync: this,
+    );
+    _rightButtonAnimationController = AnimationController(
+      duration: AppDurations.ms250,
+      vsync: this,
+    );
+
+    // OffsetAnimations
+    _leftButtonOffsetAnimation = Tween<Offset>(
+      begin: const Offset(0.0, AppPaddings.p5),
+      end: Offset.zero,
+    ).animate(
+      CurvedAnimation(
+        parent: _leftButtonAnimationController,
+        curve: Curves.easeOutCubic
+    ));
+    _rightButtonOffsetAnimation = Tween<Offset>(
+      begin: const Offset(0.0, AppPaddings.p5),
+      end: Offset.zero,
+    ).animate(
+      CurvedAnimation(
+        parent: _rightButtonAnimationController,
+        curve: Curves.easeOutCubic
+    ));
+  }
+
+  void _mouseEnter(_) => setState(() {
+    final delayValues = [
+      Duration(milliseconds: 0),
+      Duration(milliseconds: (Random().nextInt(4) + 1) * 10) // range of 10 - 40
+    ]..shuffle();
+
+    Future.delayed(delayValues[0], () {
+      _leftButtonAnimationController.forward();
+    });
+    Future.delayed(delayValues[1], () {
+      _rightButtonAnimationController.forward();
+    });
+  });
+
+  void _mouseExit(_) => setState(() {
+    final delayValues = [
+      Duration(milliseconds: 0),
+      Duration(milliseconds: (Random().nextInt(4) + 1) * 10) // range of 10 - 40
+    ]..shuffle();
+
+    Future.delayed(delayValues[0], () {
+      _leftButtonAnimationController.reverse();
+    });
+    Future.delayed(delayValues[1], () {
+      _rightButtonAnimationController.reverse();
+    });
+  });
+
+  @override
+  void dispose() {
+    _leftButtonAnimationController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-
-    final buttonStyle = ElevatedButton.styleFrom(
-      backgroundColor: Theme.of(context).colorScheme.primary,
-      elevation: AppElevations.e5,
-      iconColor: Theme.of(context).colorScheme.onPrimary,
-      padding: const EdgeInsets.all(AppPaddings.p18),
-      shape: CircleBorder(),
-    );
-
-    final showActionsButton = ElevatedButton(
-      style: buttonStyle,
-      onPressed: _toggleIsFooterCollapsed,
-      child: Icon(
-        Icons.add,
-        color: Theme.of(context).colorScheme.onPrimaryContainer,
-        size: AppIconSizes.s30
-      ),
-    );
-
-    final hideActionsButton = ElevatedButton(
-      style: buttonStyle,
-      onPressed: _toggleIsFooterCollapsed,
-      child: Icon(
-        Icons.close,
-        color: Theme.of(context).colorScheme.onPrimaryContainer,
-        size: AppIconSizes.s30
-      ),
-    );
-
-    return Row(
+    return Stack(
+      alignment: AlignmentDirectional.center,
       children: [
-        Expanded(
-          child: ValueListenableBuilder(
-            valueListenable: _isFooterCollapsed,
-            builder: (BuildContext context, bool value, Widget? child) {
-              return value ?
-                Center(child: showActionsButton) :
-                AppBottomBar(hideActionsButton: hideActionsButton,);
-            }
+        AppBottomBar(
+          leftButtonOffsetAnimation: _leftButtonOffsetAnimation,
+          rightButtonOffsetAnimation: _rightButtonOffsetAnimation
+        ),
+        MouseRegion(
+          onEnter: _mouseEnter,
+          onExit: _mouseExit,
+          hitTestBehavior: HitTestBehavior.translucent,
+          child: Container(
+            constraints: BoxConstraints.expand(
+              width: AppConstraints.c700,
+              height: AppConstraints.c150
+            ),
           ),
         ),
       ],
@@ -72,65 +128,61 @@ class GardenFooter extends StatelessWidget {
 
 class AppBottomBar extends StatelessWidget {
   const AppBottomBar({
-    required this.hideActionsButton
+    required this.leftButtonOffsetAnimation,
+    required this.rightButtonOffsetAnimation,
   });
 
-  final Widget hideActionsButton;
+  final Animation<Offset> leftButtonOffsetAnimation;
+  final Animation<Offset> rightButtonOffsetAnimation;
 
   @override
   Widget build(BuildContext context) {
-    var iconColor = Theme.of(context).colorScheme.onPrimary;
-    var iconSize = AppButtonSizes.s25;
+    final iconColor = Theme.of(context).colorScheme.onPrimary;
 
-    return Center(
-      child: Stack(
-        alignment: Alignment.centerLeft,
-        clipBehavior: Clip.none,
-        children: [
-          Container(
-            constraints: BoxConstraints.expand(
-              width: AppConstraints.c350,
-              height: AppConstraints.c40
-            ),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(AppBorderRadii.r50),
-              color: Theme.of(context).colorScheme.secondary,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                gapW10,
-                IconButton(
-                  color: iconColor,
-                  icon: const Icon(Icons.local_florist),
-                  iconSize: iconSize,
-                  tooltip: GardenFooterText.gardensTooltip,
-                  onPressed: () => createCurrentGardenDialog(context),
-                ),
-                IconButton(
-                  color: iconColor,
-                  icon: const Icon(Icons.add),
-                  iconSize: iconSize,
-                  tooltip: GardenFooterText.asksTooltip,
-                  onPressed: () => createCreatableAskDialog(context),
-                ),
-                IconButton(
-                  color: iconColor,
-                  icon: const Icon(Icons.settings),
-                  iconSize: iconSize,
-                  tooltip: GardenFooterText.settingsTooltip,
-                  onPressed: () => createUserSettingsDialog(context),
-                ),
-              ],
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        SlideTransition(
+          position: leftButtonOffsetAnimation,
+          child: CircleAvatar(
+            backgroundColor: Theme.of(context).colorScheme.secondaryFixed,
+            child: IconButton(
+              color: iconColor,
+              icon: const Icon(Icons.local_florist),
+              iconSize: AppButtonSizes.s25,
+              tooltip: GardenFooterText.gardensTooltip,
+              onPressed: () => createCurrentGardenDialog(context),
             ),
           ),
-          Positioned(
-            left: AppPositions.pNg10,
-            child: hideActionsButton,
+        ),
+        gapW20,
+        CircleAvatar(
+          backgroundColor: Theme.of(context).colorScheme.primary,
+          radius: AppBorderRadii.r30,
+          child: IconButton(
+            color: Theme.of(context).colorScheme.onPrimaryContainer,
+            icon: const Icon(Icons.add),
+            iconSize: AppIconSizes.s30,
+            tooltip: GardenFooterText.asksTooltip,
+            onPressed: () => createCreatableAskDialog(context),
           ),
-        ],
-      ),
+        ),
+        gapW20,
+        SlideTransition(
+          position: rightButtonOffsetAnimation,
+          child: CircleAvatar(
+            backgroundColor: Theme.of(context).colorScheme.secondaryFixed,
+            child: IconButton(
+              color: iconColor,
+              icon: const Icon(Icons.settings),
+              iconSize: AppButtonSizes.s25,
+              tooltip: GardenFooterText.settingsTooltip,
+              onPressed: () => createUserSettingsDialog(context),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

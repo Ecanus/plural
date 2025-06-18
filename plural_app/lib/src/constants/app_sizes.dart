@@ -4,6 +4,7 @@ class AppBorderRadii {
   static const r5 = 5.0;
   static const r15 = 15.0;
   static const r25 = 25.0;
+  static const r30 = 30.0;
   static const r50 = 50.0;
 }
 
@@ -16,6 +17,7 @@ class AppConstraints {
   static const c40 = 40.0;
   static const c60 = 60.0;
   static const c100 = 100.0;
+  static const c150 = 150.0;
   static const c180 = 180.0;
   static const c300 = 300.0;
   static const c350 = 350.0;

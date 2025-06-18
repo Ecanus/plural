@@ -8,7 +8,7 @@ class CloseDialogButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return CircleAvatar(
       backgroundColor: Theme.of(context).colorScheme.primary,
-      radius: AppBorderRadii.r25,
+      radius: AppBorderRadii.r30,
       child: IconButton(
         onPressed: () => Navigator.pop(context),
         icon: Icon(
