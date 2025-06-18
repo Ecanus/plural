@@ -226,7 +226,6 @@ class UsersRepository implements Repository {
         final userID = e.record!.toJson()[GenericField.id];
 
         // Only respond to changes to users in the given gardenID
-        // TODO: have getUserGardenRecord() return null if no records found
         final gardenRecord = await getUserGardenRecord(
           userID: userID,
           gardenID: gardenID

@@ -14,12 +14,11 @@ import 'package:plural_app/src/features/asks/presentation/listed_asks_dialog.dar
 // Auth
 import 'package:plural_app/src/features/authentication/data/user_garden_records_repository.dart';
 import 'package:plural_app/src/features/authentication/data/users_repository.dart';
-import 'package:plural_app/src/features/authentication/presentation/listed_users_dialog.dart';
 import 'package:plural_app/src/features/authentication/presentation/user_settings_dialog.dart';
 
 // Gardens
 import 'package:plural_app/src/features/gardens/presentation/garden_footer.dart';
-import 'package:plural_app/src/features/gardens/presentation/listed_gardens_dialog.dart';
+import 'package:plural_app/src/features/gardens/presentation/current_garden_dialog.dart';
 
 // Utils
 import 'package:plural_app/src/utils/app_dialog_router.dart';
@@ -147,60 +146,6 @@ void main() {
 
     tearDown(() => GetIt.instance.reset());
 
-    testWidgets("createListedUsersDialog", (tester) async {
-      final tc = TestContext();
-
-      final appState = AppState.skipSubscribe()
-                        ..currentGarden = tc.garden;
-
-      final getIt = GetIt.instance;
-      final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
-      getIt.registerLazySingleton<AppDialogRouter>(() => AppDialogRouter());
-      getIt.registerLazySingleton<AppState>(() => appState);
-      getIt.registerLazySingleton<UserGardenRecordsRepository>(
-        () => mockUserGardenRecordsRepository);
-
-      // UserGardenRecordsRepository.getList()
-      when(
-        () => mockUserGardenRecordsRepository.getList(
-          expand: UserGardenRecordField.user,
-          filter: "${UserGardenRecordField.garden} = '${tc.garden.id}'",
-          sort: "${UserGardenRecordField.user}.${UserField.username}"
-        )
-      ).thenAnswer(
-        (_) async => ResultList<RecordModel>(items: [
-          tc.getExpandUserGardenRecordRecordModel(UserGardenRecordField.user)
-        ])
-      );
-
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: Builder(
-              builder: (BuildContext context) {
-                return GardenFooter();
-              }
-            ),
-          ),
-        ));
-
-      // Tap ElevatedButton (to toggle AppBottomBar)
-      await tester.tap(find.byType(ElevatedButton));
-      await tester.pumpAndSettle();
-
-      // Check AppBottomBar is rendered; AskDialogList is not
-      expect(find.byType(AppBottomBar), findsOneWidget);
-      expect(find.byType(UserDialogList), findsNothing);
-
-      // Tap IconButton with Icons.people_alt_rounded (opens listed users dialog)
-      await tester.tap(find.byIcon(Icons.people_alt_rounded));
-      await tester.pumpAndSettle();
-
-      expect(find.byType(UserDialogList), findsOneWidget);
-    });
-
-    tearDown(() => GetIt.instance.reset());
-
     testWidgets("createListedGardensDialog", (tester) async {
       final tc = TestContext();
       final appState = AppState.skipSubscribe()
@@ -257,13 +202,13 @@ void main() {
 
       // Check AppBottomBar is rendered; AskDialogList is not
       expect(find.byType(AppBottomBar), findsOneWidget);
-      expect(find.byType(GardenDialogList), findsNothing);
+      expect(find.byType(CurrentGardenDialogList), findsNothing);
 
       // Tap IconButton with Icons.local_florist (opens listed gardens dialog)
       await tester.tap(find.byIcon(Icons.local_florist));
       await tester.pumpAndSettle();
 
-      expect(find.byType(GardenDialogList), findsOneWidget);
+      expect(find.byType(CurrentGardenDialogList), findsOneWidget);
     });
 
     tearDown(() => GetIt.instance.reset());

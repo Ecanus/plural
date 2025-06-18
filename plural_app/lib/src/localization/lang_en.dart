@@ -3,17 +3,17 @@ class AppText {
 }
 
 class AppDialogFooterText {
-  static const asks = "Asks";
-
   static const createAsk = "Create Ask";
 
   static const editAsk = "Edit Ask";
 
-  static const gardens = "Gardens";
+  static const garden = "Garden";
 
-  static const navToAsks = "Asks";
-  static const navToGardens = "Gardens";
-  static const navToSettings = "Settings";
+  static const listedAsks = "My Asks";
+
+  static const navToAsksDialog = "Asks";
+  static const navToGardenDialog = "Gardens";
+  static const navToSettingsDialog = "Settings";
   static const navToUsers = "Users";
 
   static const settings = "Settings";
@@ -43,9 +43,9 @@ class AskDialogText {
   static const emptyListedAskTilesSubtitle = ""
     "Click the '$createAsk' button below to get started.";
 
-  static const instructions = "Instructions";
+  static const goToListedAsks = "Go to My Asks";
 
-  static const listedAsks = "Go to Asks";
+  static const instructions = "Instructions";
 
   static const markAsSponsored = "Click to mark as sponsored";
 

@@ -16,7 +16,7 @@ class RouteToListedAsksViewButton extends StatelessWidget {
     final appDialogRouter = GetIt.instance<AppDialogRouter>();
 
     return Tooltip(
-      message: AskDialogText.listedAsks,
+      message: AskDialogText.goToListedAsks,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           backgroundColor: Theme.of(context).colorScheme.surface,

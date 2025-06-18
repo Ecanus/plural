@@ -4,16 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:plural_app/src/constants/app_sizes.dart';
 
 // Asks
-import 'package:plural_app/src/features/asks/presentation/listed_asks_dialog.dart';
+import 'package:plural_app/src/features/asks/presentation/creatable_ask_dialog.dart';
 
 // Auth
-import '''
-package:plural_app/src/features/authentication/presentation/listed_users_dialog.dart''';
-import '''
-package:plural_app/src/features/authentication/presentation/user_settings_dialog.dart''';
+import 'package:plural_app/src/features/authentication/presentation/user_settings_dialog.dart''';
 
 // Gardens
-import 'package:plural_app/src/features/gardens/presentation/listed_gardens_dialog.dart';
+import 'package:plural_app/src/features/gardens/presentation/current_garden_dialog.dart';
 
 // Localization
 import 'package:plural_app/src/localization/lang_en.dart';
@@ -106,10 +103,17 @@ class AppBottomBar extends StatelessWidget {
                 gapW10,
                 IconButton(
                   color: iconColor,
-                  icon: const Icon(Icons.aspect_ratio),
+                  icon: const Icon(Icons.local_florist),
+                  iconSize: iconSize,
+                  tooltip: GardenFooterText.gardensTooltip,
+                  onPressed: () => createCurrentGardenDialog(context),
+                ),
+                IconButton(
+                  color: iconColor,
+                  icon: const Icon(Icons.add),
                   iconSize: iconSize,
                   tooltip: GardenFooterText.asksTooltip,
-                  onPressed: () => createListedAsksDialog(context),
+                  onPressed: () => createCreatableAskDialog(context),
                 ),
                 IconButton(
                   color: iconColor,
@@ -117,20 +121,6 @@ class AppBottomBar extends StatelessWidget {
                   iconSize: iconSize,
                   tooltip: GardenFooterText.settingsTooltip,
                   onPressed: () => createUserSettingsDialog(context),
-                ),
-                IconButton(
-                  color: iconColor,
-                  icon: const Icon(Icons.people_alt_rounded),
-                  iconSize: iconSize,
-                  tooltip: GardenFooterText.usersTooltip,
-                  onPressed: () => createListedUsersDialog(context),
-                ),
-                IconButton(
-                  color: iconColor,
-                  icon: const Icon(Icons.local_florist),
-                  iconSize: iconSize,
-                  tooltip: GardenFooterText.gardensTooltip,
-                  onPressed: () => createListedGardensDialog(context),
                 ),
               ],
             ),

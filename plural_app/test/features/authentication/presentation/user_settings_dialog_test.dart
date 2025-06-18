@@ -11,9 +11,6 @@ import 'package:plural_app/src/common_widgets/log_out_button.dart';
 // Auth
 import 'package:plural_app/src/features/authentication/presentation/user_settings_dialog.dart';
 
-// Localization
-import 'package:plural_app/src/localization/lang_en.dart';
-
 // Utils
 import 'package:plural_app/src/utils/app_dialog_router.dart';
 import 'package:plural_app/src/utils/app_state.dart';
@@ -63,22 +60,6 @@ void main() {
       expect(find.byType(LogOutButton), findsOneWidget);
       expect(find.byType(AppDialogFooterBuffer), findsOneWidget);
       expect(find.byType(AppDialogNavFooter), findsOneWidget);
-
-      // Tap ExitGardenButton (to open another dialog)
-      await tester.ensureVisible(find.byType(ExitGardenButton));
-      await tester.pumpAndSettle();
-      await tester.tap(find.byType(ExitGardenButton));
-      await tester.pumpAndSettle();
-
-      // Check ConfirmExitGardenDialog has been created
-      expect(find.byType(ConfirmExitGardenDialog), findsOneWidget);
-
-      // Tap close dialog button
-      await tester.tap(find.text(UserSettingsDialogText.cancelConfirmExitGarden));
-      await tester.pumpAndSettle();
-
-      // Check ConfirmExitGardenDialog has been removed
-      expect(find.byType(ConfirmExitGardenDialog), findsNothing);
     });
 
     tearDown(() => GetIt.instance.reset());

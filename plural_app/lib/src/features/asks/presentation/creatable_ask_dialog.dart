@@ -7,6 +7,7 @@ import 'package:plural_app/src/common_functions/input_formatters.dart';
 // Common Widgets
 import 'package:plural_app/src/common_widgets/app_currency_picker_form_field.dart';
 import 'package:plural_app/src/common_widgets/app_date_picker_form_field.dart';
+import 'package:plural_app/src/common_widgets/app_dialog.dart';
 import 'package:plural_app/src/common_widgets/app_dialog_footer.dart';
 import 'package:plural_app/src/common_widgets/app_dialog_footer_buffer_submit_button.dart';
 import 'package:plural_app/src/common_widgets/app_text_form_field.dart';
@@ -26,8 +27,22 @@ import 'package:plural_app/src/features/asks/presentation/route_to_listed_asks_v
 import 'package:plural_app/src/localization/lang_en.dart';
 
 // Utils
+import 'package:plural_app/src/utils/app_dialog_router.dart';
 import 'package:plural_app/src/utils/app_form.dart';
 import 'package:plural_app/src/utils/app_state.dart';
+
+Future createCreatableAskDialog(BuildContext context) async {
+  if (context.mounted) {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AppDialog(
+          view: AskDialogCreateForm(),
+        );
+      }
+    );
+  }
+}
 
 class AskDialogCreateForm extends StatefulWidget {
   @override
@@ -35,6 +50,7 @@ class AskDialogCreateForm extends StatefulWidget {
 }
 
 class _AskDialogCreateFormState extends State<AskDialogCreateForm> {
+  late AppDialogRouter _appDialogRouter;
   late AppForm _appForm;
   late AppState _appState;
   late GlobalKey<FormState> _formKey;
@@ -43,6 +59,7 @@ class _AskDialogCreateFormState extends State<AskDialogCreateForm> {
   void initState() {
     super.initState();
 
+    _appDialogRouter = GetIt.instance<AppDialogRouter>();
     _appState = GetIt.instance<AppState>();
     _formKey = GlobalKey<FormState>();
 
@@ -159,7 +176,15 @@ class _AskDialogCreateFormState extends State<AskDialogCreateForm> {
             ),
           ]
         ),
-        AppDialogFooter(title: AppDialogFooterText.createAsk)
+        AppDialogNavFooter(
+          leftDialogIcon: Icons.local_florist,
+          leftNavCallback: _appDialogRouter.routeToCurrentGardenDialogView,
+          leftTooltipMessage: AppDialogFooterText.navToGardenDialog,
+          rightDialogIcon: Icons.settings,
+          rightNavCallback: _appDialogRouter.routeToUserSettingsDialogView,
+          rightTooltipMessage: AppDialogFooterText.navToSettingsDialog,
+          title: AppDialogFooterText.createAsk
+        )
       ],
     );
   }
