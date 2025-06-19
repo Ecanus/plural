@@ -14,15 +14,10 @@ import 'package:plural_app/src/features/asks/presentation/listed_asks_dialog.dar
 import 'package:plural_app/src/features/asks/presentation/listed_ask_tile.dart';
 
 // Auth
-import 'package:plural_app/src/features/authentication/data/auth_api.dart';
-import 'package:plural_app/src/features/authentication/presentation/listed_users_dialog.dart';
-import 'package:plural_app/src/features/authentication/presentation/listed_user_tile.dart';
 import 'package:plural_app/src/features/authentication/presentation/user_settings_dialog.dart';
 
 // Gardens
-import 'package:plural_app/src/features/gardens/data/gardens_api.dart';
-import 'package:plural_app/src/features/gardens/presentation/listed_gardens_dialog.dart';
-import 'package:plural_app/src/features/gardens/presentation/listed_garden_tile.dart';
+import 'package:plural_app/src/features/gardens/presentation/current_garden_dialog.dart';
 
 // Utils
 import 'package:plural_app/src/utils/app_state.dart';
@@ -58,31 +53,17 @@ class AppDialogRouter {
   }
 
   /// Auth
-  Future<void> routeToUserDialogListView() async {
-    final users = await getCurrentGardenUsers();
-
-    viewNotifier.value = UserDialogList(
-      listedUserTiles: [for (var user in users) ListedUserTile(user: user)]
-    );
-  }
-
   Future<void> routeToUserSettingsDialogView() async {
     final currentUser = GetIt.instance<AppState>().currentUser!;
     final currentUserSettings = GetIt.instance<AppState>().currentUserSettings!;
 
-    viewNotifier.value = UserSettingsList(
+    viewNotifier.value = UserSettingsDialogList(
       user: currentUser, userSettings: currentUserSettings
     );
   }
 
   /// Gardens
-  Future<void> routeToGardenDialogListView() async {
-    final gardens = await getGardensByUserID(
-      GetIt.instance<AppState>().currentUserID!
-    );
-
-    viewNotifier.value = GardenDialogList(
-      listedGardenTiles: [for (var garden in gardens) ListedGardenTile(garden: garden)]
-    );
+  Future<void> routeToCurrentGardenDialogView() async {
+    viewNotifier.value = CurrentGardenDialogList();
   }
 }

@@ -183,7 +183,7 @@ class AsksRepository implements Repository {
       final boon = body[AskField.boon];
       final targetSum = body[AskField.targetSum];
 
-      checkBoonCeiling(boon, targetSum);
+      if (boon != null && targetSum != null) checkBoonCeiling(boon, targetSum);
 
       final record = await pb.collection(_collection).update(
         id,

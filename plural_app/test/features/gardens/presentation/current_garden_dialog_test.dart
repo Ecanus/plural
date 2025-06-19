@@ -2,23 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mocktail/mocktail.dart';
-import 'package:pocketbase/pocketbase.dart';
 
 // Common Widgets
 import 'package:plural_app/src/common_widgets/app_dialog_footer.dart';
 
 // Constants
-import 'package:plural_app/src/constants/fields.dart';
 import 'package:plural_app/src/constants/routes.dart';
 
-// Auth
-import 'package:plural_app/src/features/authentication/data/user_garden_records_repository.dart';
-import 'package:plural_app/src/features/authentication/data/users_repository.dart';
-
 // Gardens
-import 'package:plural_app/src/features/gardens/presentation/listed_garden_tile.dart';
-import 'package:plural_app/src/features/gardens/presentation/listed_gardens_dialog.dart';
+import 'package:plural_app/src/features/gardens/presentation/current_garden_dialog.dart';
 
 // Localization
 import 'package:plural_app/src/localization/lang_en.dart';
@@ -29,10 +21,9 @@ import 'package:plural_app/src/utils/app_state.dart';
 
 // Tests
 import '../../../test_context.dart';
-import '../../../test_mocks.dart';
 
 void main() {
-  group("GardenDialogList test", () {
+  group("CurrentGardenDialogList test", () {
     testWidgets("widgets", (tester) async {
       final tc = TestContext();
       final appState = AppState.skipSubscribe()
@@ -40,38 +31,8 @@ void main() {
                         ..currentUser = tc.user;
 
       final getIt = GetIt.instance;
-      final mockUsersRepository = MockUsersRepository();
-      final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
       getIt.registerLazySingleton<AppState>(() => appState);
-      getIt.registerLazySingleton<AppDialogRouter>(() => AppDialogRouter());
-      getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
-      getIt.registerLazySingleton<UserGardenRecordsRepository>(
-        () => mockUserGardenRecordsRepository
-      );
-
-      // UsersRepository.getFirstListItem()
-      when(
-        () => mockUsersRepository.getFirstListItem(filter: any(named: "filter"))
-      ).thenAnswer(
-        (_) async => tc.getUserRecordModel()
-      );
-
-      // UserGardenRecordsRepository.getList()
-      when(
-        () => mockUserGardenRecordsRepository.getList(
-          expand: any(named: "expand"),
-          filter: any(named: "filter"),
-          sort: any(named: "sort"),
-        )
-      ).thenAnswer(
-        (_) async => ResultList<RecordModel>(
-          items: [
-            tc.getExpandUserGardenRecordRecordModel(UserGardenRecordField.garden),
-            tc.getExpandUserGardenRecordRecordModel(UserGardenRecordField.garden),
-            tc.getExpandUserGardenRecordRecordModel(UserGardenRecordField.garden),
-          ]
-        )
-      );
+      getIt.registerLazySingleton<AppDialogRouter>(() => AppDialogRouter()); // for AppDialogNavFooter
 
       await tester.pumpWidget(
         MaterialApp(
@@ -79,7 +40,7 @@ void main() {
             body: Builder(
               builder: (BuildContext context) {
                 return ElevatedButton(
-                  onPressed: () => createListedGardensDialog(context),
+                  onPressed: () => createCurrentGardenDialog(context),
                   child: Text("The ElevatedButton")
                 );
               }
@@ -88,17 +49,32 @@ void main() {
         )
       );
 
-      // Check GardenDialogList not yet displayed
-      expect(find.byType(GardenDialogList), findsNothing);
+      // Check CurrentGardenDialogList not yet displayed
+      expect(find.byType(CurrentGardenDialogList), findsNothing);
 
       // Tap ElevatedButton (to open dialog)
       await tester.tap(find.byType(ElevatedButton));
       await tester.pumpAndSettle();
 
       // Check expected values are found
-      expect(find.byType(GardenDialogList), findsOneWidget);
-      expect(find.byType(ListedGardenTile), findsNWidgets(3));
+      expect(find.byType(CurrentGardenDialogList), findsOneWidget);
       expect(find.byType(AppDialogNavFooter), findsOneWidget);
+
+      // Tap ExitGardenButton (to open another dialog)
+      await tester.ensureVisible(find.byType(ExitGardenButton));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byType(ExitGardenButton));
+      await tester.pumpAndSettle();
+
+      // Check ConfirmExitGardenDialog has been created
+      expect(find.byType(ConfirmExitGardenDialog), findsOneWidget);
+
+      // Tap close dialog button
+      await tester.tap(find.text(UserSettingsDialogText.cancelConfirmExitGarden));
+      await tester.pumpAndSettle();
+
+      // Check ConfirmExitGardenDialog has been removed
+      expect(find.byType(ConfirmExitGardenDialog), findsNothing);
     });
 
     tearDown(() => GetIt.instance.reset());
@@ -118,7 +94,7 @@ void main() {
             builder: (_, __) => Scaffold(
             body: Builder(
                 builder: (BuildContext context) {
-                  return ListedLandingPageTile();
+                  return GoToLandingPageTile();
                 }
               ),
             ),
@@ -135,10 +111,10 @@ void main() {
       // Check routed text not rendered, widget is present, and tile label is rendered
       expect(find.text("Test routing to Landing Page was successful."), findsNothing);
       expect(find.text(GardenDialogText.listedLandingPageTileLabel), findsOneWidget);
-      expect(find.byType(ListedLandingPageTile), findsOneWidget);
+      expect(find.byType(GoToLandingPageTile), findsOneWidget);
 
       // Tap on the ListTile
-      await tester.tap(find.byType(ListedLandingPageTile));
+      await tester.tap(find.byType(GoToLandingPageTile));
       await tester.pumpAndSettle();
 
       // Check successful reroute (text should now appear)

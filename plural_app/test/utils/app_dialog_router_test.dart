@@ -16,11 +16,10 @@ import 'package:plural_app/src/features/asks/presentation/listed_asks_dialog.dar
 // Auth
 import 'package:plural_app/src/features/authentication/data/user_garden_records_repository.dart';
 import 'package:plural_app/src/features/authentication/data/users_repository.dart';
-import 'package:plural_app/src/features/authentication/presentation/listed_users_dialog.dart';
 import 'package:plural_app/src/features/authentication/presentation/user_settings_dialog.dart';
 
 // Gardens
-import 'package:plural_app/src/features/gardens/presentation/listed_gardens_dialog.dart';
+import 'package:plural_app/src/features/gardens/presentation/current_garden_dialog.dart';
 
 // Utils
 import 'package:plural_app/src/utils/app_dialog_router.dart';
@@ -99,41 +98,6 @@ void main() {
 
     tearDown(() => GetIt.instance.reset());
 
-    test("routeToUserDialogListView", () async {
-      final tc = TestContext();
-
-      final appState = AppState.skipSubscribe()
-                        ..currentGarden = tc.garden // for getCurrentGardenUsers()
-                        ..currentUser = tc.user;
-
-      final getIt = GetIt.instance;
-      final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
-      getIt.registerLazySingleton<AppState>(() => appState);
-      getIt.registerLazySingleton<UserGardenRecordsRepository>(
-        () => mockUserGardenRecordsRepository);
-
-      // UserGardenRecordsRepository.getList()
-      when(
-        () => mockUserGardenRecordsRepository.getList(
-          expand: any(named: "expand"),
-          filter: any(named: "filter"),
-          sort: any(named: "sort")
-        )
-      ).thenAnswer(
-        (_) async => ResultList<RecordModel>(items: [
-          tc.getExpandUserGardenRecordRecordModel(UserGardenRecordField.user)
-        ])
-      );
-
-      final appDialogRouter = AppDialogRouter();
-
-      expect(appDialogRouter.viewNotifier.value, isA<SizedBox>());
-      await appDialogRouter.routeToUserDialogListView();
-      expect(appDialogRouter.viewNotifier.value, isA<UserDialogList>());
-    });
-
-    tearDown(() => GetIt.instance.reset());
-
     test("routeToUserSettingsDialogView", () async {
       final tc = TestContext();
 
@@ -148,7 +112,7 @@ void main() {
 
       expect(appDialogRouter.viewNotifier.value, isA<SizedBox>());
       await appDialogRouter.routeToUserSettingsDialogView();
-      expect(appDialogRouter.viewNotifier.value, isA<UserSettingsList>());
+      expect(appDialogRouter.viewNotifier.value, isA<UserSettingsDialogList>());
     });
 
     tearDown(() => GetIt.instance.reset());
@@ -194,8 +158,8 @@ void main() {
       final appDialogRouter = AppDialogRouter();
 
       expect(appDialogRouter.viewNotifier.value, isA<SizedBox>());
-      await appDialogRouter.routeToGardenDialogListView();
-      expect(appDialogRouter.viewNotifier.value, isA<GardenDialogList>());
+      await appDialogRouter.routeToCurrentGardenDialogView();
+      expect(appDialogRouter.viewNotifier.value, isA<CurrentGardenDialogList>());
     });
 
     tearDown(() => GetIt.instance.reset());

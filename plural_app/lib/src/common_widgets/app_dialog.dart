@@ -70,7 +70,7 @@ class _AppDialogState extends State<AppDialog> {
                     ),
                   ),
                 ),
-                gapH37,
+                gapH25,
                 CloseDialogButton()
               ],
             ),

@@ -20,9 +20,6 @@ import 'package:plural_app/src/features/authentication/data/forms.dart';
 import 'package:plural_app/src/features/authentication/domain/app_user.dart';
 import 'package:plural_app/src/features/authentication/domain/app_user_settings.dart';
 
-// Gardens
-import 'package:plural_app/src/features/gardens/data/gardens_api.dart';
-
 // Localization
 import 'package:plural_app/src/localization/lang_en.dart';
 
@@ -40,7 +37,7 @@ Future createUserSettingsDialog(BuildContext context) async {
       context: context,
       builder: (BuildContext context) {
         return AppDialog(
-          view: UserSettingsList(
+          view: UserSettingsDialogList(
             user: user,
             userSettings: userSettings
           ),
@@ -50,8 +47,8 @@ Future createUserSettingsDialog(BuildContext context) async {
   }
 }
 
-class UserSettingsList extends StatefulWidget {
-  const UserSettingsList({
+class UserSettingsDialogList extends StatefulWidget {
+  const UserSettingsDialogList({
     required this.user,
     required this.userSettings,
   });
@@ -60,10 +57,10 @@ class UserSettingsList extends StatefulWidget {
   final AppUserSettings userSettings;
 
   @override
-  State<UserSettingsList> createState() => _UserSettingsListState();
+  State<UserSettingsDialogList> createState() => _UserSettingsDialogListState();
 }
 
-class _UserSettingsListState extends State<UserSettingsList> {
+class _UserSettingsDialogListState extends State<UserSettingsDialogList> {
   late AppDialogRouter _appDialogRouter;
   late AppForm _userAppForm;
   late AppForm _userSettingsAppForm;
@@ -125,8 +122,6 @@ class _UserSettingsListState extends State<UserSettingsList> {
                 ),
                 gapH30,
                 LogOutButton(),
-                gapH10,
-                ExitGardenButton(),
               ],
             ),
           ),
@@ -142,151 +137,15 @@ class _UserSettingsListState extends State<UserSettingsList> {
           ]
         ),
         AppDialogNavFooter(
-          leftDialogIcon: Icons.aspect_ratio,
-          leftNavCallback: _appDialogRouter.routeToAskDialogListView,
-          leftTooltipMessage: AppDialogFooterText.navToAsks,
-          rightDialogIcon: Icons.people_alt_rounded,
-          rightNavCallback: _appDialogRouter.routeToUserDialogListView,
-          rightTooltipMessage: AppDialogFooterText.navToUsers,
+          leftDialogIcon: Icons.add,
+          leftNavCallback: _appDialogRouter.routeToCreatableAskDialogView,
+          leftTooltipMessage: AppDialogFooterText.navToAsksDialog,
+          rightDialogIcon: Icons.local_florist,
+          rightNavCallback: _appDialogRouter.routeToCurrentGardenDialogView,
+          rightTooltipMessage: AppDialogFooterText.navToGardenDialog,
           title: AppDialogFooterText.settings
         )
       ],
     );
   }
-}
-
-class ExitGardenButton extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      constraints: BoxConstraints(
-        minWidth: double.infinity,
-        minHeight: AppHeights.h50
-      ),
-      child: OutlinedButton(
-        onPressed: () => showConfirmExitGardenDialog(context),
-        style: ButtonStyle(
-          side: WidgetStateProperty.all<BorderSide>(
-            BorderSide(
-              color: Theme.of(context).colorScheme.error
-            )
-          ),
-          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-            RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(AppBorderRadii.r5)
-            )
-          ),
-        ),
-        child: Text(
-          UserSettingsDialogText.exitGarden,
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.error
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class ConfirmExitGardenDialog extends StatelessWidget {
-
-  @override
-  Widget build(BuildContext context) {
-    return Dialog(
-      child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppPaddings.p20,
-        ),
-        constraints: BoxConstraints.expand(
-          width: AppConstraints.c500,
-          height: AppConstraints.c300,
-        ),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(AppBorderRadii.r15),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text(
-                  UserSettingsDialogText.confirmExitGarden,
-                  style: Theme.of(context).textTheme.headlineMedium,
-                ),
-              ],
-            ),
-            gapH20,
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Flexible(
-                  child: Text(
-                    UserSettingsDialogText.confirmExitGardenSubtitle,
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                ),
-              ],
-            ),
-            gapH50,
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Container(
-                  constraints: BoxConstraints(minHeight: AppHeights.h40),
-                  child: OutlinedButton(
-                    onPressed: () => Navigator.pop(context),
-                    style: ButtonStyle(
-                      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(AppBorderRadii.r5)
-                        )
-                      ),
-                    ),
-                    child: Text(
-                      UserSettingsDialogText.cancelConfirmExitGarden,
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSecondary
-                      ),
-                    )
-                  ),
-                ),
-                gapW15,
-                Container(
-                  constraints: BoxConstraints(minHeight: AppHeights.h40),
-                  child: FilledButton(
-                    onPressed: () {
-                      rerouteToLandingPageWithExitedGardenID(context);
-                    },
-                    style: ButtonStyle(
-                      backgroundColor: WidgetStateProperty.all<Color>(
-                        Theme.of(context).colorScheme.error
-                      ),
-                      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(AppBorderRadii.r5)
-                        )
-                      ),
-                    ),
-                    child: const Text(UserSettingsDialogText.exitGarden)
-                  ),
-                )
-              ],
-            )
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-Future<void> showConfirmExitGardenDialog(
-  BuildContext context,
-) async {
-  await showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return ConfirmExitGardenDialog();
-    }
-  );
 }
