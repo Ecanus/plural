@@ -37,7 +37,7 @@ Future createUserSettingsDialog(BuildContext context) async {
       context: context,
       builder: (BuildContext context) {
         return AppDialog(
-          view: UserSettingsList(
+          view: UserSettingsDialogList(
             user: user,
             userSettings: userSettings
           ),
@@ -47,8 +47,8 @@ Future createUserSettingsDialog(BuildContext context) async {
   }
 }
 
-class UserSettingsList extends StatefulWidget {
-  const UserSettingsList({
+class UserSettingsDialogList extends StatefulWidget {
+  const UserSettingsDialogList({
     required this.user,
     required this.userSettings,
   });
@@ -57,10 +57,10 @@ class UserSettingsList extends StatefulWidget {
   final AppUserSettings userSettings;
 
   @override
-  State<UserSettingsList> createState() => _UserSettingsListState();
+  State<UserSettingsDialogList> createState() => _UserSettingsDialogListState();
 }
 
-class _UserSettingsListState extends State<UserSettingsList> {
+class _UserSettingsDialogListState extends State<UserSettingsDialogList> {
   late AppDialogRouter _appDialogRouter;
   late AppForm _userAppForm;
   late AppForm _userSettingsAppForm;

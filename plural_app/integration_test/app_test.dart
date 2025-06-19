@@ -20,7 +20,6 @@ import 'package:plural_app/src/constants/pocketbase.dart';
 
 // Asks
 import 'package:plural_app/src/features/asks/domain/ask.dart';
-import 'package:plural_app/src/features/asks/presentation/listed_asks_dialog.dart';
 import 'package:plural_app/src/features/asks/presentation/route_to_listed_asks_view_button.dart';
 
 // Auth
@@ -218,18 +217,6 @@ void main() {
         (_) async => ResultList<RecordModel>(items: [tc.getAskRecordModel()]
         )
       );
-      // recordService.getList() - getCurrentGardenUsers()
-      when(
-        () => recordService.getList(
-          expand: UserGardenRecordField.user,
-          filter: "${UserGardenRecordField.garden} = '${tc.garden.id}'",
-          sort: "user.username",
-        )
-      ).thenAnswer(
-        (_) async => ResultList<RecordModel>(
-          items: [tc.getExpandUserGardenRecordRecordModel(UserGardenRecordField.user)]
-        )
-      );
 
       // RecordService.unsubscribe()
       when(
@@ -255,7 +242,7 @@ void main() {
       await tester.tap(find.byType(AppElevatedButton));
       await tester.pumpAndSettle();
 
-      // Tap on ListedGardenTile
+      // Tap on LandingPageListedGardenTile
       await tester.tap(find.byType(LandingPageListedGardenTile));
       await tester.pumpAndSettle();
 
@@ -279,22 +266,10 @@ void main() {
       await tester.tap(find.byType(CloseDialogButton));
       await tester.pumpAndSettle();
 
-      // Toggle AppBottomBar
+      // Open CreatableAskDialog
       await tester.ensureVisible(find.byIcon(Icons.add));
       await tester.pumpAndSettle();
       await tester.tap(find.byIcon(Icons.add));
-      await tester.pumpAndSettle();
-
-      // Open AskDialogList
-      await tester.ensureVisible(find.byIcon(Icons.aspect_ratio));
-      await tester.pumpAndSettle();
-      await tester.tap(find.byIcon(Icons.aspect_ratio));
-      await tester.pumpAndSettle();
-
-      // Tap RouteToCreateAskViewButton
-      await tester.ensureVisible(find.byType(RouteToCreateAskViewButton));
-      await tester.pumpAndSettle();
-      await tester.tap(find.byType(RouteToCreateAskViewButton));
       await tester.pumpAndSettle();
 
       // Tap RouteToListedAsksViewButton
@@ -304,12 +279,6 @@ void main() {
       await tester.pumpAndSettle();
 
       // Navigate to GardenDialogList (first NavButton is on the left)
-      await tester.ensureVisible(find.byType(AppDialogFooterNavButton).first);
-      await tester.pumpAndSettle();
-      await tester.tap(find.byType(AppDialogFooterNavButton).first);
-      await tester.pumpAndSettle();
-
-      // Navigate to UserDialogList (first NavButton is on the left)
       await tester.ensureVisible(find.byType(AppDialogFooterNavButton).first);
       await tester.pumpAndSettle();
       await tester.tap(find.byType(AppDialogFooterNavButton).first);

@@ -25,6 +25,7 @@ class GardenFooter extends StatefulWidget {
 
 class _GardenFooterState extends State<GardenFooter>
   with TickerProviderStateMixin{
+  bool _isMouseHovered = false;
 
   // Left button
   late final AnimationController _leftButtonAnimationController;
@@ -68,6 +69,8 @@ class _GardenFooterState extends State<GardenFooter>
   }
 
   void _mouseEnter(_) => setState(() {
+    _isMouseHovered = true;
+
     final delayValues = [
       Duration(milliseconds: 0),
       Duration(milliseconds: (Random().nextInt(4) + 1) * 10) // range of 10 - 40
@@ -82,17 +85,10 @@ class _GardenFooterState extends State<GardenFooter>
   });
 
   void _mouseExit(_) => setState(() {
-    final delayValues = [
-      Duration(milliseconds: 0),
-      Duration(milliseconds: (Random().nextInt(4) + 1) * 10) // range of 10 - 40
-    ]..shuffle();
+    _isMouseHovered = false;
 
-    Future.delayed(delayValues[0], () {
-      _leftButtonAnimationController.reverse();
-    });
-    Future.delayed(delayValues[1], () {
-      _rightButtonAnimationController.reverse();
-    });
+    _leftButtonAnimationController.reverse();
+    _rightButtonAnimationController.reverse();
   });
 
   @override
@@ -107,6 +103,7 @@ class _GardenFooterState extends State<GardenFooter>
       alignment: AlignmentDirectional.center,
       children: [
         AppBottomBar(
+          isMouseHovered: _isMouseHovered,
           leftButtonOffsetAnimation: _leftButtonOffsetAnimation,
           rightButtonOffsetAnimation: _rightButtonOffsetAnimation
         ),
@@ -128,10 +125,12 @@ class _GardenFooterState extends State<GardenFooter>
 
 class AppBottomBar extends StatelessWidget {
   const AppBottomBar({
+    required this.isMouseHovered,
     required this.leftButtonOffsetAnimation,
     required this.rightButtonOffsetAnimation,
   });
 
+  final bool isMouseHovered;
   final Animation<Offset> leftButtonOffsetAnimation;
   final Animation<Offset> rightButtonOffsetAnimation;
 
@@ -145,14 +144,18 @@ class AppBottomBar extends StatelessWidget {
       children: [
         SlideTransition(
           position: leftButtonOffsetAnimation,
-          child: CircleAvatar(
-            backgroundColor: Theme.of(context).colorScheme.secondaryFixed,
-            child: IconButton(
-              color: iconColor,
-              icon: const Icon(Icons.local_florist),
-              iconSize: AppButtonSizes.s25,
-              tooltip: GardenFooterText.gardensTooltip,
-              onPressed: () => createCurrentGardenDialog(context),
+          child: AnimatedOpacity(
+            duration: AppDurations.ms80,
+            opacity: isMouseHovered ? 1.0 : 0.0,
+            child: CircleAvatar(
+              backgroundColor: Theme.of(context).colorScheme.secondaryFixed,
+              child: IconButton(
+                color: iconColor,
+                icon: const Icon(Icons.local_florist),
+                iconSize: AppButtonSizes.s25,
+                tooltip: GardenFooterText.gardensTooltip,
+                onPressed: () => createCurrentGardenDialog(context),
+              ),
             ),
           ),
         ),
@@ -171,14 +174,18 @@ class AppBottomBar extends StatelessWidget {
         gapW20,
         SlideTransition(
           position: rightButtonOffsetAnimation,
-          child: CircleAvatar(
-            backgroundColor: Theme.of(context).colorScheme.secondaryFixed,
-            child: IconButton(
-              color: iconColor,
-              icon: const Icon(Icons.settings),
-              iconSize: AppButtonSizes.s25,
-              tooltip: GardenFooterText.settingsTooltip,
-              onPressed: () => createUserSettingsDialog(context),
+          child: AnimatedOpacity(
+            duration: AppDurations.ms80,
+            opacity: isMouseHovered ? 1.0 : 0.0,
+            child: CircleAvatar(
+              backgroundColor: Theme.of(context).colorScheme.secondaryFixed,
+              child: IconButton(
+                color: iconColor,
+                icon: const Icon(Icons.settings),
+                iconSize: AppButtonSizes.s25,
+                tooltip: GardenFooterText.settingsTooltip,
+                onPressed: () => createUserSettingsDialog(context),
+              ),
             ),
           ),
         ),

@@ -57,7 +57,7 @@ class AppDialogRouter {
     final currentUser = GetIt.instance<AppState>().currentUser!;
     final currentUserSettings = GetIt.instance<AppState>().currentUserSettings!;
 
-    viewNotifier.value = UserSettingsList(
+    viewNotifier.value = UserSettingsDialogList(
       user: currentUser, userSettings: currentUserSettings
     );
   }

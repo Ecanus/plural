@@ -112,7 +112,7 @@ void main() {
 
       expect(appDialogRouter.viewNotifier.value, isA<SizedBox>());
       await appDialogRouter.routeToUserSettingsDialogView();
-      expect(appDialogRouter.viewNotifier.value, isA<UserSettingsList>());
+      expect(appDialogRouter.viewNotifier.value, isA<UserSettingsDialogList>());
     });
 
     tearDown(() => GetIt.instance.reset());
