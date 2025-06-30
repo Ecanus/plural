@@ -254,15 +254,6 @@ void main() {
 
     tearDown(() => GetIt.instance.reset());
 
-    test("getUserGardenRoleFromString", () async {
-      expect(getUserGardenRoleFromString("member"), AppUserGardenRole.member);
-      expect(getUserGardenRoleFromString("mod"), AppUserGardenRole.mod);
-      expect(getUserGardenRoleFromString("owner"), AppUserGardenRole.owner);
-
-      // Check that fallback value is member
-      expect(getUserGardenRoleFromString("invalidValue"), AppUserGardenRole.member);
-    });
-
     test("getCurrentGardenUsers", () async {
       final tc = TestContext();
 
@@ -363,6 +354,47 @@ void main() {
 
     tearDown(() => GetIt.instance.reset());
 
+    test("getUserGardenPermissionGroup", () async {
+      // Member permissions
+      expect(
+        getUserGardenPermissionGroup(AppUserGardenRole.member),
+        [AppUserGardenPermission.createAsks]
+      );
+
+      // Moderator permissions
+      expect(
+        getUserGardenPermissionGroup(AppUserGardenRole.moderator),
+        [
+          AppUserGardenPermission.createAsks,
+          AppUserGardenPermission.changeGardenName,
+          AppUserGardenPermission.changeMemberRoles,
+          AppUserGardenPermission.createAsks,
+          AppUserGardenPermission.createInvitations,
+          AppUserGardenPermission.deleteMemberAsks,
+          AppUserGardenPermission.enterModView,
+          AppUserGardenPermission.kickMembers,
+          AppUserGardenPermission.viewAuditLog,
+        ]
+      );
+
+      // Owner permissions
+      expect(
+        getUserGardenPermissionGroup(AppUserGardenRole.owner),
+        [
+          AppUserGardenPermission.createAsks,
+          AppUserGardenPermission.changeGardenName,
+          AppUserGardenPermission.changeMemberRoles,
+          AppUserGardenPermission.createAsks,
+          AppUserGardenPermission.createInvitations,
+          AppUserGardenPermission.deleteMemberAsks,
+          AppUserGardenPermission.enterModView,
+          AppUserGardenPermission.kickMembers,
+          AppUserGardenPermission.viewAuditLog,
+          AppUserGardenPermission.deleteGarden,
+        ]
+      );
+    });
+
     test("getUserGardenRecord", () async {
       final tc = TestContext();
 
@@ -446,6 +478,15 @@ void main() {
     });
 
     tearDown(() => GetIt.instance.reset());
+
+    test("getUserGardenRoleFromString", () async {
+      expect(getUserGardenRoleFromString("member"), AppUserGardenRole.member);
+      expect(getUserGardenRoleFromString("moderator"), AppUserGardenRole.moderator);
+      expect(getUserGardenRoleFromString("owner"), AppUserGardenRole.owner);
+
+      // Check that fallback value is member
+      expect(getUserGardenRoleFromString("invalidValue"), AppUserGardenRole.member);
+    });
 
     test("login", () async {
       final tc = TestContext();

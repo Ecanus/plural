@@ -28,7 +28,7 @@ import 'package:plural_app/src/features/authentication/presentation/log_in_passw
 
 // Gardens
 import 'package:plural_app/src/features/gardens/presentation/garden_timeline_tile.dart';
-import 'package:plural_app/src/features/gardens/presentation/listed_garden_tile.dart';
+import 'package:plural_app/src/features/gardens/presentation/landing_page_listed_garden_tile.dart';
 
 // Tests
 import '../test/test_context.dart';

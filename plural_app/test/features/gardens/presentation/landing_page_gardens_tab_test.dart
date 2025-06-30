@@ -14,7 +14,7 @@ import 'package:plural_app/src/features/authentication/data/users_repository.dar
 // Gardens
 import 'package:plural_app/src/features/gardens/data/gardens_repository.dart';
 import 'package:plural_app/src/features/gardens/presentation/landing_page_gardens_tab.dart';
-import 'package:plural_app/src/features/gardens/presentation/listed_garden_tile.dart';
+import 'package:plural_app/src/features/gardens/presentation/landing_page_listed_garden_tile.dart';
 
 // Utils
 import 'package:plural_app/src/utils/app_state.dart';

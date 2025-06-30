@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+// Common Widgets
+import 'package:plural_app/src/common_widgets/app_logo.dart';
+
 // Auth
 import 'package:plural_app/src/features/authentication/presentation/log_in_tab.dart';
 import 'package:plural_app/src/features/authentication/presentation/sign_in_page.dart';
@@ -37,6 +40,28 @@ void main() {
       // Check only SignUp tab rendered fully; LogIn tab not rendered
       expect(find.byType(LogInTab), findsNothing);
       expect(find.byType(SignUpTab), findsOneWidget);
+    });
+
+    testWidgets("appLogo", (tester) async {
+      final dpi = tester.view.devicePixelRatio;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SignInPage()
+          )
+        )
+      );
+
+      // height > 800
+      tester.view.physicalSize = Size(tester.view.physicalSize.width, 1200 * dpi);
+      await tester.pumpAndSettle();
+      expect(find.byType(AppLogo), findsOneWidget);
+
+      // height < 800
+      tester.view.physicalSize = Size(tester.view.physicalSize.width, 700 * dpi);
+      await tester.pumpAndSettle();
+      expect(find.byType(AppLogo), findsNothing);
     });
   });
 }
