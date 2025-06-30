@@ -64,8 +64,8 @@ class _AskDialogCreateFormState extends State<AskDialogCreateForm> {
     _formKey = GlobalKey<FormState>();
 
     _appForm = AppForm.fromMap(Ask.emptyMap());
-    _appForm.setValue(fieldName: AskField.creator, value: _appState.currentUser!);
-    _appForm.setValue(fieldName: AskField.garden, value: _appState.currentGarden!);
+    _appForm.setValue(fieldName: AskField.creator, value: _appState.currentUser!.id);
+    _appForm.setValue(fieldName: AskField.garden, value: _appState.currentGarden!.id);
     _appForm.setValue(
       fieldName: AppFormFields.rebuild,
       value: () { setState(() {}); },

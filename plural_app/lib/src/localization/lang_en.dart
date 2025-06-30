@@ -29,14 +29,14 @@ class AskDialogText {
   static const boon = "Boon";
 
   static const cancelConfirmDeleteAsk = "Cancel";
-  static const confirmDeleteAsk = "Delete ask?";
+  static const confirmDeleteAsk = "Delete Ask?";
   static const createAsk = "Create new Ask";
   static const creator = "Creator";
   static const currency = "Currency";
 
   static const deadlineDate = "Deadline date";
   static const deadlineDueBy = "due";
-  static const deleteAsk = "Delete ask";
+  static const deleteAsk = "Delete Ask";
   static const description = "Description";
 
   static const emptyListedAskTilesMessage = "No Asks found";

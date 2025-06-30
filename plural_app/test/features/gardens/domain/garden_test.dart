@@ -3,6 +3,9 @@ import 'package:test/test.dart';
 // Constants
 import 'package:plural_app/src/constants/fields.dart';
 
+// Auth
+import 'package:plural_app/src/features/authentication/domain/app_user.dart';
+
 // Gardens
 import 'package:plural_app/src/features/gardens/domain/garden.dart';
 
@@ -19,10 +22,24 @@ void main() {
       expect(tc.garden.name == "Petunia", true);
     });
 
+    test("fromJson", () {
+      final tc = TestContext();
+
+      final record = {
+        GenericField.id: "TESTGARDENFROMJSON",
+        GardenField.name: "Daisies"
+      };
+      final newGarden = Garden.fromJson(record, tc.user);
+
+      expect(newGarden.creator == tc.user, true);
+      expect(newGarden.id == "TESTGARDENFROMJSON", true);
+      expect(newGarden.name == "Daisies", true);
+    });
+
     test("toMap", () {
       final tc = TestContext();
 
-      final gardenToMap = Garden(
+      final garden = Garden(
         creator: tc.user,
         id: "TESTGARDEN2",
         name: "Rosemaries",
@@ -34,7 +51,7 @@ void main() {
         GardenField.name: "Rosemaries"
       };
 
-      expect(gardenToMap.toMap(), map);
+      expect(garden.toMap(), map);
     });
 
     test("emptyMap", () {
@@ -45,6 +62,50 @@ void main() {
       };
 
       expect(Garden.emptyMap(), emptyMap);
+    });
+
+    test("==", () {
+      final tc = TestContext();
+      final garden = tc.garden;
+
+      final differentUser = AppUser(
+        email: "testEmail",
+        firstName: "testFirstName",
+        id: "testID",
+        lastName: "testLastName",
+        username: "testUsername",
+      );
+
+      // Identity
+      expect(garden == garden, true);
+
+      // Same ID
+      final sameIDgarden = Garden(
+        creator: differentUser,
+        id: garden.id,
+        name: "sameIDGarden"
+      );
+
+      expect(garden == sameIDgarden, true);
+
+      // Different ID
+      final differentIDGarden = Garden(
+        creator: tc.user,
+        id: "differentIDGarden",
+        name: tc.garden.name,
+      );
+
+      expect(garden == differentIDGarden, false);
+    });
+
+    test("toString", () {
+      final tc = TestContext();
+      final garden = tc.garden;
+
+      expect(
+        garden.toString(),
+        "Garden(id: ${garden.id}, name: ${garden.name}, creator: ${garden.creator})"
+      );
     });
   });
 }

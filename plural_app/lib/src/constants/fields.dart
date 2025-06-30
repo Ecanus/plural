@@ -46,6 +46,7 @@ class UserField {
 
 class UserGardenRecordField {
   static const garden = "garden";
+  static const role = "role";
   static const user = "user";
 }
 

@@ -43,9 +43,10 @@ class TestContext {
     );
 
     userGardenRecord = AppUserGardenRecord(
-      id: "TESTGARDENRECORD1",
       user: user,
-      garden: garden
+      garden: garden,
+      id: "TESTGARDENRECORD1",
+      role: AppUserGardenRole.member,
     );
 
     userSettings = AppUserSettings(
@@ -162,6 +163,7 @@ class TestContext {
       "collectionName": Collection.userGardenRecords,
       UserGardenRecordField.user: user.id,
       UserGardenRecordField.garden: garden.id,
+      UserGardenRecordField.role: AppUserGardenRole.member.name,
     });
   }
 

@@ -322,12 +322,10 @@ void main() {
     tearDown(() => GetIt.instance.reset());
 
     test("getAskTypeFromString", () async {
-      final askType1 = getAskTypeFromString("monetary");
-      expect(askType1, AskType.monetary);
+      expect(getAskTypeFromString("monetary"), AskType.monetary);
 
       // Check that fallback value is monetary (for now)
-      final askType2 = getAskTypeFromString("invalidValue");
-      expect(askType2, AskType.monetary);
+      expect(getAskTypeFromString("invalidValue"), AskType.monetary);
     });
 
     test("getParsedTargetMetDate", () async {
