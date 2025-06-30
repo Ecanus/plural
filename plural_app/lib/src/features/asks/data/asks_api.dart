@@ -181,7 +181,7 @@ Future<List<Ask>> getAsksForListedAsksDialog({
 /// Returns the [AskType] enum that corresponds to [askTypeString].
 AskType getAskTypeFromString(String askTypeString) {
   return AskType.values.firstWhere(
-    (a) => a.name == "AskType.$askTypeString",
+    (a) => a.name == askTypeString,
     orElse: () => AskType.monetary
   );
 }

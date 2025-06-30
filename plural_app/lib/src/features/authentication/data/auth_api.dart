@@ -118,6 +118,14 @@ Future<void> deleteCurrentUserSettings() async {
   await GetIt.instance<UserSettingsRepository>().delete(id: currentUserSettings.id);
 }
 
+/// Returns the [AppUserGardenRole] enum that corresponds to [roleString].
+AppUserGardenRole getUserGardenRoleFromString(String roleString) {
+  return AppUserGardenRole.values.firstWhere(
+    (a) => a.name == roleString,
+    orElse: () => AppUserGardenRole.member
+  );
+}
+
 /// Queries on the [UserGardenRecord] collection to retrieve all [User]s
 /// with the same [Garden] as the currentGarden.
 ///
@@ -188,11 +196,7 @@ Future<AppUserGardenRecord?> getUserGardenRecord({
   final garden = await getGardenByID(gardenID);
   final user = await getUserByID(userID);
 
-  return AppUserGardenRecord(
-    id: record[GenericField.id],
-    garden: garden,
-    user: user,
-  );
+  return AppUserGardenRecord.fromJson(record, user, garden);
 }
 
 /// Attempts to log in to the database with [usernameOrEmail]

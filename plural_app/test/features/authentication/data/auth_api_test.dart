@@ -254,6 +254,15 @@ void main() {
 
     tearDown(() => GetIt.instance.reset());
 
+    test("getUserGardenRoleFromString", () async {
+      expect(getUserGardenRoleFromString("member"), AppUserGardenRole.member);
+      expect(getUserGardenRoleFromString("mod"), AppUserGardenRole.mod);
+      expect(getUserGardenRoleFromString("owner"), AppUserGardenRole.owner);
+
+      // Check that fallback value is member
+      expect(getUserGardenRoleFromString("invalidValue"), AppUserGardenRole.member);
+    });
+
     test("getCurrentGardenUsers", () async {
       final tc = TestContext();
 
@@ -407,8 +416,9 @@ void main() {
       );
 
       expect(userGardenRecord!, isA<AppUserGardenRecord>());
-      expect(userGardenRecord.id, "TestGardenRecordID");
       expect(userGardenRecord.garden, tc.garden);
+      expect(userGardenRecord.id, "TestGardenRecordID");
+      expect(userGardenRecord.role, AppUserGardenRole.member);
       expect(userGardenRecord.user, tc.user);
 
       // UserGardenRecordsRepository.getList(), Now returns empty list
