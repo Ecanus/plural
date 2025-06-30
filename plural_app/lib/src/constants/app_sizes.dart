@@ -67,6 +67,7 @@ class AppIconSizes {
   static const s30 = 30.0;
   static const s35 = 35.0;
   static const s40 = 40.0;
+  static const s110 = 110.0;
 }
 
 class AppIndents {

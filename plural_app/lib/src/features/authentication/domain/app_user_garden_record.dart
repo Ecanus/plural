@@ -10,9 +10,27 @@ import 'package:plural_app/src/features/authentication/domain/app_user.dart';
 import 'package:plural_app/src/features/gardens/domain/garden.dart';
 
 enum AppUserGardenRole {
-  member,
-  mod,
-  owner,
+  member(priority: 0),
+  moderator(priority: 1),
+  owner(priority: 2);
+
+  const AppUserGardenRole({
+    required this.priority
+  });
+
+  final int priority;
+}
+
+enum AppUserGardenPermission {
+  changeGardenName,
+  changeMemberRoles,
+  createAsks,
+  createInvitations,
+  deleteGarden,
+  deleteMemberAsks,
+  enterModView,
+  kickMembers,
+  viewAuditLog,
 }
 
 class AppUserGardenRecord {

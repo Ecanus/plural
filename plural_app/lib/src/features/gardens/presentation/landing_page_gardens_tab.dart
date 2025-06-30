@@ -7,7 +7,7 @@ import 'package:plural_app/src/constants/app_sizes.dart';
 // Gardens
 import 'package:plural_app/src/features/gardens/data/gardens_api.dart';
 import 'package:plural_app/src/features/gardens/domain/garden.dart';
-import 'package:plural_app/src/features/gardens/presentation/listed_garden_tile.dart';
+import 'package:plural_app/src/features/gardens/presentation/landing_page_listed_garden_tile.dart';
 
 // Localization
 import 'package:plural_app/src/localization/lang_en.dart';

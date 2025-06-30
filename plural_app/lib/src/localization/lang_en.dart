@@ -174,6 +174,15 @@ class SnackbarText {
   static const urlError = "Invalid URL:";
 }
 
+class UnauthorizedPageText {
+  static const buttonText = "Return";
+
+  static const messageBody = ""
+    "You do not have the necessary permissions to access this page.";
+  static const messageHeader = "Unauthorized Access";
+
+}
+
 class UserSettingsDialogText {
   static const cancelConfirmExitGarden = "Cancel";
   static const confirmExitGarden = "Are you sure?";

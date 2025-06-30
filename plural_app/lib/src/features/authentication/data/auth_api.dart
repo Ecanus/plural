@@ -118,14 +118,6 @@ Future<void> deleteCurrentUserSettings() async {
   await GetIt.instance<UserSettingsRepository>().delete(id: currentUserSettings.id);
 }
 
-/// Returns the [AppUserGardenRole] enum that corresponds to [roleString].
-AppUserGardenRole getUserGardenRoleFromString(String roleString) {
-  return AppUserGardenRole.values.firstWhere(
-    (a) => a.name == roleString,
-    orElse: () => AppUserGardenRole.member
-  );
-}
-
 /// Queries on the [UserGardenRecord] collection to retrieve all [User]s
 /// with the same [Garden] as the currentGarden.
 ///
@@ -174,6 +166,41 @@ Future<AppUser> getUserByID(String userID) async {
   return AppUser.fromJson(query.toJson());
 }
 
+/// Returns a list of AppUserGardenPermissions associated with the given [role].
+List<AppUserGardenPermission> getUserGardenPermissionGroup(AppUserGardenRole role) {
+  final List<AppUserGardenPermission> group = [];
+
+  // Member permissions
+  if (role.priority >= AppUserGardenRole.member.priority) {
+    group.addAll([
+      AppUserGardenPermission.createAsks
+    ]);
+  }
+
+  // Moderator permissions
+  if (role.priority >= AppUserGardenRole.moderator.priority) {
+    group.addAll([
+      AppUserGardenPermission.changeGardenName,
+      AppUserGardenPermission.changeMemberRoles,
+      AppUserGardenPermission.createAsks,
+      AppUserGardenPermission.createInvitations,
+      AppUserGardenPermission.deleteMemberAsks,
+      AppUserGardenPermission.enterModView,
+      AppUserGardenPermission.kickMembers,
+      AppUserGardenPermission.viewAuditLog,
+    ]);
+  }
+
+  // Owner permissions
+  if (role.priority >= AppUserGardenRole.owner.priority) {
+    group.addAll([
+      AppUserGardenPermission.deleteGarden,
+    ]);
+  }
+
+  return group;
+}
+
 /// Queries on the [UserGardenRecord] collection, to retrieve a UserGardenRecord
 /// corresponding to [userID] and [gardenID].
 Future<AppUserGardenRecord?> getUserGardenRecord({
@@ -197,6 +224,14 @@ Future<AppUserGardenRecord?> getUserGardenRecord({
   final user = await getUserByID(userID);
 
   return AppUserGardenRecord.fromJson(record, user, garden);
+}
+
+/// Returns the [AppUserGardenRole] enum that corresponds to [roleString].
+AppUserGardenRole getUserGardenRoleFromString(String roleString) {
+  return AppUserGardenRole.values.firstWhere(
+    (a) => a.name == roleString,
+    orElse: () => AppUserGardenRole.member
+  );
 }
 
 /// Attempts to log in to the database with [usernameOrEmail]
