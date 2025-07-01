@@ -39,7 +39,7 @@ class AppThemes {
     surface: Color(0xff1C2229),
     onSurface: Color(0xffD8D8D8),
     surfaceBright: Color(0xff2E324A),
-    surfaceDim: Color.fromARGB(255, 13, 16, 20)
+    surfaceDim: Color(0xff0D1014)
   );
 
   static ThemeData standard = ThemeData(
