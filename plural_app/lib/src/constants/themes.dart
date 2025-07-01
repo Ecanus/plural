@@ -38,7 +38,8 @@ class AppThemes {
     onError: Color(0xffC7C7C7),
     surface: Color(0xff1C2229),
     onSurface: Color(0xffD8D8D8),
-    surfaceBright: Color(0xff2E324A)
+    surfaceBright: Color(0xff2E324A),
+    surfaceDim: Color(0xff0D1014)
   );
 
   static ThemeData standard = ThemeData(

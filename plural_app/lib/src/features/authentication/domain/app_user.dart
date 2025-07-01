@@ -1,6 +1,10 @@
 // Constants
 import 'package:plural_app/src/constants/fields.dart';
 
+// Auth
+import 'package:plural_app/src/features/authentication/data/auth_api.dart';
+import 'package:plural_app/src/features/authentication/domain/app_user_garden_record.dart' show AppUserGardenRole;
+
 class AppUser {
   AppUser({
     required this.email,
@@ -31,6 +35,19 @@ class AppUser {
       UserField.lastName: lastName,
       UserField.username: username
     };
+  }
+
+  /// Checks if the AppUser has an AppUserGardenRecord.role of priority
+  /// greater than or equal to [role].
+  ///
+  /// Returns true if the priority is greater than or equal to [role],
+  /// else false.
+  Future<bool> hasRole(String gardenID, AppUserGardenRole role) async {
+    final userGardenRecord = await getUserGardenRecord(userID: id, gardenID: gardenID);
+
+    if (userGardenRecord == null) return false;
+
+    return userGardenRecord.role.priority >= role.priority;
   }
 
   @override

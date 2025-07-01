@@ -90,7 +90,8 @@ class ForgotPasswordDialogText {
 }
 
 class GardenDialogText {
-  static const listedLandingPageTileLabel = "Go to Landing page";
+  static const goToLandingPageLabel = "Go to Landing page";
+  static const goToModViewGardenPageLabel = "Go to Moderator View";
 }
 
 class GardenFooterText {

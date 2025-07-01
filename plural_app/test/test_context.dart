@@ -155,7 +155,8 @@ class TestContext {
   }
 
   RecordModel getUserGardenRecordRecordModel({
-    String? id
+    String? id,
+    AppUserGardenRole? role,
   }) {
     return RecordModel({
       "id": id ?? userGardenRecord.id,
@@ -163,7 +164,7 @@ class TestContext {
       "collectionName": Collection.userGardenRecords,
       UserGardenRecordField.user: user.id,
       UserGardenRecordField.garden: garden.id,
-      UserGardenRecordField.role: AppUserGardenRole.member.name,
+      UserGardenRecordField.role: role?.name ?? AppUserGardenRole.member.name,
     });
   }
 

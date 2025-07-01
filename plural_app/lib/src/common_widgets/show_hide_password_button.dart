@@ -9,8 +9,8 @@ class ShowHidePasswordButton extends StatelessWidget {
     required this.isPasswordVisible,
   });
 
-  final Function callback;
-  final Function isPasswordVisible;
+  final void Function() callback;
+  final bool Function() isPasswordVisible;
 
   @override
   Widget build(BuildContext context) {

@@ -97,7 +97,7 @@ class _AppCurrencyPickerFormFieldState extends State<AppCurrencyPickerFormField>
 
 Future<void> showCurrencyPicker(
   BuildContext context,
-  Function setTextCallback,
+  void Function(String) setTextCallback,
   List<CurrencyCard> currencyCards,
 ) async {
   final String? currencyCode = await showDialog<String>(

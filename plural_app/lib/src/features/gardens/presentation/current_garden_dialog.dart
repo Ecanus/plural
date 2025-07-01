@@ -18,6 +18,7 @@ import 'package:plural_app/src/localization/lang_en.dart';
 
 // Utils
 import 'package:plural_app/src/utils/app_dialog_router.dart';
+import 'package:plural_app/src/utils/app_state.dart';
 
 Future createCurrentGardenDialog(BuildContext context) async {
   if (context.mounted) {
@@ -46,7 +47,12 @@ class CurrentGardenDialogList extends StatelessWidget {
             top: AppPaddings.p50,
             bottom: AppPaddings.p10,
           ),
-          child: GoToLandingPageTile(),
+          child: Column(
+            children: [
+              GoToLandingPageTile(),
+              GoToModViewGardenPageTile(),
+            ],
+          )
         ),
         Expanded(
           child: ListView(
@@ -78,15 +84,45 @@ class GoToLandingPageTile extends StatelessWidget {
       child: ListTile(
         tileColor: Theme.of(context).colorScheme.primaryContainer,
         title: Text(
-          GardenDialogText.listedLandingPageTileLabel,
+          GardenDialogText.goToLandingPageLabel,
           style: TextStyle(
             fontWeight: FontWeight.w500)
         ),
-        leading: Icon(Icons.arrow_back_rounded),
+        leading: Icon(Icons.home),
         onTap: () {
           GoRouter.of(context).go(Routes.landing);
         }
       ),
+    );
+  }
+}
+
+class GoToModViewGardenPageTile extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<bool>(
+      future: GetIt.instance<AppState>().isModerator(),
+      builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+        if (snapshot.hasData && snapshot.data!) {
+          return Card(
+            elevation: AppElevations.e7,
+            child: ListTile(
+              tileColor: Theme.of(context).colorScheme.secondaryFixed,
+              title: Text(
+                GardenDialogText.goToModViewGardenPageLabel,
+                style: TextStyle(
+                  fontWeight: FontWeight.w500)
+              ),
+              leading: Icon(Icons.security),
+              onTap: () {
+                GoRouter.of(context).go(Routes.modViewGarden);
+              }
+            ),
+          );
+        } else {
+          return SizedBox();
+        }
+      }
     );
   }
 }

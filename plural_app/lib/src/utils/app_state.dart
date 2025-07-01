@@ -23,6 +23,7 @@ import 'package:plural_app/src/features/asks/domain/ask.dart';
 // Auth
 import 'package:plural_app/src/features/authentication/data/auth_api.dart';
 import 'package:plural_app/src/features/authentication/domain/app_user.dart';
+import 'package:plural_app/src/features/authentication/domain/app_user_garden_record.dart';
 import 'package:plural_app/src/features/authentication/domain/app_user_settings.dart';
 
 // Gardens
@@ -80,6 +81,10 @@ class AppState with ChangeNotifier {
 
   // _timelineAsks
   List<Ask>? get timelineAsks => _timelineAsksList;
+
+  Future<bool> isModerator() async {
+    return await currentUser!.hasRole(currentGarden!.id, AppUserGardenRole.moderator);
+  }
 
   /// Verifies the existence of a [UserGardenRecord] record associated with
   /// both the [currentUser] and the given [newGarden] before rerouting to the

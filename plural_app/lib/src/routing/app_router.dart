@@ -1,3 +1,4 @@
+import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pocketbase/pocketbase.dart';
 
@@ -12,6 +13,10 @@ import 'package:plural_app/src/features/authentication/presentation/unauthorized
 // Garden
 import 'package:plural_app/src/features/gardens/presentation/garden_page.dart';
 import 'package:plural_app/src/features/gardens/presentation/landing_page.dart';
+import 'package:plural_app/src/features/gardens/presentation/mod_view_garden_page.dart';
+
+// Utils
+import 'package:plural_app/src/utils/app_state.dart';
 
 class AppRouter {
   AppRouter(PocketBase? database) {
@@ -27,6 +32,22 @@ class AppRouter {
           builder: (_, state) => LandingPage(
             exitedGardenID: state.uri.queryParameters[QueryParameters.exitedGardenID],
           ),
+        ),
+        GoRoute(
+          path: Routes.modViewGarden,
+          builder: (_, __) => ModViewGardenPage(),
+          redirect: (_, __) async {
+            final isModerator = await GetIt.instance<AppState>().isModerator();
+
+            if (isModerator) {
+              return null;
+            } else {
+              return Uri(
+                path: Routes.unauthorized,
+                queryParameters: { QueryParameters.previousRoute: Routes.garden}
+              ).toString();
+            }
+          },
         ),
         GoRoute(
           path: Routes.signIn,

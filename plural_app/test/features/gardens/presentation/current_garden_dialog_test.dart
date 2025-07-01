@@ -110,7 +110,7 @@ void main() {
 
       // Check routed text not rendered, widget is present, and tile label is rendered
       expect(find.text("Test routing to Landing Page was successful."), findsNothing);
-      expect(find.text(GardenDialogText.listedLandingPageTileLabel), findsOneWidget);
+      expect(find.text(GardenDialogText.goToLandingPageLabel), findsOneWidget);
       expect(find.byType(GoToLandingPageTile), findsOneWidget);
 
       // Tap on the ListTile

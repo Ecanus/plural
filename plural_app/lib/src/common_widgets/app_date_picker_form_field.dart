@@ -103,7 +103,7 @@ class _AppDatePickerFormFieldState extends State<AppDatePickerFormField> {
 Future<void> showDatePickerDialog(
   BuildContext context,
   String dateString,
-  Function setTextCallback,
+  void Function(DateTime) setTextCallback,
   ) async {
     var now = DateTime.now().toLocal();
     var lastDate = now.add(AppDateValues.datePickerThreshold);
