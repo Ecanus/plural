@@ -81,7 +81,7 @@ Future<List<Garden>> getGardensByUserID(
 Future<void> removeUserFromGarden(
   String userID,
   String exitedGardenID,
-  Function callback,
+  void Function() callback,
 ) async {
   final asksRepository = GetIt.instance<AsksRepository>();
   final userGardenRecordsRepository = GetIt.instance<UserGardenRecordsRepository>();

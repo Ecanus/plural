@@ -42,7 +42,7 @@ class _GardenClockState extends State<GardenClock> {
 
       // If day has changed, update Timeline (in case of outdated deadlineDates)
       if (_currentTime.day != updatedTime.day) {
-        Provider.of<AppState>(context, listen: false).notifyAllListeners();
+        Provider.of<AppState>(context, listen: false).refreshTimelineAsks();
       }
 
       _currentTime = updatedTime;

@@ -15,7 +15,7 @@ import '../../../test_context.dart';
 import '../../../test_mocks.dart';
 
 void main() {
-  group("GardenClock test", () {
+  group("GardenHeader test", () {
     testWidgets("garden name", (tester) async {
       final tc = TestContext();
       final appState = AppState.skipSubscribe()
@@ -41,8 +41,6 @@ void main() {
     testWidgets("refresh", (tester) async {
       final tc = TestContext();
 
-      // final appState = AppState()
-      //                   ..currentGarden = tc.garden;
       final mockAppState = MockAppState();
 
       // AppState.currentGarden()
@@ -73,6 +71,25 @@ void main() {
       tester.pumpAndSettle();
 
       verify(() => mockAppState.refreshTimelineAsks()).called(1);
+    });
+
+    testWidgets("isModView", (tester) async {
+      final tc = TestContext();
+
+      final appState = AppState.skipSubscribe()
+                        ..currentGarden = tc.garden;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: ChangeNotifierProvider<AppState>.value(
+            value: appState,
+            child: Scaffold(
+              body: GardenHeader(isModView: true,),
+            )
+          )
+        ));
+
+      expect(find.byType(ModViewIcon), findsOneWidget);
     });
   });
 }

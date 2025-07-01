@@ -16,7 +16,7 @@ import 'package:plural_app/src/features/asks/presentation/listed_asks_dialog.dar
 // Auth
 import 'package:plural_app/src/features/authentication/data/user_garden_records_repository.dart';
 import 'package:plural_app/src/features/authentication/data/users_repository.dart';
-import 'package:plural_app/src/features/authentication/presentation/user_settings_dialog.dart';
+import 'package:plural_app/src/features/gardens/presentation/user_settings_dialog.dart';
 
 // Gardens
 import 'package:plural_app/src/features/gardens/presentation/current_garden_dialog.dart';

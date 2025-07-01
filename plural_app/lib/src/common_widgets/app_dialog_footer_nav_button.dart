@@ -18,7 +18,7 @@ class AppDialogFooterNavButton extends StatelessWidget {
     required this.tooltipMessage,
   });
 
-  final Function callback;
+  final void Function() callback;
   final IconData dialogIcon;
   final NavButtonDirection direction;
   final bool isMouseHovered;

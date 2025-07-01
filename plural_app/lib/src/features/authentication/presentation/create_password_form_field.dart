@@ -233,27 +233,27 @@ class _CreatePasswordFormFieldState extends State<CreatePasswordFormField> {
                 children: [
                   PasswordRequirementText(
                     notifier: _passwordValuesNotifier,
-                    requirement: checkPasswordLength,
+                    validationFunction: checkPasswordLength,
                     text: SignInPageText.passwordLength
                   ),
                   PasswordRequirementText(
                     notifier: _passwordValuesNotifier,
-                    requirement: checkHasLowercase,
+                    validationFunction: checkHasLowercase,
                     text: SignInPageText.passwordLowercase
                   ),
                   PasswordRequirementText(
                     notifier: _passwordValuesNotifier,
-                    requirement: checkHasUppercase,
+                    validationFunction: checkHasUppercase,
                     text: SignInPageText.passwordUppercase
                   ),
                   PasswordRequirementText(
                     notifier: _passwordValuesNotifier,
-                    requirement: checkHasNumber,
+                    validationFunction: checkHasNumber,
                     text: SignInPageText.passwordNumber
                   ),
                   PasswordRequirementText(
                     notifier: _passwordValuesNotifier,
-                    requirement: checkHasSpecialCharacter,
+                    validationFunction: checkHasSpecialCharacter,
                     text: SignInPageText.passwordSpecial
                   ),
                 ],
@@ -269,12 +269,12 @@ class _CreatePasswordFormFieldState extends State<CreatePasswordFormField> {
 class PasswordRequirementText extends StatelessWidget {
   const PasswordRequirementText({
     required this.notifier,
-    required this.requirement,
+    required this.validationFunction,
     required this.text,
   });
 
   final ValueNotifier<Map> notifier;
-  final Function requirement;
+  final bool Function(String) validationFunction;
   final String text;
 
   @override
@@ -282,7 +282,7 @@ class PasswordRequirementText extends StatelessWidget {
     return ValueListenableBuilder(
       valueListenable: notifier,
       builder: (BuildContext context, Map passwordValues, Widget? _) {
-        final isValid = requirement(passwordValues[UserField.password]);
+        final isValid = validationFunction(passwordValues[UserField.password]);
 
         return PasswordTextRow(
           isValid: isValid,

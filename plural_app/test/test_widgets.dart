@@ -48,7 +48,7 @@ class TestContextDependantFunctionWidget extends StatelessWidget {
     required this.callback
   });
 
-  final Function callback;
+  final void Function(BuildContext) callback;
 
   @override
   Widget build(BuildContext context) {
