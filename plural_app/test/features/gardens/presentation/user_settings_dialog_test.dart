@@ -12,7 +12,7 @@ import 'package:plural_app/src/common_widgets/log_out_button.dart';
 import 'package:plural_app/src/features/gardens/presentation/user_settings_dialog.dart';
 
 // Utils
-import 'package:plural_app/src/utils/app_dialog_router.dart';
+import 'package:plural_app/src/utils/app_dialog_view_router.dart';
 import 'package:plural_app/src/utils/app_state.dart';
 
 // Tests
@@ -29,7 +29,7 @@ void main() {
       // GetIt
       final getIt = GetIt.instance;
       getIt.registerLazySingleton<AppState>(() => appState);
-      getIt.registerLazySingleton<AppDialogRouter>(() => AppDialogRouter());
+      getIt.registerLazySingleton<AppDialogViewRouter>(() => AppDialogViewRouter());
 
       await tester.pumpWidget(
         MaterialApp(
@@ -47,14 +47,14 @@ void main() {
       );
 
       // Check UserSettingsList not yet displayed
-      expect(find.byType(UserSettingsDialogList), findsNothing);
+      expect(find.byType(UserSettingsView), findsNothing);
 
       // Tap ElevatedButton (to open dialog)
       await tester.tap(find.byType(ElevatedButton));
       await tester.pumpAndSettle();
 
       // Check expected values are found
-      expect(find.byType(UserSettingsDialogList), findsOneWidget);
+      expect(find.byType(UserSettingsView), findsOneWidget);
       expect(find.byType(AppCurrencyPickerFormField), findsOneWidget);
       expect(find.byType(AppTextFormField), findsNWidgets(3));
       expect(find.byType(LogOutButton), findsOneWidget);

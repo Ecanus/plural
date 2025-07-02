@@ -12,7 +12,7 @@ import 'package:plural_app/src/constants/themes.dart';
 import 'package:plural_app/src/localization/lang_en.dart';
 
 // Utils
-import 'package:plural_app/src/utils/app_dialog_router.dart';
+import 'package:plural_app/src/utils/app_dialog_view_router.dart';
 import 'package:plural_app/src/utils/app_state.dart';
 
 // Tests
@@ -28,7 +28,7 @@ void main() {
 
       final getIt = GetIt.instance;
       getIt.registerLazySingleton<AppState>(() => AppState());
-      getIt.registerLazySingleton<AppDialogRouter>(() => AppDialogRouter());
+      getIt.registerLazySingleton<AppDialogViewRouter>(() => AppDialogViewRouter());
 
       await tester.pumpWidget(
         MaterialApp(
@@ -72,7 +72,7 @@ void main() {
 
       final getIt = GetIt.instance;
       getIt.registerLazySingleton<AppState>(() => AppState());
-      getIt.registerLazySingleton<AppDialogRouter>(() => AppDialogRouter());
+      getIt.registerLazySingleton<AppDialogViewRouter>(() => AppDialogViewRouter());
 
       await tester.pumpWidget(
         MaterialApp(
@@ -116,7 +116,7 @@ void main() {
 
       final getIt = GetIt.instance;
       getIt.registerLazySingleton<AppState>(() => AppState());
-      getIt.registerLazySingleton<AppDialogRouter>(() => AppDialogRouter());
+      getIt.registerLazySingleton<AppDialogViewRouter>(() => AppDialogViewRouter());
 
       await tester.pumpWidget(
         MaterialApp(

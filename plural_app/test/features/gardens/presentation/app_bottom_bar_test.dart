@@ -4,7 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 
 // Asks
-import 'package:plural_app/src/features/asks/presentation/creatable_ask_dialog.dart';
+import 'package:plural_app/src/features/asks/presentation/create_ask_dialog.dart';
 
 // Auth
 import 'package:plural_app/src/features/gardens/presentation/user_settings_dialog.dart';
@@ -12,10 +12,10 @@ import 'package:plural_app/src/features/gardens/presentation/app_bottom_bar.dart
 
 // Gardens
 import 'package:plural_app/src/features/gardens/presentation/garden_footer.dart';
-import 'package:plural_app/src/features/gardens/presentation/current_garden_dialog.dart';
+import 'package:plural_app/src/features/gardens/presentation/current_garden_settings_dialog.dart';
 
 // Utils
-import 'package:plural_app/src/utils/app_dialog_router.dart';
+import 'package:plural_app/src/utils/app_dialog_view_router.dart';
 import 'package:plural_app/src/utils/app_state.dart';
 
 // Tests
@@ -32,7 +32,7 @@ void main() {
 
       final getIt = GetIt.instance;
       getIt.registerLazySingleton<AppState>(() => appState);
-      getIt.registerLazySingleton<AppDialogRouter>(() => AppDialogRouter());
+      getIt.registerLazySingleton<AppDialogViewRouter>(() => AppDialogViewRouter());
 
       await tester.pumpWidget(
         MaterialApp(
@@ -47,13 +47,13 @@ void main() {
 
       // Check AppBottomBar is rendered; AskDialogList is not
       expect(find.byType(AppBottomBar), findsOneWidget);
-      expect(find.byType(AskDialogCreateForm), findsNothing);
+      expect(find.byType(CreateAskView), findsNothing);
 
       // Tap IconButton with Icons.add (opens creatable ask dialog)
       await tester.tap(find.byIcon(Icons.add));
       await tester.pumpAndSettle();
 
-      expect(find.byType(AskDialogCreateForm), findsOneWidget);
+      expect(find.byType(CreateAskView), findsOneWidget);
     });
 
     tearDown(() => GetIt.instance.reset());
@@ -70,7 +70,7 @@ void main() {
 
       final getIt = GetIt.instance;
       getIt.registerLazySingleton<AppState>(() => appState);
-      getIt.registerLazySingleton<AppDialogRouter>(() => AppDialogRouter());
+      getIt.registerLazySingleton<AppDialogViewRouter>(() => AppDialogViewRouter());
 
       await tester.pumpWidget(
         MaterialApp(
@@ -86,7 +86,7 @@ void main() {
       // Check AppBottomBar is rendered; UserSettingsDialog not rendered
       final appBottomBar = find.byType(AppBottomBar);
       expect(appBottomBar, findsOneWidget);
-      expect(find.byType(UserSettingsDialogList), findsNothing);
+      expect(find.byType(UserSettingsView), findsNothing);
 
       // Move gesture to AppBottomBar so that the other two buttons will reveal
       await gesture.moveTo(tester.getCenter(appBottomBar));
@@ -96,7 +96,7 @@ void main() {
       await tester.tap(find.byIcon(Icons.settings));
       await tester.pumpAndSettle();
 
-      expect(find.byType(UserSettingsDialogList), findsOneWidget);
+      expect(find.byType(UserSettingsView), findsOneWidget);
     });
 
     tearDown(() => GetIt.instance.reset());
@@ -113,7 +113,7 @@ void main() {
                         ..currentUserSettings = tc.userSettings;
 
       final getIt = GetIt.instance;
-      getIt.registerLazySingleton<AppDialogRouter>(() => AppDialogRouter());
+      getIt.registerLazySingleton<AppDialogViewRouter>(() => AppDialogViewRouter());
       getIt.registerLazySingleton<AppState>(() => appState);
 
       await tester.pumpWidget(
@@ -130,7 +130,7 @@ void main() {
       // Check AppBottomBar is rendered; AskDialogList is not
       final appBottomBar = find.byType(AppBottomBar);
       expect(appBottomBar, findsOneWidget);
-      expect(find.byType(CurrentGardenDialogList), findsNothing);
+      expect(find.byType(CurrentGardenSettingsView), findsNothing);
 
       // Move gesture to AppBottomBar so that the other two buttons will reveal
       await gesture.moveTo(tester.getCenter(appBottomBar));
@@ -140,7 +140,7 @@ void main() {
       await tester.tap(find.byIcon(Icons.local_florist));
       await tester.pumpAndSettle();
 
-      expect(find.byType(CurrentGardenDialogList), findsOneWidget);
+      expect(find.byType(CurrentGardenSettingsView), findsOneWidget);
     });
 
     tearDown(() => GetIt.instance.reset());

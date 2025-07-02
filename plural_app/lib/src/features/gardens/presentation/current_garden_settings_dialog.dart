@@ -17,26 +17,26 @@ import 'package:plural_app/src/features/gardens/data/gardens_api.dart';
 import 'package:plural_app/src/localization/lang_en.dart';
 
 // Utils
-import 'package:plural_app/src/utils/app_dialog_router.dart';
+import 'package:plural_app/src/utils/app_dialog_view_router.dart';
 import 'package:plural_app/src/utils/app_state.dart';
 
-Future createCurrentGardenDialog(BuildContext context) async {
+Future createCurrentGardenSettingsDialog(BuildContext context) async {
   if (context.mounted) {
     return showDialog(
       context: context,
       builder: (BuildContext context) {
         return AppDialog(
-          view: CurrentGardenDialogList(),
+          view: CurrentGardenSettingsView(),
         );
       }
     );
   }
 }
 
-class CurrentGardenDialogList extends StatelessWidget {
+class CurrentGardenSettingsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final appDialogRouter = GetIt.instance<AppDialogRouter>();
+    final appDialogRouter = GetIt.instance<AppDialogViewRouter>();
 
     return Column(
       children: [
@@ -64,10 +64,10 @@ class CurrentGardenDialogList extends StatelessWidget {
         ),
         AppDialogNavFooter(
           leftDialogIcon: Icons.settings,
-          leftNavCallback: appDialogRouter.routeToUserSettingsDialogView,
+          leftNavCallback: appDialogRouter.routeToUserSettingsView,
           leftTooltipMessage: AppDialogFooterText.navToSettingsDialog,
           rightDialogIcon: Icons.add,
-          rightNavCallback: appDialogRouter.routeToCreatableAskDialogView,
+          rightNavCallback: appDialogRouter.routeToCreateAskView,
           rightTooltipMessage: AppDialogFooterText.navToAsksDialog,
           title: AppDialogFooterText.garden
         )

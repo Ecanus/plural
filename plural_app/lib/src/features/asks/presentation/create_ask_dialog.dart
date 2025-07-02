@@ -27,30 +27,30 @@ import 'package:plural_app/src/features/asks/presentation/route_to_listed_asks_v
 import 'package:plural_app/src/localization/lang_en.dart';
 
 // Utils
-import 'package:plural_app/src/utils/app_dialog_router.dart';
+import 'package:plural_app/src/utils/app_dialog_view_router.dart';
 import 'package:plural_app/src/utils/app_form.dart';
 import 'package:plural_app/src/utils/app_state.dart';
 
-Future createCreatableAskDialog(BuildContext context) async {
+Future createCreateAskDialog(BuildContext context) async {
   if (context.mounted) {
     return showDialog(
       context: context,
       builder: (BuildContext context) {
         return AppDialog(
-          view: AskDialogCreateForm(),
+          view: CreateAskView(),
         );
       }
     );
   }
 }
 
-class AskDialogCreateForm extends StatefulWidget {
+class CreateAskView extends StatefulWidget {
   @override
-  State<AskDialogCreateForm> createState() => _AskDialogCreateFormState();
+  State<CreateAskView> createState() => _CreateAskViewState();
 }
 
-class _AskDialogCreateFormState extends State<AskDialogCreateForm> {
-  late AppDialogRouter _appDialogRouter;
+class _CreateAskViewState extends State<CreateAskView> {
+  late AppDialogViewRouter _appDialogRouter;
   late AppForm _appForm;
   late AppState _appState;
   late GlobalKey<FormState> _formKey;
@@ -59,7 +59,7 @@ class _AskDialogCreateFormState extends State<AskDialogCreateForm> {
   void initState() {
     super.initState();
 
-    _appDialogRouter = GetIt.instance<AppDialogRouter>();
+    _appDialogRouter = GetIt.instance<AppDialogViewRouter>();
     _appState = GetIt.instance<AppState>();
     _formKey = GlobalKey<FormState>();
 
@@ -178,10 +178,10 @@ class _AskDialogCreateFormState extends State<AskDialogCreateForm> {
         ),
         AppDialogNavFooter(
           leftDialogIcon: Icons.local_florist,
-          leftNavCallback: _appDialogRouter.routeToCurrentGardenDialogView,
+          leftNavCallback: _appDialogRouter.routeToCurrentGardenSettingsView,
           leftTooltipMessage: AppDialogFooterText.navToGardenDialog,
           rightDialogIcon: Icons.settings,
-          rightNavCallback: _appDialogRouter.routeToUserSettingsDialogView,
+          rightNavCallback: _appDialogRouter.routeToUserSettingsView,
           rightTooltipMessage: AppDialogFooterText.navToSettingsDialog,
           title: AppDialogFooterText.createAsk
         )

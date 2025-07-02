@@ -24,7 +24,7 @@ import 'package:plural_app/src/features/authentication/domain/app_user_settings.
 import 'package:plural_app/src/localization/lang_en.dart';
 
 // Utils
-import 'package:plural_app/src/utils/app_dialog_router.dart';
+import 'package:plural_app/src/utils/app_dialog_view_router.dart';
 import 'package:plural_app/src/utils/app_form.dart';
 import 'package:plural_app/src/utils/app_state.dart';
 
@@ -37,7 +37,7 @@ Future createUserSettingsDialog(BuildContext context) async {
       context: context,
       builder: (BuildContext context) {
         return AppDialog(
-          view: UserSettingsDialogList(
+          view: UserSettingsView(
             user: user,
             userSettings: userSettings
           ),
@@ -47,8 +47,8 @@ Future createUserSettingsDialog(BuildContext context) async {
   }
 }
 
-class UserSettingsDialogList extends StatefulWidget {
-  const UserSettingsDialogList({
+class UserSettingsView extends StatefulWidget {
+  const UserSettingsView({
     required this.user,
     required this.userSettings,
   });
@@ -57,11 +57,11 @@ class UserSettingsDialogList extends StatefulWidget {
   final AppUserSettings userSettings;
 
   @override
-  State<UserSettingsDialogList> createState() => _UserSettingsDialogListState();
+  State<UserSettingsView> createState() => _UserSettingsViewState();
 }
 
-class _UserSettingsDialogListState extends State<UserSettingsDialogList> {
-  late AppDialogRouter _appDialogRouter;
+class _UserSettingsViewState extends State<UserSettingsView> {
+  late AppDialogViewRouter _appDialogRouter;
   late AppForm _userAppForm;
   late AppForm _userSettingsAppForm;
   late GlobalKey<FormState> _formKey;
@@ -74,7 +74,7 @@ class _UserSettingsDialogListState extends State<UserSettingsDialogList> {
     _userSettingsAppForm = AppForm.fromMap(widget.userSettings.toMap());
 
     _formKey = GlobalKey<FormState>();
-    _appDialogRouter = GetIt.instance<AppDialogRouter>();
+    _appDialogRouter = GetIt.instance<AppDialogViewRouter>();
   }
 
   @override
@@ -138,10 +138,10 @@ class _UserSettingsDialogListState extends State<UserSettingsDialogList> {
         ),
         AppDialogNavFooter(
           leftDialogIcon: Icons.add,
-          leftNavCallback: _appDialogRouter.routeToCreatableAskDialogView,
+          leftNavCallback: _appDialogRouter.routeToCreateAskView,
           leftTooltipMessage: AppDialogFooterText.navToAsksDialog,
           rightDialogIcon: Icons.local_florist,
-          rightNavCallback: _appDialogRouter.routeToCurrentGardenDialogView,
+          rightNavCallback: _appDialogRouter.routeToCurrentGardenSettingsView,
           rightTooltipMessage: AppDialogFooterText.navToGardenDialog,
           title: AppDialogFooterText.settings
         )

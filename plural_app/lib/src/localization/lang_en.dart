@@ -94,7 +94,7 @@ class GardenDialogText {
   static const goToModViewGardenPageLabel = "Go to Moderator View";
 }
 
-class GardenFooterText {
+class GardenPageFooterText {
   static const asksTooltip = "Asks";
 
   static const gardensTooltip = "Gardens";

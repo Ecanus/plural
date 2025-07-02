@@ -236,61 +236,34 @@ void main() {
       getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
       getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
 
-      final nowString = DateFormat(Formats.dateYMMddHms).format(DateTime.now());
+      final nowString = DateFormat(Formats.dateYMMddHHms).format(DateTime.now());
 
-      String formatFilterString(String filter) {
-        return """
+      final filterString =  """
         ${AskField.creator} = '${appState.currentUser!.id}' &&
-        ${AskField.garden} = '${appState.currentGarden!.id}' $filter
+        ${AskField.garden} = '${appState.currentGarden!.id}'
         """.trim();
-      }
 
-      // AsksRepository.getList(), target not met and deadline not passed
-      final filterString = formatFilterString(""
-        "&& ${AskField.targetMetDate} = null"
-        "&& ${AskField.deadlineDate} > '$nowString'");
+      // AsksRepository.getList()
       when(
         () => mockAsksRepository.getList(
           filter: filterString,
           sort: GenericField.created,
         )
       ).thenAnswer(
-        (_) async => ResultList<RecordModel>(items: [tc.getAskRecordModel(
-          id: "ASK001",
-          targetMetDate: null,
-          deadlineDate: DateTime.now().add(Duration(days: 50))
-        )])
-      );
-      // AsksRepository.getList(), target not met and deadline passed
-      final deadlinePassedFilterString = formatFilterString(""
-        "&& ${AskField.targetMetDate} = null"
-        "&& ${AskField.deadlineDate} <= '$nowString'");
-      when(
-        () => mockAsksRepository.getList(
-          filter: deadlinePassedFilterString,
-          sort: GenericField.created,
-        )
-      ).thenAnswer(
-        (_) async => ResultList<RecordModel>(items: [tc.getAskRecordModel(
-          id: "ASK002",
-          targetMetDate: null,
-          deadlineDate: DateTime.now().add(Duration(days: -50))
-        )])
-      );
-      // AsksRepository.getList(), target met
-      final targetMetFilterString = formatFilterString(
-        "&& ${AskField.targetMetDate} != null");
-      when(
-        () => mockAsksRepository.getList(
-          filter: targetMetFilterString,
-          sort: GenericField.created,
-        )
-      ).thenAnswer(
-        (_) async => ResultList<RecordModel>(items: [tc.getAskRecordModel(
-          id: "ASK003",
-          targetMetDate: DateTime.now(),
-          deadlineDate: DateTime.now().add(Duration(days: 50))
-        )])
+        (_) async => ResultList<RecordModel>(items: [
+          tc.getAskRecordModel(
+            id: "ASK001",
+            targetMetDate: null,
+            deadlineDate: DateTime.now().add(Duration(days: 50))),
+          tc.getAskRecordModel(
+            id: "ASK002",
+            targetMetDate: null,
+            deadlineDate: DateTime.now().add(Duration(days: -50))),
+          tc.getAskRecordModel(
+            id: "ASK003",
+            targetMetDate: DateTime.now(),
+            deadlineDate: DateTime.now().add(Duration(days: 50))),
+        ])
       );
 
       // UsersRepository.getFirstListItem()
@@ -309,7 +282,7 @@ void main() {
       );
 
       final asks = await getAsksForListedAsksDialog(
-        userID: tc.user.id, nowString: nowString
+        userID: tc.user.id, now: DateTime.parse(nowString)
       );
 
       // Check length and order is correct

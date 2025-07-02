@@ -10,13 +10,13 @@ import 'package:plural_app/src/common_widgets/app_dialog_footer.dart';
 import 'package:plural_app/src/constants/routes.dart';
 
 // Gardens
-import 'package:plural_app/src/features/gardens/presentation/current_garden_dialog.dart';
+import 'package:plural_app/src/features/gardens/presentation/current_garden_settings_dialog.dart';
 
 // Localization
 import 'package:plural_app/src/localization/lang_en.dart';
 
 // Utils
-import 'package:plural_app/src/utils/app_dialog_router.dart';
+import 'package:plural_app/src/utils/app_dialog_view_router.dart';
 import 'package:plural_app/src/utils/app_state.dart';
 
 // Tests
@@ -32,7 +32,7 @@ void main() {
 
       final getIt = GetIt.instance;
       getIt.registerLazySingleton<AppState>(() => appState);
-      getIt.registerLazySingleton<AppDialogRouter>(() => AppDialogRouter()); // for AppDialogNavFooter
+      getIt.registerLazySingleton<AppDialogViewRouter>(() => AppDialogViewRouter()); // for AppDialogNavFooter
 
       await tester.pumpWidget(
         MaterialApp(
@@ -40,7 +40,7 @@ void main() {
             body: Builder(
               builder: (BuildContext context) {
                 return ElevatedButton(
-                  onPressed: () => createCurrentGardenDialog(context),
+                  onPressed: () => createCurrentGardenSettingsDialog(context),
                   child: Text("The ElevatedButton")
                 );
               }
@@ -50,14 +50,14 @@ void main() {
       );
 
       // Check CurrentGardenDialogList not yet displayed
-      expect(find.byType(CurrentGardenDialogList), findsNothing);
+      expect(find.byType(CurrentGardenSettingsView), findsNothing);
 
       // Tap ElevatedButton (to open dialog)
       await tester.tap(find.byType(ElevatedButton));
       await tester.pumpAndSettle();
 
       // Check expected values are found
-      expect(find.byType(CurrentGardenDialogList), findsOneWidget);
+      expect(find.byType(CurrentGardenSettingsView), findsOneWidget);
       expect(find.byType(AppDialogNavFooter), findsOneWidget);
 
       // Tap ExitGardenButton (to open another dialog)

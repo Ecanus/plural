@@ -8,12 +8,18 @@ import 'package:plural_app/src/constants/app_sizes.dart';
 import 'package:plural_app/src/localization/lang_en.dart';
 
 // Utils
-import 'package:plural_app/src/utils/app_dialog_router.dart';
+import 'package:plural_app/src/utils/app_dialog_view_router.dart';
 
 class RouteToListedAsksViewButton extends StatelessWidget {
+  const RouteToListedAsksViewButton({
+    this.icon = Icons.toc_rounded,
+  });
+
+  final IconData icon;
+
   @override
   Widget build(BuildContext context) {
-    final appDialogRouter = GetIt.instance<AppDialogRouter>();
+    final appDialogRouter = GetIt.instance<AppDialogViewRouter>();
 
     return Tooltip(
       message: AskDialogText.goToListedAsks,
@@ -24,8 +30,8 @@ class RouteToListedAsksViewButton extends StatelessWidget {
           iconColor: Theme.of(context).colorScheme.onPrimary,
           shape: CircleBorder(),
         ),
-        onPressed: () => appDialogRouter.routeToAskDialogListView(),
-        child: const Icon(Icons.toc_rounded)
+        onPressed: () => appDialogRouter.routeToListedAsksView(),
+        child: Icon(icon)
       ),
     );
   }

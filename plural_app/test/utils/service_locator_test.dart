@@ -19,7 +19,7 @@ import 'package:plural_app/src/features/authentication/data/users_repository.dar
 import 'package:plural_app/src/features/gardens/data/gardens_repository.dart';
 
 // Utils
-import 'package:plural_app/src/utils/app_dialog_router.dart';
+import 'package:plural_app/src/utils/app_dialog_view_router.dart';
 import 'package:plural_app/src/utils/app_state.dart';
 import 'package:plural_app/src/utils/service_locator.dart';
 
@@ -73,7 +73,7 @@ void main() {
 
       // Check values not yet registered
       expect(getIt.isRegistered<PocketBase>(), false);
-      expect(getIt.isRegistered<AppDialogRouter>(), false);
+      expect(getIt.isRegistered<AppDialogViewRouter>(), false);
       expect(getIt.isRegistered<AsksRepository>(), false);
       expect(getIt.isRegistered<UserGardenRecordsRepository>(), false);
       expect(getIt.isRegistered<UserSettingsRepository>(), false);
@@ -85,7 +85,7 @@ void main() {
 
       // Check values are registered
       expect(getIt.isRegistered<PocketBase>(), true);
-      expect(getIt.isRegistered<AppDialogRouter>(), true);
+      expect(getIt.isRegistered<AppDialogViewRouter>(), true);
       expect(getIt.isRegistered<AsksRepository>(), true);
       expect(getIt.isRegistered<UserGardenRecordsRepository>(), true);
       expect(getIt.isRegistered<UserSettingsRepository>(), true);
@@ -107,8 +107,8 @@ void main() {
       getIt.registerLazySingleton<PocketBase>(
         () => pb
       );
-      getIt.registerLazySingleton<AppDialogRouter>(
-        () => AppDialogRouter()
+      getIt.registerLazySingleton<AppDialogViewRouter>(
+        () => AppDialogViewRouter()
       );
       getIt.registerLazySingleton<AsksRepository>(
         () => AsksRepository(pb: pb)
@@ -130,7 +130,7 @@ void main() {
       );
 
       expect(getIt.isRegistered<PocketBase>(), true);
-      expect(getIt.isRegistered<AppDialogRouter>(), true);
+      expect(getIt.isRegistered<AppDialogViewRouter>(), true);
       expect(getIt.isRegistered<AsksRepository>(), true);
       expect(getIt.isRegistered<UserGardenRecordsRepository>(), true);
       expect(getIt.isRegistered<UserSettingsRepository>(), true);
@@ -141,7 +141,7 @@ void main() {
       await clearGetItInstance();
 
       expect(getIt.isRegistered<PocketBase>(), false);
-      expect(getIt.isRegistered<AppDialogRouter>(), false);
+      expect(getIt.isRegistered<AppDialogViewRouter>(), false);
       expect(getIt.isRegistered<AsksRepository>(), false);
       expect(getIt.isRegistered<UserGardenRecordsRepository>(), false);
       expect(getIt.isRegistered<UserSettingsRepository>(), false);

@@ -8,8 +8,8 @@ import 'package:plural_app/src/constants/formats.dart';
 // Asks
 import 'package:plural_app/src/features/asks/data/asks_api.dart';
 import 'package:plural_app/src/features/asks/domain/ask.dart';
-import 'package:plural_app/src/features/asks/presentation/creatable_ask_dialog.dart';
-import 'package:plural_app/src/features/asks/presentation/editable_ask_dialog.dart';
+import 'package:plural_app/src/features/asks/presentation/create_ask_dialog.dart';
+import 'package:plural_app/src/features/asks/presentation/edit_ask_dialog.dart';
 import 'package:plural_app/src/features/asks/presentation/listed_asks_dialog.dart';
 import 'package:plural_app/src/features/asks/presentation/listed_ask_tile.dart';
 
@@ -17,12 +17,12 @@ import 'package:plural_app/src/features/asks/presentation/listed_ask_tile.dart';
 import 'package:plural_app/src/features/gardens/presentation/user_settings_dialog.dart';
 
 // Gardens
-import 'package:plural_app/src/features/gardens/presentation/current_garden_dialog.dart';
+import 'package:plural_app/src/features/gardens/presentation/current_garden_settings_dialog.dart';
 
 // Utils
 import 'package:plural_app/src/utils/app_state.dart';
 
-class AppDialogRouter {
+class AppDialogViewRouter {
   final ValueNotifier<Widget> viewNotifier = ValueNotifier<Widget>(SizedBox());
 
   void setRouteTo(Widget widget) {
@@ -30,40 +30,42 @@ class AppDialogRouter {
   }
 
   /// Asks
-  void routeToCreatableAskDialogView() {
-    viewNotifier.value = AskDialogCreateForm();
+  void routeToCreateAskView() {
+    viewNotifier.value = CreateAskView();
   }
 
-  void routeToEditableAskDialogView(Ask ask) {
-    viewNotifier.value = AskDialogEditForm(ask: ask);
+  void routeToEditAskView(Ask ask) {
+    viewNotifier.value = EditAskView(ask: ask);
   }
 
-  Future<void> routeToAskDialogListView() async {
+  Future<void> routeToListedAsksView() async {
     final currentUserID = GetIt.instance<AppState>().currentUserID!;
-    final nowString = DateFormat(Formats.dateYMMddHms).format(DateTime.now());
+
+    final datetimeNow = DateTime.parse(
+        DateFormat(Formats.dateYMMddHHms).format(DateTime.now())).toLocal();
 
     final asks = await getAsksForListedAsksDialog(
       userID: currentUserID,
-      nowString: nowString,
+      now: datetimeNow,
     );
 
-    viewNotifier.value = AskDialogList(
+    viewNotifier.value = ListedAsksView(
       listedAskTiles: [for (Ask ask in asks) ListedAskTile(ask: ask)]
     );
   }
 
   /// Auth
-  Future<void> routeToUserSettingsDialogView() async {
+  Future<void> routeToUserSettingsView() async {
     final currentUser = GetIt.instance<AppState>().currentUser!;
     final currentUserSettings = GetIt.instance<AppState>().currentUserSettings!;
 
-    viewNotifier.value = UserSettingsDialogList(
+    viewNotifier.value = UserSettingsView(
       user: currentUser, userSettings: currentUserSettings
     );
   }
 
   /// Gardens
-  Future<void> routeToCurrentGardenDialogView() async {
-    viewNotifier.value = CurrentGardenDialogList();
+  Future<void> routeToCurrentGardenSettingsView() async {
+    viewNotifier.value = CurrentGardenSettingsView();
   }
 }

@@ -30,7 +30,7 @@ import 'package:plural_app/src/localization/lang_en.dart';
 // Utils
 import 'package:plural_app/src/utils/app_form.dart';
 
-Future createEditableAskDialog({
+Future createEditAskDialog({
   required BuildContext context,
   required Ask ask
 }) async {
@@ -38,24 +38,24 @@ Future createEditableAskDialog({
     context: context,
     builder: (BuildContext context) {
       return AppDialog(
-        view: AskDialogEditForm(ask: ask)
+        view: EditAskView(ask: ask)
       );
     }
   );
 }
 
-class AskDialogEditForm extends StatefulWidget {
-  const AskDialogEditForm({
+class EditAskView extends StatefulWidget {
+  const EditAskView({
     required this.ask,
   });
 
   final Ask ask;
 
   @override
-  State<AskDialogEditForm> createState() => _AskDialogEditFormState();
+  State<EditAskView> createState() => _EditAskViewState();
 }
 
-class _AskDialogEditFormState extends State<AskDialogEditForm> {
+class _EditAskViewState extends State<EditAskView> {
   late AppForm _appForm;
   late GlobalKey<FormState> _formKey;
 
@@ -188,7 +188,7 @@ class _AskDialogEditFormState extends State<AskDialogEditForm> {
         ),
         AppDialogFooterBuffer(
           buttons: [
-            RouteToListedAsksViewButton(),
+            RouteToListedAsksViewButton(icon: Icons.arrow_back_ios_new),
             AppDialogFooterBufferSubmitButton(
               callback: submitUpdate,
               positionalArguments: [context, _formKey, _appForm],

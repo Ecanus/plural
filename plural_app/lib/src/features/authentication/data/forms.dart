@@ -19,7 +19,7 @@ import 'package:plural_app/src/features/authentication/domain/constants.dart';
 import 'package:plural_app/src/localization/lang_en.dart';
 
 // Utils
-import 'package:plural_app/src/utils/app_dialog_router.dart';
+import 'package:plural_app/src/utils/app_dialog_view_router.dart';
 import 'package:plural_app/src/utils/app_form.dart';
 import 'package:plural_app/src/utils/app_state.dart';
 
@@ -61,7 +61,7 @@ Future<void> submitUpdateSettings(
     switch(currentRoute) {
       case Routes.garden:
         // Reload Dialog (and reacquire user settings)
-        GetIt.instance<AppDialogRouter>().routeToUserSettingsDialogView();
+        GetIt.instance<AppDialogViewRouter>().routeToUserSettingsView();
       case Routes.landing:
         // Force reload value of currentUser
         // (because no garden-specific subscriptions are set in the landing page)

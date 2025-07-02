@@ -17,7 +17,7 @@ import 'package:plural_app/src/features/asks/data/forms.dart';
 import 'package:plural_app/src/features/authentication/data/users_repository.dart';
 
 // Utils
-import 'package:plural_app/src/utils/app_dialog_router.dart';
+import 'package:plural_app/src/utils/app_dialog_view_router.dart';
 import 'package:plural_app/src/utils/app_form.dart';
 import 'package:plural_app/src/utils/app_state.dart';
 
@@ -48,7 +48,7 @@ void main() {
       final mockAsksRepository = MockAsksRepository();
       final mockUsersRepository = MockUsersRepository();
       getIt.registerLazySingleton<AppState>(() => appState);
-      getIt.registerLazySingleton<AppDialogRouter>(() => AppDialogRouter());
+      getIt.registerLazySingleton<AppDialogViewRouter>(() => AppDialogViewRouter());
       getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
       getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
 
@@ -162,7 +162,7 @@ void main() {
       final mockAppDialogRouter = MockAppDialogRouter();
       getIt.registerLazySingleton<AppState>(() => appState);
       getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
-      getIt.registerLazySingleton<AppDialogRouter>(() => mockAppDialogRouter);
+      getIt.registerLazySingleton<AppDialogViewRouter>(() => mockAppDialogRouter);
 
       // AsksRepository.create()
       when(
@@ -173,7 +173,7 @@ void main() {
 
       // AppDialogRouter.routeToAskDialogListView()
       when(
-        () => mockAppDialogRouter.routeToAskDialogListView()
+        () => mockAppDialogRouter.routeToListedAsksView()
       ).thenAnswer(
         (_) async => {}
       );
@@ -213,7 +213,7 @@ void main() {
 
       // Check no method calls before submit; no snackbar
       verifyNever(() => mockAsksRepository.create(body: appForm.fields));
-      verifyNever(() => mockAppDialogRouter.routeToAskDialogListView());
+      verifyNever(() => mockAppDialogRouter.routeToListedAsksView());
       expect(ft.find.byType(SnackBar), ft.findsNothing);
 
       // Tap ElevatedButton (to call submitCreate)
@@ -233,7 +233,7 @@ void main() {
 
       // Check still no snackbar; router never called
       expect(ft.find.byType(SnackBar), ft.findsNothing);
-      verifyNever(() => mockAppDialogRouter.routeToAskDialogListView());
+      verifyNever(() => mockAppDialogRouter.routeToListedAsksView());
     });
 
     tearDown(() => GetIt.instance.reset());
@@ -257,7 +257,7 @@ void main() {
       final mockUsersRepository = MockUsersRepository();
       getIt.registerLazySingleton<AppState>(() => appState);
       getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
-      getIt.registerLazySingleton<AppDialogRouter>(() => mockAppDialogRouter);
+      getIt.registerLazySingleton<AppDialogViewRouter>(() => mockAppDialogRouter);
       getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
 
       // AsksRepository.create()
@@ -285,7 +285,7 @@ void main() {
 
       // AppDialogRouter.routeToAskDialogListView()
       when(
-        () => mockAppDialogRouter.routeToAskDialogListView()
+        () => mockAppDialogRouter.routeToListedAsksView()
       ).thenAnswer(
         (_) async => {}
       );
@@ -326,7 +326,7 @@ void main() {
       verifyNever(() => mockUsersRepository.getFirstListItem(
         filter: any(named: "filter"))
       );
-      verifyNever(() => mockAppDialogRouter.routeToAskDialogListView());
+      verifyNever(() => mockAppDialogRouter.routeToListedAsksView());
       expect(ft.find.byType(SnackBar), ft.findsNothing);
 
       // Tap ElevatedButton (to call submitCreate)
@@ -351,7 +351,7 @@ void main() {
 
       // Check still no snackbar; router never called
       expect(ft.find.byType(SnackBar), ft.findsNothing);
-      verifyNever(() => mockAppDialogRouter.routeToAskDialogListView());
+      verifyNever(() => mockAppDialogRouter.routeToListedAsksView());
     });
 
     tearDown(() => GetIt.instance.reset());

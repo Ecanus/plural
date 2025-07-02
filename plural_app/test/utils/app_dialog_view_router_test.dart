@@ -9,8 +9,8 @@ import 'package:plural_app/src/constants/fields.dart';
 
 // Asks
 import 'package:plural_app/src/features/asks/data/asks_repository.dart';
-import 'package:plural_app/src/features/asks/presentation/creatable_ask_dialog.dart';
-import 'package:plural_app/src/features/asks/presentation/editable_ask_dialog.dart';
+import 'package:plural_app/src/features/asks/presentation/create_ask_dialog.dart';
+import 'package:plural_app/src/features/asks/presentation/edit_ask_dialog.dart';
 import 'package:plural_app/src/features/asks/presentation/listed_asks_dialog.dart';
 
 // Auth
@@ -19,10 +19,10 @@ import 'package:plural_app/src/features/authentication/data/users_repository.dar
 import 'package:plural_app/src/features/gardens/presentation/user_settings_dialog.dart';
 
 // Gardens
-import 'package:plural_app/src/features/gardens/presentation/current_garden_dialog.dart';
+import 'package:plural_app/src/features/gardens/presentation/current_garden_settings_dialog.dart';
 
 // Utils
-import 'package:plural_app/src/utils/app_dialog_router.dart';
+import 'package:plural_app/src/utils/app_dialog_view_router.dart';
 import 'package:plural_app/src/utils/app_state.dart';
 
 // Tests
@@ -32,7 +32,7 @@ import '../test_mocks.dart';
 void main() {
   group("App dialog router test", () {
     test("setRouteTo", () async {
-      final appDialogRouter = AppDialogRouter();
+      final appDialogRouter = AppDialogViewRouter();
 
       expect(appDialogRouter.viewNotifier.value, isA<SizedBox>());
       appDialogRouter.setRouteTo(Container());
@@ -40,20 +40,20 @@ void main() {
     });
 
     test("routeToCreatableAskDialogView", () async {
-      final appDialogRouter = AppDialogRouter();
+      final appDialogRouter = AppDialogViewRouter();
 
       expect(appDialogRouter.viewNotifier.value, isA<SizedBox>());
-      appDialogRouter.routeToCreatableAskDialogView();
-      expect(appDialogRouter.viewNotifier.value, isA<AskDialogCreateForm>());
+      appDialogRouter.routeToCreateAskView();
+      expect(appDialogRouter.viewNotifier.value, isA<CreateAskView>());
     });
 
     test("routeToEditableAskDialogView", () async {
       final tc = TestContext();
-      final appDialogRouter = AppDialogRouter();
+      final appDialogRouter = AppDialogViewRouter();
 
       expect(appDialogRouter.viewNotifier.value, isA<SizedBox>());
-      appDialogRouter.routeToEditableAskDialogView(tc.ask);
-      expect(appDialogRouter.viewNotifier.value, isA<AskDialogEditForm>());
+      appDialogRouter.routeToEditAskView(tc.ask);
+      expect(appDialogRouter.viewNotifier.value, isA<EditAskView>());
     });
 
     test("routeToAskDialogListView", () async {
@@ -89,11 +89,11 @@ void main() {
         (_) async => tc.getUserRecordModel()
       );
 
-      final appDialogRouter = AppDialogRouter();
+      final appDialogRouter = AppDialogViewRouter();
 
       expect(appDialogRouter.viewNotifier.value, isA<SizedBox>());
-      await appDialogRouter.routeToAskDialogListView();
-      expect(appDialogRouter.viewNotifier.value, isA<AskDialogList>());
+      await appDialogRouter.routeToListedAsksView();
+      expect(appDialogRouter.viewNotifier.value, isA<ListedAsksView>());
     });
 
     tearDown(() => GetIt.instance.reset());
@@ -108,11 +108,11 @@ void main() {
       final getIt = GetIt.instance;
       getIt.registerLazySingleton<AppState>(() => appState);
 
-      final appDialogRouter = AppDialogRouter();
+      final appDialogRouter = AppDialogViewRouter();
 
       expect(appDialogRouter.viewNotifier.value, isA<SizedBox>());
-      await appDialogRouter.routeToUserSettingsDialogView();
-      expect(appDialogRouter.viewNotifier.value, isA<UserSettingsDialogList>());
+      await appDialogRouter.routeToUserSettingsView();
+      expect(appDialogRouter.viewNotifier.value, isA<UserSettingsView>());
     });
 
     tearDown(() => GetIt.instance.reset());
@@ -155,11 +155,11 @@ void main() {
         (_) async => tc.getUserRecordModel()
       );
 
-      final appDialogRouter = AppDialogRouter();
+      final appDialogRouter = AppDialogViewRouter();
 
       expect(appDialogRouter.viewNotifier.value, isA<SizedBox>());
-      await appDialogRouter.routeToCurrentGardenDialogView();
-      expect(appDialogRouter.viewNotifier.value, isA<CurrentGardenDialogList>());
+      await appDialogRouter.routeToCurrentGardenSettingsView();
+      expect(appDialogRouter.viewNotifier.value, isA<CurrentGardenSettingsView>());
     });
 
     tearDown(() => GetIt.instance.reset());

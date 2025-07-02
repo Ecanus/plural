@@ -8,7 +8,7 @@ import 'package:plural_app/src/constants/app_values.dart';
 // Asks
 import 'package:plural_app/src/features/asks/domain/ask.dart';
 import 'package:plural_app/src/features/asks/presentation/ask_time_left_text.dart';
-import 'package:plural_app/src/features/asks/presentation/editable_ask_dialog.dart';
+import 'package:plural_app/src/features/asks/presentation/edit_ask_dialog.dart';
 import 'package:plural_app/src/features/asks/presentation/non_editable_ask_dialog.dart';
 
 class GardenTimelineTile extends StatelessWidget {
@@ -274,7 +274,7 @@ class TileEditAskButton extends StatelessWidget {
           icon: const Icon(Icons.mode_edit_outlined),
           hoverColor: Theme.of(context).colorScheme.onPrimary
             .withValues(alpha: AppOpacities.point3),
-          onPressed: () => createEditableAskDialog(context: context, ask: ask),
+          onPressed: () => createEditAskDialog(context: context, ask: ask),
           padding: EdgeInsets.zero,
         ),
       ),
