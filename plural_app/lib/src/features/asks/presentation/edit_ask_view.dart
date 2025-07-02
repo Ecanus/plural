@@ -153,7 +153,7 @@ class _EditAskViewState extends State<EditAskView> {
                       maxLength: AppMaxLengths.max200,
                       maxLines: null,
                       suffixIcon: Tooltip(
-                        message: AskViewText.tooltipInstructions,
+                        message: AskViewText.instructionsTooltip,
                         child: AppTooltipIcon(isDark: false),
                       ),
                     ),
