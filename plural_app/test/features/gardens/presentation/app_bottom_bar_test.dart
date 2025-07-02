@@ -7,10 +7,10 @@ import 'package:get_it/get_it.dart';
 import 'package:plural_app/src/features/asks/presentation/create_ask_dialog.dart';
 
 // Auth
-import 'package:plural_app/src/features/gardens/presentation/user_settings_dialog.dart';
-import 'package:plural_app/src/features/gardens/presentation/app_bottom_bar.dart';
+import 'package:plural_app/src/features/authentication/presentation/user_settings_dialog.dart';
 
 // Gardens
+import 'package:plural_app/src/features/gardens/presentation/app_bottom_bar.dart';
 import 'package:plural_app/src/features/gardens/presentation/garden_footer.dart';
 import 'package:plural_app/src/features/gardens/presentation/current_garden_settings_dialog.dart';
 
@@ -108,7 +108,7 @@ void main() {
       final gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
       addTearDown(() async { return gesture.removePointer(); });
 
-      final appState = AppState() // for GoToModViewGardenPageTile
+      final appState = AppState() // for GoToAdminPageTile
                         ..currentUser = tc.user
                         ..currentUserSettings = tc.userSettings;
 

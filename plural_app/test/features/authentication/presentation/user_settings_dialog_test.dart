@@ -9,7 +9,7 @@ import 'package:plural_app/src/common_widgets/app_text_form_field.dart';
 import 'package:plural_app/src/common_widgets/log_out_button.dart';
 
 // Auth
-import 'package:plural_app/src/features/gardens/presentation/user_settings_dialog.dart';
+import 'package:plural_app/src/features/authentication/presentation/user_settings_dialog.dart';
 
 // Utils
 import 'package:plural_app/src/utils/app_dialog_view_router.dart';

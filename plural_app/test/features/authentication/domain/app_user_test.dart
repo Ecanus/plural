@@ -83,10 +83,10 @@ void main() {
 
       // Check user is member and no higher
       expect(await tc.user.hasRole(tc.garden.id, AppUserGardenRole.member), true);
-      expect(await tc.user.hasRole(tc.garden.id, AppUserGardenRole.moderator), false);
+      expect(await tc.user.hasRole(tc.garden.id, AppUserGardenRole.administrator), false);
       expect(await tc.user.hasRole(tc.garden.id, AppUserGardenRole.owner), false);
 
-      // UserGardenRecordsRepository.getList(). Role of moderator
+      // UserGardenRecordsRepository.getList(). Role of administrator
       when(
         () => mockUserGardenRecordsRepository.getList(
           filter: ""
@@ -96,13 +96,15 @@ void main() {
         )
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(
-          items: [tc.getUserGardenRecordRecordModel(role: AppUserGardenRole.moderator)]
+          items: [
+            tc.getUserGardenRecordRecordModel(role: AppUserGardenRole.administrator)
+          ]
         )
       );
 
-      // Check user is moderator and no higher
+      // Check user is administrator and no higher
       expect(await tc.user.hasRole(tc.garden.id, AppUserGardenRole.member), true);
-      expect(await tc.user.hasRole(tc.garden.id, AppUserGardenRole.moderator), true);
+      expect(await tc.user.hasRole(tc.garden.id, AppUserGardenRole.administrator), true);
       expect(await tc.user.hasRole(tc.garden.id, AppUserGardenRole.owner), false);
 
       // UserGardenRecordsRepository.getList(). Role of owner
@@ -121,7 +123,7 @@ void main() {
 
       // Check user is owner
       expect(await tc.user.hasRole(tc.garden.id, AppUserGardenRole.member), true);
-      expect(await tc.user.hasRole(tc.garden.id, AppUserGardenRole.moderator), true);
+      expect(await tc.user.hasRole(tc.garden.id, AppUserGardenRole.administrator), true);
       expect(await tc.user.hasRole(tc.garden.id, AppUserGardenRole.owner), true);
 
       // UserGardenRecordsRepository.getList(). No record (or role) found
@@ -140,7 +142,7 @@ void main() {
 
       // Check user is not a member
       expect(await tc.user.hasRole(tc.garden.id, AppUserGardenRole.member), false);
-      expect(await tc.user.hasRole(tc.garden.id, AppUserGardenRole.moderator), false);
+      expect(await tc.user.hasRole(tc.garden.id, AppUserGardenRole.administrator), false);
       expect(await tc.user.hasRole(tc.garden.id, AppUserGardenRole.owner), false);
     });
 

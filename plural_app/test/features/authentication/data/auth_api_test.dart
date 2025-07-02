@@ -283,7 +283,7 @@ void main() {
         )
       );
 
-      final usersList = await getCurrentGardenUsers();
+      final usersList = await getCurrentGardenUserGardenRecords();
 
       expect(usersList.length, 2);
       expect(usersList.first, isA<AppUser>());
@@ -361,9 +361,9 @@ void main() {
         [AppUserGardenPermission.createAsks]
       );
 
-      // Moderator permissions
+      // Administrator permissions
       expect(
-        getUserGardenPermissionGroup(AppUserGardenRole.moderator),
+        getUserGardenPermissionGroup(AppUserGardenRole.administrator),
         [
           AppUserGardenPermission.createAsks,
           AppUserGardenPermission.changeGardenName,
@@ -371,7 +371,7 @@ void main() {
           AppUserGardenPermission.createAsks,
           AppUserGardenPermission.createInvitations,
           AppUserGardenPermission.deleteMemberAsks,
-          AppUserGardenPermission.enterModView,
+          AppUserGardenPermission.enterAdminPage,
           AppUserGardenPermission.kickMembers,
           AppUserGardenPermission.viewAuditLog,
         ]
@@ -387,7 +387,7 @@ void main() {
           AppUserGardenPermission.createAsks,
           AppUserGardenPermission.createInvitations,
           AppUserGardenPermission.deleteMemberAsks,
-          AppUserGardenPermission.enterModView,
+          AppUserGardenPermission.enterAdminPage,
           AppUserGardenPermission.kickMembers,
           AppUserGardenPermission.viewAuditLog,
           AppUserGardenPermission.deleteGarden,
@@ -481,7 +481,8 @@ void main() {
 
     test("getUserGardenRoleFromString", () async {
       expect(getUserGardenRoleFromString("member"), AppUserGardenRole.member);
-      expect(getUserGardenRoleFromString("moderator"), AppUserGardenRole.moderator);
+      expect(
+        getUserGardenRoleFromString("administrator"), AppUserGardenRole.administrator);
       expect(getUserGardenRoleFromString("owner"), AppUserGardenRole.owner);
 
       // Check that fallback value is member

@@ -11,7 +11,7 @@ import 'package:plural_app/src/features/gardens/domain/garden.dart';
 
 enum AppUserGardenRole {
   member(priority: 0),
-  moderator(priority: 1),
+  administrator(priority: 1),
   owner(priority: 2);
 
   const AppUserGardenRole({
@@ -28,7 +28,7 @@ enum AppUserGardenPermission {
   createInvitations,
   deleteGarden,
   deleteMemberAsks,
-  enterModView,
+  enterAdminPage,
   kickMembers,
   viewAuditLog,
 }

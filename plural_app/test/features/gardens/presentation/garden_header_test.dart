@@ -73,7 +73,7 @@ void main() {
       verify(() => mockAppState.refreshTimelineAsks()).called(1);
     });
 
-    testWidgets("isModView", (tester) async {
+    testWidgets("isAdminPage", (tester) async {
       final tc = TestContext();
 
       final appState = AppState.skipSubscribe()
@@ -84,12 +84,12 @@ void main() {
           home: ChangeNotifierProvider<AppState>.value(
             value: appState,
             child: Scaffold(
-              body: GardenHeader(isModView: true,),
+              body: GardenHeader(isAdminPage: true,),
             )
           )
         ));
 
-      expect(find.byType(ModViewIcon), findsOneWidget);
+      expect(find.byType(AdminPageIcon), findsOneWidget);
     });
   });
 }

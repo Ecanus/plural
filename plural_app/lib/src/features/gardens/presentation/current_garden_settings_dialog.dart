@@ -50,7 +50,7 @@ class CurrentGardenSettingsView extends StatelessWidget {
           child: Column(
             children: [
               GoToLandingPageTile(),
-              GoToModViewGardenPageTile(),
+              GoToAdminPageTile(),
             ],
           )
         ),
@@ -97,11 +97,11 @@ class GoToLandingPageTile extends StatelessWidget {
   }
 }
 
-class GoToModViewGardenPageTile extends StatelessWidget {
+class GoToAdminPageTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<bool>(
-      future: GetIt.instance<AppState>().isModerator(),
+      future: GetIt.instance<AppState>().isAdministrator(),
       builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
         if (snapshot.hasData && snapshot.data!) {
           return Card(
@@ -109,13 +109,13 @@ class GoToModViewGardenPageTile extends StatelessWidget {
             child: ListTile(
               tileColor: Theme.of(context).colorScheme.secondaryFixed,
               title: Text(
-                GardenDialogText.goToModViewGardenPageLabel,
+                GardenDialogText.goToAdminPageLabel,
                 style: TextStyle(
                   fontWeight: FontWeight.w500)
               ),
               leading: Icon(Icons.security),
               onTap: () {
-                GoRouter.of(context).go(Routes.modViewGarden);
+                GoRouter.of(context).go(Routes.admin);
               }
             ),
           );

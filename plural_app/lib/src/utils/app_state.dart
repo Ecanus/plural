@@ -82,8 +82,8 @@ class AppState with ChangeNotifier {
   // _timelineAsks
   List<Ask>? get timelineAsks => _timelineAsksList;
 
-  Future<bool> isModerator() async {
-    return await currentUser!.hasRole(currentGarden!.id, AppUserGardenRole.moderator);
+  Future<bool> isAdministrator() async {
+    return await currentUser!.hasRole(currentGarden!.id, AppUserGardenRole.administrator);
   }
 
   /// Verifies the existence of a [UserGardenRecord] record associated with

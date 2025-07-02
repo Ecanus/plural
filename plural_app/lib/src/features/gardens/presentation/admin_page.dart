@@ -11,12 +11,12 @@ import 'package:plural_app/src/features/gardens/presentation/garden_footer.dart'
 import 'package:plural_app/src/features/gardens/presentation/garden_header.dart';
 import 'package:plural_app/src/features/gardens/presentation/garden_timeline.dart';
 
-class ModViewGardenPage extends StatefulWidget {
+class AdminPage extends StatefulWidget {
   @override
-  State<ModViewGardenPage> createState() => _ModViewGardenPageState();
+  State<AdminPage> createState() => _AdminPageState();
 }
 
-class _ModViewGardenPageState extends State<ModViewGardenPage> {
+class _AdminPageState extends State<AdminPage> {
 
   @override
   Widget build(BuildContext context) {
@@ -28,10 +28,10 @@ class _ModViewGardenPageState extends State<ModViewGardenPage> {
           child: Column(
             children: [
               gapH60,
-              GardenHeader(isModView: true,),
+              GardenHeader(isAdminPage: true,),
               gapH30,
               GardenTimeline(),
-              GardenFooter(isModView: true,),
+              GardenFooter(isAdminPage: true,),
               gapH35
             ],
           ),
