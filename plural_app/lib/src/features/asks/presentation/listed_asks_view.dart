@@ -59,7 +59,7 @@ class RouteToCreateAskViewButton extends StatelessWidget {
     final appDialogRouter = GetIt.instance<AppDialogViewRouter>();
 
     return Tooltip(
-      message: AskDialogText.createAsk,
+      message: AskViewText.createAsk,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           backgroundColor: Theme.of(context).colorScheme.onPrimary,
@@ -82,12 +82,12 @@ class EmptyListedAskTilesMessage extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            AskDialogText.emptyListedAskTilesMessage,
+            AskViewText.emptyListedAskTilesMessage,
             style: Theme.of(context).textTheme.headlineSmall
           ),
           gapH25,
           Text(
-            AskDialogText.emptyListedAskTilesSubtitle,
+            AskViewText.emptyListedAskTilesSubtitle,
             style: Theme.of(context).textTheme.bodyMedium
           ),
         ],

@@ -49,7 +49,7 @@ class ListedAskTile extends StatelessWidget {
           ),
         ),
         subtitle: Text(
-          "${AskDialogText.deadlineDueBy}: ${ask.formattedDeadlineDate}",
+          "${AskViewText.deadlineDueBy}: ${ask.formattedDeadlineDate}",
           style: TextStyle(
             color: textColor,
             decoration: textDecoration,

@@ -54,7 +54,7 @@ void main() {
 
       // Check expected values are found
       expect(find.byType(EditAskView), findsOneWidget);
-      expect(find.byType(EditableAskHeader), findsOneWidget);
+      expect(find.byType(EditAskHeader), findsOneWidget);
       expect(find.byType(AppDatePickerFormField), findsOneWidget);
       expect(find.byType(AppTextFormField), findsNWidgets(5));
       expect(find.byType(AppCurrencyPickerFormField), findsOneWidget);

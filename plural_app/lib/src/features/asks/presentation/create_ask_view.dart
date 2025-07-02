@@ -88,7 +88,7 @@ class _CreateAskViewState extends State<CreateAskView> {
                     AppDatePickerFormField(
                       appForm: _appForm,
                       fieldName: AskField.deadlineDate,
-                      label: AskDialogText.deadlineDate,
+                      label: AskViewText.deadlineDate,
                     ),
                     Row(
                       children: [
@@ -97,7 +97,7 @@ class _CreateAskViewState extends State<CreateAskView> {
                             appForm: _appForm,
                             fieldName: AskField.targetSum,
                             formFieldType: FormFieldType.digitsOnly,
-                            label: AskDialogText.targetSum,
+                            label: AskViewText.targetSum,
                             maxLength: AppMaxLengths.max4,
                             textFieldType: TextFieldType.digitsOnly,
                           ),
@@ -108,10 +108,10 @@ class _CreateAskViewState extends State<CreateAskView> {
                             appForm: _appForm,
                             fieldName: AskField.boon,
                             formFieldType: FormFieldType.digitsOnly,
-                            label: AskDialogText.boon,
+                            label: AskViewText.boon,
                             maxLength: AppMaxLengths.max4,
                             suffixIcon: Tooltip(
-                              message: AskDialogText.tooltipBoon,
+                              message: AskViewText.tooltipBoon,
                               child: AppTooltipIcon(isDark: false),
                             ),
                             textFieldType: TextFieldType.digitsOnly,
@@ -124,7 +124,7 @@ class _CreateAskViewState extends State<CreateAskView> {
                             appForm: _appForm,
                             fieldName: AskField.currency,
                             initialValue: _appState.currentUserSettings!.defaultCurrency,
-                            label: AskDialogText.currency,
+                            label: AskViewText.currency,
                           )
                         )
                       ],
@@ -132,11 +132,11 @@ class _CreateAskViewState extends State<CreateAskView> {
                     AppTextFormField(
                       appForm: _appForm,
                       fieldName: AskField.description,
-                      label: AskDialogText.description,
+                      label: AskViewText.description,
                       maxLength: AppMaxLengths.max400,
                       maxLines: null,
                       suffixIcon: Tooltip(
-                        message: AskDialogText.urlFormattingText,
+                        message: AskViewText.urlFormattingText,
                         child: AppTooltipIcon(isDark: false),
                       ),
                     ),
@@ -144,11 +144,11 @@ class _CreateAskViewState extends State<CreateAskView> {
                       appForm: _appForm,
                       fieldName: AskField.instructions,
                       initialValue: _appState.currentUserSettings!.defaultInstructions,
-                      label: AskDialogText.instructions,
+                      label: AskViewText.instructions,
                       maxLength: AppMaxLengths.max200,
                       maxLines: null,
                       suffixIcon: Tooltip(
-                        message: AskDialogText.tooltipInstructions,
+                        message: AskViewText.tooltipInstructions,
                         child: AppTooltipIcon(isDark: false),
                       ),
                     ),
@@ -158,7 +158,7 @@ class _CreateAskViewState extends State<CreateAskView> {
                         appForm: _appForm,
                         fieldName: AskField.type,
                         initialValue: AskType.monetary.name, // Hardcoded value for now
-                        label: AskDialogText.type,
+                        label: AskViewText.type,
                       ),
                     ),
                   ],

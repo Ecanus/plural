@@ -266,7 +266,7 @@ void main() {
       await tester.tap(find.byType(CloseDialogButton));
       await tester.pumpAndSettle();
 
-      // Open CreatableAskDialog
+      // Open CreateAskDialog
       await tester.ensureVisible(find.byIcon(Icons.add));
       await tester.pumpAndSettle();
       await tester.tap(find.byIcon(Icons.add));

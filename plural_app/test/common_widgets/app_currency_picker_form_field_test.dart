@@ -24,7 +24,7 @@ void main() {
       final AppForm appForm = AppForm();
 
       const fieldName = AskField.currency;
-      const label = AskDialogText.currency;
+      const label = AskViewText.currency;
 
       await tester.pumpWidget(
         MaterialApp(
@@ -47,7 +47,7 @@ void main() {
       final AppForm appForm = AppForm();
 
       const fieldName = AskField.currency;
-      const label = AskDialogText.currency;
+      const label = AskViewText.currency;
       final value = tc.ask.currency;
 
       await tester.pumpWidget(
@@ -71,7 +71,7 @@ void main() {
       final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
       const fieldName = AskField.currency;
-      const label = AskDialogText.currency;
+      const label = AskViewText.currency;
 
       appForm.setValue(fieldName: fieldName, value: null);
 
@@ -106,7 +106,7 @@ void main() {
       final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
       const fieldName = AskField.currency;
-      const label = AskDialogText.currency;
+      const label = AskViewText.currency;
 
       appForm.setValue(fieldName: fieldName, value: null);
 
@@ -143,7 +143,7 @@ void main() {
       final AppForm appForm = AppForm();
 
       const fieldName = AskField.currency;
-      const firstLabel = AskDialogText.currency;
+      const firstLabel = AskViewText.currency;
       const secondLabel = "Pickles";
 
       await tester.pumpWidget(
@@ -182,7 +182,7 @@ void main() {
       final AppForm appForm = AppForm();
 
       const fieldName = AskField.currency;
-      const label = AskDialogText.currency;
+      const label = AskViewText.currency;
 
       appForm.setValue(fieldName: fieldName, value: null);
 
@@ -224,7 +224,7 @@ void main() {
       final AppForm appForm = AppForm();
 
       const fieldName = AskField.currency;
-      const label = AskDialogText.currency;
+      const label = AskViewText.currency;
 
       appForm.setValue(fieldName: fieldName, value: null);
 

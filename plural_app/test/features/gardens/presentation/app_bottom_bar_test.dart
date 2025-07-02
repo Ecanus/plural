@@ -23,7 +23,7 @@ import '../../../test_context.dart';
 
 void main() {
   group("AppBottomBar test", () {
-    testWidgets("createCreatableAskDialog", (tester) async {
+    testWidgets("createCreateAskDialog", (tester) async {
       final tc = TestContext();
       final appState = AppState.skipSubscribe()
                         ..currentGarden = tc.garden
@@ -49,7 +49,7 @@ void main() {
       expect(find.byType(AppBottomBar), findsOneWidget);
       expect(find.byType(CreateAskView), findsNothing);
 
-      // Tap IconButton with Icons.add (opens creatable ask dialog)
+      // Tap IconButton with Icons.add (opens create ask dialog)
       await tester.tap(find.byIcon(Icons.add));
       await tester.pumpAndSettle();
 

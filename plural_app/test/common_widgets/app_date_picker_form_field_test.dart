@@ -25,7 +25,7 @@ void main() {
       final AppForm appForm = AppForm();
 
       const fieldName = AskField.deadlineDate;
-      const label = AskDialogText.deadlineDate;
+      const label = AskViewText.deadlineDate;
 
       await tester.pumpWidget(
         MaterialApp(
@@ -48,7 +48,7 @@ void main() {
       final AppForm appForm = AppForm();
 
       const fieldName = AskField.deadlineDate;
-      const label = AskDialogText.deadlineDate;
+      const label = AskViewText.deadlineDate;
       final value = tc.ask.deadlineDate;
 
       await tester.pumpWidget(
@@ -75,7 +75,7 @@ void main() {
       final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
       const fieldName = AskField.deadlineDate;
-      const label = AskDialogText.deadlineDate;
+      const label = AskViewText.deadlineDate;
 
       appForm.setValue(fieldName: AskField.deadlineDate, value: null);
 
@@ -110,7 +110,7 @@ void main() {
       final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
       const fieldName = AskField.deadlineDate;
-      const label = AskDialogText.deadlineDate;
+      const label = AskViewText.deadlineDate;
 
       appForm.setValue(fieldName: fieldName, value: null);
 
@@ -147,7 +147,7 @@ void main() {
       final AppForm appForm = AppForm();
 
       const fieldName = AskField.deadlineDate;
-      const firstLabel = AskDialogText.deadlineDate;
+      const firstLabel = AskViewText.deadlineDate;
       const secondLabel = "Hibiscus";
 
       await tester.pumpWidget(
@@ -185,7 +185,7 @@ void main() {
     testWidgets("showDatePickerDialog select value", (tester) async {
       final AppForm appForm = AppForm();
       const fieldName = AskField.deadlineDate;
-      const label = AskDialogText.deadlineDate;
+      const label = AskViewText.deadlineDate;
 
       appForm.setValue(fieldName: fieldName, value: null);
 
@@ -228,7 +228,7 @@ void main() {
     testWidgets("showDatePickerDialog dismiss", (tester) async {
       final AppForm appForm = AppForm();
       const fieldName = AskField.deadlineDate;
-      const label = AskDialogText.deadlineDate;
+      const label = AskViewText.deadlineDate;
 
       appForm.setValue(fieldName: fieldName, value: null);
 
@@ -270,7 +270,7 @@ void main() {
     testWidgets("Valid text entry out of range", (tester) async {
       final AppForm appForm = AppForm();
       const fieldName = AskField.deadlineDate;
-      const label = AskDialogText.deadlineDate;
+      const label = AskViewText.deadlineDate;
 
       appForm.setValue(fieldName: fieldName, value: null);
 
@@ -313,7 +313,7 @@ void main() {
     testWidgets("showDatePickerDialog initialValue out of range", (tester) async {
       final AppForm appForm = AppForm();
       const fieldName = AskField.deadlineDate;
-      const label = AskDialogText.deadlineDate;
+      const label = AskViewText.deadlineDate;
 
       appForm.setValue(fieldName: fieldName, value: null);
 

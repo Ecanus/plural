@@ -39,7 +39,7 @@ void main() {
       expect(appDialogRouter.viewNotifier.value, isA<Container>());
     });
 
-    test("routeToCreatableAskDialogView", () async {
+    test("routeToCreateAskView", () async {
       final appDialogRouter = AppDialogViewRouter();
 
       expect(appDialogRouter.viewNotifier.value, isA<SizedBox>());
@@ -47,7 +47,7 @@ void main() {
       expect(appDialogRouter.viewNotifier.value, isA<CreateAskView>());
     });
 
-    test("routeToEditableAskDialogView", () async {
+    test("routeToEditAskView", () async {
       final tc = TestContext();
       final appDialogRouter = AppDialogViewRouter();
 

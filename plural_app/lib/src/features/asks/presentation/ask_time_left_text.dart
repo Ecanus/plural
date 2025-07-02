@@ -28,7 +28,7 @@ class AskTimeLeftText extends StatelessWidget {
                 color: textColor,
                 fontSize: fontSize
               ),
-              text: "${AskDialogText.askTimeLeftBrace} "
+              text: "${AskViewText.askTimeLeftBrace} "
             ),
             TextSpan(
               style: TextStyle(
@@ -43,7 +43,7 @@ class AskTimeLeftText extends StatelessWidget {
                 color: textColor,
                 fontSize: fontSize
               ),
-              text: " ${AskDialogText.askTimeLeftBrace}"
+              text: " ${AskViewText.askTimeLeftBrace}"
             ),
           ]
         )

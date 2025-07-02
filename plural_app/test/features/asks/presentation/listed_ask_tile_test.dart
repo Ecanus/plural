@@ -57,7 +57,7 @@ void main() {
       var subtitle = get<Text>(
         tester,
         getBy: GetBy.text,
-        text: "${AskDialogText.deadlineDueBy}: ${tc.ask.formattedDeadlineDate}",
+        text: "${AskViewText.deadlineDueBy}: ${tc.ask.formattedDeadlineDate}",
       );
       expect(subtitle.style!.color, AppThemes.colorScheme.onPrimaryFixed);
       expect(subtitle.style!.decoration, TextDecoration.lineThrough);
@@ -101,7 +101,7 @@ void main() {
       var subtitle = get<Text>(
         tester,
         getBy: GetBy.text,
-        text: "${AskDialogText.deadlineDueBy}: ${tc.ask.formattedDeadlineDate}",
+        text: "${AskViewText.deadlineDueBy}: ${tc.ask.formattedDeadlineDate}",
       );
       expect(subtitle.style!.color, AppThemes.colorScheme.onPrimaryFixed);
       expect(subtitle.style!.decoration, TextDecoration.lineThrough);
@@ -145,7 +145,7 @@ void main() {
       var subtitle = get<Text>(
         tester,
         getBy: GetBy.text,
-        text: "${AskDialogText.deadlineDueBy}: ${tc.ask.formattedDeadlineDate}",
+        text: "${AskViewText.deadlineDueBy}: ${tc.ask.formattedDeadlineDate}",
       );
       expect(subtitle.style!.color, AppThemes.colorScheme.onPrimary);
       expect(subtitle.style!.decoration, null);

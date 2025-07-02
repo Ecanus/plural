@@ -3,6 +3,8 @@ class AppText {
 }
 
 class AppDialogFooterText {
+  static const adminListedUsers = "Users";
+
   static const createAsk = "Create Ask";
 
   static const editAsk = "Edit Ask";
@@ -11,19 +13,21 @@ class AppDialogFooterText {
 
   static const listedAsks = "My Asks";
 
+  static const navToAdminListedUsers = "Users";
   static const navToAsksDialog = "Asks";
   static const navToGardenDialog = "Gardens";
   static const navToSettingsDialog = "Settings";
-  static const navToUsers = "Users";
 
   static const settings = "Settings";
-
-  static const users = "Users";
 
   static const viewAsk = "View Ask";
 }
 
-class AskDialogText {
+class AppDialogFooterBufferText {
+  static const saveChanges = "Save changes";
+}
+
+class AskViewText {
   static const askTimeLeftBrace = "—";
 
   static const boon = "Boon";
@@ -46,6 +50,8 @@ class AskDialogText {
   static const goToListedAsks = "Go to My Asks";
 
   static const instructions = "Instructions";
+  static const instructionsTooltip = "How funds can be sent to you.\n"
+                                      "$urlFormattingText";
 
   static const markAsSponsored = "Click to mark as sponsored";
 
@@ -54,7 +60,6 @@ class AskDialogText {
   static const reasonDeadlinePassed = "(deadline passed)";
   static const reasonTargetMet = "(target met)";
 
-  static const saveChanges = "Save changes";
   static const selectDateLabel = "Select date";
 
   static const targetMet = "Target met";
@@ -62,8 +67,6 @@ class AskDialogText {
   static const targetSum = "Target Sum";
   static const tooltipBoon = "The smallest ideal donation amount, "
                               "e.g. \$5 boon for \$20 target sum";
-  static const tooltipInstructions = "How funds can be sent to you.\n"
-                                      "$urlFormattingText";
   static const type = "Type";
 
   static const unmarkAsSponsored = "Click to unmark as sponsored";
@@ -89,7 +92,16 @@ class ForgotPasswordDialogText {
     "Please enter the email address to send password reset instructions to");
 }
 
-class GardenDialogText {
+class GardenSettingsViewText {
+  static const cancelConfirmExitGarden = "Cancel";
+  static const confirmExitGarden = "Are you sure?";
+  static const confirmExitGardenSubtitle = ""
+    "Leaving will permanently remove you from this Garden."
+    "\n\nAll your Asks—fulfilled or unfulfilled—will be deleted, "
+    "and you will need a new invitation to return.";
+
+  static const exitGarden = "Exit Garden";
+
   static const goToLandingPageLabel = "Go to Landing page";
   static const goToAdminPageLabel = "Go to Administrator page";
 }
@@ -184,19 +196,11 @@ class UnauthorizedPageText {
 
 }
 
-class UserSettingsDialogText {
-  static const cancelConfirmExitGarden = "Cancel";
-  static const confirmExitGarden = "Are you sure?";
-  static const confirmExitGardenSubtitle = ""
-    "Leaving will permanently remove you from this Garden."
-    "\n\nAll your Asks—fulfilled or unfulfilled—will be deleted, "
-    "and you will need a new invitation to return.";
-
+class UserSettingsViewText {
   static const defaultCurrency = "Default currency";
   static const defaultInstructions = "Default instructions";
 
   static const firstName = "First name";
 
   static const lastName = "Last name";
-  static const exitGarden = "Leave Garden";
 }

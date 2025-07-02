@@ -70,7 +70,7 @@ void main() {
       expect(find.byType(ConfirmExitGardenDialog), findsOneWidget);
 
       // Tap close dialog button
-      await tester.tap(find.text(UserSettingsDialogText.cancelConfirmExitGarden));
+      await tester.tap(find.text(GardenSettingsViewText.cancelConfirmExitGarden));
       await tester.pumpAndSettle();
 
       // Check ConfirmExitGardenDialog has been removed
@@ -110,7 +110,7 @@ void main() {
 
       // Check routed text not rendered, widget is present, and tile label is rendered
       expect(find.text("Test routing to Landing Page was successful."), findsNothing);
-      expect(find.text(GardenDialogText.goToLandingPageLabel), findsOneWidget);
+      expect(find.text(GardenSettingsViewText.goToLandingPageLabel), findsOneWidget);
       expect(find.byType(GoToLandingPageTile), findsOneWidget);
 
       // Tap on the ListTile

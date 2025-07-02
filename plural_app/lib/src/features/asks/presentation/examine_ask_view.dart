@@ -49,7 +49,7 @@ class ExamineAskView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        NonEditableAskHeader(ask: ask),
+        ExamineAskHeader(ask: ask),
         Expanded(
           child: ListView(
             padding: const EdgeInsets.all(AppPaddings.p45),
@@ -81,12 +81,12 @@ class ExamineAskView extends StatelessWidget {
                   gapH25,
                   TextColumn(
                     fontWeight: FontWeight.bold,
-                    labelText: AskDialogText.instructions,
+                    labelText: AskViewText.instructions,
                     bodyText: ask.instructions,
                   ),
                   gapH25,
                   TextColumn(
-                    labelText: AskDialogText.username,
+                    labelText: AskViewText.username,
                     bodyText: ask.creator.username,
                   ),
                 ],
@@ -100,18 +100,18 @@ class ExamineAskView extends StatelessWidget {
   }
 }
 
-class NonEditableAskHeader extends StatefulWidget {
-  const NonEditableAskHeader({
+class ExamineAskHeader extends StatefulWidget {
+  const ExamineAskHeader({
     required this.ask,
   });
 
   final Ask ask;
 
   @override
-  State<NonEditableAskHeader> createState() => _NonEditableAskHeaderState();
+  State<ExamineAskHeader> createState() => _ExamineAskHeaderState();
 }
 
-class _NonEditableAskHeaderState extends State<NonEditableAskHeader> {
+class _ExamineAskHeaderState extends State<ExamineAskHeader> {
   late bool _isSponsored;
 
   @override
@@ -186,7 +186,7 @@ class _NonEditableAskHeaderState extends State<NonEditableAskHeader> {
               gapW5,
               Tooltip(
                 message: _isSponsored ?
-                  AskDialogText.unmarkAsSponsored : AskDialogText.markAsSponsored,
+                  AskViewText.unmarkAsSponsored : AskViewText.markAsSponsored,
                 child: AppTooltipIcon()
               )
             ],
@@ -227,12 +227,12 @@ class BoonColumn extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              AskDialogText.boon,
+              AskViewText.boon,
               style: TextStyle(color: Theme.of(context).colorScheme.primary)
             ),
             gapW5,
             Tooltip(
-              message: AskDialogText.tooltipBoon,
+              message: AskViewText.tooltipBoon,
               child: AppTooltipIcon()
             )
           ],

@@ -84,7 +84,7 @@ class GoToLandingPageTile extends StatelessWidget {
       child: ListTile(
         tileColor: Theme.of(context).colorScheme.primaryContainer,
         title: Text(
-          GardenDialogText.goToLandingPageLabel,
+          GardenSettingsViewText.goToLandingPageLabel,
           style: TextStyle(
             fontWeight: FontWeight.w500)
         ),
@@ -109,7 +109,7 @@ class GoToAdminPageTile extends StatelessWidget {
             child: ListTile(
               tileColor: Theme.of(context).colorScheme.secondaryFixed,
               title: Text(
-                GardenDialogText.goToAdminPageLabel,
+                GardenSettingsViewText.goToAdminPageLabel,
                 style: TextStyle(
                   fontWeight: FontWeight.w500)
               ),
@@ -149,7 +149,7 @@ class ExitGardenButton extends StatelessWidget {
           ),
         ),
         child: Text(
-          UserSettingsDialogText.exitGarden,
+          GardenSettingsViewText.exitGarden,
           style: TextStyle(
             color: Theme.of(context).colorScheme.error
           ),
@@ -182,7 +182,7 @@ class ConfirmExitGardenDialog extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Text(
-                  UserSettingsDialogText.confirmExitGarden,
+                  GardenSettingsViewText.confirmExitGarden,
                   style: Theme.of(context).textTheme.headlineMedium,
                 ),
               ],
@@ -193,7 +193,7 @@ class ConfirmExitGardenDialog extends StatelessWidget {
               children: [
                 Flexible(
                   child: Text(
-                    UserSettingsDialogText.confirmExitGardenSubtitle,
+                    GardenSettingsViewText.confirmExitGardenSubtitle,
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                 ),
@@ -215,7 +215,7 @@ class ConfirmExitGardenDialog extends StatelessWidget {
                       ),
                     ),
                     child: Text(
-                      UserSettingsDialogText.cancelConfirmExitGarden,
+                      GardenSettingsViewText.cancelConfirmExitGarden,
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.onSecondary
                       ),
@@ -239,7 +239,7 @@ class ConfirmExitGardenDialog extends StatelessWidget {
                         )
                       ),
                     ),
-                    child: const Text(UserSettingsDialogText.exitGarden)
+                    child: const Text(GardenSettingsViewText.exitGarden)
                   ),
                 )
               ],

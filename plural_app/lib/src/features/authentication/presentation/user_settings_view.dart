@@ -82,48 +82,52 @@ class _UserSettingsViewState extends State<UserSettingsView> {
     return Column(
       children: [
         Expanded(
-          child: Form(
-            key: _formKey,
-            child: ListView(
-              padding: const EdgeInsets.all(AppPaddings.p35),
-              children: [
-                AppCurrencyPickerFormField(
-                  appForm: _userSettingsAppForm,
-                  fieldName: UserSettingsField.defaultCurrency,
-                  initialValue: widget.userSettings.defaultCurrency,
-                  label: UserSettingsDialogText.defaultCurrency,
+          child: ListView(
+            padding: const EdgeInsets.all(AppPaddings.p35),
+            children: [
+              Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    AppCurrencyPickerFormField(
+                      appForm: _userSettingsAppForm,
+                      fieldName: UserSettingsField.defaultCurrency,
+                      initialValue: widget.userSettings.defaultCurrency,
+                      label: UserSettingsViewText.defaultCurrency,
+                    ),
+                    AppTextFormField(
+                      appForm: _userSettingsAppForm,
+                      fieldName: UserSettingsField.defaultInstructions,
+                      initialValue: widget.userSettings.defaultInstructions,
+                      label: UserSettingsViewText.defaultInstructions,
+                      maxLength: AppMaxLengths.max200,
+                      maxLines: null,
+                    ),
+                    gapH30,
+                    AppTextFormField(
+                      appForm: _userAppForm,
+                      fieldName: UserField.firstName,
+                      initialValue: widget.user.firstName,
+                      label: UserSettingsViewText.firstName,
+                      maxLength: AppMaxLengths.max200,
+                      maxLines: null,
+                      paddingTop: AppPaddings.p0,
+                    ),
+                    AppTextFormField(
+                      appForm: _userAppForm,
+                      fieldName: UserField.lastName,
+                      initialValue: widget.user.lastName,
+                      label: UserSettingsViewText.lastName,
+                      maxLength: AppMaxLengths.max200,
+                      maxLines: null,
+                      paddingTop: AppPaddings.p0,
+                    ),
+                    gapH30,
+                    LogOutButton(),
+                  ],
                 ),
-                AppTextFormField(
-                  appForm: _userSettingsAppForm,
-                  fieldName: UserSettingsField.defaultInstructions,
-                  initialValue: widget.userSettings.defaultInstructions,
-                  label: UserSettingsDialogText.defaultInstructions,
-                  maxLength: AppMaxLengths.max200,
-                  maxLines: null,
-                ),
-                gapH30,
-                AppTextFormField(
-                  appForm: _userAppForm,
-                  fieldName: UserField.firstName,
-                  initialValue: widget.user.firstName,
-                  label: UserSettingsDialogText.firstName,
-                  maxLength: AppMaxLengths.max200,
-                  maxLines: null,
-                  paddingTop: AppPaddings.p0,
-                ),
-                AppTextFormField(
-                  appForm: _userAppForm,
-                  fieldName: UserField.lastName,
-                  initialValue: widget.user.lastName,
-                  label: UserSettingsDialogText.lastName,
-                  maxLength: AppMaxLengths.max200,
-                  maxLines: null,
-                  paddingTop: AppPaddings.p0,
-                ),
-                gapH30,
-                LogOutButton(),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
         AppDialogFooterBuffer(
