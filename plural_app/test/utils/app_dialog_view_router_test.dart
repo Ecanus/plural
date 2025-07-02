@@ -9,17 +9,17 @@ import 'package:plural_app/src/constants/fields.dart';
 
 // Asks
 import 'package:plural_app/src/features/asks/data/asks_repository.dart';
-import 'package:plural_app/src/features/asks/presentation/create_ask_dialog.dart';
-import 'package:plural_app/src/features/asks/presentation/edit_ask_dialog.dart';
-import 'package:plural_app/src/features/asks/presentation/listed_asks_dialog.dart';
+import 'package:plural_app/src/features/asks/presentation/create_ask_view.dart';
+import 'package:plural_app/src/features/asks/presentation/edit_ask_view.dart';
+import 'package:plural_app/src/features/asks/presentation/listed_asks_view.dart';
 
 // Auth
 import 'package:plural_app/src/features/authentication/data/user_garden_records_repository.dart';
 import 'package:plural_app/src/features/authentication/data/users_repository.dart';
-import 'package:plural_app/src/features/authentication/presentation/user_settings_dialog.dart';
+import 'package:plural_app/src/features/authentication/presentation/user_settings_view.dart';
 
 // Gardens
-import 'package:plural_app/src/features/gardens/presentation/current_garden_settings_dialog.dart';
+import 'package:plural_app/src/features/gardens/presentation/current_garden_settings_view.dart';
 
 // Utils
 import 'package:plural_app/src/utils/app_dialog_view_router.dart';
@@ -158,7 +158,7 @@ void main() {
       final appDialogRouter = AppDialogViewRouter();
 
       expect(appDialogRouter.viewNotifier.value, isA<SizedBox>());
-      await appDialogRouter.routeToCurrentGardenSettingsView();
+      appDialogRouter.routeToCurrentGardenSettingsView();
       expect(appDialogRouter.viewNotifier.value, isA<CurrentGardenSettingsView>());
     });
 

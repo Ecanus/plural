@@ -11,7 +11,7 @@ import 'package:plural_app/src/common_widgets/app_dialog_footer.dart';
 
 // Asks
 import 'package:plural_app/src/features/asks/data/asks_repository.dart';
-import 'package:plural_app/src/features/asks/presentation/non_editable_ask_dialog.dart';
+import 'package:plural_app/src/features/asks/presentation/examine_ask_view.dart';
 
 // Localization
 import 'package:plural_app/src/localization/lang_en.dart';
@@ -50,7 +50,7 @@ void main() {
             body: Builder(
               builder: (BuildContext context) {
                 return ElevatedButton(
-                  onPressed: () => createNonEditableAskDialog(
+                  onPressed: () => createExamineAskDialog(
                     context: context, ask: ask),
                   child: Text("The ElevatedButton")
                 );
@@ -61,7 +61,7 @@ void main() {
       );
 
       // Check AskDialogView not yet displayed
-      expect(find.byType(AskDialogView), findsNothing);
+      expect(find.byType(ExamineAskView), findsNothing);
 
       // Tap ElevatedButton (to open dialog)
       await tester.tap(find.byType(ElevatedButton));

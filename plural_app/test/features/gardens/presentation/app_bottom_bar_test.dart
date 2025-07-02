@@ -4,15 +4,15 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 
 // Asks
-import 'package:plural_app/src/features/asks/presentation/create_ask_dialog.dart';
+import 'package:plural_app/src/features/asks/presentation/create_ask_view.dart';
 
 // Auth
-import 'package:plural_app/src/features/authentication/presentation/user_settings_dialog.dart';
+import 'package:plural_app/src/features/authentication/presentation/user_settings_view.dart';
 
 // Gardens
 import 'package:plural_app/src/features/gardens/presentation/app_bottom_bar.dart';
+import 'package:plural_app/src/features/gardens/presentation/current_garden_settings_view.dart';
 import 'package:plural_app/src/features/gardens/presentation/garden_footer.dart';
-import 'package:plural_app/src/features/gardens/presentation/current_garden_settings_dialog.dart';
 
 // Utils
 import 'package:plural_app/src/utils/app_dialog_view_router.dart';

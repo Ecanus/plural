@@ -7,9 +7,9 @@ import 'package:plural_app/src/common_widgets/app_dialog.dart';
 import 'package:plural_app/src/common_widgets/app_dialog_footer.dart';
 
 // Asks
-import 'package:plural_app/src/features/asks/presentation/create_ask_dialog.dart';
+import 'package:plural_app/src/features/asks/presentation/create_ask_view.dart';
 import 'package:plural_app/src/features/asks/presentation/listed_ask_tile.dart';
-import 'package:plural_app/src/features/asks/presentation/listed_asks_dialog.dart';
+import 'package:plural_app/src/features/asks/presentation/listed_asks_view.dart';
 
 // Utils
 import 'package:plural_app/src/utils/app_dialog_view_router.dart';

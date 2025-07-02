@@ -24,7 +24,7 @@ import 'package:plural_app/src/localization/lang_en.dart';
 import 'package:plural_app/src/utils/app_state.dart';
 
 
-Future createNonEditableAskDialog({
+Future createExamineAskDialog({
   required BuildContext context,
   required Ask ask
   }) async {
@@ -32,14 +32,14 @@ Future createNonEditableAskDialog({
       context: context,
       builder: (BuildContext context) {
         return AppDialog(
-          view: AskDialogView(ask: ask),
+          view: ExamineAskView(ask: ask),
         );
       }
     );
 }
 
-class AskDialogView extends StatelessWidget {
-  const AskDialogView({
+class ExamineAskView extends StatelessWidget {
+  const ExamineAskView({
     required this.ask,
   });
 

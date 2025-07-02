@@ -8,16 +8,18 @@ import 'package:plural_app/src/constants/formats.dart';
 // Asks
 import 'package:plural_app/src/features/asks/data/asks_api.dart';
 import 'package:plural_app/src/features/asks/domain/ask.dart';
-import 'package:plural_app/src/features/asks/presentation/create_ask_dialog.dart';
-import 'package:plural_app/src/features/asks/presentation/edit_ask_dialog.dart';
-import 'package:plural_app/src/features/asks/presentation/listed_asks_dialog.dart';
+import 'package:plural_app/src/features/asks/presentation/create_ask_view.dart';
+import 'package:plural_app/src/features/asks/presentation/edit_ask_view.dart';
+import 'package:plural_app/src/features/asks/presentation/listed_asks_view.dart';
 import 'package:plural_app/src/features/asks/presentation/listed_ask_tile.dart';
 
 // Auth
-import 'package:plural_app/src/features/authentication/presentation/user_settings_dialog.dart';
+import 'package:plural_app/src/features/authentication/domain/app_user_garden_record.dart';
+import 'package:plural_app/src/features/authentication/presentation/admin_edit_user_view.dart';
+import 'package:plural_app/src/features/authentication/presentation/user_settings_view.dart';
 
 // Gardens
-import 'package:plural_app/src/features/gardens/presentation/current_garden_settings_dialog.dart';
+import 'package:plural_app/src/features/gardens/presentation/current_garden_settings_view.dart';
 
 // Utils
 import 'package:plural_app/src/utils/app_state.dart';
@@ -55,6 +57,10 @@ class AppDialogViewRouter {
   }
 
   /// Auth
+  void routeToAdminEditUserView(AppUserGardenRecord userGardenRecord) {
+    viewNotifier.value = AdminEditUserView(userGardenRecord: userGardenRecord);
+  }
+
   Future<void> routeToUserSettingsView() async {
     final currentUser = GetIt.instance<AppState>().currentUser!;
     final currentUserSettings = GetIt.instance<AppState>().currentUserSettings!;
@@ -65,7 +71,7 @@ class AppDialogViewRouter {
   }
 
   /// Gardens
-  Future<void> routeToCurrentGardenSettingsView() async {
+  void routeToCurrentGardenSettingsView() {
     viewNotifier.value = CurrentGardenSettingsView();
   }
 }

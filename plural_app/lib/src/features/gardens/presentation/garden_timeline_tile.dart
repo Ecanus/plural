@@ -8,8 +8,8 @@ import 'package:plural_app/src/constants/app_values.dart';
 // Asks
 import 'package:plural_app/src/features/asks/domain/ask.dart';
 import 'package:plural_app/src/features/asks/presentation/ask_time_left_text.dart';
-import 'package:plural_app/src/features/asks/presentation/edit_ask_dialog.dart';
-import 'package:plural_app/src/features/asks/presentation/non_editable_ask_dialog.dart';
+import 'package:plural_app/src/features/asks/presentation/edit_ask_view.dart';
+import 'package:plural_app/src/features/asks/presentation/examine_ask_view.dart';
 
 class GardenTimelineTile extends StatelessWidget {
   const GardenTimelineTile({
@@ -247,7 +247,7 @@ class TileViewAskButton extends StatelessWidget {
         child: IconButton(
           color: Theme.of(context).colorScheme.secondaryFixed,
           icon: const Icon(Icons.more_horiz_rounded),
-          onPressed: () => createNonEditableAskDialog(context: context, ask: ask),
+          onPressed: () => createExamineAskDialog(context: context, ask: ask),
           padding: EdgeInsets.zero
         ),
       ),

@@ -10,7 +10,7 @@ import 'package:plural_app/src/common_widgets/app_dialog_footer.dart';
 import 'package:plural_app/src/constants/routes.dart';
 
 // Gardens
-import 'package:plural_app/src/features/gardens/presentation/current_garden_settings_dialog.dart';
+import 'package:plural_app/src/features/gardens/presentation/current_garden_settings_view.dart';
 
 // Localization
 import 'package:plural_app/src/localization/lang_en.dart';
