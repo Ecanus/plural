@@ -128,10 +128,10 @@ void main() {
       verify(() => mockAsksRepository.create(body: appForm.fields)).called(1);
       verify(() => mockAsksRepository.getList(
         filter: any(named: "filter"), sort: any(named: "sort"))
-      ).called(3);
+      ).called(1);
       verify(() => mockUsersRepository.getFirstListItem(
         filter: any(named: "filter"))
-      ).called(3);
+      ).called(1);
       expect(formKey.currentState!.validate(), true);
       expect(ft.find.byType(SnackBar), ft.findsOneWidget);
 

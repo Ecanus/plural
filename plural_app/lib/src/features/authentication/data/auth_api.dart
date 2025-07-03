@@ -218,7 +218,6 @@ List<AppUserGardenPermission> getUserGardenPermissionGroup(AppUserGardenRole rol
     group.addAll([
       AppUserGardenPermission.changeGardenName,
       AppUserGardenPermission.changeMemberRoles,
-      AppUserGardenPermission.createAndEditAsks,
       AppUserGardenPermission.createInvitations,
       AppUserGardenPermission.deleteMemberAsks,
       AppUserGardenPermission.expelMembers,

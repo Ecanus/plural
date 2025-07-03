@@ -38,7 +38,7 @@ void main() {
       verifyNever(() => recordService.authWithPassword(any(), any()));
 
       await usersRepository.authWithPassword(
-        tc.user.email,
+        "test@email.com",
         "testpassword"
       );
 
@@ -54,7 +54,7 @@ void main() {
       // Check a ClientException is thrown
       expect(
         () async => await usersRepository.authWithPassword(
-          tc.user.email, "testpassword"),
+          "test@email.com", "testpassword"),
         throwsA(predicate((e) => e is ClientException))
       );
     });

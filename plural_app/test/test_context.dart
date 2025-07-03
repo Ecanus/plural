@@ -29,7 +29,6 @@ class TestContext {
 
   TestContext() {
     user = AppUser(
-      email: "test@user.com",
       firstName: "MyFirstName",
       id: "TESTUSER1",
       lastName: "MyLastName",
@@ -168,32 +167,29 @@ class TestContext {
     });
   }
 
-  RecordModel getExpandUserGardenRecordRecordModel(String expand) {
-    Map<String, dynamic> map;
+  RecordModel getExpandUserGardenRecordRecordModel(
+    List<String> expand, {
+    AppUserGardenRole role = AppUserGardenRole.member,
+}) {
+    Map<String, dynamic> map = {};
 
-    switch (expand) {
-      case UserGardenRecordField.user:
-        map = {
-          UserGardenRecordField.user: {
-            GenericField.id: user.id,
-            GenericField.created: "1992-12-23",
-            UserField.email: user.email,
-            UserField.firstName: user.firstName,
-            UserField.lastName: user.lastName,
-            UserField.username: user.username
-          },
-        };
-      case UserGardenRecordField.garden:
-        map = {
-          UserGardenRecordField.garden: {
-            GenericField.id: garden.id,
-            GenericField.created: "1993-11-11",
-            GardenField.creator: user.id,
-            GardenField.name: garden.name,
-          },
-        };
-      default:
-        map = {};
+    if (expand.contains(UserGardenRecordField.user)) {
+      map[UserGardenRecordField.user] = {
+        GenericField.id: user.id,
+        GenericField.created: "1992-12-23",
+        UserField.firstName: user.firstName,
+        UserField.lastName: user.lastName,
+        UserField.username: user.username
+      };
+    }
+
+    if (expand.contains(UserGardenRecordField.garden)) {
+      map[UserGardenRecordField.garden] = {
+        GenericField.id: garden.id,
+        GenericField.created: "1993-11-11",
+        GardenField.creator: user.id,
+        GardenField.name: garden.name,
+      };
     }
 
     return RecordModel.fromJson({
@@ -201,13 +197,13 @@ class TestContext {
       GenericField.created: "1999-10-08",
       UserGardenRecordField.user: user.id,
       UserGardenRecordField.garden: garden.id,
+      UserGardenRecordField.role: role.name,
       "expand": map
     });
   }
 
   RecordModel getUserRecordModel({
     String? id,
-    String? email,
     String? firstName,
     String? lastName,
     String? username,
@@ -216,7 +212,6 @@ class TestContext {
       "id": id ?? user.id,
       "created": "1992-12-23",
       "collectionName": Collection.users,
-      UserField.email: email ?? user.email,
       UserField.firstName: firstName ?? user.firstName,
       UserField.lastName: lastName ?? user.lastName,
       UserField.username: username ?? user.username,

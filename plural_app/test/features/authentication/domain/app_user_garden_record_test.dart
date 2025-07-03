@@ -44,7 +44,6 @@ void main() {
       final userGardenRecord = tc.userGardenRecord;
 
       final differentUser = AppUser(
-        email: "testEmail",
         firstName: "testFirstName",
         id: "testID",
         lastName: "testLastName",

@@ -274,7 +274,6 @@ void main() {
       ).thenAnswer(
         (_) async => tc.getUserRecordModel(
           id: tc.user.id,
-          email: tc.user.email,
           firstName: tc.user.firstName,
           lastName: tc.user.lastName,
           username: tc.user.username

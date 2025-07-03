@@ -23,14 +23,12 @@ void main() {
   group("AppUser test", () {
     test("constructor", () {
       final user = AppUser(
-        email: "test2@user.com",
         firstName: "FirstName2",
         id: "TESTUSER2",
         lastName: "LastName2",
         username: "testuser2"
       );
 
-      expect(user.email == "test2@user.com", true);
       expect(user.id == "TESTUSER2", true);
       expect(user.username == "testuser2", true);
     });
@@ -155,50 +153,46 @@ void main() {
       // Identity
       expect(user == user, true);
 
-      final otherUserSameIDAndEmail = AppUser(
-        email: user.email,
+      final otherUserSameIDAndUsername = AppUser(
         firstName: "OtherSameIDAndEmailFirst",
         id: user.id,
         lastName: "OtherSameIDAndEmailLast",
-        username: "testotheruser"
+        username: user.username
       );
 
-      expect(user == otherUserSameIDAndEmail, true);
+      expect(user == otherUserSameIDAndUsername, true);
 
-      final otherUserDifferentIDAndEmail = AppUser(
-        email: "test@otheruser.com",
+      final otherUserDifferentIDAndUsername = AppUser(
         firstName: "OtherFirst",
         id: "TESTUSER2",
         lastName: "OtherLast",
         username: "testotheruser"
       );
 
-      expect(user == otherUserDifferentIDAndEmail, false);
+      expect(user == otherUserDifferentIDAndUsername, false);
 
-      final otherUserSameIDAndDifferentEmail = AppUser(
-        email: "test@otheruser.com",
+      final otherUserSameIDAndDifferentUsername = AppUser(
         firstName: "OtherSameIDEmailDiffFirst",
         lastName: "OtherSameIDEmailDiffLast",
         id: user.id,
         username: "testotheruser"
       );
 
-      expect(user == otherUserSameIDAndDifferentEmail, false);
+      expect(user == otherUserSameIDAndDifferentUsername, false);
 
-      final otherUserDifferentIDAndSameEmail = AppUser(
-        email: user.email,
+      final otherUserDifferentIDAndSameUsername = AppUser(
         firstName: "OtherDiffIDSameEmailFirst",
         lastName: "OtherDiffIDSameEmailLast",
         id: "TESTUSER2",
-        username: "testotheruser"
+        username: user.username
       );
 
-      expect(user == otherUserDifferentIDAndSameEmail, false);
+      expect(user == otherUserDifferentIDAndSameUsername, false);
     });
 
     test("toString", () {
       final tc = TestContext();
-      var string = "AppUser(id: TESTUSER1, username: testuser, email: test@user.com)";
+      var string = "AppUser(id: TESTUSER1, username: testuser)";
 
       expect(tc.user.toString(), string);
     });

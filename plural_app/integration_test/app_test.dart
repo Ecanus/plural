@@ -45,7 +45,6 @@ void main() {
       tc.ask.deadlineDate = now.add(const Duration(days: 2));
 
       final otherUser = AppUser(
-        email: "otheruser@test.com",
         firstName: "OtherFirst",
         id: "OTHERUSER",
         lastName: "OtherLast",
@@ -124,7 +123,6 @@ void main() {
       ).thenAnswer(
         (_) async => tc.getUserRecordModel(
           id: otherUser.id,
-          email: otherUser.email,
           username: otherUser.username,
         )
       );
@@ -154,7 +152,7 @@ void main() {
         )
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(
-          items: [tc.getExpandUserGardenRecordRecordModel(UserGardenRecordField.garden)]
+          items: [tc.getExpandUserGardenRecordRecordModel([UserGardenRecordField.garden])]
         )
       );
       // RecordService.getList() - getUserGardenRecord()
@@ -180,7 +178,7 @@ void main() {
         )
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(
-          items: [tc.getExpandUserGardenRecordRecordModel(UserGardenRecordField.garden)]
+          items: [tc.getExpandUserGardenRecordRecordModel([UserGardenRecordField.garden])]
         )
       );
       // RecordService.getList() - getAsksByGardenID

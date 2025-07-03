@@ -52,7 +52,6 @@ void main() {
       final now = DateTime.now();
 
       final newUser = AppUser(
-        email: "new@user.com",
         firstName: "NewFirst",
         id: "NEWUSER001",
         lastName: "NewLast",

@@ -91,7 +91,7 @@ void main() {
         )
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(items: [
-          tc.getExpandUserGardenRecordRecordModel(UserGardenRecordField.user)
+          tc.getExpandUserGardenRecordRecordModel([UserGardenRecordField.user])
         ])
       );
 
@@ -225,7 +225,7 @@ void main() {
         )
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(items: [
-          tc.getExpandUserGardenRecordRecordModel(UserGardenRecordField.user)
+          tc.getExpandUserGardenRecordRecordModel([UserGardenRecordField.user])
         ])
       );
 
