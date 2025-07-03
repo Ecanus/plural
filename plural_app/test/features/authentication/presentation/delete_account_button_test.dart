@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
 
 // Common Widgets
-import 'package:plural_app/src/common_widgets/delete_account_button.dart';
+import 'package:plural_app/src/features/authentication/presentation/delete_account_button.dart';
 import 'package:plural_app/src/constants/fields.dart';
 
 // Constants
@@ -23,9 +23,9 @@ import 'package:plural_app/src/utils/app_state.dart';
 import 'package:pocketbase/pocketbase.dart';
 
 // Tests
-import '../test_context.dart';
-import '../test_mocks.dart';
-import '../test_widgets.dart';
+import '../../../test_context.dart';
+import '../../../test_mocks.dart';
+import '../../../test_widgets.dart';
 
 void main() {
   group("DeleteAccountButton test", () {

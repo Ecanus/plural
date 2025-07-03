@@ -254,7 +254,7 @@ void main() {
 
     tearDown(() => GetIt.instance.reset());
 
-    test("getCurrentGardenUsers", () async {
+    test("getCurrentGardenUserGardenRecords", () async {
       final tc = TestContext();
 
       var appState = AppState.skipSubscribe()
@@ -355,42 +355,46 @@ void main() {
     tearDown(() => GetIt.instance.reset());
 
     test("getUserGardenPermissionGroup", () async {
-      // Member permissions
+      // Owner permissions
       expect(
-        getUserGardenPermissionGroup(AppUserGardenRole.member),
-        [AppUserGardenPermission.createAsks]
+        getUserGardenPermissionGroup(AppUserGardenRole.owner),
+        [
+          AppUserGardenPermission.createAndEditAsks,
+          AppUserGardenPermission.changeGardenName,
+          AppUserGardenPermission.changeMemberRoles,
+          AppUserGardenPermission.changeOwner, // owner only
+          AppUserGardenPermission.createAndEditAsks,
+          AppUserGardenPermission.createInvitations,
+          AppUserGardenPermission.deleteGarden, // owner only
+          AppUserGardenPermission.deleteMemberAsks,
+          AppUserGardenPermission.expelMembers,
+          AppUserGardenPermission.viewAuditLog,
+          AppUserGardenPermission.viewAdminGardenTimeline,
+        ]
       );
 
       // Administrator permissions
       expect(
         getUserGardenPermissionGroup(AppUserGardenRole.administrator),
         [
-          AppUserGardenPermission.createAsks,
+          AppUserGardenPermission.createAndEditAsks,
           AppUserGardenPermission.changeGardenName,
           AppUserGardenPermission.changeMemberRoles,
-          AppUserGardenPermission.createAsks,
+          AppUserGardenPermission.createAndEditAsks,
           AppUserGardenPermission.createInvitations,
           AppUserGardenPermission.deleteMemberAsks,
-          AppUserGardenPermission.enterAdminPage,
-          AppUserGardenPermission.kickMembers,
+          AppUserGardenPermission.expelMembers,
           AppUserGardenPermission.viewAuditLog,
+          AppUserGardenPermission.viewAdminGardenTimeline,
         ]
       );
 
-      // Owner permissions
+      // Member permissions
       expect(
-        getUserGardenPermissionGroup(AppUserGardenRole.owner),
+        getUserGardenPermissionGroup(AppUserGardenRole.member),
         [
-          AppUserGardenPermission.createAsks,
-          AppUserGardenPermission.changeGardenName,
-          AppUserGardenPermission.changeMemberRoles,
-          AppUserGardenPermission.createAsks,
-          AppUserGardenPermission.createInvitations,
-          AppUserGardenPermission.deleteMemberAsks,
-          AppUserGardenPermission.enterAdminPage,
-          AppUserGardenPermission.kickMembers,
-          AppUserGardenPermission.viewAuditLog,
-          AppUserGardenPermission.deleteGarden,
+          AppUserGardenPermission.createAndEditAsks,
+          AppUserGardenPermission.viewGardenTimeline
         ]
       );
     });

@@ -168,7 +168,7 @@ void main() {
               builder: (BuildContext context) {
                 final avatar = getTileTrailingAvatar(context, isOnTimeline, isTargetMet);
                 return Scaffold(
-                  body: TileTrailing(tileTrailingAvatar: avatar,),
+                  body: ListedAskTileTrailing(tileTrailingAvatar: avatar,),
                 );
               }
             ),
@@ -191,7 +191,7 @@ void main() {
               builder: (BuildContext context) {
                 final avatar = getTileTrailingAvatar(context, isOnTimeline, isTargetMet);
                 return Scaffold(
-                  body: TileTrailing(tileTrailingAvatar: avatar,),
+                  body: ListedAskTileTrailing(tileTrailingAvatar: avatar,),
                 );
               }
             ),
@@ -217,7 +217,7 @@ void main() {
               builder: (BuildContext context) {
                 final avatar = getTileTrailingAvatar(context, isOnTimeline, isTargetMet);
                 return Scaffold(
-                  body: TileTrailing(tileTrailingAvatar: avatar,),
+                  body: ListedAskTileTrailing(tileTrailingAvatar: avatar,),
                 );
               }
             ),
@@ -240,7 +240,7 @@ void main() {
               builder: (BuildContext context) {
                 final avatar = getTileTrailingAvatar(context, isOnTimeline, isTargetMet);
                 return Scaffold(
-                  body: TileTrailing(tileTrailingAvatar: avatar,),
+                  body: ListedAskTileTrailing(tileTrailingAvatar: avatar,),
                 );
               }
             ),

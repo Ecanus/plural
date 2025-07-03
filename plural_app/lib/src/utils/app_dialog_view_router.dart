@@ -14,8 +14,10 @@ import 'package:plural_app/src/features/asks/presentation/listed_asks_view.dart'
 import 'package:plural_app/src/features/asks/presentation/listed_ask_tile.dart';
 
 // Auth
+import 'package:plural_app/src/features/authentication/data/auth_api.dart';
 import 'package:plural_app/src/features/authentication/domain/app_user_garden_record.dart';
 import 'package:plural_app/src/features/authentication/presentation/admin_edit_user_view.dart';
+import 'package:plural_app/src/features/authentication/presentation/admin_listed_users_view.dart';
 import 'package:plural_app/src/features/authentication/presentation/user_settings_view.dart';
 
 // Gardens
@@ -57,8 +59,16 @@ class AppDialogViewRouter {
   }
 
   /// Auth
+  // todo: test
   void routeToAdminEditUserView(AppUserGardenRecord userGardenRecord) {
     viewNotifier.value = AdminEditUserView(userGardenRecord: userGardenRecord);
+  }
+
+  // todo: test
+  void routeToAdminListedUsersView() async {
+    final userGardenRecordsMap = await getCurrentGardenUserGardenRecords();
+
+    viewNotifier.value = AdminListedUsersView(userGardenRecordsMap: userGardenRecordsMap);
   }
 
   Future<void> routeToUserSettingsView() async {

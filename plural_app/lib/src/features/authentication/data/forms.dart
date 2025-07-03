@@ -74,6 +74,13 @@ Future<void> submitUpdateSettings(
   }
 }
 
+// todo: implement
+Future<void> submitUpdateUserGardenRecord(
+  BuildContext context,
+  GlobalKey<FormState> formKey,
+  AppForm appForm,
+) async {}
+
 /// Validates and submits form data to log in a user to the application.
 Future<void> submitLogIn(
   BuildContext context,

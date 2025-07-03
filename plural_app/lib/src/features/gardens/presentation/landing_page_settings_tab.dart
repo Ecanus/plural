@@ -12,13 +12,13 @@ import 'package:plural_app/src/common_widgets/app_currency_picker_form_field.dar
 import 'package:plural_app/src/common_widgets/app_elevated_button.dart';
 import 'package:plural_app/src/common_widgets/app_text_form_field.dart';
 import 'package:plural_app/src/common_widgets/app_tooltip_icon.dart';
-import 'package:plural_app/src/common_widgets/delete_account_button.dart';
 import 'package:plural_app/src/common_widgets/log_out_button.dart';
 
 // Auth
 import 'package:plural_app/src/features/authentication/data/forms.dart';
 import 'package:plural_app/src/features/authentication/domain/app_user.dart';
 import 'package:plural_app/src/features/authentication/domain/app_user_settings.dart';
+import 'package:plural_app/src/features/authentication/presentation/delete_account_button.dart';
 
 // Localization
 import 'package:plural_app/src/localization/lang_en.dart';

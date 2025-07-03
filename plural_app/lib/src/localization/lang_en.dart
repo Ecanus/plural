@@ -1,8 +1,31 @@
+class AdminListedUsersViewText {
+  static const adminHeading = "Administrators";
+
+  static const cancelConfirmExpelUser = "Cancel";
+  static const confirmExpelUser = "Expel User?";
+  static const confirmExpelUserSubtitle = ""
+    "Expelling this user will remove them from the Garden, and they will need a new "
+    "invitation to return.";
+
+  static const expelUser = "Expel user";
+  static const expelUserPrefix = "Expel";
+
+  static const memberHeading = "Members";
+
+  static const ownerHeading = "Owner";
+
+  static const noAdministrators = "This Garden has no administrators.";
+  static const noMembers = "This Garden has no other members.";
+
+  static const userGardenRole = "Role";
+}
+
 class AppText {
   static const pluralApp = "Plural App";
 }
 
 class AppDialogFooterText {
+  static const adminEditUser = "Edit User";
   static const adminListedUsers = "Users";
 
   static const createAsk = "Create Ask";
@@ -24,6 +47,8 @@ class AppDialogFooterText {
 }
 
 class AppDialogFooterBufferText {
+  static const adminListedUsersTooltip = "Return to Users";
+
   static const saveChanges = "Save changes";
 }
 

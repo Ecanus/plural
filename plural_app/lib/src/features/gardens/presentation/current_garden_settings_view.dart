@@ -159,6 +159,17 @@ class ExitGardenButton extends StatelessWidget {
   }
 }
 
+Future<void> showConfirmExitGardenDialog(
+  BuildContext context,
+) async {
+  await showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return ConfirmExitGardenDialog();
+    }
+  );
+}
+
 class ConfirmExitGardenDialog extends StatelessWidget {
 
   @override
@@ -249,15 +260,4 @@ class ConfirmExitGardenDialog extends StatelessWidget {
       ),
     );
   }
-}
-
-Future<void> showConfirmExitGardenDialog(
-  BuildContext context,
-) async {
-  await showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return ConfirmExitGardenDialog();
-    }
-  );
 }

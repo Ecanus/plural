@@ -56,7 +56,7 @@ class ListedAskTile extends StatelessWidget {
             fontStyle: FontStyle.italic,
           ),
         ),
-        trailing: TileTrailing(tileTrailingAvatar: tileTrailingAvatar),
+        trailing: ListedAskTileTrailing(tileTrailingAvatar: tileTrailingAvatar),
         onTap: () {
           Future.delayed(AppDurations.ms80, () {
             appDialogRouter.routeToEditAskView(ask);
@@ -67,8 +67,8 @@ class ListedAskTile extends StatelessWidget {
   }
 }
 
-class TileTrailing extends StatelessWidget {
-  const TileTrailing({
+class ListedAskTileTrailing extends StatelessWidget {
+  const ListedAskTileTrailing({
     required this.tileTrailingAvatar,
   });
 
