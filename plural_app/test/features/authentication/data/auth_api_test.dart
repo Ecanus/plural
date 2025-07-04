@@ -369,7 +369,6 @@ void main() {
 
       expect(appUser, isA<AppUser>());
       expect(appUser.id, tc.user.id);
-      //expect(appUser.email, tc.user.email);
       expect(appUser.firstName, tc.user.firstName);
       expect(appUser.lastName, tc.user.lastName);
       expect(appUser.username, tc.user.username);

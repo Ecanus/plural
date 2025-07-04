@@ -16,9 +16,9 @@ import 'package:plural_app/src/features/asks/presentation/listed_asks_view.dart'
 // Auth
 import 'package:plural_app/src/features/authentication/data/user_garden_records_repository.dart';
 import 'package:plural_app/src/features/authentication/data/users_repository.dart';
+import 'package:plural_app/src/features/authentication/domain/app_user_garden_record.dart';
 import 'package:plural_app/src/features/authentication/presentation/admin_edit_user_view.dart';
 import 'package:plural_app/src/features/authentication/presentation/admin_listed_users_view.dart';
-import 'package:plural_app/src/features/authentication/domain/app_user_garden_record.dart';
 import 'package:plural_app/src/features/authentication/presentation/user_settings_view.dart';
 
 // Gardens

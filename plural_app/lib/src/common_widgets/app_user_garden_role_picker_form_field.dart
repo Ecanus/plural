@@ -7,6 +7,8 @@ import 'package:plural_app/src/common_functions/form_validators.dart';
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
 import 'package:plural_app/src/constants/styles.dart';
+
+// Auth
 import 'package:plural_app/src/features/authentication/data/auth_api.dart';
 import 'package:plural_app/src/features/authentication/domain/app_user_garden_record.dart';
 

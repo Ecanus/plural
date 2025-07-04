@@ -12,10 +12,10 @@ import 'package:plural_app/src/features/authentication/data/users_repository.dar
 
 // Gardens
 import 'package:plural_app/src/features/gardens/data/gardens_repository.dart';
+import 'package:plural_app/src/features/gardens/presentation/admin_page.dart';
 import 'package:plural_app/src/features/gardens/presentation/garden_footer.dart';
 import 'package:plural_app/src/features/gardens/presentation/garden_header.dart';
 import 'package:plural_app/src/features/gardens/presentation/garden_timeline.dart';
-import 'package:plural_app/src/features/gardens/presentation/admin_page.dart';
 
 // Utils
 import 'package:plural_app/src/utils/app_state.dart';

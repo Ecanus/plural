@@ -3,9 +3,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:pocketbase/pocketbase.dart';
 
 // Common Widgets
-import 'package:plural_app/src/features/authentication/presentation/delete_account_button.dart';
 import 'package:plural_app/src/constants/fields.dart';
 
 // Constants
@@ -13,14 +13,16 @@ import 'package:plural_app/src/constants/routes.dart';
 
 // Asks
 import 'package:plural_app/src/features/asks/data/asks_repository.dart';
+
+// Auth
 import 'package:plural_app/src/features/authentication/data/user_garden_records_repository.dart';
 import 'package:plural_app/src/features/authentication/data/user_settings_repository.dart';
 import 'package:plural_app/src/features/authentication/data/users_repository.dart';
+import 'package:plural_app/src/features/authentication/presentation/delete_account_button.dart';
 
 // Localization
 import 'package:plural_app/src/localization/lang_en.dart';
 import 'package:plural_app/src/utils/app_state.dart';
-import 'package:pocketbase/pocketbase.dart';
 
 // Tests
 import '../../../test_context.dart';

@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:pocketbase/pocketbase.dart';
 
 // Common Widgets
 import 'package:plural_app/src/common_widgets/app_dialog.dart';
+
+// Constants
 import 'package:plural_app/src/constants/fields.dart';
 
 // Auth
@@ -18,7 +21,6 @@ import 'package:plural_app/src/features/authentication/presentation/expel_user_b
 // Utils
 import 'package:plural_app/src/utils/app_dialog_view_router.dart';
 import 'package:plural_app/src/utils/app_state.dart';
-import 'package:pocketbase/pocketbase.dart';
 
 // Test
 import '../../../test_context.dart';
