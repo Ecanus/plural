@@ -54,10 +54,9 @@ class AppUserGardenRecord {
     Map<String, dynamic> json, AppUser recordUser, Garden recordGarden) :
       garden = recordGarden,
       id = json[GenericField.id] as String,
-      role = getUserGardenRoleFromString(json[UserGardenRecordField.role]),
+      role = getUserGardenRoleFromString(json[UserGardenRecordField.role])!,
       user = recordUser;
 
-  // todo: test
   Map<String, dynamic> toMap() {
     return {
       GenericField.id: id,

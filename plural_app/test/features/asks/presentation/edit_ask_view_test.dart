@@ -20,7 +20,7 @@ import 'package:plural_app/src/utils/app_state.dart';
 import '../../../test_context.dart';
 
 void main() {
-  group("AskDialogEditForm test", () {
+  group("EditAskView test", () {
     testWidgets("widgets", (tester) async {
       final tc = TestContext();
       final appState = AppState();

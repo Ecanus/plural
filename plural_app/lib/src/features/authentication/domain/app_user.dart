@@ -39,11 +39,12 @@ class AppUser {
   /// Returns true if the priority is greater than or equal to [role],
   /// else false.
   Future<bool> hasRole(String gardenID, AppUserGardenRole role) async {
-    final userGardenRecord = await getUserGardenRecord(userID: id, gardenID: gardenID);
+    final userGardenRecordRole = await getUserGardenRecordRole(
+      userID: id, gardenID: gardenID);
 
-    if (userGardenRecord == null) return false;
+    if (userGardenRecordRole == null) return false;
 
-    return userGardenRecord.role.priority >= role.priority;
+    return userGardenRecordRole.priority >= role.priority;
   }
 
   @override

@@ -8,6 +8,9 @@ import 'package:plural_app/src/common_functions/form_validators.dart';
 import 'package:plural_app/src/constants/currencies.dart';
 import 'package:plural_app/src/constants/formats.dart';
 
+// Auth
+import 'package:plural_app/src/features/authentication/domain/app_user_garden_record.dart';
+
 // Localization
 import 'package:plural_app/src/localization/lang_en.dart';
 
@@ -107,6 +110,17 @@ void main() {
       expect(validateText("with text"), null);
       expect(validateText("with text and numbers 9999"), null);
       expect(validateText("9999"), null);
+    });
+
+    test("validateUserGardenRole", () {
+      expect(validateUserGardenRole(null), AppFormText.invalidValue);
+      expect(validateUserGardenRole(""), AppFormText.invalidValue);
+
+      expect(validateUserGardenRole("badRole"), AppFormText.invalidValue);
+
+      expect(validateUserGardenRole(AppUserGardenRole.owner.name), null);
+      expect(validateUserGardenRole(AppUserGardenRole.administrator.name), null);
+      expect(validateUserGardenRole(AppUserGardenRole.member.name), null);
     });
 
     test("validateUsernameOrEmail", () {

@@ -14,7 +14,6 @@ import 'package:plural_app/src/features/authentication/domain/app_user_garden_re
 import 'package:plural_app/src/utils/app_form.dart';
 import 'package:plural_app/src/utils/app_state.dart';
 
-// todo: test
 class AppUserGardenRolePickerFormField extends StatefulWidget {
   const AppUserGardenRolePickerFormField({
     required this.appForm,
@@ -49,38 +48,49 @@ class _AppUserGardenRolePickerFormFieldState extends State<AppUserGardenRolePick
   @override
   Widget build(BuildContext context) {
     var showDialogButton = IconButton(
-      onPressed: () => showRolePicker(
+      onPressed: () => showRolePickerDialog(
         context,
         _setControllerText,
       ),
       icon: const Icon(Icons.mode_edit_outlined),
     );
 
-    return TextFormField(
-      controller: _controller,
-      decoration: InputDecoration(
-        border: AppStyles.textFieldBorder,
-        enabledBorder: AppStyles.textFieldBorder,
-        errorText: widget.appForm.getError(fieldName: widget.fieldName),
-        floatingLabelStyle: AppStyles.floatingLabelStyle,
-        focusedBorder: AppStyles.textFieldFocusedBorder,
-        focusedErrorBorder: AppStyles.textFieldFocusedErrorBorder,
-        label: Text(widget.label),
-        suffixIcon: showDialogButton,
-      ),
-      onSaved: (value) => widget.appForm.save(
-        fieldName: widget.fieldName,
-        value: getUserGardenRoleFromString(value!, displayName: true).name,
-        formFieldType: FormFieldType.text,
-      ),
-      validator: (value) => validateUserGardenRole(
-        getUserGardenRoleFromString(value!, displayName: true).name
-      )
+    return Row(
+      children: [
+        Expanded(
+          child: TextFormField(
+            controller: _controller,
+            decoration: InputDecoration(
+              border: AppStyles.textFieldBorder,
+              enabledBorder: AppStyles.textFieldBorder,
+              errorText: widget.appForm.getError(fieldName: widget.fieldName),
+              floatingLabelStyle: AppStyles.floatingLabelStyle,
+              focusedBorder: AppStyles.textFieldFocusedBorder,
+              focusedErrorBorder: AppStyles.textFieldFocusedErrorBorder,
+              label: Text(widget.label),
+            ),
+            enabled: false,
+            onSaved: (value) => widget.appForm.save(
+              fieldName: widget.fieldName,
+              value: getUserGardenRoleFromString(value!, displayName: true)?.name,
+              formFieldType: FormFieldType.text,
+            ),
+            validator: (value) => validateUserGardenRole(
+              getUserGardenRoleFromString(value!, displayName: true)?.name
+            )
+          ),
+        ),
+        gapW10,
+        CircleAvatar(
+          backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+          child: showDialogButton,
+        )
+      ],
     );
   }
 }
 
-Future<void> showRolePicker(
+Future<void> showRolePickerDialog(
   BuildContext context,
   void Function(AppUserGardenRole) setTextCallback,
 ) async {

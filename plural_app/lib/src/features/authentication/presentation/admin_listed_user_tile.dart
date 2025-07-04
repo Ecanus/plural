@@ -10,7 +10,6 @@ import 'package:plural_app/src/features/authentication/domain/app_user_garden_re
 import 'package:plural_app/src/utils/app_dialog_view_router.dart';
 import 'package:plural_app/src/utils/app_state.dart';
 
-// todo: test
 class AdminListedUserTile extends StatelessWidget {
   const AdminListedUserTile({
     required this.userGardenRecord,

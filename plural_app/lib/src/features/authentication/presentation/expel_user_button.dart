@@ -10,7 +10,6 @@ import 'package:plural_app/src/features/authentication/domain/app_user_garden_re
 // Localization
 import 'package:plural_app/src/localization/lang_en.dart';
 
-// todo: test
 class ExpelUserButton extends StatelessWidget {
   const ExpelUserButton({
     required this.userGardenRecord,

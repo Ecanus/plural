@@ -59,13 +59,11 @@ class AppDialogViewRouter {
   }
 
   /// Auth
-  // todo: test
   void routeToAdminEditUserView(AppUserGardenRecord userGardenRecord) {
     viewNotifier.value = AdminEditUserView(userGardenRecord: userGardenRecord);
   }
 
-  // todo: test
-  void routeToAdminListedUsersView() async {
+  Future<void> routeToAdminListedUsersView() async {
     final userGardenRecordsMap = await getCurrentGardenUserGardenRecords();
 
     viewNotifier.value = AdminListedUsersView(userGardenRecordsMap: userGardenRecordsMap);

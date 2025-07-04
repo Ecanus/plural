@@ -16,6 +16,9 @@ import 'package:plural_app/src/features/asks/presentation/listed_asks_view.dart'
 // Auth
 import 'package:plural_app/src/features/authentication/data/user_garden_records_repository.dart';
 import 'package:plural_app/src/features/authentication/data/users_repository.dart';
+import 'package:plural_app/src/features/authentication/presentation/admin_edit_user_view.dart';
+import 'package:plural_app/src/features/authentication/presentation/admin_listed_users_view.dart';
+import 'package:plural_app/src/features/authentication/domain/app_user_garden_record.dart';
 import 'package:plural_app/src/features/authentication/presentation/user_settings_view.dart';
 
 // Gardens
@@ -30,7 +33,7 @@ import '../test_context.dart';
 import '../test_mocks.dart';
 
 void main() {
-  group("App dialog router test", () {
+  group("AppDialogViewRouter", () {
     test("setRouteTo", () async {
       final appDialogRouter = AppDialogViewRouter();
 
@@ -56,7 +59,7 @@ void main() {
       expect(appDialogRouter.viewNotifier.value, isA<EditAskView>());
     });
 
-    test("routeToAskDialogListView", () async {
+    test("routeToListedAsksView", () async {
       final tc = TestContext();
 
       final appState = AppState.skipSubscribe()
@@ -98,7 +101,73 @@ void main() {
 
     tearDown(() => GetIt.instance.reset());
 
-    test("routeToUserSettingsDialogView", () async {
+    test("routeToAdminEditUserView", () async {
+      final tc = TestContext();
+      final appDialogRouter = AppDialogViewRouter();
+
+      expect(appDialogRouter.viewNotifier.value, isA<SizedBox>());
+      appDialogRouter.routeToAdminEditUserView(tc.userGardenRecord);
+      expect(appDialogRouter.viewNotifier.value, isA<AdminEditUserView>());
+    });
+
+    test("routeToAdminListedUsersView", () async {
+      final tc = TestContext();
+      final appDialogRouter = AppDialogViewRouter();
+
+      final appState = AppState.skipSubscribe()
+                      ..currentGarden = tc.garden;
+
+      final getIt = GetIt.instance;
+      final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
+      final mockUsersRepository = MockUsersRepository();
+
+      getIt.registerLazySingleton<AppState>(() => appState);
+      getIt.registerLazySingleton<UserGardenRecordsRepository>(
+        () => mockUserGardenRecordsRepository
+      );
+      getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
+
+      // UserGardenRecordsRepository.getList()
+      when(
+        () => mockUserGardenRecordsRepository.getList(
+          expand: "${UserGardenRecordField.user}, ${UserGardenRecordField.garden}",
+          filter: "${UserGardenRecordField.garden} = '${tc.garden.id}'",
+          sort: "${UserGardenRecordField.user}.${UserField.username}"
+        )
+      ).thenAnswer(
+        (_) async => ResultList<RecordModel>(
+          items: [
+            tc.getExpandUserGardenRecordRecordModel([
+              UserGardenRecordField.user, UserGardenRecordField.garden
+            ], role: AppUserGardenRole.owner),
+            tc.getExpandUserGardenRecordRecordModel([
+              UserGardenRecordField.user, UserGardenRecordField.garden
+            ], role: AppUserGardenRole.administrator),
+            tc.getExpandUserGardenRecordRecordModel([
+              UserGardenRecordField.user, UserGardenRecordField.garden
+            ]),
+            tc.getExpandUserGardenRecordRecordModel([
+              UserGardenRecordField.user, UserGardenRecordField.garden
+            ]),
+          ]
+        )
+      );
+
+      // UsersRepository.getFirstListItem()
+      when(
+        () => mockUsersRepository.getFirstListItem(
+          filter: any(named: "filter")
+        )
+      ).thenAnswer(
+        (_) async => tc.getUserRecordModel()
+      );
+
+      expect(appDialogRouter.viewNotifier.value, isA<SizedBox>());
+      await appDialogRouter.routeToAdminListedUsersView();
+      expect(appDialogRouter.viewNotifier.value, isA<AdminListedUsersView>());
+    });
+
+    test("routeToUserSettingsView", () async {
       final tc = TestContext();
 
       final appState = AppState()
@@ -117,7 +186,7 @@ void main() {
 
     tearDown(() => GetIt.instance.reset());
 
-    test("routeToGardenDialogListView", () async {
+    test("routeToCurrentGardenSettingsView", () async {
       final tc = TestContext();
 
       final appState = AppState.skipSubscribe()

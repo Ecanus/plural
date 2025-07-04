@@ -19,12 +19,12 @@ void main() {
   group("RouteToListedAsksViewButton test", () {
     testWidgets("onPressed", (tester) async {
       final getIt = GetIt.instance;
-      final mockAppDialogRouter = MockAppDialogRouter();
-      getIt.registerLazySingleton<AppDialogViewRouter>(() => mockAppDialogRouter);
+      final mockAppDialogViewRouter = MockAppDialogViewRouter();
+      getIt.registerLazySingleton<AppDialogViewRouter>(() => mockAppDialogViewRouter);
 
       // AppDialogRouter.routeToAskDialogListView()
       when(
-        () => mockAppDialogRouter.routeToListedAsksView()
+        () => mockAppDialogViewRouter.routeToListedAsksView()
       ).thenAnswer(
         (_) async => {}
       );
@@ -37,12 +37,12 @@ void main() {
           ),
         ));
 
-      verifyNever(() => mockAppDialogRouter.routeToListedAsksView());
+      verifyNever(() => mockAppDialogViewRouter.routeToListedAsksView());
 
       await tester.tap(find.byType(ElevatedButton));
       await tester.pumpAndSettle();
 
-      verify(() => mockAppDialogRouter.routeToListedAsksView()).called(1);
+      verify(() => mockAppDialogViewRouter.routeToListedAsksView()).called(1);
     });
 
     tearDown(() => GetIt.instance.reset());

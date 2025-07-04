@@ -42,10 +42,10 @@ class TestContext {
     );
 
     userGardenRecord = AppUserGardenRecord(
-      user: user,
       garden: garden,
       id: "TESTGARDENRECORD1",
       role: AppUserGardenRole.member,
+      user: user,
     );
 
     userSettings = AppUserSettings(
@@ -169,6 +169,7 @@ class TestContext {
 
   RecordModel getExpandUserGardenRecordRecordModel(
     List<String> expand, {
+    String? recordID,
     AppUserGardenRole role = AppUserGardenRole.member,
 }) {
     Map<String, dynamic> map = {};
@@ -193,7 +194,7 @@ class TestContext {
     }
 
     return RecordModel.fromJson({
-      GenericField.id: userGardenRecord.id,
+      GenericField.id: recordID ?? userGardenRecord.id,
       GenericField.created: "1999-10-08",
       UserGardenRecordField.user: user.id,
       UserGardenRecordField.garden: garden.id,

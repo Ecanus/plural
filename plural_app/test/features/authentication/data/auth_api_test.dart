@@ -30,7 +30,7 @@ import '../../../test_context.dart';
 import '../../../test_mocks.dart';
 
 void main() {
-  group("Auth api test", () {
+  group("auth_api", () {
     test("deleteCurrentUserAccount", () async {
       final tc = TestContext();
       final appState = AppState.skipSubscribe()
@@ -257,15 +257,18 @@ void main() {
     test("getCurrentGardenUserGardenRecords", () async {
       final tc = TestContext();
 
-      var appState = AppState.skipSubscribe()
+      final appState = AppState.skipSubscribe()
                       ..currentGarden = tc.garden;
 
       final getIt = GetIt.instance;
       final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
+      final mockUsersRepository = MockUsersRepository();
 
       getIt.registerLazySingleton<AppState>(() => appState);
       getIt.registerLazySingleton<UserGardenRecordsRepository>(
-        () => mockUserGardenRecordsRepository);
+        () => mockUserGardenRecordsRepository
+      );
+      getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
 
       // UserGardenRecordsRepository.getList()
       when(
@@ -282,15 +285,31 @@ void main() {
             ], role: AppUserGardenRole.owner),
             tc.getExpandUserGardenRecordRecordModel([
               UserGardenRecordField.user, UserGardenRecordField.garden
+            ], role: AppUserGardenRole.administrator),
+            tc.getExpandUserGardenRecordRecordModel([
+              UserGardenRecordField.user, UserGardenRecordField.garden
+            ]),
+            tc.getExpandUserGardenRecordRecordModel([
+              UserGardenRecordField.user, UserGardenRecordField.garden
             ]),
           ]
         )
       );
 
-      final usersList = await getCurrentGardenUserGardenRecords();
+      // UsersRepository.getFirstListItem()
+      when(
+        () => mockUsersRepository.getFirstListItem(
+          filter: "${GenericField.id} = '${tc.user.id}'",
+        )
+      ).thenAnswer(
+        (_) async => tc.getUserRecordModel()
+      );
 
-      // expect(usersList.length, 2);
-      // expect(usersList.first, isA<AppUser>());
+      final userGardenRecordsMap = await getCurrentGardenUserGardenRecords();
+
+      expect(userGardenRecordsMap[AppUserGardenRole.owner]!.length, 1);
+      expect(userGardenRecordsMap[AppUserGardenRole.administrator]!.length, 1);
+      expect(userGardenRecordsMap[AppUserGardenRole.member]!.length, 2);
     });
 
     tearDown(() => GetIt.instance.reset());
@@ -407,11 +426,9 @@ void main() {
       final tc = TestContext();
 
       final getIt = GetIt.instance;
-      final mockGardensRepository = MockGardensRepository();
       final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
       final mockUsersRepository = MockUsersRepository();
 
-      getIt.registerLazySingleton<GardensRepository>(() => mockGardensRepository);
       getIt.registerLazySingleton<UserGardenRecordsRepository>(
         () => mockUserGardenRecordsRepository
       );
@@ -421,6 +438,7 @@ void main() {
       // UserGardenRecordsRepository.getList()
       when(
         () => mockUserGardenRecordsRepository.getList(
+          expand: "${UserGardenRecordField.user}, ${UserGardenRecordField.garden}",
           filter: ""
             "${UserGardenRecordField.user} = '${tc.user.id}' && "
             "${UserGardenRecordField.garden} = '${tc.garden.id}'",
@@ -428,17 +446,13 @@ void main() {
         )
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(
-          items: [tc.getUserGardenRecordRecordModel(id: "TestGardenRecordID")]
+          items: [
+            tc.getExpandUserGardenRecordRecordModel(
+              [UserGardenRecordField.user, UserGardenRecordField.garden],
+              recordID: "TestGardenRecordID",
+              role: AppUserGardenRole.member),
+          ]
         )
-      );
-
-      // GardensRepository.getFirstListItem()
-      when(
-        () => mockGardensRepository.getFirstListItem(
-          filter: "${GenericField.id} = '${tc.garden.id}'",
-        )
-      ).thenAnswer(
-        (_) async => tc.getGardenRecordModel()
       );
 
       // UsersRepository.getFirstListItem()
@@ -464,6 +478,7 @@ void main() {
       // UserGardenRecordsRepository.getList(), Now returns empty list
       when(
         () => mockUserGardenRecordsRepository.getList(
+          expand: "${UserGardenRecordField.user}, ${UserGardenRecordField.garden}",
           filter: ""
             "${UserGardenRecordField.user} = '${tc.user.id}' && "
             "${UserGardenRecordField.garden} = '${tc.garden.id}'",
@@ -482,19 +497,89 @@ void main() {
 
       // Check null is now returned
       expect(userGardenRecord2, null);
+    });
 
+    test("getUserGardenRecordRole", () async {
+      final tc = TestContext();
+
+      final getIt = GetIt.instance;
+      final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
+
+      getIt.registerLazySingleton<UserGardenRecordsRepository>(
+        () => mockUserGardenRecordsRepository
+      );
+
+      // UserGardenRecordsRepository.getList()
+      when(
+        () => mockUserGardenRecordsRepository.getList(
+          filter: ""
+            "${UserGardenRecordField.user} = '${tc.user.id}' && "
+            "${UserGardenRecordField.garden} = '${tc.garden.id}'",
+          sort: "-updated"
+        )
+      ).thenAnswer(
+        (_) async => ResultList<RecordModel>(
+          items: [tc.getUserGardenRecordRecordModel()]
+        )
+      );
+
+      final userGardenRecordRole = await getUserGardenRecordRole(
+        userID: tc.user.id,
+        gardenID: tc.garden.id
+      );
+
+      expect(userGardenRecordRole!.name, AppUserGardenRole.member.name);
+      expect(userGardenRecordRole.priority, AppUserGardenRole.member.priority);
+      expect(userGardenRecordRole.displayName, AppUserGardenRole.member.displayName);
+
+      // UserGardenRecordsRepository.getList(), Now returns empty list
+      when(
+        () => mockUserGardenRecordsRepository.getList(
+          filter: ""
+            "${UserGardenRecordField.user} = '${tc.user.id}' && "
+            "${UserGardenRecordField.garden} = '${tc.garden.id}'",
+          sort: "-updated"
+        )
+      ).thenAnswer(
+        (_) async => ResultList<RecordModel>(
+          items: []
+        )
+      );
+
+      final userGardenRecordRole2 = await getUserGardenRecordRole(
+        userID: tc.user.id,
+        gardenID: tc.garden.id
+      );
+
+      // Check null is now returned
+      expect(userGardenRecordRole2, null);
     });
 
     tearDown(() => GetIt.instance.reset());
 
     test("getUserGardenRoleFromString", () async {
+      // name
       expect(getUserGardenRoleFromString("member"), AppUserGardenRole.member);
       expect(
         getUserGardenRoleFromString("administrator"), AppUserGardenRole.administrator);
       expect(getUserGardenRoleFromString("owner"), AppUserGardenRole.owner);
 
-      // Check that fallback value is member
-      expect(getUserGardenRoleFromString("invalidValue"), AppUserGardenRole.member);
+      // displayName
+      expect(
+        getUserGardenRoleFromString("Member", displayName: true),
+        AppUserGardenRole.member
+      );
+      expect(
+        getUserGardenRoleFromString("Administrator", displayName: true),
+        AppUserGardenRole.administrator
+      );
+      expect(
+        getUserGardenRoleFromString("Owner", displayName: true),
+        AppUserGardenRole.owner
+      );
+
+      // Check that fallback value is null
+      expect(getUserGardenRoleFromString("invalidValue"), null);
     });
 
     test("login", () async {

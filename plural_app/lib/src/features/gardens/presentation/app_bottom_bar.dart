@@ -27,7 +27,7 @@ ButtonLayout _getButtonLayout(BuildContext context, { isAdminPage = false }) {
   if (isAdminPage) {
     final iconColor = Theme.of(context).colorScheme.surfaceDim;
 
-    // todo: test
+    // TODO: test
     return (
       leftButton: CreateAdminListedUsersDialogButton(iconColor: iconColor),
       middleButton: CreateAdminSettingsDialogButton(),

@@ -28,7 +28,7 @@ import '../../../test_mocks.dart';
 import '../../../test_widgets.dart';
 
 void main() {
-  group("DeleteAccountButton test", () {
+  group("DeleteAccountButton", () {
     testWidgets("cancelConfirmDeleteAccount", (tester) async {
       await tester.pumpWidget(
         MaterialApp(

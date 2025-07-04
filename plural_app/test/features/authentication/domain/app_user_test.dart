@@ -10,10 +10,6 @@ import 'package:plural_app/src/constants/fields.dart';
 import 'package:plural_app/src/features/authentication/domain/app_user.dart';
 import 'package:plural_app/src/features/authentication/domain/app_user_garden_record.dart';
 import 'package:plural_app/src/features/authentication/data/user_garden_records_repository.dart';
-import 'package:plural_app/src/features/authentication/data/users_repository.dart';
-
-// Gardens
-import 'package:plural_app/src/features/gardens/data/gardens_repository.dart';
 
 // Test
 import '../../../test_context.dart';
@@ -37,15 +33,11 @@ void main() {
       final tc = TestContext();
 
       final getIt = GetIt.instance;
-      final mockGardensRepository = MockGardensRepository();
       final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
-      final mockUsersRepository = MockUsersRepository();
 
-      getIt.registerLazySingleton<GardensRepository>(() => mockGardensRepository);
       getIt.registerLazySingleton<UserGardenRecordsRepository>(
         () => mockUserGardenRecordsRepository
       );
-      getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
 
       // UserGardenRecordsRepository.getList()
       when(
@@ -59,24 +51,6 @@ void main() {
         (_) async => ResultList<RecordModel>(
           items: [tc.getUserGardenRecordRecordModel()]
         )
-      );
-
-      // GardensRepository.getFirstListItem()
-      when(
-        () => mockGardensRepository.getFirstListItem(
-          filter: "${GenericField.id} = '${tc.garden.id}'",
-        )
-      ).thenAnswer(
-        (_) async => tc.getGardenRecordModel()
-      );
-
-      // UsersRepository.getFirstListItem()
-      when(
-        () => mockUsersRepository.getFirstListItem(
-          filter: "${GenericField.id} = '${tc.user.id}'",
-        )
-      ).thenAnswer(
-        (_) async => tc.getUserRecordModel()
       );
 
       // Check user is member and no higher
