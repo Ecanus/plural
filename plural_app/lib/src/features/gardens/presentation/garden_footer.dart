@@ -11,10 +11,10 @@ import 'package:plural_app/src/features/gardens/presentation/app_bottom_bar.dart
 
 class GardenFooter extends StatefulWidget {
   const GardenFooter({
-    this.isModView = false,
+    this.isAdminPage = false,
   });
 
-  final bool isModView;
+  final bool isAdminPage;
 
   @override
   State<GardenFooter> createState() => _GardenFooterState();
@@ -100,7 +100,7 @@ class _GardenFooterState extends State<GardenFooter>
       alignment: AlignmentDirectional.center,
       children: [
         AppBottomBar(
-          isModView: widget.isModView,
+          isAdminPage: widget.isAdminPage,
           isMouseHovered: _isMouseHovered,
           leftButtonOffsetAnimation: _leftButtonOffsetAnimation,
           rightButtonOffsetAnimation: _rightButtonOffsetAnimation

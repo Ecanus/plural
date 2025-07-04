@@ -15,6 +15,7 @@ import 'package:plural_app/src/features/asks/data/asks_repository.dart';
 // Auth
 import 'package:plural_app/src/features/authentication/data/user_garden_records_repository.dart';
 import 'package:plural_app/src/features/authentication/data/users_repository.dart';
+import 'package:plural_app/src/features/authentication/domain/app_user_garden_record.dart';
 
 // Gardens
 import 'package:plural_app/src/features/gardens/data/gardens_repository.dart';
@@ -28,7 +29,7 @@ import '../../../test_context.dart';
 import '../../../test_mocks.dart';
 
 void main() {
-  group("ListedGardenTile test", () {
+  group("LandingPageListedGardenTile", () {
     testWidgets("LandingPageListedGardenTile", (tester) async {
       final tc = TestContext();
 
@@ -91,6 +92,7 @@ void main() {
       // UserGardenRecordsRepository.getList()
       when(
         () => mockUserGardenRecordsRepository.getList(
+          expand: "${UserGardenRecordField.user}, ${UserGardenRecordField.garden}",
           filter: ""
             "${UserGardenRecordField.user} = '${tc.user.id}' && "
             "${UserGardenRecordField.garden} = '${tc.garden.id}'",
@@ -98,17 +100,13 @@ void main() {
           )
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(
-          items: [tc.getUserGardenRecordRecordModel()]
+          items: [
+            tc.getExpandUserGardenRecordRecordModel(
+              [UserGardenRecordField.user, UserGardenRecordField.garden],
+              recordID: "TestGardenRecordID",
+              role: AppUserGardenRole.member),
+          ]
         )
-      );
-
-      // GardensRepository.getFirstListItem()
-      when(
-        () => mockGardensRepository.getFirstListItem(
-          filter: "${GenericField.id} = '${tc.garden.id}'"
-          )
-      ).thenAnswer(
-        (_) async => tc.getGardenRecordModel()
       );
 
       // UsersRepository.getFirstListItem()
@@ -176,6 +174,7 @@ void main() {
       // UserGardenRecordsRepository.getList()
       when(
         () => mockUserGardenRecordsRepository.getList(
+          expand: "${UserGardenRecordField.user}, ${UserGardenRecordField.garden}",
           filter: ""
             "${UserGardenRecordField.user} = '${tc.user.id}' && "
             "${UserGardenRecordField.garden} = '${tc.garden.id}'",
@@ -222,9 +221,9 @@ void main() {
       await tester.tap(find.byType(ListTile));
       await tester.pumpAndSettle();
 
-      // Check appState.currentGarden still null, Snackbar appears
+      // Check appState.currentGarden still null
       expect(appState.currentGarden, null);
-      //expect(find.byType(SnackBar), findsOneWidget);
+      expect(find.byType(SnackBar), findsOneWidget);
     });
 
     tearDown(() => GetIt.instance.reset());

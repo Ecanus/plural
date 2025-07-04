@@ -14,7 +14,7 @@ import 'package:plural_app/src/features/asks/data/asks_repository.dart';
 import 'package:plural_app/src/localization/lang_en.dart';
 
 // Utils
-import 'package:plural_app/src/utils/app_dialog_router.dart';
+import 'package:plural_app/src/utils/app_dialog_view_router.dart';
 import 'package:plural_app/src/utils/app_form.dart';
 
 
@@ -43,8 +43,8 @@ Future<void> submitCreate(
       // Display Success Snackbar
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
 
-      // Route to Listed Asks Dialog
-      GetIt.instance<AppDialogRouter>().routeToAskDialogListView();
+      // Route to Listed Asks View
+      GetIt.instance<AppDialogViewRouter>().routeToListedAsksView();
     } else {
       // Add errors to corresponding fields
       appForm.setErrors(errorsMap: errorsMap);

@@ -11,15 +11,15 @@ import 'package:plural_app/src/features/authentication/presentation/sign_in_page
 import 'package:plural_app/src/features/authentication/presentation/unauthorized_page.dart';
 
 // Garden
+import 'package:plural_app/src/features/gardens/presentation/admin_page.dart';
 import 'package:plural_app/src/features/gardens/presentation/garden_page.dart';
 import 'package:plural_app/src/features/gardens/presentation/landing_page.dart';
-import 'package:plural_app/src/features/gardens/presentation/mod_view_garden_page.dart';
 
 // Utils
 import 'package:plural_app/src/utils/app_state.dart';
 
-class AppRouter {
-  AppRouter(PocketBase? database) {
+class AppGoRouter {
+  AppGoRouter(PocketBase? database) {
     router = GoRouter(
       initialLocation: Routes.signIn,
       routes: [
@@ -34,12 +34,12 @@ class AppRouter {
           ),
         ),
         GoRoute(
-          path: Routes.modViewGarden,
-          builder: (_, __) => ModViewGardenPage(),
+          path: Routes.admin,
+          builder: (_, __) => AdminPage(),
           redirect: (_, __) async {
-            final isModerator = await GetIt.instance<AppState>().isModerator();
+            final isAdmin = await GetIt.instance<AppState>().isAdministrator();
 
-            if (isModerator) {
+            if (isAdmin) {
               return null;
             } else {
               return Uri(

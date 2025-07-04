@@ -8,7 +8,7 @@ import 'package:plural_app/src/constants/themes.dart';
 import 'package:plural_app/src/localization/lang_en.dart';
 
 // Routing
-import 'package:plural_app/src/routing/app_router.dart';
+import 'package:plural_app/src/routing/app_go_router.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({
@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      routerConfig: AppRouter(database).router,
+      routerConfig: AppGoRouter(database).router,
       theme: AppThemes.standard,
       title: AppText.pluralApp,
     );

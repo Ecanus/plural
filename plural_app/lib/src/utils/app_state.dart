@@ -82,8 +82,12 @@ class AppState with ChangeNotifier {
   // _timelineAsks
   List<Ask>? get timelineAsks => _timelineAsksList;
 
-  Future<bool> isModerator() async {
-    return await currentUser!.hasRole(currentGarden!.id, AppUserGardenRole.moderator);
+  Future<bool> isAdministrator() async {
+    return await currentUser!.hasRole(currentGarden!.id, AppUserGardenRole.administrator);
+  }
+
+  Future<bool> isOwner() async {
+    return await currentUser!.hasRole(currentGarden!.id, AppUserGardenRole.owner);
   }
 
   /// Verifies the existence of a [UserGardenRecord] record associated with
@@ -164,7 +168,7 @@ class AppState with ChangeNotifier {
 
   /// Returns the list of [Ask]s to be displayed in the [Garden] timeline.
   Future<List<Ask>> getTimelineAsks() async {
-    var nowString = DateFormat(Formats.dateYMMddHms).format(DateTime.now());
+    var nowString = DateFormat(Formats.dateYMMddHHms).format(DateTime.now());
 
     // Asks with target met, or deadlineDate passed are filtered out.
     var filterString = ""

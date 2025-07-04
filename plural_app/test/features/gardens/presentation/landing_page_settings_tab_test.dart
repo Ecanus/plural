@@ -6,8 +6,10 @@ import 'package:get_it/get_it.dart';
 import 'package:plural_app/src/common_widgets/app_currency_picker_form_field.dart';
 import 'package:plural_app/src/common_widgets/app_elevated_button.dart';
 import 'package:plural_app/src/common_widgets/app_text_form_field.dart';
-import 'package:plural_app/src/common_widgets/delete_account_button.dart';
 import 'package:plural_app/src/common_widgets/log_out_button.dart';
+
+// Auth
+import 'package:plural_app/src/features/authentication/presentation/delete_account_button.dart';
 
 // Gardens
 import 'package:plural_app/src/features/gardens/presentation/landing_page_settings_tab.dart';

@@ -10,27 +10,31 @@ import 'package:plural_app/src/features/authentication/domain/app_user.dart';
 import 'package:plural_app/src/features/gardens/domain/garden.dart';
 
 enum AppUserGardenRole {
-  member(priority: 0),
-  moderator(priority: 1),
-  owner(priority: 2);
+  owner(displayName: "Owner", priority: 2),
+  administrator(displayName: "Administrator", priority: 1),
+  member(displayName: "Member", priority: 0);
 
   const AppUserGardenRole({
-    required this.priority
+    required this.priority,
+    required this.displayName,
   });
 
+  final String displayName;
   final int priority;
 }
 
 enum AppUserGardenPermission {
   changeGardenName,
   changeMemberRoles,
-  createAsks,
+  changeOwner,
+  createAndEditAsks,
   createInvitations,
   deleteGarden,
   deleteMemberAsks,
-  enterModView,
-  kickMembers,
+  expelMembers,
+  viewAdminGardenTimeline,
   viewAuditLog,
+  viewGardenTimeline
 }
 
 class AppUserGardenRecord {
@@ -50,8 +54,17 @@ class AppUserGardenRecord {
     Map<String, dynamic> json, AppUser recordUser, Garden recordGarden) :
       garden = recordGarden,
       id = json[GenericField.id] as String,
-      role = getUserGardenRoleFromString(json[UserGardenRecordField.role]),
+      role = getUserGardenRoleFromString(json[UserGardenRecordField.role])!,
       user = recordUser;
+
+  Map<String, dynamic> toMap() {
+    return {
+      GenericField.id: id,
+      UserGardenRecordField.garden: garden.id,
+      UserGardenRecordField.role: role.name,
+      UserGardenRecordField.user: user.id
+    };
+  }
 
   @override
   bool operator ==(Object other) {

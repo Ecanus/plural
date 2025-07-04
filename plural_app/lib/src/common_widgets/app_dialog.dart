@@ -8,7 +8,7 @@ import 'package:plural_app/src/common_widgets/close_dialog_button.dart';
 import 'package:plural_app/src/constants/app_sizes.dart';
 
 // Utils
-import 'package:plural_app/src/utils/app_dialog_router.dart';
+import 'package:plural_app/src/utils/app_dialog_view_router.dart';
 
 class AppDialog extends StatefulWidget {
   const AppDialog({
@@ -22,7 +22,7 @@ class AppDialog extends StatefulWidget {
 }
 
 class _AppDialogState extends State<AppDialog> {
-  final _appDialogRouter = GetIt.instance<AppDialogRouter>();
+  final _appDialogRouter = GetIt.instance<AppDialogViewRouter>();
 
   @override
   void initState() {

@@ -12,10 +12,10 @@ import 'package:plural_app/src/features/authentication/data/users_repository.dar
 
 // Gardens
 import 'package:plural_app/src/features/gardens/data/gardens_repository.dart';
+import 'package:plural_app/src/features/gardens/presentation/admin_page.dart';
 import 'package:plural_app/src/features/gardens/presentation/garden_footer.dart';
 import 'package:plural_app/src/features/gardens/presentation/garden_header.dart';
 import 'package:plural_app/src/features/gardens/presentation/garden_timeline.dart';
-import 'package:plural_app/src/features/gardens/presentation/mod_view_garden_page.dart';
 
 // Utils
 import 'package:plural_app/src/utils/app_state.dart';
@@ -25,7 +25,7 @@ import '../../../test_context.dart';
 import '../../../test_mocks.dart';
 
 void main() {
-  group("GardenPage test", () {
+  group("AdminPage test", () {
     testWidgets("widgets", (tester) async {
       final tc = TestContext();
       final appState = AppState.skipSubscribe()
@@ -62,7 +62,7 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
-          home: ModViewGardenPage()
+          home: AdminPage()
         ));
 
       // Check widgets all rendered

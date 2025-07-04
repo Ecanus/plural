@@ -14,7 +14,7 @@ import 'package:plural_app/src/features/authentication/data/users_repository.dar
 import 'package:plural_app/src/features/gardens/data/gardens_repository.dart';
 
 // Utils
-import 'package:plural_app/src/utils/app_dialog_router.dart';
+import 'package:plural_app/src/utils/app_dialog_view_router.dart';
 import 'package:plural_app/src/utils/app_state.dart';
 
 /// Populates the [GetIt] instance with the necessary singleton
@@ -28,8 +28,8 @@ Future<void> registerGetItInstances(PocketBase pb) async {
   );
 
   // AppDialogRouter
-  getIt.registerLazySingleton<AppDialogRouter>(
-    () => AppDialogRouter()
+  getIt.registerLazySingleton<AppDialogViewRouter>(
+    () => AppDialogViewRouter()
   );
 
   // AsksRepository

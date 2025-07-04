@@ -39,12 +39,25 @@ void main() {
       expect(newUserGardenRecord.user == tc.user, true);
     });
 
+    test("toMap", () {
+      final tc = TestContext();
+      final userGardenRecord = tc.userGardenRecord;
+
+      final userGardenRecordMap = {
+        UserGardenRecordField.garden: tc.garden.id,
+        GenericField.id: "TESTGARDENRECORD1",
+        UserGardenRecordField.role: "member",
+        UserGardenRecordField.user: tc.user.id,
+      };
+
+      expect(userGardenRecord.toMap(), userGardenRecordMap);
+    });
+
     test("==", () {
       final tc = TestContext();
       final userGardenRecord = tc.userGardenRecord;
 
       final differentUser = AppUser(
-        email: "testEmail",
         firstName: "testFirstName",
         id: "testID",
         lastName: "testLastName",

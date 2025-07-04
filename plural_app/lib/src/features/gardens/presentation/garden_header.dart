@@ -12,10 +12,10 @@ import 'package:plural_app/src/utils/app_state.dart';
 
 class GardenHeader extends StatelessWidget {
   const GardenHeader({
-    this.isModView = false,
+    this.isAdminPage = false,
   });
 
-  final bool isModView;
+  final bool isAdminPage;
 
   @override
   Widget build(BuildContext context) {
@@ -24,8 +24,8 @@ class GardenHeader extends StatelessWidget {
         Expanded(
           child: Column(
             children: [
-              isModView ? ModViewIcon() : SizedBox(),
-              isModView ? gapH15 : SizedBox(),
+              isAdminPage ? AdminPageIcon() : SizedBox(),
+              isAdminPage ? gapH15 : SizedBox(),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -41,7 +41,7 @@ class GardenHeader extends StatelessWidget {
                     Provider.of<AppState>(context).currentGarden!.name,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      color: isModView ? Theme.of(context).colorScheme.onPrimary : null,
+                      color: isAdminPage ? Theme.of(context).colorScheme.onPrimary : null,
                       fontWeight: FontWeight.bold,
                       fontSize: AppFontSizes.s25,
                     ),
@@ -58,8 +58,8 @@ class GardenHeader extends StatelessWidget {
   }
 }
 
-class ModViewIcon extends StatelessWidget {
-  const ModViewIcon({
+class AdminPageIcon extends StatelessWidget {
+  const AdminPageIcon({
     super.key,
   });
 

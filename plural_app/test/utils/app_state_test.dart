@@ -13,6 +13,7 @@ import 'package:plural_app/src/features/asks/domain/ask.dart';
 // Auth
 import 'package:plural_app/src/features/authentication/data/user_garden_records_repository.dart';
 import 'package:plural_app/src/features/authentication/data/users_repository.dart';
+import 'package:plural_app/src/features/authentication/domain/app_user_garden_record.dart';
 
 // Gardens
 import 'package:plural_app/src/features/gardens/data/gardens_repository.dart';
@@ -25,7 +26,7 @@ import '../test_context.dart';
 import '../test_mocks.dart';
 
 void main() {
-  group("App state test", () {
+  group("AppState", () {
     test("getTimelineAsks", () async {
       final tc = TestContext();
 
@@ -141,6 +142,7 @@ void main() {
       // UserGardenRecordsRepository.getList()
       when(
         () => mockUserGardenRecordsRepository.getList(
+          expand: "${UserGardenRecordField.user}, ${UserGardenRecordField.garden}",
           filter: ""
             "${UserGardenRecordField.user} = '${tc.user.id}' && "
             "${UserGardenRecordField.garden} = '${tc.garden.id}'",
@@ -150,15 +152,6 @@ void main() {
         (_) async => ResultList<RecordModel>(
           items: []
         )
-      );
-
-      // GardensRepository.getFirstListItem()
-      when(
-        () => mockGardensRepository.getFirstListItem(
-          filter: "${GenericField.id} = '${tc.garden.id}'"
-          )
-      ).thenAnswer(
-        (_) async => tc.getGardenRecordModel()
       );
 
       // UsersRepository.getFirstListItem()
@@ -196,7 +189,7 @@ void main() {
         showsSnackbar: false
       );
 
-      // Check curerentGarden is still null
+      // Check curerentGarden is still null (was never set because no userGardenRecord was found)
       expect(appState.currentGarden, null);
 
       // Check methods were called
@@ -206,6 +199,7 @@ void main() {
       // UserGardenRecordsRepository.getList(), now returns RecordModel
       when(
         () => mockUserGardenRecordsRepository.getList(
+          expand: "${UserGardenRecordField.user}, ${UserGardenRecordField.garden}",
           filter: ""
             "${UserGardenRecordField.user} = '${tc.user.id}' && "
             "${UserGardenRecordField.garden} = '${tc.garden.id}'",
@@ -213,7 +207,11 @@ void main() {
           )
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(
-          items: [tc.getUserGardenRecordRecordModel()]
+          items: [
+            tc.getExpandUserGardenRecordRecordModel([
+              UserGardenRecordField.user, UserGardenRecordField.garden
+            ], role: AppUserGardenRole.member),
+          ]
         )
       );
 
@@ -222,7 +220,7 @@ void main() {
         () => mockGoRouter.go(any())
       ).thenReturn(null);
 
-      // Check currentGarden is null
+      // Check currentGarden is null (call not yet made)
       expect(appState.currentGarden, null);
 
       // Check methods not yet called
@@ -241,5 +239,78 @@ void main() {
     });
 
     tearDown(() => GetIt.instance.reset());
+
+    test("isAdministrator, isOwner", () async {
+      final tc = TestContext();
+
+      final appState = AppState.skipSubscribe()
+                        ..currentGarden = tc.garden
+                        ..currentUser = tc.user;
+
+      final getIt = GetIt.instance;
+      final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
+
+      getIt.registerLazySingleton<UserGardenRecordsRepository>(
+        () => mockUserGardenRecordsRepository
+      );
+
+      // UserGardenRecordsRepository.getList()
+      when(
+        () => mockUserGardenRecordsRepository.getList(
+          filter: ""
+            "${UserGardenRecordField.user} = '${tc.user.id}' && "
+            "${UserGardenRecordField.garden} = '${tc.garden.id}'",
+          sort: "-updated"
+        )
+      ).thenAnswer(
+        (_) async => ResultList<RecordModel>(
+          items: [
+            tc.getUserGardenRecordRecordModel(role: AppUserGardenRole.member)
+          ]
+        )
+      );
+
+      expect(await appState.isAdministrator(), false);
+      expect(await appState.isOwner(), false);
+
+      // UserGardenRecordsRepository.getList(). Returns record with role == administrator
+      when(
+        () => mockUserGardenRecordsRepository.getList(
+          filter: ""
+            "${UserGardenRecordField.user} = '${tc.user.id}' && "
+            "${UserGardenRecordField.garden} = '${tc.garden.id}'",
+          sort: "-updated"
+        )
+      ).thenAnswer(
+        (_) async => ResultList<RecordModel>(
+          items: [
+            tc.getUserGardenRecordRecordModel(role: AppUserGardenRole.administrator)
+          ]
+        )
+      );
+
+      expect(await appState.isAdministrator(), true);
+      expect(await appState.isOwner(), false);
+
+      // UserGardenRecordsRepository.getList(). Returns record with role == owner
+      when(
+        () => mockUserGardenRecordsRepository.getList(
+          filter: ""
+            "${UserGardenRecordField.user} = '${tc.user.id}' && "
+            "${UserGardenRecordField.garden} = '${tc.garden.id}'",
+          sort: "-updated"
+        )
+      ).thenAnswer(
+        (_) async => ResultList<RecordModel>(
+          items: [
+            tc.getUserGardenRecordRecordModel(role: AppUserGardenRole.owner)
+          ]
+        )
+      );
+
+      expect(await appState.isAdministrator(), true);
+      expect(await appState.isOwner(), true);
+    });
+
   });
 }

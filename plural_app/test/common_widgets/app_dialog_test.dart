@@ -6,15 +6,15 @@ import 'package:get_it/get_it.dart';
 import 'package:plural_app/src/common_widgets/app_dialog.dart';
 
 // Utils
-import 'package:plural_app/src/utils/app_dialog_router.dart';
+import 'package:plural_app/src/utils/app_dialog_view_router.dart';
 
 void main() {
   group("AppDialog test", () {
     testWidgets("view", (tester) async {
-      final appDialogRouter = AppDialogRouter();
+      final appDialogRouter = AppDialogViewRouter();
 
       final getIt = GetIt.instance;
-      getIt.registerLazySingleton<AppDialogRouter>(() => appDialogRouter);
+      getIt.registerLazySingleton<AppDialogViewRouter>(() => appDialogRouter);
 
       await tester.pumpWidget(
         MaterialApp(

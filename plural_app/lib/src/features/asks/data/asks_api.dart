@@ -1,10 +1,12 @@
 import 'dart:math';
 
+import 'package:intl/intl.dart';
 import 'package:pocketbase/pocketbase.dart';
 import 'package:get_it/get_it.dart';
 
 // Constants
 import 'package:plural_app/src/constants/fields.dart';
+import 'package:plural_app/src/constants/formats.dart';
 
 // Asks
 import 'package:plural_app/src/features/asks/data/asks_repository.dart';
@@ -145,37 +147,38 @@ Future<List<Ask>> getAsksByUserID({
 /// Returns the list of all related Asks.
 Future<List<Ask>> getAsksForListedAsksDialog({
   required String userID,
-  required String nowString,
+  required DateTime now,
 }) async {
-  // Target not met, deadline not passed
-  final filterString = ""
-    "&& ${AskField.targetMetDate} = null"
-    "&& ${AskField.deadlineDate} > '$nowString'";
+  final List<Ask> displayableAsks = [];
+  final List<Ask> deadlinePassedAsks = [];
+  final List<Ask> targetMetAsks = [];
+
   final asks = await getAsksByUserID(
-    filter: filterString,
     sort: GenericField.created,
     userID: userID,
   );
 
-  // Target not met, deadline passed
-  final deadlinePassedFilterString = ""
-    "&& ${AskField.targetMetDate} = null"
-    "&& ${AskField.deadlineDate} <= '$nowString'";
-  final deadlinePassedAsks = await getAsksByUserID(
-    filter: deadlinePassedFilterString,
-    sort: GenericField.created,
-    userID: userID,
-  );
+  for (Ask ask in asks) {
+    if (ask.targetMetDate == null) {
+      final deadlineDate = DateTime.parse(
+        DateFormat(Formats.dateYMMddHHms).format(ask.deadlineDate)).toLocal();
 
-  // Target met
-  final targetMetFilterString = "&& ${AskField.targetMetDate} != null";
-  final targetMetAsks = await getAsksByUserID(
-    filter: targetMetFilterString,
-    sort: GenericField.created,
-    userID: userID,
-  );
+      // Target not met, deadline not passed
+      if (deadlineDate.isAfter(now)) {
+        displayableAsks.add(ask);
+      }
 
-  return asks + deadlinePassedAsks + targetMetAsks;
+      // Target not met, deadline passed
+      if (deadlineDate.isAtSameMomentAs(now) || deadlineDate.isBefore(now)) {
+        deadlinePassedAsks.add(ask);
+      }
+    } else {
+      // Target met
+      targetMetAsks.add(ask);
+    }
+  }
+
+  return displayableAsks + deadlinePassedAsks + targetMetAsks;
 }
 
 /// Returns the [AskType] enum that corresponds to [askTypeString].

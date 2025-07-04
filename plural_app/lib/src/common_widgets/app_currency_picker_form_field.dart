@@ -43,8 +43,7 @@ class _AppCurrencyPickerFormFieldState extends State<AppCurrencyPickerFormField>
     _controller.text = widget.initialValue ?? "";
 
     // Currencies
-    var keys = Currencies.all.keys.toList();
-    keys.sort();
+    var keys = Currencies.all.keys.toList()..sort();
 
     _sortedCurrencyCards = keys.map(
       (String currencyCode) {

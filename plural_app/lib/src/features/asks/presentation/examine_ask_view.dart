@@ -24,7 +24,7 @@ import 'package:plural_app/src/localization/lang_en.dart';
 import 'package:plural_app/src/utils/app_state.dart';
 
 
-Future createNonEditableAskDialog({
+Future createExamineAskDialog({
   required BuildContext context,
   required Ask ask
   }) async {
@@ -32,14 +32,14 @@ Future createNonEditableAskDialog({
       context: context,
       builder: (BuildContext context) {
         return AppDialog(
-          view: AskDialogView(ask: ask),
+          view: ExamineAskView(ask: ask),
         );
       }
     );
 }
 
-class AskDialogView extends StatelessWidget {
-  const AskDialogView({
+class ExamineAskView extends StatelessWidget {
+  const ExamineAskView({
     required this.ask,
   });
 
@@ -49,7 +49,7 @@ class AskDialogView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        NonEditableAskHeader(ask: ask),
+        ExamineAskHeader(ask: ask),
         Expanded(
           child: ListView(
             padding: const EdgeInsets.all(AppPaddings.p45),
@@ -81,12 +81,12 @@ class AskDialogView extends StatelessWidget {
                   gapH25,
                   TextColumn(
                     fontWeight: FontWeight.bold,
-                    labelText: AskDialogText.instructions,
+                    labelText: AskViewText.instructions,
                     bodyText: ask.instructions,
                   ),
                   gapH25,
                   TextColumn(
-                    labelText: AskDialogText.username,
+                    labelText: AskViewText.username,
                     bodyText: ask.creator.username,
                   ),
                 ],
@@ -100,18 +100,18 @@ class AskDialogView extends StatelessWidget {
   }
 }
 
-class NonEditableAskHeader extends StatefulWidget {
-  const NonEditableAskHeader({
+class ExamineAskHeader extends StatefulWidget {
+  const ExamineAskHeader({
     required this.ask,
   });
 
   final Ask ask;
 
   @override
-  State<NonEditableAskHeader> createState() => _NonEditableAskHeaderState();
+  State<ExamineAskHeader> createState() => _ExamineAskHeaderState();
 }
 
-class _NonEditableAskHeaderState extends State<NonEditableAskHeader> {
+class _ExamineAskHeaderState extends State<ExamineAskHeader> {
   late bool _isSponsored;
 
   @override
@@ -186,7 +186,7 @@ class _NonEditableAskHeaderState extends State<NonEditableAskHeader> {
               gapW5,
               Tooltip(
                 message: _isSponsored ?
-                  AskDialogText.unmarkAsSponsored : AskDialogText.markAsSponsored,
+                  AskViewText.unmarkAsSponsored : AskViewText.markAsSponsored,
                 child: AppTooltipIcon()
               )
             ],
@@ -227,12 +227,12 @@ class BoonColumn extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              AskDialogText.boon,
+              AskViewText.boon,
               style: TextStyle(color: Theme.of(context).colorScheme.primary)
             ),
             gapW5,
             Tooltip(
-              message: AskDialogText.tooltipBoon,
+              message: AskViewText.tooltipBoon,
               child: AppTooltipIcon()
             )
           ],

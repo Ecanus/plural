@@ -30,6 +30,7 @@ import 'package:plural_app/src/features/authentication/domain/app_user_settings.
 // Gardens
 import 'package:plural_app/src/features/gardens/data/gardens_api.dart';
 import 'package:plural_app/src/features/gardens/data/gardens_repository.dart';
+import 'package:plural_app/src/features/gardens/domain/garden.dart';
 
 // Localization
 import 'package:plural_app/src/localization/lang_en.dart';
@@ -118,28 +119,61 @@ Future<void> deleteCurrentUserSettings() async {
   await GetIt.instance<UserSettingsRepository>().delete(id: currentUserSettings.id);
 }
 
-/// Queries on the [UserGardenRecord] collection to retrieve all [User]s
+// TODO: implement
+Future<void> expelUserFromGarden(
+  BuildContext context,
+  AppUserGardenRecord userGardenRecord
+) async {}
+
+/// Queries on the [UserGardenRecord] collection to retrieve all records
 /// with the same [Garden] as the currentGarden.
 ///
-/// Returns the list of retrieved [AppUser]s.
-Future<List<AppUser>> getCurrentGardenUsers() async {
+/// Returns the list of retrieved [AppUserGardenRecord]s.
+Future<Map<AppUserGardenRole, List<AppUserGardenRecord>>> getCurrentGardenUserGardenRecords() async {
+  late AppUserGardenRecord owner;
+  final List<AppUserGardenRecord> administrators = [];
+  final List<AppUserGardenRecord> members = [];
+
   String currentGardenID = GetIt.instance<AppState>().currentGarden!.id;
-  List<AppUser> users = [];
 
   final resultList = await GetIt.instance<UserGardenRecordsRepository>().getList(
-    expand: UserGardenRecordField.user,
+    expand: "${UserGardenRecordField.user}, ${UserGardenRecordField.garden}",
     filter: "${UserGardenRecordField.garden} = '$currentGardenID'",
     sort: "${UserGardenRecordField.user}.${UserField.username}"
   );
 
   for (var record in resultList.items) {
-    final userRecord = record.toJson()[QueryKey.expand][UserGardenRecordField.user];
+    final recordJson = record.toJson();
+
+    final userRecord = recordJson[QueryKey.expand][UserGardenRecordField.user];
     final user = AppUser.fromJson(userRecord);
 
-    users.add(user);
+    final gardenRecord = recordJson[QueryKey.expand][UserGardenRecordField.garden];
+    final garden = Garden.fromJson(gardenRecord, await getUserByID(gardenRecord[GardenField.creator]));
+
+    final userGardenRecord = AppUserGardenRecord.fromJson(recordJson, user, garden);
+
+    // Owner
+    if (userGardenRecord.role == AppUserGardenRole.owner) {
+      owner = userGardenRecord;
+    }
+
+    // Administrator
+    if (userGardenRecord.role == AppUserGardenRole.administrator) {
+      administrators.add(userGardenRecord);
+    }
+
+    // Member
+    if (userGardenRecord.role == AppUserGardenRole.member) {
+      members.add(userGardenRecord);
+    }
   }
 
-  return users;
+  return {
+    AppUserGardenRole.owner: [owner],
+    AppUserGardenRole.administrator: administrators,
+    AppUserGardenRole.member: members,
+  };
 }
 
 /// Queries on the [UserSettings] collection to retrieve the record which
@@ -170,31 +204,32 @@ Future<AppUser> getUserByID(String userID) async {
 List<AppUserGardenPermission> getUserGardenPermissionGroup(AppUserGardenRole role) {
   final List<AppUserGardenPermission> group = [];
 
-  // Member permissions
-  if (role.priority >= AppUserGardenRole.member.priority) {
+  // Owner
+  if (role.priority >= AppUserGardenRole.owner.priority) {
     group.addAll([
-      AppUserGardenPermission.createAsks
+      AppUserGardenPermission.changeOwner,
+      AppUserGardenPermission.deleteGarden,
     ]);
   }
 
-  // Moderator permissions
-  if (role.priority >= AppUserGardenRole.moderator.priority) {
+  // Administrator
+  if (role.priority >= AppUserGardenRole.administrator.priority) {
     group.addAll([
       AppUserGardenPermission.changeGardenName,
       AppUserGardenPermission.changeMemberRoles,
-      AppUserGardenPermission.createAsks,
       AppUserGardenPermission.createInvitations,
       AppUserGardenPermission.deleteMemberAsks,
-      AppUserGardenPermission.enterModView,
-      AppUserGardenPermission.kickMembers,
+      AppUserGardenPermission.expelMembers,
       AppUserGardenPermission.viewAuditLog,
+      AppUserGardenPermission.viewAdminGardenTimeline,
     ]);
   }
 
-  // Owner permissions
-  if (role.priority >= AppUserGardenRole.owner.priority) {
+  // Member
+  if (role.priority >= AppUserGardenRole.member.priority) {
     group.addAll([
-      AppUserGardenPermission.deleteGarden,
+      AppUserGardenPermission.createAndEditAsks,
+      AppUserGardenPermission.viewGardenTimeline
     ]);
   }
 
@@ -204,6 +239,37 @@ List<AppUserGardenPermission> getUserGardenPermissionGroup(AppUserGardenRole rol
 /// Queries on the [UserGardenRecord] collection, to retrieve a UserGardenRecord
 /// corresponding to [userID] and [gardenID].
 Future<AppUserGardenRecord?> getUserGardenRecord({
+  required String userID,
+  required String gardenID,
+  sort = "-updated"
+}) async {
+  final resultList = await GetIt.instance<UserGardenRecordsRepository>().getList(
+    expand: "${UserGardenRecordField.user}, ${UserGardenRecordField.garden}",
+    filter: ""
+      "${UserGardenRecordField.user} = '$userID' && "
+      "${UserGardenRecordField.garden} = '$gardenID'",
+    sort: sort,
+  );
+
+  // Return null if no UserGardenRecord record is found
+  if (resultList.items.isEmpty) return null;
+
+  final record = resultList.items.first.toJson();
+
+  final userRecord = record[QueryKey.expand][UserGardenRecordField.user];
+  final user = AppUser.fromJson(userRecord);
+
+  final gardenRecord = record[QueryKey.expand][UserGardenRecordField.garden];
+  final garden = Garden.fromJson(
+    gardenRecord, await getUserByID(gardenRecord[GardenField.creator])
+  );
+
+  return AppUserGardenRecord.fromJson(record, user, garden);
+}
+
+/// Queries on the [UserGardenRecord] collection, to retrieve a UserGardenRecord
+/// corresponding to [userID] and [gardenID].
+Future<AppUserGardenRole?> getUserGardenRecordRole({
   required String userID,
   required String gardenID,
   sort = "-updated"
@@ -220,18 +286,21 @@ Future<AppUserGardenRecord?> getUserGardenRecord({
 
   final record = resultList.items.first.toJson();
 
-  final garden = await getGardenByID(gardenID);
-  final user = await getUserByID(userID);
-
-  return AppUserGardenRecord.fromJson(record, user, garden);
+  return getUserGardenRoleFromString(record[UserGardenRecordField.role])!;
 }
 
 /// Returns the [AppUserGardenRole] enum that corresponds to [roleString].
-AppUserGardenRole getUserGardenRoleFromString(String roleString) {
-  return AppUserGardenRole.values.firstWhere(
-    (a) => a.name == roleString,
-    orElse: () => AppUserGardenRole.member
-  );
+AppUserGardenRole? getUserGardenRoleFromString(
+  String roleString, {
+  displayName = false
+}) {
+  try {
+    return AppUserGardenRole.values.firstWhere(
+      (a) => displayName ? a.displayName == roleString : a.name == roleString,
+    );
+  } on StateError {
+    return null;
+  }
 }
 
 /// Attempts to log in to the database with [usernameOrEmail]

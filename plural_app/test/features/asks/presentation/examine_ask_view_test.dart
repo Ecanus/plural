@@ -11,13 +11,13 @@ import 'package:plural_app/src/common_widgets/app_dialog_footer.dart';
 
 // Asks
 import 'package:plural_app/src/features/asks/data/asks_repository.dart';
-import 'package:plural_app/src/features/asks/presentation/non_editable_ask_dialog.dart';
+import 'package:plural_app/src/features/asks/presentation/examine_ask_view.dart';
 
 // Localization
 import 'package:plural_app/src/localization/lang_en.dart';
 
 // Utils
-import 'package:plural_app/src/utils/app_dialog_router.dart';
+import 'package:plural_app/src/utils/app_dialog_view_router.dart';
 import 'package:plural_app/src/utils/app_state.dart';
 
 // Tests
@@ -42,7 +42,7 @@ void main() {
       // GetIt
       final getIt = GetIt.instance;
       getIt.registerLazySingleton<AppState>(() => appState);
-      getIt.registerLazySingleton<AppDialogRouter>(() => AppDialogRouter());
+      getIt.registerLazySingleton<AppDialogViewRouter>(() => AppDialogViewRouter());
 
       await tester.pumpWidget(
         MaterialApp(
@@ -50,7 +50,7 @@ void main() {
             body: Builder(
               builder: (BuildContext context) {
                 return ElevatedButton(
-                  onPressed: () => createNonEditableAskDialog(
+                  onPressed: () => createExamineAskDialog(
                     context: context, ask: ask),
                   child: Text("The ElevatedButton")
                 );
@@ -61,14 +61,14 @@ void main() {
       );
 
       // Check AskDialogView not yet displayed
-      expect(find.byType(AskDialogView), findsNothing);
+      expect(find.byType(ExamineAskView), findsNothing);
 
       // Tap ElevatedButton (to open dialog)
       await tester.tap(find.byType(ElevatedButton));
       await tester.pumpAndSettle();
 
       // Check expected values are found
-      expect(find.byType(NonEditableAskHeader), findsOneWidget);
+      expect(find.byType(ExamineAskHeader), findsOneWidget);
       expect(find.text(ask.description), findsOneWidget);
       expect(find.text("${ask.boon.toString()} ${ask.currency}"), findsOneWidget);
       expect(find.text(ask.instructions), findsOneWidget);
@@ -80,14 +80,14 @@ void main() {
       await gesture.moveTo(tester.getCenter(tooltip));
       await tester.pumpAndSettle();
 
-      expect(find.text(AskDialogText.markAsSponsored), findsOneWidget);
+      expect(find.text(AskViewText.markAsSponsored), findsOneWidget);
 
       // Check boon tooltip message is correct
       tooltip = find.byType(Tooltip).last;
       await gesture.moveTo(tester.getCenter(tooltip));
       await tester.pumpAndSettle();
 
-      expect(find.text(AskDialogText.tooltipBoon), findsOneWidget);
+      expect(find.text(AskViewText.tooltipBoon), findsOneWidget);
     });
 
     tearDown(() => GetIt.instance.reset());
@@ -129,7 +129,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: NonEditableAskHeader(ask: tc.ask)
+            body: ExamineAskHeader(ask: tc.ask)
           ),
         )
       );
@@ -139,7 +139,7 @@ void main() {
       await gesture.moveTo(tester.getCenter(tooltip));
       await tester.pumpAndSettle();
 
-      expect(find.text(AskDialogText.markAsSponsored), findsOneWidget);
+      expect(find.text(AskViewText.markAsSponsored), findsOneWidget);
 
       // Move cursor off tooltip; toggle switch; move cursor back
       // NOTE: Switch will add tc.user to tc.ask.sponsors
@@ -150,7 +150,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Check that tooltip text has changed
-      expect(find.text(AskDialogText.unmarkAsSponsored), findsOneWidget);
+      expect(find.text(AskViewText.unmarkAsSponsored), findsOneWidget);
     });
 
     tearDown(() => GetIt.instance.reset());
@@ -172,7 +172,7 @@ void main() {
       );
 
       // No relevant text renders when boon <= 0
-      expect(find.text(AskDialogText.boon), findsNothing);
+      expect(find.text(AskViewText.boon), findsNothing);
       expect(find.byType(Tooltip), findsNothing);
       expect(find.text("${ask.boon.toString()} ${ask.currency}"), findsNothing);
 
@@ -188,7 +188,7 @@ void main() {
       );
 
       // Check text renders when boon > 0
-      expect(find.text(AskDialogText.boon), findsOneWidget);
+      expect(find.text(AskViewText.boon), findsOneWidget);
       expect(find.byType(Tooltip), findsOneWidget);
       expect(find.text("${ask.boon.toString()} ${ask.currency}"), findsOneWidget);
     });

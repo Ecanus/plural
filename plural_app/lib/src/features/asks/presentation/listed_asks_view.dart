@@ -14,10 +14,10 @@ import 'package:plural_app/src/features/asks/presentation/listed_ask_tile.dart';
 import 'package:plural_app/src/localization/lang_en.dart';
 
 // Utils
-import 'package:plural_app/src/utils/app_dialog_router.dart';
+import 'package:plural_app/src/utils/app_dialog_view_router.dart';
 
-class AskDialogList extends StatelessWidget {
-  const AskDialogList({
+class ListedAsksView extends StatelessWidget {
+  const ListedAsksView({
     required this.listedAskTiles,
   });
 
@@ -25,7 +25,7 @@ class AskDialogList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appDialogRouter = GetIt.instance<AppDialogRouter>();
+    final appDialogRouter = GetIt.instance<AppDialogViewRouter>();
 
     return Column(
       children: [
@@ -40,10 +40,10 @@ class AskDialogList extends StatelessWidget {
         AppDialogFooterBuffer(buttons: [RouteToCreateAskViewButton()],),
         AppDialogNavFooter(
           leftDialogIcon: Icons.local_florist,
-          leftNavCallback: appDialogRouter.routeToCurrentGardenDialogView,
+          leftNavCallback: appDialogRouter.routeToCurrentGardenSettingsView,
           leftTooltipMessage: AppDialogFooterText.navToGardenDialog,
           rightDialogIcon: Icons.settings,
-          rightNavCallback: appDialogRouter.routeToUserSettingsDialogView,
+          rightNavCallback: appDialogRouter.routeToUserSettingsView,
           rightTooltipMessage: AppDialogFooterText.navToSettingsDialog,
           title: AppDialogFooterText.listedAsks
         )
@@ -56,10 +56,10 @@ class RouteToCreateAskViewButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appDialogRouter = GetIt.instance<AppDialogRouter>();
+    final appDialogRouter = GetIt.instance<AppDialogViewRouter>();
 
     return Tooltip(
-      message: AskDialogText.createAsk,
+      message: AskViewText.createAsk,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           backgroundColor: Theme.of(context).colorScheme.onPrimary,
@@ -67,7 +67,7 @@ class RouteToCreateAskViewButton extends StatelessWidget {
           iconColor: Theme.of(context).colorScheme.surface,
           shape: CircleBorder(),
         ),
-        onPressed: () => appDialogRouter.routeToCreatableAskDialogView(),
+        onPressed: () => appDialogRouter.routeToCreateAskView(),
         child: const Icon(Icons.add)
       ),
     );
@@ -82,12 +82,12 @@ class EmptyListedAskTilesMessage extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            AskDialogText.emptyListedAskTilesMessage,
+            AskViewText.emptyListedAskTilesMessage,
             style: Theme.of(context).textTheme.headlineSmall
           ),
           gapH25,
           Text(
-            AskDialogText.emptyListedAskTilesSubtitle,
+            AskViewText.emptyListedAskTilesSubtitle,
             style: Theme.of(context).textTheme.bodyMedium
           ),
         ],

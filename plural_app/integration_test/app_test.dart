@@ -24,6 +24,7 @@ import 'package:plural_app/src/features/asks/presentation/route_to_listed_asks_v
 
 // Auth
 import 'package:plural_app/src/features/authentication/domain/app_user.dart';
+import 'package:plural_app/src/features/authentication/domain/app_user_garden_record.dart';
 import 'package:plural_app/src/features/authentication/presentation/log_in_password_form_field.dart';
 
 // Gardens
@@ -45,7 +46,6 @@ void main() {
       tc.ask.deadlineDate = now.add(const Duration(days: 2));
 
       final otherUser = AppUser(
-        email: "otheruser@test.com",
         firstName: "OtherFirst",
         id: "OTHERUSER",
         lastName: "OtherLast",
@@ -124,7 +124,6 @@ void main() {
       ).thenAnswer(
         (_) async => tc.getUserRecordModel(
           id: otherUser.id,
-          email: otherUser.email,
           username: otherUser.username,
         )
       );
@@ -154,7 +153,7 @@ void main() {
         )
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(
-          items: [tc.getExpandUserGardenRecordRecordModel(UserGardenRecordField.garden)]
+          items: [tc.getExpandUserGardenRecordRecordModel([UserGardenRecordField.garden])]
         )
       );
       // RecordService.getList() - getUserGardenRecord()
@@ -168,7 +167,11 @@ void main() {
         )
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(
-          items: [tc.getUserGardenRecordRecordModel()]
+          items: [
+            tc.getExpandUserGardenRecordRecordModel([
+              UserGardenRecordField.user, UserGardenRecordField.garden],
+              role: AppUserGardenRole.owner),
+          ]
         )
       );
       // RecordService.getList() - getGardensByUser(excludeCurrentGarden: false)
@@ -180,7 +183,7 @@ void main() {
         )
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(
-          items: [tc.getExpandUserGardenRecordRecordModel(UserGardenRecordField.garden)]
+          items: [tc.getExpandUserGardenRecordRecordModel([UserGardenRecordField.garden])]
         )
       );
       // RecordService.getList() - getAsksByGardenID
@@ -266,7 +269,7 @@ void main() {
       await tester.tap(find.byType(CloseDialogButton));
       await tester.pumpAndSettle();
 
-      // Open CreatableAskDialog
+      // Open CreateAskDialog
       await tester.ensureVisible(find.byIcon(Icons.add));
       await tester.pumpAndSettle();
       await tester.tap(find.byIcon(Icons.add));

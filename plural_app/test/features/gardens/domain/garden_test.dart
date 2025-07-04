@@ -69,7 +69,6 @@ void main() {
       final garden = tc.garden;
 
       final differentUser = AppUser(
-        email: "testEmail",
         firstName: "testFirstName",
         id: "testID",
         lastName: "testLastName",

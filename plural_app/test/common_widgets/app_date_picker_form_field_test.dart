@@ -25,7 +25,7 @@ void main() {
       final AppForm appForm = AppForm();
 
       const fieldName = AskField.deadlineDate;
-      const label = AskDialogText.deadlineDate;
+      const label = AskViewText.deadlineDate;
 
       await tester.pumpWidget(
         MaterialApp(
@@ -48,7 +48,7 @@ void main() {
       final AppForm appForm = AppForm();
 
       const fieldName = AskField.deadlineDate;
-      const label = AskDialogText.deadlineDate;
+      const label = AskViewText.deadlineDate;
       final value = tc.ask.deadlineDate;
 
       await tester.pumpWidget(
@@ -75,7 +75,6 @@ void main() {
       final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
       const fieldName = AskField.deadlineDate;
-      const label = AskDialogText.deadlineDate;
 
       appForm.setValue(fieldName: AskField.deadlineDate, value: null);
 
@@ -88,7 +87,6 @@ void main() {
                 appForm: appForm,
                 fieldName: fieldName,
                 initialValue: null,
-                label: label,
               ),
             ),
           ),
@@ -110,7 +108,6 @@ void main() {
       final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
       const fieldName = AskField.deadlineDate;
-      const label = AskDialogText.deadlineDate;
 
       appForm.setValue(fieldName: fieldName, value: null);
 
@@ -123,7 +120,6 @@ void main() {
                 appForm: appForm,
                 fieldName: fieldName,
                 initialValue: null,
-                label: label,
               ),
             ),
           ),
@@ -133,7 +129,7 @@ void main() {
       expect(appForm.getValue(fieldName: fieldName), null);
       expect(find.text(AppFormText.invalidValue), findsNothing);
 
-      // Set text to invalid value; validate
+      // Set text to invalid value; validate be false
       textFieldController(tester).text = "???";
       expect(formKey.currentState!.validate(), false);
       await tester.pumpAndSettle();
@@ -147,7 +143,7 @@ void main() {
       final AppForm appForm = AppForm();
 
       const fieldName = AskField.deadlineDate;
-      const firstLabel = AskDialogText.deadlineDate;
+      const firstLabel = AskViewText.deadlineDate;
       const secondLabel = "Hibiscus";
 
       await tester.pumpWidget(
@@ -185,7 +181,6 @@ void main() {
     testWidgets("showDatePickerDialog select value", (tester) async {
       final AppForm appForm = AppForm();
       const fieldName = AskField.deadlineDate;
-      const label = AskDialogText.deadlineDate;
 
       appForm.setValue(fieldName: fieldName, value: null);
 
@@ -196,7 +191,6 @@ void main() {
               appForm: appForm,
               fieldName: fieldName,
               initialValue: null,
-              label: label,
             ),
           ),
         )
@@ -228,7 +222,6 @@ void main() {
     testWidgets("showDatePickerDialog dismiss", (tester) async {
       final AppForm appForm = AppForm();
       const fieldName = AskField.deadlineDate;
-      const label = AskDialogText.deadlineDate;
 
       appForm.setValue(fieldName: fieldName, value: null);
 
@@ -239,7 +232,6 @@ void main() {
               appForm: appForm,
               fieldName: fieldName,
               initialValue: null,
-              label: label,
             ),
           ),
         )
@@ -270,7 +262,6 @@ void main() {
     testWidgets("Valid text entry out of range", (tester) async {
       final AppForm appForm = AppForm();
       const fieldName = AskField.deadlineDate;
-      const label = AskDialogText.deadlineDate;
 
       appForm.setValue(fieldName: fieldName, value: null);
 
@@ -281,7 +272,6 @@ void main() {
               appForm: appForm,
               fieldName: fieldName,
               initialValue: null,
-              label: label,
             ),
           ),
         )
@@ -313,7 +303,6 @@ void main() {
     testWidgets("showDatePickerDialog initialValue out of range", (tester) async {
       final AppForm appForm = AppForm();
       const fieldName = AskField.deadlineDate;
-      const label = AskDialogText.deadlineDate;
 
       appForm.setValue(fieldName: fieldName, value: null);
 
@@ -324,7 +313,6 @@ void main() {
               appForm: appForm,
               fieldName: fieldName,
               initialValue: DateTime(2000, 1, 1),
-              label: label,
             ),
           ),
         )

@@ -62,10 +62,11 @@ Future<List<Garden>> getGardensByUserID(
   );
 
   for (final record in resultList.items) {
-    final creator = await getUserByID(userID);
     final gardenRecord =
       record.toJson()[QueryKey.expand][UserGardenRecordField.garden];
-    final garden = Garden.fromJson(gardenRecord, creator);
+    final garden = Garden.fromJson(
+      gardenRecord, await getUserByID(gardenRecord[GardenField.creator])
+    );
 
     gardens.add(garden);
   }
