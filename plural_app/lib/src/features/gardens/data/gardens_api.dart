@@ -5,7 +5,6 @@ import 'package:plural_app/src/utils/app_state.dart';
 
 // Constants
 import 'package:plural_app/src/constants/fields.dart';
-import 'package:plural_app/src/constants/pocketbase.dart';
 import 'package:plural_app/src/constants/query_parameters.dart';
 import 'package:plural_app/src/constants/routes.dart';
 
@@ -33,45 +32,6 @@ Future<Garden> getGardenByID(String gardenID) async {
   final creator = await getUserByID(recordJson[GardenField.creator]);
 
   return Garden.fromJson(recordJson, creator);
-}
-
-/// Returns a list of [Garden] instances corresponding to [Garden] records from the
-/// database that [userID] belongs to.
-///
-/// If [excludesCurrentGarden] is true, the [Garden] corresponding
-/// to [AppState].currentGarden will be excluded from the list of results.
-Future<List<Garden>> getGardensByUserID(
-  String userID, {
-  bool excludesCurrentGarden = true,
-}) async {
-  List<Garden> gardens = [];
-  var filter = "${UserGardenRecordField.user} = '$userID'";
-
-  // excludesCurrentGarden
-  if (excludesCurrentGarden) {
-    final currentGardenID = GetIt.instance<AppState>().currentGarden!.id;
-    filter = ""
-      "${UserGardenRecordField.garden}.${GenericField.id} != '$currentGardenID' && "
-      "$filter";
-  }
-
-  final resultList = await GetIt.instance<UserGardenRecordsRepository>().getList(
-    expand: UserGardenRecordField.garden,
-    filter: filter,
-    sort: "garden.name",
-  );
-
-  for (final record in resultList.items) {
-    final gardenRecord =
-      record.toJson()[QueryKey.expand][UserGardenRecordField.garden];
-    final garden = Garden.fromJson(
-      gardenRecord, await getUserByID(gardenRecord[GardenField.creator])
-    );
-
-    gardens.add(garden);
-  }
-
-  return gardens;
 }
 
 /// Deletes the [UserGardenRecord] record corresponding to the

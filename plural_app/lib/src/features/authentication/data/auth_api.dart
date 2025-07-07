@@ -28,7 +28,6 @@ import 'package:plural_app/src/features/authentication/domain/app_user_garden_re
 import 'package:plural_app/src/features/authentication/domain/app_user_settings.dart';
 
 // Gardens
-import 'package:plural_app/src/features/gardens/data/gardens_api.dart';
 import 'package:plural_app/src/features/gardens/data/gardens_repository.dart';
 import 'package:plural_app/src/features/gardens/domain/garden.dart';
 
@@ -62,8 +61,8 @@ Future<bool> deleteCurrentUserAccount({BuildContext? context}) async {
       // Route to Sign in Page
       GoRouter.of(context).go(Routes.signIn);
 
-      var snackBar = AppSnackbars.getSnackbar(
-        SnackbarText.deletedUserAccount,
+      var snackBar = AppSnackBars.getSnackBar(
+        SnackBarText.deletedUserAccount,
         duration: AppDurations.s9,
         snackbarType: SnackbarType.success
       );
@@ -81,8 +80,8 @@ Future<bool> deleteCurrentUserAccount({BuildContext? context}) async {
     );
 
     if (context != null && context.mounted) {
-      var snackBar = AppSnackbars.getSnackbar(
-        SnackbarText.deletedUserAccountFailed,
+      var snackBar = AppSnackBars.getSnackBar(
+        SnackBarText.deletedUserAccountFailed,
         duration: AppDurations.s9,
         snackbarType: SnackbarType.error
       );
@@ -119,11 +118,47 @@ Future<void> deleteCurrentUserSettings() async {
   await GetIt.instance<UserSettingsRepository>().delete(id: currentUserSettings.id);
 }
 
-// TODO: implement
+/// An action. Deletes the given [userGardenRecord] and calls the given [callback]
+/// function afterwards.
 Future<void> expelUserFromGarden(
   BuildContext context,
-  AppUserGardenRecord userGardenRecord
-) async {}
+  AppUserGardenRecord userGardenRecord, {
+  void Function()? callback,
+}) async {
+  late SnackBar snackBar;
+
+  try {
+    // Check permissions first
+    await GetIt.instance<AppState>().verify(
+      [AppUserGardenPermission.expelMembers]);
+
+    // Delete record (will also call AppState.notifyAllListeners)
+    await GetIt.instance<UserGardenRecordsRepository>().delete(id: userGardenRecord.id);
+
+    // Call the callback
+    if (callback != null) callback();
+
+    // Get success SnackBar
+    snackBar = AppSnackBars.getSnackBar(
+      SnackBarText.expelUserSuccess,
+      boldMessage: userGardenRecord.user.username,
+      duration: AppDurations.s9,
+      snackbarType: SnackbarType.success
+    );
+  } on PermissionException {
+    // Get error SnackBar
+    snackBar = AppSnackBars.getSnackBar(
+      SnackBarText.invalidPermissions,
+      duration: AppDurations.s9,
+      snackbarType: SnackbarType.error
+    );
+  } finally {
+    if (context.mounted) {
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
+  }
+}
 
 /// Queries on the [UserGardenRecord] collection to retrieve all records
 /// with the same [Garden] as the currentGarden.
@@ -286,7 +321,34 @@ Future<AppUserGardenRole?> getUserGardenRecordRole({
 
   final record = resultList.items.first.toJson();
 
-  return getUserGardenRoleFromString(record[UserGardenRecordField.role])!;
+  return getUserGardenRoleFromString(record[UserGardenRecordField.role]);
+}
+
+/// Returns a list of [UserGardenRecord] instances corresponding to the given [userID].
+Future<List<AppUserGardenRecord>> getUserGardenRecordsByUserID(String userID) async {
+  List<AppUserGardenRecord> userGardenRecords = [];
+
+  final resultList = await GetIt.instance<UserGardenRecordsRepository>().getList(
+    expand: "${UserGardenRecordField.user}, ${UserGardenRecordField.garden}",
+    filter: "${UserGardenRecordField.user} = '$userID'",
+    sort: "garden.name",
+  );
+
+  for (final record in resultList.items) {
+    final jsonRecord = record.toJson();
+
+    final userRecord = jsonRecord[QueryKey.expand][UserGardenRecordField.user];
+    final user = AppUser.fromJson(userRecord);
+
+    final gardenRecord = jsonRecord[QueryKey.expand][UserGardenRecordField.garden];
+    final garden = Garden.fromJson(
+      gardenRecord, await getUserByID(gardenRecord[GardenField.creator])
+    );
+
+    userGardenRecords.add(AppUserGardenRecord.fromJson(jsonRecord, user, garden));
+  }
+
+  return userGardenRecords;
 }
 
 /// Returns the [AppUserGardenRole] enum that corresponds to [roleString].
@@ -423,6 +485,19 @@ Future<(bool, Map)> signup(
   }
 }
 
+/// Subscribes to any changes made in the [UserGardenRecord] collection for
+/// any [UserGardenRecord] record associated with the given [gardenID].
+///
+/// Calls the [callback] function whenever a change is made.
+Future<Function> subscribeToUserGardenRecords(String gardenID, Function callback) async {
+  final userGardenRecordsRepository = GetIt.instance<UserGardenRecordsRepository>();
+
+  // Always clear before setting new subscription
+  await userGardenRecordsRepository.unsubscribe();
+
+  return userGardenRecordsRepository.subscribe(gardenID, callback);
+}
+
 /// Subscribes to any changes made in the [User] collection for any [User] record
 /// associated with the given [gardenID].
 ///
@@ -442,11 +517,11 @@ Future<Function> subscribeToUsers(String gardenID, Function callback) async {
 /// Updates the [AppState]'s currentUserSettings whenever a change is made.
 Future<Function> subscribeToUserSettings() async {
   final userSettingsRepository = GetIt.instance<UserSettingsRepository>();
+
   // Always clear before setting new subscription
   await userSettingsRepository.unsubscribe();
 
-  Future<Function> unsubscribeFunc = userSettingsRepository.subscribe();
-  return unsubscribeFunc;
+  return userSettingsRepository.subscribe();
 }
 
 /// Attempts to update the [User] record that matches the values passed

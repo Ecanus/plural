@@ -34,8 +34,8 @@ Future<void> submitCreate(
     );
 
     if (record != null && context.mounted) {
-      var snackBar = AppSnackbars.getSnackbar(
-        SnackbarText.createAskSuccess,
+      var snackBar = AppSnackBars.getSnackBar(
+        SnackBarText.createAskSuccess,
         showCloseIcon: false,
         snackbarType: SnackbarType.success
       );
@@ -74,8 +74,8 @@ Future<void> submitUpdate(
       );
 
     if (record != null && context.mounted) {
-      var snackBar = AppSnackbars.getSnackbar(
-        SnackbarText.updateAskSuccess,
+      var snackBar = AppSnackBars.getSnackBar(
+        SnackBarText.updateAskSuccess,
         showCloseIcon: false,
         snackbarType: SnackbarType.success
       );
@@ -106,8 +106,8 @@ Future<void> submitDelete(
   await GetIt.instance<AsksRepository>().delete(id: askID);
 
   if (context.mounted) {
-    var snackBar = AppSnackbars.getSnackbar(
-      SnackbarText.deleteAskSuccess,
+    var snackBar = AppSnackBars.getSnackBar(
+      SnackBarText.deleteAskSuccess,
       showCloseIcon: false,
       snackbarType: SnackbarType.success
     );

@@ -1,3 +1,6 @@
+import 'package:flutter_test/flutter_test.dart' as ft;
+
+import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:pocketbase/pocketbase.dart';
@@ -24,6 +27,7 @@ import 'package:plural_app/src/features/gardens/data/gardens_repository.dart';
 
 // Utils
 import 'package:plural_app/src/utils/app_state.dart';
+import 'package:plural_app/src/utils/exceptions.dart';
 
 // Tests
 import '../../../test_context.dart';
@@ -254,6 +258,159 @@ void main() {
 
     tearDown(() => GetIt.instance.reset());
 
+    ft.testWidgets("expelUserFromGarden", (tester) async {
+      final list = [1, 2, 3];
+      void testCallback() => list.clear();
+
+      final tc = TestContext();
+
+      final getIt = GetIt.instance;
+      final mockAppState = MockAppState();
+      final mockBuildContext = MockBuildContext();
+      final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
+
+      getIt.registerLazySingleton<AppState>(() => mockAppState);
+      getIt.registerLazySingleton<UserGardenRecordsRepository>(
+        () => mockUserGardenRecordsRepository
+      );
+
+      // AppState.verify()
+      when(
+        () => mockAppState.verify(any())
+      ).thenAnswer(
+        (_) async => {}
+      );
+
+      // UserGardenRecordsRepository.delete()
+      when(
+        () => mockUserGardenRecordsRepository.delete(id: tc.userGardenRecord.id)
+      ).thenAnswer(
+        (_) async => {}
+      );
+
+      // BuildContext.mounted
+      when(
+        () => mockBuildContext.mounted
+      ).thenAnswer(
+        (_) => true
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (BuildContext context) {
+                return ElevatedButton(
+                  onPressed: () => expelUserFromGarden(
+                    context,
+                    tc.userGardenRecord,
+                    callback: testCallback),
+                  child: Text("The ElevatedButton")
+                );
+              }
+            )
+          )
+        )
+      );
+
+      // check verify() and delete() not yet called; testCallback not called
+      // can't test SnackBar due to Navigator.pop
+      expect(list.isEmpty, false);
+      verifyNever(() => mockAppState.verify(any()));
+      verifyNever(() => mockUserGardenRecordsRepository.delete(
+        id: tc.userGardenRecord.id)
+      );
+
+      // Tap button (to call expelUserFromGarden)
+      await tester.tap(ft.find.byType(ElevatedButton));
+      await tester.pumpAndSettle();
+
+      // check verify() and delete() now called; testCallback called
+      // can't test SnackBar due to Navigator.pop
+      expect(list.isEmpty, true);
+      verify(() => mockAppState.verify(any())).called(1);
+      verify(() => mockUserGardenRecordsRepository.delete(
+        id: tc.userGardenRecord.id)
+      ).called(1);
+    });
+
+    tearDown(() => GetIt.instance.reset());
+
+    ft.testWidgets("expelUserFromGarden bad permissions", (tester) async {
+      final list = [1, 2, 3];
+      void testCallback() => list.clear();
+
+      final tc = TestContext();
+
+      final getIt = GetIt.instance;
+      final mockAppState = MockAppState();
+      final mockBuildContext = MockBuildContext();
+      final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
+
+      getIt.registerLazySingleton<AppState>(() => mockAppState);
+      getIt.registerLazySingleton<UserGardenRecordsRepository>(
+        () => mockUserGardenRecordsRepository
+      );
+
+      // AppState.verify()
+      when(
+        () => mockAppState.verify(any())
+      ).thenThrow(
+        PermissionException()
+      );
+
+      // UserGardenRecordsRepository.delete()
+      when(
+        () => mockUserGardenRecordsRepository.delete(id: tc.userGardenRecord.id)
+      ).thenAnswer(
+        (_) async => {}
+      );
+
+      // BuildContext.mounted
+      when(
+        () => mockBuildContext.mounted
+      ).thenAnswer(
+        (_) => true
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (BuildContext context) {
+                return ElevatedButton(
+                  onPressed: () => expelUserFromGarden(
+                    context,
+                    tc.userGardenRecord,
+                    callback: testCallback),
+                  child: Text("The ElevatedButton")
+                );
+              }
+            )
+          )
+        )
+      );
+
+      // check verify() and delete() not yet called; testCallback not yet called
+      // can't test SnackBar due to Navigator.pop
+      expect(list.isEmpty, false);
+      verifyNever(() => mockAppState.verify(any()));
+      verifyNever(() => mockUserGardenRecordsRepository.delete(
+        id: tc.userGardenRecord.id)
+      );
+
+      // Tap button (to call expelUserFromGarden)
+      await tester.tap(ft.find.byType(ElevatedButton));
+      await tester.pumpAndSettle();
+
+      // check only verify() is called; can't test SnackBar due to Navigator.pop
+      expect(list.isEmpty, false);
+      verify(() => mockAppState.verify(any())).called(1);
+      verifyNever(() => mockUserGardenRecordsRepository.delete(
+        id: tc.userGardenRecord.id)
+      );
+    });
+
     test("getCurrentGardenUserGardenRecords", () async {
       final tc = TestContext();
 
@@ -325,7 +482,8 @@ void main() {
 
       getIt.registerLazySingleton<AppState>(() => appState);
       getIt.registerLazySingleton<UserSettingsRepository>(
-        () => mockUserSettingsRepository);
+        () => mockUserSettingsRepository
+      );
 
       // UserSettingsRepository.getFirstListItem()
       when(
@@ -552,6 +710,60 @@ void main() {
 
       // Check null is now returned
       expect(userGardenRecordRole2, null);
+    });
+
+    tearDown(() => GetIt.instance.reset());
+
+    test("getUserGardenRecordsByUserID", () async {
+      final tc = TestContext();
+
+      final getIt = GetIt.instance;
+      final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
+      final mockUsersRepository = MockUsersRepository();
+
+      getIt.registerLazySingleton<UserGardenRecordsRepository>(
+        () => mockUserGardenRecordsRepository
+      );
+      getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
+
+      // UserGardenRecordsRepository.getList()
+      when(
+        () => mockUserGardenRecordsRepository.getList(
+          expand: "${UserGardenRecordField.user}, ${UserGardenRecordField.garden}",
+          filter: "${UserGardenRecordField.user} = '${tc.user.id}'",
+          sort: "${UserGardenRecordField.garden}.${GardenField.name}"
+        )
+      ).thenAnswer(
+        (_) async => ResultList<RecordModel>(
+          items: [
+            tc.getExpandUserGardenRecordRecordModel([
+              UserGardenRecordField.user, UserGardenRecordField.garden
+            ], role: AppUserGardenRole.owner),
+            tc.getExpandUserGardenRecordRecordModel([
+              UserGardenRecordField.user, UserGardenRecordField.garden
+            ], role: AppUserGardenRole.administrator),
+            tc.getExpandUserGardenRecordRecordModel([
+              UserGardenRecordField.user, UserGardenRecordField.garden
+            ]),
+            tc.getExpandUserGardenRecordRecordModel([
+              UserGardenRecordField.user, UserGardenRecordField.garden
+            ]),
+          ]
+        )
+      );
+
+      // UsersRepository.getFirstListItem()
+      when(
+        () => mockUsersRepository.getFirstListItem(
+          filter: "${GenericField.id} = '${tc.user.id}'",
+        )
+      ).thenAnswer(
+        (_) async => tc.getUserRecordModel()
+      );
+
+      final userGardenRecords = await getUserGardenRecordsByUserID(tc.user.id);
+
+      expect (userGardenRecords.length, 4);
     });
 
     tearDown(() => GetIt.instance.reset());
@@ -840,6 +1052,125 @@ void main() {
       expect(errorsMap2.isEmpty, false);
       verifyNever(() => recordService.requestVerification(body[UserField.email]));
     });
+
+    test("subscribeToUserGardenRecords", () async {
+      final tc = TestContext();
+
+      final getIt = GetIt.instance;
+      final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
+
+      void testCallback() => {};
+
+      getIt.registerLazySingleton<UserGardenRecordsRepository>(
+        () => mockUserGardenRecordsRepository
+      );
+
+      // UserGardenRecordsRepository.unsubscribe()
+      when(
+        () => mockUserGardenRecordsRepository.unsubscribe()
+      ).thenAnswer(
+        (_) async => {}
+      );
+
+      // UserGardenRecordsRepository.subscribe()
+      when(
+        () => mockUserGardenRecordsRepository.subscribe(
+          tc.garden.id, testCallback
+        )
+      ).thenAnswer(
+        (_) async => () {}
+      );
+
+      verifyNever(() => mockUserGardenRecordsRepository.unsubscribe());
+      verifyNever(() => mockUserGardenRecordsRepository.subscribe(
+        tc.garden.id, testCallback)
+      );
+
+      await subscribeToUserGardenRecords(tc.garden.id, testCallback);
+
+      verify(() => mockUserGardenRecordsRepository.unsubscribe()).called(1);
+      verify(() => mockUserGardenRecordsRepository.subscribe(
+        tc.garden.id, testCallback)
+      ).called(1);
+    });
+
+    tearDown(() => GetIt.instance.reset());
+
+    test("subscribeToUsers", () async {
+      final tc = TestContext();
+
+      final getIt = GetIt.instance;
+      final mockUsersRepository = MockUsersRepository();
+
+      void testCallback() => {};
+
+      getIt.registerLazySingleton<UsersRepository>(
+        () => mockUsersRepository
+      );
+
+      // UsersRepository.unsubscribe()
+      when(
+        () => mockUsersRepository.unsubscribe()
+      ).thenAnswer(
+        (_) async => {}
+      );
+
+      // UsersRepository.subscribe()
+      when(
+        () => mockUsersRepository.subscribe(
+          tc.garden.id, testCallback
+        )
+      ).thenAnswer(
+        (_) async => () {}
+      );
+
+      verifyNever(() => mockUsersRepository.unsubscribe());
+      verifyNever(() => mockUsersRepository.subscribe(
+        tc.garden.id, testCallback)
+      );
+
+      await subscribeToUsers(tc.garden.id, testCallback);
+
+      verify(() => mockUsersRepository.unsubscribe()).called(1);
+      verify(() => mockUsersRepository.subscribe(
+        tc.garden.id, testCallback)
+      ).called(1);
+    });
+
+    tearDown(() => GetIt.instance.reset());
+
+    test("subscribeToUserSettings", () async {
+      final getIt = GetIt.instance;
+      final mockUserSettingsRepository = MockUserSettingsRepository();
+
+      getIt.registerLazySingleton<UserSettingsRepository>(
+        () => mockUserSettingsRepository
+      );
+
+      // UserSettingsRepository.unsubscribe()
+      when(
+        () => mockUserSettingsRepository.unsubscribe()
+      ).thenAnswer(
+        (_) async => {}
+      );
+
+      // UserSettingsRepository.subscribe()
+      when(
+        () => mockUserSettingsRepository.subscribe()
+      ).thenAnswer(
+        (_) async => () {}
+      );
+
+      verifyNever(() => mockUserSettingsRepository.unsubscribe());
+      verifyNever(() => mockUserSettingsRepository.subscribe());
+
+      await subscribeToUserSettings();
+
+      verify(() => mockUserSettingsRepository.unsubscribe()).called(1);
+      verify(() => mockUserSettingsRepository.subscribe()).called(1);
+    });
+
+    tearDown(() => GetIt.instance.reset());
 
     test("updateUser", () async {
       final tc = TestContext();

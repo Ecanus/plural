@@ -98,8 +98,8 @@ class _AppHyperlinkableTextState extends State<AppHyperlinkableText> {
 
         // If the tap did not work, display error Snackbar
         if (!tapResult && context.mounted) {
-          var snackBar = AppSnackbars.getSnackbar(
-            SnackbarText.urlError,
+          var snackBar = AppSnackBars.getSnackBar(
+            SnackBarText.urlError,
             boldMessage: linkText,
             duration: AppDurations.s9,
             showCloseIcon: true,

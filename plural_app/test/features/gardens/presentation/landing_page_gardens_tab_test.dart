@@ -49,8 +49,12 @@ void main() {
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(
           items: [
-            tc.getExpandUserGardenRecordRecordModel([UserGardenRecordField.garden]),
-            tc.getExpandUserGardenRecordRecordModel([UserGardenRecordField.garden]),
+            tc.getExpandUserGardenRecordRecordModel([
+              UserGardenRecordField.user, UserGardenRecordField.garden
+            ]),
+            tc.getExpandUserGardenRecordRecordModel([
+              UserGardenRecordField.user, UserGardenRecordField.garden
+            ]),
           ]
         )
       );
