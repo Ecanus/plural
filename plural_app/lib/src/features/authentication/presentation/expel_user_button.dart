@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
@@ -9,6 +10,9 @@ import 'package:plural_app/src/features/authentication/domain/app_user_garden_re
 
 // Localization
 import 'package:plural_app/src/localization/lang_en.dart';
+
+// Utils
+import 'package:plural_app/src/utils/app_dialog_view_router.dart';
 
 class ExpelUserButton extends StatelessWidget {
   const ExpelUserButton({
@@ -129,7 +133,12 @@ class ConfirmExpelUserDialog extends StatelessWidget {
                 Container(
                   constraints: BoxConstraints(minHeight: AppHeights.h40),
                   child: FilledButton(
-                    onPressed: () => expelUserFromGarden(context, userGardenRecord),
+                    onPressed: () => expelUserFromGarden(
+                      context,
+                      userGardenRecord,
+                      callback: GetIt.instance<AppDialogViewRouter>()
+                        .routeToAdminListedUsersView
+                    ),
                     style: ButtonStyle(
                       backgroundColor: WidgetStateProperty.all<Color>(
                         Theme.of(context).colorScheme.error

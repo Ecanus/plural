@@ -15,7 +15,7 @@ import '../../../test_context.dart';
 import '../../../test_mocks.dart';
 
 void main() {
-  group("GardenHeader test", () {
+  group("GardenHeader", () {
     testWidgets("garden name", (tester) async {
       final tc = TestContext();
       final appState = AppState.skipSubscribe()
@@ -40,7 +40,6 @@ void main() {
 
     testWidgets("refresh", (tester) async {
       final tc = TestContext();
-
       final mockAppState = MockAppState();
 
       // AppState.currentGarden()

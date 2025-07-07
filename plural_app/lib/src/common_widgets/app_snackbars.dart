@@ -17,7 +17,7 @@ typedef SnackbarValues = ({
   Color iconColor,
   Color textColor,
 });
-class AppSnackbars {
+class AppSnackBars {
 
   static SnackbarValues _getValues(SnackbarType type) {
     switch (type) {
@@ -40,7 +40,7 @@ class AppSnackbars {
     }
   }
 
-  static SnackBar getSnackbar(
+  static SnackBar getSnackBar(
     String mainMessage,
     {
       String boldMessage = "",

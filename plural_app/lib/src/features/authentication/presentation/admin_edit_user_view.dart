@@ -108,7 +108,7 @@ class RouteToListedUsersViewButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appDialogRouter = GetIt.instance<AppDialogViewRouter>();
+    final appDialogViewRouter = GetIt.instance<AppDialogViewRouter>();
 
     return Tooltip(
       message: AppDialogFooterBufferText.adminListedUsersTooltip,
@@ -119,7 +119,7 @@ class RouteToListedUsersViewButton extends StatelessWidget {
           iconColor: Theme.of(context).colorScheme.onPrimary,
           shape: CircleBorder(),
         ),
-        onPressed: () => appDialogRouter.routeToAdminListedUsersView(),
+        onPressed: () => appDialogViewRouter.routeToAdminListedUsersView(),
         child: const Icon(Icons.arrow_back)
       ),
     );

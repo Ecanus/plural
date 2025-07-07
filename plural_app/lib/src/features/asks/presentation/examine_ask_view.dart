@@ -130,8 +130,8 @@ class _ExamineAskHeaderState extends State<ExamineAskHeader> {
       if (value) {
         await addSponsor(widget.ask.id, currentUserID);
 
-        var snackBar = AppSnackbars.getSnackbar(
-          SnackbarText.askSponsored,
+        var snackBar = AppSnackBars.getSnackBar(
+          SnackBarText.askSponsored,
           showCloseIcon: false,
           snackbarType: SnackbarType.success
         );

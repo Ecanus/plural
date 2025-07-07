@@ -190,7 +190,7 @@ class SignInPageText {
   static const usernameOrEmail = "Username or Email";
 }
 
-class SnackbarText {
+class SnackBarText {
   static const askSponsored = "Ask successfully sponsored!";
 
   static const createAskSuccess = "Ask successfully created";
@@ -200,8 +200,9 @@ class SnackbarText {
   static const deletedUserAccountFailed = ""
     "An error occurred while trying to delete your account";
 
-  static const invalidGardenPermissions = ""
-    "You do not have access to this Garden.";
+  static const expelUserSuccess = "Successfully expelled user:";
+
+  static const invalidPermissions = "You do not have permission to perform this action";
 
   static const sentPasswordResetEmail = "Password reset instructions have been sent to";
   static const sentUserVerificationEmail = "A verification email has been sent to";

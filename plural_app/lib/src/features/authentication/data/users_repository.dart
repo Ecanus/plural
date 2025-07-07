@@ -222,21 +222,20 @@ class UsersRepository implements Repository {
   Future<Function> subscribe(String gardenID, Function callback) async {
     return pb.collection(_collection).subscribe(
       Subscribe.all, (e) async {
-        var currentUser = GetIt.instance<AppState>().currentUser!;
         final userID = e.record!.toJson()[GenericField.id];
 
         // Only respond to changes to users in the given gardenID
-        final gardenRecord = await getUserGardenRecord(
+        final gardenRecordRole = await getUserGardenRecordRole(
           userID: userID,
           gardenID: gardenID
         );
 
-        if (gardenRecord == null) return;
+        if (gardenRecordRole == null) return;
 
         switch (e.action) {
           case EventAction.update:
             // Get new values from db, if currentUser was updated
-            if (userID == currentUser.id) {
+            if (userID == GetIt.instance<AppState>().currentUser!.id) {
               GetIt.instance<AppState>().currentUser = await getUserByID(userID);
             }
           case EventAction.create:

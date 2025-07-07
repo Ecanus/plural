@@ -14,7 +14,7 @@ import '../../../test_context.dart';
 import '../../../test_mocks.dart';
 
 void main() {
-  group("AsksRepository tests", () {
+  group("AsksRepository", () {
     test("bulkDelete", () async {
       final tc = TestContext();
 
@@ -262,6 +262,74 @@ void main() {
         throwsA(predicate((e) => e is ClientException))
       );
 
+    });
+
+    test("subscribe", () async {
+      final pb = MockPocketBase();
+      final recordService = MockRecordService();
+      final asksRepository = AsksRepository(pb: pb);
+
+      // pb.collection()
+      when(
+        () => pb.collection(any())
+      ).thenAnswer(
+        (_) => recordService as RecordService
+      );
+
+
+      // RecordService.subscribe()
+      Future<void> testFunc() async { return; }
+      when(
+        () => recordService.subscribe(any(), any())
+      ).thenAnswer(
+        (_) async => testFunc
+      );
+
+      verifyNever(() => recordService.subscribe(any(), any()));
+
+      await asksRepository.subscribe("", () {});
+
+      verify(() => recordService.subscribe(any(), any())).called(1);
+    });
+
+    test("unsubscribe", () async {
+      final pb = MockPocketBase();
+      final recordService = MockRecordService();
+      final asksRepository = AsksRepository(pb: pb);
+
+      // pb.collection()
+      when(
+        () => pb.collection(any())
+      ).thenAnswer(
+        (_) => recordService as RecordService
+      );
+
+
+      // RecordService.unsubscribe()
+      when(
+        () => recordService.unsubscribe()
+      ).thenAnswer(
+        (_) async => {}
+      );
+
+      verifyNever(() => recordService.unsubscribe());
+
+      await asksRepository.unsubscribe();
+
+      verify(() => recordService.unsubscribe()).called(1);
+
+      // RecordService.unsubscribe(). Now throws error
+      when(
+        () => recordService.unsubscribe()
+      ).thenThrow(
+        ClientException()
+      );
+
+      // Check a ClientException is thrown
+      expect(
+        () async => await asksRepository.unsubscribe(),
+        throwsA(predicate((e) => e is ClientException))
+      );
     });
 
     test("update", () async {

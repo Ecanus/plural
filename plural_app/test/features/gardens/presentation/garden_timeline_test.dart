@@ -5,10 +5,14 @@ import 'package:mocktail/mocktail.dart';
 import 'package:pocketbase/pocketbase.dart';
 import 'package:provider/provider.dart';
 
+// Constants
+import 'package:plural_app/src/constants/fields.dart';
+
 // Asks
 import 'package:plural_app/src/features/asks/data/asks_repository.dart';
 
 // Auth
+import 'package:plural_app/src/features/authentication/data/user_garden_records_repository.dart';
 import 'package:plural_app/src/features/authentication/data/users_repository.dart';
 
 // Gardens
@@ -31,10 +35,29 @@ void main() {
 
       final getIt = GetIt.instance;
       final mockAsksRepository = MockAsksRepository();
+      final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
       final mockUsersRepository = MockUsersRepository();
+
       getIt.registerLazySingleton<AppState>(() => appState);
       getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
+      getIt.registerLazySingleton<UserGardenRecordsRepository>(
+        () => mockUserGardenRecordsRepository
+      );
       getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
+
+      // UserGardenRecordsRepository.getList()
+      when(
+        () => mockUserGardenRecordsRepository.getList(
+          filter: ""
+            "${UserGardenRecordField.user} = '${tc.user.id}' && "
+            "${UserGardenRecordField.garden} = '${tc.garden.id}'",
+          sort: "-updated"
+        )
+      ).thenAnswer(
+        (_) async => ResultList<RecordModel>(
+          items: [tc.getUserGardenRecordRecordModel()]
+        )
+      );
 
       // AsksRepository.getList()
       when(
@@ -60,10 +83,14 @@ void main() {
           home: ChangeNotifierProvider<AppState>.value(
             value: appState,
             child: Scaffold(
-              body: Column(
-                children: [
-                  GardenTimeline(),
-                ],
+              body: Builder(
+                builder: (BuildContext context) {
+                  return Column(
+                    children: [
+                      GardenTimeline(),
+                    ],
+                  );
+                }
               )
             )
           )

@@ -76,6 +76,19 @@ void main() {
         (_) async => () {}
       );
 
+      // UserGardenRecordsRepository.unsubscribe()
+      when(
+        () => mockUserGardenRecordsRepository.unsubscribe()
+      ).thenAnswer(
+        (_) async => {}
+      );
+      // UserGardenRecordsRepository.subscribe()
+      when(
+        () => mockUserGardenRecordsRepository.subscribe(any(), any())
+      ).thenAnswer(
+        (_) async => () {}
+      );
+
       // UsersRepository.unsubscribe()
       when(
         () => mockUsersRepository.unsubscribe()
@@ -92,7 +105,6 @@ void main() {
       // UserGardenRecordsRepository.getList()
       when(
         () => mockUserGardenRecordsRepository.getList(
-          expand: "${UserGardenRecordField.user}, ${UserGardenRecordField.garden}",
           filter: ""
             "${UserGardenRecordField.user} = '${tc.user.id}' && "
             "${UserGardenRecordField.garden} = '${tc.garden.id}'",
@@ -174,7 +186,6 @@ void main() {
       // UserGardenRecordsRepository.getList()
       when(
         () => mockUserGardenRecordsRepository.getList(
-          expand: "${UserGardenRecordField.user}, ${UserGardenRecordField.garden}",
           filter: ""
             "${UserGardenRecordField.user} = '${tc.user.id}' && "
             "${UserGardenRecordField.garden} = '${tc.garden.id}'",
@@ -215,7 +226,6 @@ void main() {
       // Check title is rendered; appState.currentGarden is null
       expect(find.text(tc.garden.name), findsOneWidget);
       expect(appState.currentGarden, null);
-      expect(find.byType(SnackBar), findsNothing);
 
       // Tap on the ListTile
       await tester.tap(find.byType(ListTile));
@@ -223,7 +233,6 @@ void main() {
 
       // Check appState.currentGarden still null
       expect(appState.currentGarden, null);
-      expect(find.byType(SnackBar), findsOneWidget);
     });
 
     tearDown(() => GetIt.instance.reset());

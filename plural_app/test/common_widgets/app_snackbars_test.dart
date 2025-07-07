@@ -16,7 +16,7 @@ void main() {
                   behavior: HitTestBehavior.opaque,
                   child: SizedBox(height: 100.0, width: 100.0,),
                   onTap: () {
-                    final snackBar = AppSnackbars.getSnackbar(
+                    final snackBar = AppSnackBars.getSnackBar(
                       "Success Message",
                       showCloseIcon: true,
                       snackbarType: SnackbarType.success
@@ -50,7 +50,7 @@ void main() {
                   behavior: HitTestBehavior.opaque,
                   child: SizedBox(height: 100.0, width: 100.0,),
                   onTap: () {
-                    final snackBar = AppSnackbars.getSnackbar(
+                    final snackBar = AppSnackBars.getSnackBar(
                       "Error Message",
                       boldMessage: "and bold message!",
                       showCloseIcon: true,
@@ -85,7 +85,7 @@ void main() {
                   behavior: HitTestBehavior.opaque,
                   child: SizedBox(height: 100.0, width: 100.0,),
                   onTap: () {
-                    final snackBar = AppSnackbars.getSnackbar(
+                    final snackBar = AppSnackBars.getSnackBar(
                       "Success Message",
                       showCloseIcon: true,
                       snackbarType: SnackbarType.success
@@ -119,7 +119,7 @@ void main() {
                   behavior: HitTestBehavior.opaque,
                   child: SizedBox(height: 100.0, width: 100.0,),
                   onTap: () {
-                    final snackBar = AppSnackbars.getSnackbar(
+                    final snackBar = AppSnackBars.getSnackBar(
                       "Error Message",
                       showCloseIcon: false,
                       snackbarType: SnackbarType.error

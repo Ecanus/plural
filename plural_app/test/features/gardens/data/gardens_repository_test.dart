@@ -198,6 +198,74 @@ void main() {
       );
     });
 
+    test("subscribe", () async {
+      final pb = MockPocketBase();
+      final recordService = MockRecordService();
+      final gardensRepository = GardensRepository(pb: pb);
+
+      // pb.collection()
+      when(
+        () => pb.collection(any())
+      ).thenAnswer(
+        (_) => recordService as RecordService
+      );
+
+
+      // RecordService.subscribe()
+      Future<void> testFunc() async { return; }
+      when(
+        () => recordService.subscribe(any(), any())
+      ).thenAnswer(
+        (_) async => testFunc
+      );
+
+      verifyNever(() => recordService.subscribe(any(), any()));
+
+      await gardensRepository.subscribe("");
+
+      verify(() => recordService.subscribe(any(), any())).called(1);
+    });
+
+    test("unsubscribe", () async {
+      final pb = MockPocketBase();
+      final recordService = MockRecordService();
+      final gardensRepository = GardensRepository(pb: pb);
+
+      // pb.collection()
+      when(
+        () => pb.collection(any())
+      ).thenAnswer(
+        (_) => recordService as RecordService
+      );
+
+
+      // RecordService.unsubscribe()
+      when(
+        () => recordService.unsubscribe()
+      ).thenAnswer(
+        (_) async => {}
+      );
+
+      verifyNever(() => recordService.unsubscribe());
+
+      await gardensRepository.unsubscribe();
+
+      verify(() => recordService.unsubscribe()).called(1);
+
+      // RecordService.unsubscribe(). Now throws error
+      when(
+        () => recordService.unsubscribe()
+      ).thenThrow(
+        ClientException()
+      );
+
+      // Check a ClientException is thrown
+      expect(
+        () async => await gardensRepository.unsubscribe(),
+        throwsA(predicate((e) => e is ClientException))
+      );
+    });
+
     test("update", () async {
       final tc = TestContext();
 

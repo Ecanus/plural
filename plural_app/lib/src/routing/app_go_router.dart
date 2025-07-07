@@ -23,6 +23,7 @@ class AppGoRouter {
     router = GoRouter(
       initialLocation: Routes.signIn,
       routes: [
+        // NOTE: Routes.garden redirect is handled in AppState
         GoRoute(
           path: Routes.garden,
           builder: (_, __) => GardenPage()
@@ -44,7 +45,7 @@ class AppGoRouter {
             } else {
               return Uri(
                 path: Routes.unauthorized,
-                queryParameters: { QueryParameters.previousRoute: Routes.garden}
+                queryParameters: { QueryParameters.previousRoute: Routes.garden }
               ).toString();
             }
           },

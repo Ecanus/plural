@@ -135,6 +135,42 @@ class UserGardenRecordsRepository implements Repository {
     }
   }
 
+  /// Subscribes to any changes made in the [UserGardenRecord] collection for any
+  /// [UserGardenRecord] record associated with the given [gardenID].
+  ///
+  /// Calls the [callback] function whenever a change is made.
+  Future<Function> subscribe(String gardenID, Function callback) async {
+    return pb.collection(_collection).subscribe(
+      Subscribe.all, (e) async {
+        final userGardenRecordGardenID = e.record!.toJson()[UserGardenRecordField.garden];
+
+        if (userGardenRecordGardenID != gardenID) return;
+
+        switch (e.action) {
+          case EventAction.create:
+          case EventAction.delete:
+          case EventAction.update:
+            callback();
+        }
+      });
+  }
+
+  Future<void> unsubscribe() async {
+    try {
+      await pb.collection(_collection).unsubscribe();
+    } on ClientException catch(e) {
+      developer.log(
+        ""
+        "--\n"
+        "$runtimeType.unsubscribe()"
+        "\n--",
+        error: e,
+      );
+
+      rethrow;
+    }
+  }
+
   @override
   Future<(RecordModel?, Map)> update({
     required String id,

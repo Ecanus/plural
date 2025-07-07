@@ -25,7 +25,7 @@ class GardenTimeline extends StatelessWidget {
             Consumer<AppState>(
               builder: (_, appState, __) {
                 return FutureBuilder<List<Ask>>(
-                  future: appState.getTimelineAsks(),
+                  future: appState.getTimelineAsks(context),
                   builder: (BuildContext context, AsyncSnapshot<List<Ask>> snapshot) {
                     if (snapshot.hasData) {
                       return GardenTimelineList(asks: snapshot.data!);

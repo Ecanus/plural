@@ -8,7 +8,6 @@ import 'package:pocketbase/pocketbase.dart';
 import 'package:test/test.dart';
 
 // Constants
-import 'package:plural_app/src/constants/fields.dart';
 import 'package:plural_app/src/constants/query_parameters.dart';
 import 'package:plural_app/src/constants/routes.dart';
 
@@ -33,7 +32,7 @@ import '../../../test_mocks.dart';
 import '../../../test_widgets.dart';
 
 void main() {
-  group("Gardens api test", () {
+  group("gardens_api", () {
     test("getGardenByID", () async {
       final tc = TestContext();
 
@@ -68,125 +67,6 @@ void main() {
       expect(garden.name, "TestGarden");
 
     });
-
-    test("getGardensByUserID !excludeCurrentGarden", () async {
-      final tc = TestContext();
-      var appState = AppState.skipSubscribe()
-                      ..currentUser = tc.user;
-
-      final getIt = GetIt.instance;
-      final mockUsersRepository = MockUsersRepository();
-      final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
-      getIt.registerLazySingleton<AppState>(() => appState);
-      getIt.registerLazySingleton<UserGardenRecordsRepository>(
-        () => mockUserGardenRecordsRepository
-      );
-      getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
-
-      // UsersRepository.getFirstListItem()
-      when(
-        () => mockUsersRepository.getFirstListItem(filter: any(named: "filter"))
-      ).thenAnswer(
-        (_) async => tc.getUserRecordModel()
-      );
-
-      // UserGardenRecordsRepository.getList()
-      when(
-        () => mockUserGardenRecordsRepository.getList(
-          expand: any(named: "expand"),
-          filter: "${UserGardenRecordField.user} = '${tc.user.id}'",
-          sort: any(named: "sort"),
-        )
-      ).thenAnswer(
-        (_) async => ResultList<RecordModel>(
-          items: [
-            tc.getExpandUserGardenRecordRecordModel([UserGardenRecordField.garden]),
-            tc.getExpandUserGardenRecordRecordModel([UserGardenRecordField.garden]),
-            tc.getExpandUserGardenRecordRecordModel([UserGardenRecordField.garden]),
-          ]
-        )
-      );
-
-      // getGardensByUser
-      List<Garden> gardens = await getGardensByUserID(
-        tc.user.id, excludesCurrentGarden: false
-      );
-
-      // Check that 3 gardens created
-      expect(gardens.length, 3);
-
-      // Check that the correct filter was used
-      verify(() => mockUserGardenRecordsRepository.getList(
-          expand: any(named: "expand"),
-          filter: "${UserGardenRecordField.user} = '${tc.user.id}'",
-          sort: any(named: "sort"),
-        )
-      ).called(1);
-    });
-
-    tearDown(() => GetIt.instance.reset());
-
-    test("getGardensByUserID excludeCurrentGarden", () async {
-      final tc = TestContext();
-      var appState = AppState.skipSubscribe()
-        ..currentUser = tc.user
-        ..currentGarden = tc.garden;
-
-      final getIt = GetIt.instance;
-      final mockUsersRepository = MockUsersRepository();
-      final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
-      getIt.registerLazySingleton<AppState>(() => appState);
-      getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
-      getIt.registerLazySingleton<UserGardenRecordsRepository>(
-        () => mockUserGardenRecordsRepository
-      );
-
-      // UsersRepository.getFirstListItem()
-      when(
-        () => mockUsersRepository.getFirstListItem(filter: any(named: "filter"))
-      ).thenAnswer(
-        (_) async => tc.getUserRecordModel()
-      );
-
-      // UserGardenRecordsRepository.getList()
-      when(
-        () => mockUserGardenRecordsRepository.getList(
-          expand: any(named: "expand"),
-          filter: ""
-            "${UserGardenRecordField.garden}.${GenericField.id} != '${tc.garden.id}' && "
-            "${UserGardenRecordField.user} = '${tc.user.id}'",
-          sort: any(named: "sort"),
-        )
-      ).thenAnswer(
-        (_) async => ResultList<RecordModel>(
-          items: [
-            tc.getExpandUserGardenRecordRecordModel([UserGardenRecordField.garden]),
-            tc.getExpandUserGardenRecordRecordModel([UserGardenRecordField.garden]),
-            tc.getExpandUserGardenRecordRecordModel([UserGardenRecordField.garden]),
-          ]
-        )
-      );
-
-      // getGardensByUser
-      List<Garden> gardens = await getGardensByUserID(
-        tc.user.id, excludesCurrentGarden: true
-      );
-
-      // Check 3 gardens created
-      expect(gardens.length, 3);
-
-      // Check that the correct filter was used
-      verify(() => mockUserGardenRecordsRepository.getList(
-          expand: any(named: "expand"),
-          filter: ""
-            "${UserGardenRecordField.garden}.${GenericField.id} != '${tc.garden.id}' && "
-            "${UserGardenRecordField.user} = '${tc.user.id}'",
-          sort: any(named: "sort"),
-        )
-      ).called(1);
-    });
-
-    tearDown(() => GetIt.instance.reset());
 
     test("removeUserFromGarden", () async {
       final testList = ["a", "b"];
@@ -309,6 +189,42 @@ void main() {
 
       // Check redirected (Text should now appear)
       expect(ft.find.text("exitedGardenID is: ${tc.garden.id}"), ft.findsOneWidget);
+    });
+
+    tearDown(() => GetIt.instance.reset());
+
+    test("subscribeTo", () async {
+      final tc = TestContext();
+
+      final getIt = GetIt.instance;
+      final mockGardensRepository = MockGardensRepository();
+
+      getIt.registerLazySingleton<GardensRepository>(
+        () => mockGardensRepository
+      );
+
+      // UsersRepository.unsubscribe()
+      when(
+        () => mockGardensRepository.unsubscribe()
+      ).thenAnswer(
+        (_) async => {}
+      );
+
+      // UsersRepository.subscribe()
+      when(
+        () => mockGardensRepository.subscribe(tc.garden.id)
+      ).thenAnswer(
+        (_) async => () {}
+      );
+
+      verifyNever(() => mockGardensRepository.unsubscribe());
+      verifyNever(() => mockGardensRepository.subscribe(tc.garden.id)
+      );
+
+      await subscribeTo(tc.garden.id);
+
+      verify(() => mockGardensRepository.unsubscribe()).called(1);
+      verify(() => mockGardensRepository.subscribe(tc.garden.id)).called(1);
     });
 
     tearDown(() => GetIt.instance.reset());

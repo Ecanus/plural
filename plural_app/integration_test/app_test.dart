@@ -142,18 +142,19 @@ void main() {
         (_) async => tc.getGardenRecordModel()
       );
 
-      // RecordService.getList() - getGardensByUser(excludeCurrentGarden: true)
+      // RecordService.getList() - getUserGardenRecordsByUserID()
       when(
         () => recordService.getList(
-          expand: UserGardenRecordField.garden,
+          expand: "${UserGardenRecordField.user}, ${UserGardenRecordField.garden}",
           filter: ""
-            "${UserGardenRecordField.garden}.${GenericField.id} != '${tc.garden.id}' && "
             "${UserGardenRecordField.user} = '${tc.user.id}'",
           sort: "garden.name",
         )
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(
-          items: [tc.getExpandUserGardenRecordRecordModel([UserGardenRecordField.garden])]
+          items: [tc.getExpandUserGardenRecordRecordModel([
+            UserGardenRecordField.user, UserGardenRecordField.garden
+          ])]
         )
       );
       // RecordService.getList() - getUserGardenRecord()
