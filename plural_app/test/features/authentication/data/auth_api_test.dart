@@ -266,10 +266,12 @@ void main() {
 
       final getIt = GetIt.instance;
       final mockAppState = MockAppState();
+      final mockAsksRepository = MockAsksRepository();
       final mockBuildContext = MockBuildContext();
       final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
 
       getIt.registerLazySingleton<AppState>(() => mockAppState);
+      getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
       getIt.registerLazySingleton<UserGardenRecordsRepository>(
         () => mockUserGardenRecordsRepository
       );
@@ -277,6 +279,25 @@ void main() {
       // AppState.verify()
       when(
         () => mockAppState.verify(any())
+      ).thenAnswer(
+        (_) async => {}
+      );
+
+      // AsksRepository.getList()
+      final resultList = ResultList<RecordModel>(items: [tc.getAskRecordModel()]);
+      when(
+        () => mockAsksRepository.getList(
+          filter: ""
+          "${AskField.creator} = '${tc.user.id}'"
+          "&& ${AskField.garden} = '${tc.garden.id}'"
+        )
+      ).thenAnswer(
+        (_) async => resultList
+      );
+
+      // AsksRepository.bulkDelete()
+      when(
+        () => mockAsksRepository.bulkDelete(resultList: resultList)
       ).thenAnswer(
         (_) async => {}
       );
@@ -344,10 +365,12 @@ void main() {
 
       final getIt = GetIt.instance;
       final mockAppState = MockAppState();
+      final mockAsksRepository = MockAsksRepository();
       final mockBuildContext = MockBuildContext();
       final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
 
       getIt.registerLazySingleton<AppState>(() => mockAppState);
+      getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
       getIt.registerLazySingleton<UserGardenRecordsRepository>(
         () => mockUserGardenRecordsRepository
       );
@@ -357,6 +380,25 @@ void main() {
         () => mockAppState.verify(any())
       ).thenThrow(
         PermissionException()
+      );
+
+      // AsksRepository.getList()
+      final resultList = ResultList<RecordModel>(items: [tc.getAskRecordModel()]);
+      when(
+        () => mockAsksRepository.getList(
+          filter: ""
+          "${AskField.creator} = '${tc.user.id}'"
+          "&& ${AskField.garden} = '${tc.garden.id}'"
+        )
+      ).thenAnswer(
+        (_) async => resultList
+      );
+
+      // AsksRepository.bulkDelete()
+      when(
+        () => mockAsksRepository.bulkDelete(resultList: resultList)
+      ).thenAnswer(
+        (_) async => {}
       );
 
       // UserGardenRecordsRepository.delete()
@@ -395,6 +437,12 @@ void main() {
       // can't test SnackBar due to Navigator.pop
       expect(list.isEmpty, false);
       verifyNever(() => mockAppState.verify(any()));
+      verifyNever(() => mockAsksRepository.getList(
+          filter: ""
+          "${AskField.creator} = '${tc.user.id}'"
+          "&& ${AskField.garden} = '${tc.garden.id}'"
+        ));
+      verifyNever(() => mockAsksRepository.bulkDelete(resultList: resultList));
       verifyNever(() => mockUserGardenRecordsRepository.delete(
         id: tc.userGardenRecord.id)
       );
@@ -406,6 +454,12 @@ void main() {
       // check only verify() is called; can't test SnackBar due to Navigator.pop
       expect(list.isEmpty, false);
       verify(() => mockAppState.verify(any())).called(1);
+      verifyNever(() => mockAsksRepository.getList(
+          filter: ""
+          "${AskField.creator} = '${tc.user.id}'"
+          "&& ${AskField.garden} = '${tc.garden.id}'"
+        ));
+      verifyNever(() => mockAsksRepository.bulkDelete(resultList: resultList));
       verifyNever(() => mockUserGardenRecordsRepository.delete(
         id: tc.userGardenRecord.id)
       );

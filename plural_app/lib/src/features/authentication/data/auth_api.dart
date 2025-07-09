@@ -132,6 +132,16 @@ Future<void> expelUserFromGarden(
     await GetIt.instance<AppState>().verify(
       [AppUserGardenPermission.expelMembers]);
 
+    final asksRepository = GetIt.instance<AsksRepository>();
+
+    // Delete all Asks corresponding to userGardenRecord.garden
+    final askRecords = await asksRepository.getList(
+      filter: ""
+      "${AskField.creator} = '${userGardenRecord.user.id}'"
+      "&& ${AskField.garden} = '${userGardenRecord.garden.id}'"
+    );
+    await asksRepository.bulkDelete(resultList: askRecords);
+
     // Delete record (will also call AppState.notifyAllListeners)
     await GetIt.instance<UserGardenRecordsRepository>().delete(id: userGardenRecord.id);
 
