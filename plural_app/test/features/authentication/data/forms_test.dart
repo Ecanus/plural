@@ -15,9 +15,10 @@ import 'package:plural_app/src/constants/routes.dart';
 
 // Auth
 import 'package:plural_app/src/features/authentication/data/forms.dart';
+import 'package:plural_app/src/features/authentication/data/user_garden_records_repository.dart';
 import 'package:plural_app/src/features/authentication/data/user_settings_repository.dart';
 import 'package:plural_app/src/features/authentication/data/users_repository.dart';
-
+import 'package:plural_app/src/features/authentication/domain/app_user_garden_record.dart';
 // Localization
 import 'package:plural_app/src/localization/lang_en.dart';
 
@@ -28,6 +29,7 @@ import 'package:plural_app/src/utils/app_form.dart';
 // Tests
 import '../../../test_context.dart';
 import '../../../test_mocks.dart';
+import '../../../test_stubs.dart';
 import '../../../test_widgets.dart';
 
 void main() {
@@ -655,6 +657,191 @@ void main() {
       verifyNever(() => mockUserSettingsRepository.update(
         id: any(named: "id"), body: any(named: "body")
       ));
+    });
+
+    tearDown(() => GetIt.instance.reset());
+  });
+
+  group("Auth submitUpdateUserGardenRecord", () {
+    ft.testWidgets("valid", (tester) async {
+      final testList = [1, 2, 3];
+      void testFunc() => testList.clear();
+
+      final tc = TestContext();
+      final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+      final appForm = AppForm()
+        ..setValue(
+            fieldName: GenericField.id, value: tc.userGardenRecord.id)
+        ..setValue(
+            fieldName: UserGardenRecordField.garden, value: tc.userGardenRecord.garden.id)
+        ..setValue(
+            fieldName: UserGardenRecordField.role, value: AppUserGardenRole.member.name)
+        ..setValue(
+            fieldName: UserGardenRecordField.user, value: tc.userGardenRecord.user.id)
+          ..setValue(
+            fieldName: AppFormFields.rebuild, value: testFunc, isAux: true);
+
+      final appState = AppState.skipSubscribe()
+                      ..currentGarden = tc.garden
+                      ..currentUser = tc.user;
+
+      final getIt = GetIt.instance;
+      final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
+      getIt.registerLazySingleton<AppState>(() => appState);
+      getIt.registerLazySingleton<UserGardenRecordsRepository>(
+        () => mockUserGardenRecordsRepository
+      );
+
+      // Stubs
+      final items = ResultList<RecordModel>(items: [
+        tc.getUserGardenRecordRecordModel(role: AppUserGardenRole.administrator)
+      ]);
+      getUserGardenRecordRoleStub(
+        mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
+        userID: tc.user.id,
+        gardenID: tc.garden.id,
+        returnValue: items
+      );
+      final recordModel = tc.getUserGardenRecordRecordModel(
+        role: AppUserGardenRole.member);
+      updateStub(
+        mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
+        userGardenRecordID: tc.userGardenRecord.id,
+        userGardenRoleName: appForm.getValue(fieldName: UserGardenRecordField.role),
+        returnValue: (recordModel, {})
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (BuildContext context) {
+                return Form(
+                  key: formKey,
+                  child: ListView(
+                    children: [
+                      TextFormField(
+                        onSaved: (value) => appForm.save(
+                          fieldName: "testField",
+                          value: "New Random Value!",
+                        ),
+                        validator: (value) => null,
+                      ),
+                      ElevatedButton(
+                        onPressed: () => submitUpdateUserGardenRecord(
+                          context, formKey, appForm),
+                        child: Text("x")
+                      ),
+                    ],
+                  ),
+                );
+              })
+          ),
+        )
+      );
+
+      // check no snackBar, testList still has contents
+      expect(ft.find.byType(SnackBar), ft.findsNothing);
+      expect(testList.isEmpty, false);
+
+      // Tap ElevatedButton (to call submitUpdateUserGardenRecord)
+      await tester.tap(ft.find.byType(ElevatedButton));
+      await tester.pumpAndSettle();
+
+      // check snackBar now appears; testList still has contents
+      expect(ft.find.byType(SnackBar), ft.findsOneWidget);
+      expect(testList.isEmpty, false);
+    });
+
+    tearDown(() => GetIt.instance.reset());
+
+    ft.testWidgets("invalid", (tester) async {
+      final testList = [1, 2, 3];
+      void testFunc() => testList.clear();
+
+      final tc = TestContext();
+      final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+      final appForm = AppForm()
+        ..setValue(
+            fieldName: GenericField.id, value: tc.userGardenRecord.id)
+        ..setValue(
+            fieldName: UserGardenRecordField.garden, value: tc.userGardenRecord.garden.id)
+        ..setValue(
+            fieldName: UserGardenRecordField.role, value: AppUserGardenRole.member.name)
+        ..setValue(
+            fieldName: UserGardenRecordField.user, value: tc.userGardenRecord.user.id)
+          ..setValue(
+            fieldName: AppFormFields.rebuild, value: testFunc, isAux: true);
+
+      final appState = AppState.skipSubscribe()
+                      ..currentGarden = tc.garden
+                      ..currentUser = tc.user;
+
+      final getIt = GetIt.instance;
+      final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
+      getIt.registerLazySingleton<AppState>(() => appState);
+      getIt.registerLazySingleton<UserGardenRecordsRepository>(
+        () => mockUserGardenRecordsRepository
+      );
+
+      // Stubs
+      final items = ResultList<RecordModel>(items: [
+        tc.getUserGardenRecordRecordModel(role: AppUserGardenRole.administrator)
+      ]);
+      getUserGardenRecordRoleStub(
+        mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
+        userID: tc.user.id,
+        gardenID: tc.garden.id,
+        returnValue: items
+      );
+      updateStub(
+        mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
+        userGardenRecordID: tc.userGardenRecord.id,
+        userGardenRoleName: appForm.getValue(fieldName: UserGardenRecordField.role),
+        returnValue: (null, {})
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (BuildContext context) {
+                return Form(
+                  key: formKey,
+                  child: ListView(
+                    children: [
+                      TextFormField(
+                        onSaved: (value) => appForm.save(
+                          fieldName: "testField",
+                          value: "New Random Value!",
+                        ),
+                        validator: (value) => null,
+                      ),
+                      ElevatedButton(
+                        onPressed: () => submitUpdateUserGardenRecord(
+                          context, formKey, appForm),
+                        child: Text("x")
+                      ),
+                    ],
+                  ),
+                );
+              })
+          ),
+        )
+      );
+
+      expect(ft.find.byType(SnackBar), ft.findsNothing);
+      expect(testList.isEmpty, false);
+
+      // Tap ElevatedButton (to call submitUpdateUserGardenRecord)
+      await tester.tap(ft.find.byType(ElevatedButton));
+      await tester.pumpAndSettle();
+
+      // Check no snackBar; testList is now empty (rebuild() method was called)
+      expect(ft.find.byType(SnackBar), ft.findsNothing);
+      expect(testList.isEmpty, true);
     });
 
     tearDown(() => GetIt.instance.reset());

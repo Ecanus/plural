@@ -63,8 +63,8 @@ class AppDialogViewRouter {
     viewNotifier.value = AdminEditUserView(userGardenRecord: userGardenRecord);
   }
 
-  Future<void> routeToAdminListedUsersView() async {
-    final userGardenRecordsMap = await getCurrentGardenUserGardenRecords();
+  Future<void> routeToAdminListedUsersView(BuildContext context) async {
+    final userGardenRecordsMap = await getCurrentGardenUserGardenRecords(context);
 
     viewNotifier.value = AdminListedUsersView(userGardenRecordsMap: userGardenRecordsMap);
   }

@@ -13,6 +13,7 @@ import 'package:plural_app/src/constants/app_values.dart';
 import 'package:plural_app/src/constants/environments.dart';
 import 'package:plural_app/src/constants/fields.dart';
 import 'package:plural_app/src/constants/pocketbase.dart';
+import 'package:plural_app/src/constants/query_parameters.dart';
 import 'package:plural_app/src/constants/routes.dart';
 
 // Asks
@@ -61,7 +62,7 @@ Future<bool> deleteCurrentUserAccount({BuildContext? context}) async {
       // Route to Sign in Page
       GoRouter.of(context).go(Routes.signIn);
 
-      var snackBar = AppSnackBars.getSnackBar(
+      final snackBar = AppSnackBars.getSnackBar(
         SnackBarText.deletedUserAccount,
         duration: AppDurations.s9,
         snackbarType: SnackbarType.success
@@ -80,7 +81,7 @@ Future<bool> deleteCurrentUserAccount({BuildContext? context}) async {
     );
 
     if (context != null && context.mounted) {
-      var snackBar = AppSnackBars.getSnackBar(
+      final snackBar = AppSnackBars.getSnackBar(
         SnackBarText.deletedUserAccountFailed,
         duration: AppDurations.s9,
         snackbarType: SnackbarType.error
@@ -123,7 +124,7 @@ Future<void> deleteCurrentUserSettings() async {
 Future<void> expelUserFromGarden(
   BuildContext context,
   AppUserGardenRecord userGardenRecord, {
-  void Function()? callback,
+  void Function(BuildContext context)? callback,
 }) async {
   late SnackBar snackBar;
 
@@ -132,11 +133,21 @@ Future<void> expelUserFromGarden(
     await GetIt.instance<AppState>().verify(
       [AppUserGardenPermission.expelMembers]);
 
+    final asksRepository = GetIt.instance<AsksRepository>();
+
+    // Delete all Asks corresponding to userGardenRecord.garden
+    final askRecords = await asksRepository.getList(
+      filter: ""
+      "${AskField.creator} = '${userGardenRecord.user.id}'"
+      "&& ${AskField.garden} = '${userGardenRecord.garden.id}'"
+    );
+    await asksRepository.bulkDelete(resultList: askRecords);
+
     // Delete record (will also call AppState.notifyAllListeners)
     await GetIt.instance<UserGardenRecordsRepository>().delete(id: userGardenRecord.id);
 
     // Call the callback
-    if (callback != null) callback();
+    if (callback != null && context.mounted) callback(context);
 
     // Get success SnackBar
     snackBar = AppSnackBars.getSnackBar(
@@ -145,70 +156,99 @@ Future<void> expelUserFromGarden(
       duration: AppDurations.s9,
       snackbarType: SnackbarType.success
     );
-  } on PermissionException {
-    // Get error SnackBar
-    snackBar = AppSnackBars.getSnackBar(
-      SnackBarText.invalidPermissions,
-      duration: AppDurations.s9,
-      snackbarType: SnackbarType.error
-    );
-  } finally {
+
     if (context.mounted) {
       Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
+
+  } on PermissionException {
+    if (context.mounted) {
+      // Redirect to UnauthorizedPage
+      GoRouter.of(context).go(
+        Uri(
+          path: Routes.unauthorized,
+          queryParameters: { QueryParameters.previousRoute: Routes.garden }
+        ).toString()
+      );
+    }
   }
 }
 
-/// Queries on the [UserGardenRecord] collection to retrieve all records
+/// An action. Queries on the [UserGardenRecord] collection to retrieve all records
 /// with the same [Garden] as the currentGarden.
 ///
 /// Returns the list of retrieved [AppUserGardenRecord]s.
-Future<Map<AppUserGardenRole, List<AppUserGardenRecord>>> getCurrentGardenUserGardenRecords() async {
-  late AppUserGardenRecord owner;
-  final List<AppUserGardenRecord> administrators = [];
-  final List<AppUserGardenRecord> members = [];
+Future<Map<AppUserGardenRole, List<AppUserGardenRecord>>> getCurrentGardenUserGardenRecords(
+  BuildContext context,
+) async {
+  try {
+    // Check permissions
+    await GetIt.instance<AppState>().verify(
+      [AppUserGardenPermission.viewAllUsers]);
 
-  String currentGardenID = GetIt.instance<AppState>().currentGarden!.id;
+    late AppUserGardenRecord owner;
+    final List<AppUserGardenRecord> administrators = [];
+    final List<AppUserGardenRecord> members = [];
 
-  final resultList = await GetIt.instance<UserGardenRecordsRepository>().getList(
-    expand: "${UserGardenRecordField.user}, ${UserGardenRecordField.garden}",
-    filter: "${UserGardenRecordField.garden} = '$currentGardenID'",
-    sort: "${UserGardenRecordField.user}.${UserField.username}"
-  );
+    String currentGardenID = GetIt.instance<AppState>().currentGarden!.id;
 
-  for (var record in resultList.items) {
-    final recordJson = record.toJson();
+    final resultList = await GetIt.instance<UserGardenRecordsRepository>().getList(
+      expand: "${UserGardenRecordField.user}, ${UserGardenRecordField.garden}",
+      filter: "${UserGardenRecordField.garden} = '$currentGardenID'",
+      sort: "${UserGardenRecordField.user}.${UserField.username}"
+    );
 
-    final userRecord = recordJson[QueryKey.expand][UserGardenRecordField.user];
-    final user = AppUser.fromJson(userRecord);
+    for (var record in resultList.items) {
+      final recordJson = record.toJson();
 
-    final gardenRecord = recordJson[QueryKey.expand][UserGardenRecordField.garden];
-    final garden = Garden.fromJson(gardenRecord, await getUserByID(gardenRecord[GardenField.creator]));
+      final userRecord = recordJson[QueryKey.expand][UserGardenRecordField.user];
+      final user = AppUser.fromJson(userRecord);
 
-    final userGardenRecord = AppUserGardenRecord.fromJson(recordJson, user, garden);
+      final gardenRecord = recordJson[QueryKey.expand][UserGardenRecordField.garden];
+      final garden = Garden.fromJson(gardenRecord, await getUserByID(
+        gardenRecord[GardenField.creator]));
 
-    // Owner
-    if (userGardenRecord.role == AppUserGardenRole.owner) {
-      owner = userGardenRecord;
+      final userGardenRecord = AppUserGardenRecord.fromJson(recordJson, user, garden);
+
+      // Owner
+      if (userGardenRecord.role == AppUserGardenRole.owner) {
+        owner = userGardenRecord;
+      }
+
+      // Administrator
+      if (userGardenRecord.role == AppUserGardenRole.administrator) {
+        administrators.add(userGardenRecord);
+      }
+
+      // Member
+      if (userGardenRecord.role == AppUserGardenRole.member) {
+        members.add(userGardenRecord);
+      }
     }
 
-    // Administrator
-    if (userGardenRecord.role == AppUserGardenRole.administrator) {
-      administrators.add(userGardenRecord);
+    return {
+      AppUserGardenRole.owner: [owner],
+      AppUserGardenRole.administrator: administrators,
+      AppUserGardenRole.member: members,
+    };
+  } on PermissionException {
+    if (context.mounted) {
+      // Redirect to UnauthorizedPage
+      GoRouter.of(context).go(
+        Uri(
+          path: Routes.unauthorized,
+          queryParameters: { QueryParameters.previousRoute: Routes.garden }
+        ).toString()
+      );
     }
 
-    // Member
-    if (userGardenRecord.role == AppUserGardenRole.member) {
-      members.add(userGardenRecord);
-    }
+    return {
+      AppUserGardenRole.owner: [],
+      AppUserGardenRole.administrator: [],
+      AppUserGardenRole.member: [],
+    };
   }
-
-  return {
-    AppUserGardenRole.owner: [owner],
-    AppUserGardenRole.administrator: administrators,
-    AppUserGardenRole.member: members,
-  };
 }
 
 /// Queries on the [UserSettings] collection to retrieve the record which
@@ -218,7 +258,7 @@ Future<Map<AppUserGardenRole, List<AppUserGardenRecord>>> getCurrentGardenUserGa
 Future<AppUserSettings> getCurrentUserSettings() async {
   final currentUser = GetIt.instance<AppState>().currentUser!;
 
-  var result = await GetIt.instance<UserSettingsRepository>().getFirstListItem(
+  final result = await GetIt.instance<UserSettingsRepository>().getFirstListItem(
     filter: "${UserSettingsField.user} = '${currentUser.id}'"
   );
 
@@ -255,8 +295,9 @@ List<AppUserGardenPermission> getUserGardenPermissionGroup(AppUserGardenRole rol
       AppUserGardenPermission.createInvitations,
       AppUserGardenPermission.deleteMemberAsks,
       AppUserGardenPermission.expelMembers,
-      AppUserGardenPermission.viewAuditLog,
       AppUserGardenPermission.viewAdminGardenTimeline,
+      AppUserGardenPermission.viewAllUsers,
+      AppUserGardenPermission.viewAuditLog,
     ]);
   }
 
@@ -412,7 +453,7 @@ Future<void> logout(
   clearGetItInstance();
 
   if (context.mounted) {
-    var router = goRouter ?? GoRouter.of(context);
+    final router = goRouter ?? GoRouter.of(context);
     router.go(Routes.signIn);
   }
 }
@@ -473,7 +514,7 @@ Future<(bool, Map)> signup(
     // Return
     return (true, {});
   } on ClientException catch (e) {
-    var errorsMap = getErrorsMapFromClientException(e);
+    final errorsMap = getErrorsMapFromClientException(e);
 
     // Log error
     developer.log(
@@ -538,6 +579,74 @@ Future<(RecordModel?, Map)> updateUser(Map map) async {
   });
 
   return (record, errorsMap);
+}
+
+/// An action. Attempts to update the [UserGardenRecord] record that matches the values
+/// passed in the given [map] parameter.
+///
+/// Returns the updated [RecordModel] and an empty map if updated successfully,
+/// else null and a map of the errors.
+Future<(RecordModel?, Map?)> updateUserGardenRole(
+  BuildContext context,
+  Map map,
+) async {
+  final newRoleString = map[UserGardenRecordField.role];
+  final existingRole = await getUserGardenRecordRole(
+    userID: map[UserGardenRecordField.user],
+    gardenID: map[UserGardenRecordField.garden]
+  );
+
+  final isChangingOwner =
+    existingRole != AppUserGardenRole.owner
+    && newRoleString == AppUserGardenRole.owner.name;
+
+  try {
+    // Check permissions
+    if (isChangingOwner) {
+      await GetIt.instance<AppState>().verify(
+        [AppUserGardenPermission.changeOwner]);
+    } else {
+      await GetIt.instance<AppState>().verify(
+        [AppUserGardenPermission.changeMemberRoles]);
+    }
+
+    // Update
+    final (record, errorsMap) =
+      await GetIt.instance<UserGardenRecordsRepository>().update(
+        id: map[GenericField.id],
+        body: {
+          UserGardenRecordField.role: map[UserGardenRecordField.role]
+        }
+      );
+
+    // if isChangingOwner, change currentUser from owner to administrator
+    if (isChangingOwner) {
+      final currentUserGardenRecord = await getUserGardenRecord(
+        userID: GetIt.instance<AppState>().currentUser!.id,
+        gardenID: GetIt.instance<AppState>().currentGarden!.id
+      );
+      await GetIt.instance<UserGardenRecordsRepository>().update(
+        id: currentUserGardenRecord!.id,
+        body: {
+          UserGardenRecordField.role: AppUserGardenRole.administrator.name
+        }
+      );
+    }
+
+    return (record, errorsMap);
+  } on PermissionException {
+    if (context.mounted) {
+      // Redirect to UnauthorizedPage
+      GoRouter.of(context).go(
+        Uri(
+          path: Routes.unauthorized,
+          queryParameters: { QueryParameters.previousRoute: Routes.garden }
+        ).toString()
+      );
+    }
+
+    return (null, null);
+  }
 }
 
 /// Attempts to update the [UserSettings] record that matches the values passed

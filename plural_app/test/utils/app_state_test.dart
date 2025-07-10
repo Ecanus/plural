@@ -21,6 +21,7 @@ import 'package:plural_app/src/features/gardens/data/gardens_repository.dart';
 
 // Utils
 import 'package:plural_app/src/utils/app_state.dart';
+import 'package:plural_app/src/utils/exceptions.dart';
 
 // Tests
 import '../test_context.dart';
@@ -392,6 +393,74 @@ void main() {
 
       expect(await appState.isAdministrator(), true);
       expect(await appState.isOwner(), true);
+    });
+
+    test("verify", () async {
+      final tc = TestContext();
+
+      final appState = AppState.skipSubscribe()
+                        ..currentGarden = tc.garden
+                        ..currentUser = tc.user;
+
+      final getIt = GetIt.instance;
+      final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
+
+      getIt.registerLazySingleton<UserGardenRecordsRepository>(
+        () => mockUserGardenRecordsRepository
+      );
+
+      // UserGardenRecordsRepository.getList()
+      when(
+        () => mockUserGardenRecordsRepository.getList(
+          filter: ""
+            "${UserGardenRecordField.user} = '${tc.user.id}' && "
+            "${UserGardenRecordField.garden} = '${tc.garden.id}'",
+          sort: "-updated"
+        )
+      ).thenAnswer(
+        (_) async => ResultList<RecordModel>(
+          items: [tc.getUserGardenRecordRecordModel(role: AppUserGardenRole.member)]
+        )
+      );
+
+      final ownerPermissions = [
+        AppUserGardenPermission.changeOwner,
+        AppUserGardenPermission.deleteGarden,
+      ];
+
+      final memberPermissions = [
+        AppUserGardenPermission.createAndEditAsks,
+        AppUserGardenPermission.viewGardenTimeline,
+      ];
+
+      // Check no exceptions thrown
+      await appState.verify(memberPermissions);
+
+      // Check throws exception because insufficient permissions
+      expect(
+        () async => await appState.verify(ownerPermissions),
+        throwsA(predicate((e) => e is PermissionException))
+      );
+
+      // UserGardenRecordsRepository.getList() Returns empty list
+      when(
+        () => mockUserGardenRecordsRepository.getList(
+          filter: ""
+            "${UserGardenRecordField.user} = '${tc.user.id}' && "
+            "${UserGardenRecordField.garden} = '${tc.garden.id}'",
+          sort: "-updated"
+        )
+      ).thenAnswer(
+        (_) async => ResultList<RecordModel>(
+          items: []
+        )
+      );
+
+      // Check throws exception because no UserGardenRecord was found (empty list)
+      expect(
+        () async => await appState.verify(ownerPermissions),
+        throwsA(predicate((e) => e is PermissionException))
+      );
     });
 
   });

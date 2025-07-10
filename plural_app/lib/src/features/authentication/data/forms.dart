@@ -38,12 +38,12 @@ Future<void> submitUpdateSettings(
 
     // Update.
     // If in a Garden, subscribeTo() will prompt timeline refresh and currentUser reload
-    var (userRecord, userErrorsMap) = await updateUser(userAppForm.fields);
-    var (userSettingsRecord, userSettingsErrorsMap) =
+    final (userRecord, userErrorsMap) = await updateUser(userAppForm.fields);
+    final (userSettingsRecord, userSettingsErrorsMap) =
       await updateUserSettings(userSettingsAppForm.fields);
 
     if (userRecord != null && userSettingsRecord != null && context.mounted) {
-      var snackBar = AppSnackBars.getSnackBar(
+      final snackBar = AppSnackBars.getSnackBar(
         SnackBarText.updateUserSettingsSuccess,
         showCloseIcon: false,
         snackbarType: SnackbarType.success
@@ -64,7 +64,7 @@ Future<void> submitUpdateSettings(
         GetIt.instance<AppDialogViewRouter>().routeToUserSettingsView();
       case Routes.landing:
         // Force reload value of currentUser
-        // (because no garden-specific subscriptions are set in the landing page)
+        // (because no Garden-specific subscriptions are set in the landing page)
         GetIt.instance<AppState>().currentUser = await getUserByID(
           userAppForm.getValue(fieldName: GenericField.id)
         );
@@ -74,12 +74,42 @@ Future<void> submitUpdateSettings(
   }
 }
 
-// TODO: implement
+/// Validates and submits form data to update an existing [UserGardenRecord] record
+/// in the database.
 Future<void> submitUpdateUserGardenRecord(
   BuildContext context,
   GlobalKey<FormState> formKey,
   AppForm appForm,
-) async {}
+) async {
+  if (formKey.currentState!.validate()) {
+    SnackBar snackBar;
+
+    // Save form
+    formKey.currentState!.save();
+
+    // Update
+    final (userGardenRecord, errorsMap) = await updateUserGardenRole(
+      context, appForm.fields);
+
+    // Handle success
+    if (userGardenRecord != null && context.mounted) {
+      snackBar = AppSnackBars.getSnackBar(
+        SnackBarText.updateUserGardenRoleSuccess,
+        snackbarType: SnackbarType.success
+      );
+
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      return;
+    }
+
+    // Handle errors
+    if (errorsMap != null) {
+      appForm.setErrors(errorsMap: errorsMap);
+      appForm.getValue(fieldName: AppFormFields.rebuild, isAux: true)();
+      return;
+    }
+  }
+}
 
 /// Validates and submits form data to log in a user to the application.
 Future<void> submitLogIn(
@@ -93,7 +123,7 @@ Future<void> submitLogIn(
     formKey.currentState!.save();
 
     // Login
-    var isValid = await login(
+    final isValid = await login(
       appForm.getValue(fieldName: SignInField.usernameOrEmail),
       appForm.getValue(fieldName: UserField.password),
       database: database
@@ -133,7 +163,7 @@ Future<void> submitSignUp(
     formKey.currentState!.save();
 
     // Sign up
-    var (isValid, errorsMap) = await signup(appForm.fields, database: database);
+    final (isValid, errorsMap) = await signup(appForm.fields, database: database);
 
     if (isValid && context.mounted) {
       // Go to log in tab
@@ -142,7 +172,7 @@ Future<void> submitSignUp(
         isAux: true)
       .animateTo(AuthConstants.logInTabIndex);
 
-      var snackBar = AppSnackBars.getSnackBar(
+      final snackBar = AppSnackBars.getSnackBar(
         SnackBarText.sentUserVerificationEmail,
         boldMessage: appForm.getValue(fieldName: UserField.email),
         duration: AppDurations.s9,
@@ -176,15 +206,15 @@ Future<void> submitForgotPassword(
     // Save form
     formKey.currentState!.save();
 
-    var email = appForm.getValue(fieldName: UserField.email);
-    var isValid = await sendPasswordResetCode(email, database: database);
+    final email = appForm.getValue(fieldName: UserField.email);
+    final isValid = await sendPasswordResetCode(email, database: database);
 
     if (context.mounted) {
       // Close dialog
       Navigator.pop(context);
 
       if (isValid) {
-        var snackBar = AppSnackBars.getSnackBar(
+        final snackBar = AppSnackBars.getSnackBar(
           SnackBarText.sentPasswordResetEmail,
           boldMessage: email,
           duration: AppDurations.s9,

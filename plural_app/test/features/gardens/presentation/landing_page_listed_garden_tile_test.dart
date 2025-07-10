@@ -130,7 +130,7 @@ void main() {
         (_) async => tc.getUserRecordModel()
       );
 
-      var testRouter = GoRouter(
+      final testRouter = GoRouter(
         initialLocation: "/test_landing_tile",
         routes: [
           GoRoute(

@@ -119,7 +119,7 @@ class RouteToListedUsersViewButton extends StatelessWidget {
           iconColor: Theme.of(context).colorScheme.onPrimary,
           shape: CircleBorder(),
         ),
-        onPressed: () => appDialogViewRouter.routeToAdminListedUsersView(),
+        onPressed: () => appDialogViewRouter.routeToAdminListedUsersView(context),
         child: const Icon(Icons.arrow_back)
       ),
     );

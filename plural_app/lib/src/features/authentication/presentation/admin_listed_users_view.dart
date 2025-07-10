@@ -20,7 +20,7 @@ import 'package:plural_app/src/localization/lang_en.dart';
 import 'package:plural_app/src/utils/app_dialog_view_router.dart';
 
 Future createAdminListedUsersDialog(BuildContext context) async {
-  final userGardenRecordsMap  = await getCurrentGardenUserGardenRecords();
+  final userGardenRecordsMap  = await getCurrentGardenUserGardenRecords(context);
 
   if (context.mounted) {
     return showDialog(

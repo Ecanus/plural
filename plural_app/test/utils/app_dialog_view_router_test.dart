@@ -115,9 +115,11 @@ void main() {
       final appDialogRouter = AppDialogViewRouter();
 
       final appState = AppState.skipSubscribe()
-                      ..currentGarden = tc.garden;
+                      ..currentGarden = tc.garden
+                      ..currentUser = tc.user;
 
       final getIt = GetIt.instance;
+      final mockBuildContext = MockBuildContext();
       final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
       final mockUsersRepository = MockUsersRepository();
 
@@ -127,7 +129,23 @@ void main() {
       );
       getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
 
-      // UserGardenRecordsRepository.getList()
+      // UserGardenRecordsRepository.getList(), getUserGardenRecordRole()
+      when(
+        () => mockUserGardenRecordsRepository.getList(
+          filter: ""
+          "${UserGardenRecordField.user} = '${tc.user.id}' && "
+          "${UserGardenRecordField.garden} = '${tc.garden.id}'",
+          sort: "-updated"
+        )
+      ).thenAnswer(
+        (_) async => ResultList<RecordModel>(
+          items: [
+            tc.getUserGardenRecordRecordModel(role: AppUserGardenRole.administrator),
+          ]
+        )
+      );
+
+      // UserGardenRecordsRepository.getList(), getCurrentGardenUserGardenRecords()
       when(
         () => mockUserGardenRecordsRepository.getList(
           expand: "${UserGardenRecordField.user}, ${UserGardenRecordField.garden}",
@@ -163,7 +181,7 @@ void main() {
       );
 
       expect(appDialogRouter.viewNotifier.value, isA<SizedBox>());
-      await appDialogRouter.routeToAdminListedUsersView();
+      await appDialogRouter.routeToAdminListedUsersView(mockBuildContext);
       expect(appDialogRouter.viewNotifier.value, isA<AdminListedUsersView>());
     });
 

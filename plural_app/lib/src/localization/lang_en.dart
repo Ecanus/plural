@@ -202,12 +202,11 @@ class SnackBarText {
 
   static const expelUserSuccess = "Successfully expelled user:";
 
-  static const invalidPermissions = "You do not have permission to perform this action";
-
   static const sentPasswordResetEmail = "Password reset instructions have been sent to";
   static const sentUserVerificationEmail = "A verification email has been sent to";
 
   static const updateAskSuccess = "Ask successfully updated!";
+  static const updateUserGardenRoleSuccess = "User role successfully updated";
   static const updateUserSettingsSuccess = "Settings updated";
 
   static const urlError = "Invalid URL:";
