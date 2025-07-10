@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
-import 'package:mocktail/mocktail.dart';
 import 'package:pocketbase/pocketbase.dart';
 
 // Common Widgets
@@ -27,6 +26,7 @@ import 'package:plural_app/src/utils/app_state.dart';
 // Test
 import '../../../test_context.dart';
 import '../../../test_mocks.dart';
+import '../../../test_stubs.dart';
 
 void main() {
   group("AdminListedUsersView", () {
@@ -48,39 +48,45 @@ void main() {
       );
       getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
 
-      // UserGardenRecordsRepository.getList()
-      when(
-        () => mockUserGardenRecordsRepository.getList(
-          expand: "${UserGardenRecordField.user}, ${UserGardenRecordField.garden}",
-          filter: "${UserGardenRecordField.garden} = '${tc.garden.id}'",
-          sort: "${UserGardenRecordField.user}.${UserField.username}"
-        )
-      ).thenAnswer(
-        (_) async => ResultList<RecordModel>(
-          items: [
-            tc.getExpandUserGardenRecordRecordModel([
-              UserGardenRecordField.user, UserGardenRecordField.garden
-            ], role: AppUserGardenRole.owner),
-            tc.getExpandUserGardenRecordRecordModel([
-              UserGardenRecordField.user, UserGardenRecordField.garden
-            ], role: AppUserGardenRole.administrator),
-            tc.getExpandUserGardenRecordRecordModel([
-              UserGardenRecordField.user, UserGardenRecordField.garden
-            ]),
-            tc.getExpandUserGardenRecordRecordModel([
-              UserGardenRecordField.user, UserGardenRecordField.garden
-            ]),
-          ]
-        )
+      // user -> auth_api.getUserGardenRecordRole()
+      final userGardenRecordRoleItems = ResultList<RecordModel>(items: [
+        tc.getUserGardenRecordRecordModel(role: AppUserGardenRole.administrator),
+      ]);
+      getUserGardenRecordRoleStub(
+        mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
+        userID: tc.user.id,
+        gardenID: tc.garden.id,
+        returnValue: userGardenRecordRoleItems
       );
 
-      // UsersRepository.getFirstListItem()
-      when(
-        () => mockUsersRepository.getFirstListItem(
-          filter: any(named: "filter")
-        )
-      ).thenAnswer(
-        (_) async => tc.getUserRecordModel()
+      // user -> auth_api.getCurrentGardenUserGardenRecords()
+      final currentGardenUserGardenRecordsItems = ResultList<RecordModel>(
+        items: [
+          tc.getExpandUserGardenRecordRecordModel([
+            UserGardenRecordField.user, UserGardenRecordField.garden
+          ], role: AppUserGardenRole.owner),
+          tc.getExpandUserGardenRecordRecordModel([
+            UserGardenRecordField.user, UserGardenRecordField.garden
+          ], role: AppUserGardenRole.administrator),
+          tc.getExpandUserGardenRecordRecordModel([
+            UserGardenRecordField.user, UserGardenRecordField.garden
+          ]),
+          tc.getExpandUserGardenRecordRecordModel([
+            UserGardenRecordField.user, UserGardenRecordField.garden
+          ]),
+        ]
+      );
+      getCurrentGardenUserGardenRecordsStub(
+        mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
+        gardenID: tc.garden.id,
+        returnValue: currentGardenUserGardenRecordsItems
+      );
+
+      // user -> UsersRepository.getFirstListItem()
+      getFirstListItemStub(
+        mockUsersRepository: mockUsersRepository,
+        userID: tc.user.id,
+        returnValue: tc.getUserRecordModel()
       );
 
       await tester.pumpWidget(
@@ -128,30 +134,38 @@ void main() {
       );
       getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
 
-      // UserGardenRecordsRepository.getList()
-      when(
-        () => mockUserGardenRecordsRepository.getList(
-          expand: "${UserGardenRecordField.user}, ${UserGardenRecordField.garden}",
-          filter: "${UserGardenRecordField.garden} = '${tc.garden.id}'",
-          sort: "${UserGardenRecordField.user}.${UserField.username}"
-        )
-      ).thenAnswer(
-        (_) async => ResultList<RecordModel>(
-          items: [
-            tc.getExpandUserGardenRecordRecordModel([
-              UserGardenRecordField.user, UserGardenRecordField.garden
-            ], role: AppUserGardenRole.owner),
-          ]
-        )
+      // user -> auth_api.getUserGardenRecordRole()
+      final userGardenRecordRoleItems = ResultList<RecordModel>(
+        items: [
+          tc.getUserGardenRecordRecordModel(role: AppUserGardenRole.administrator),
+        ]
+      );
+      getUserGardenRecordRoleStub(
+        mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
+        userID: tc.user.id,
+        gardenID: tc.garden.id,
+        returnValue: userGardenRecordRoleItems
       );
 
-      // UsersRepository.getFirstListItem()
-      when(
-        () => mockUsersRepository.getFirstListItem(
-          filter: any(named: "filter")
-        )
-      ).thenAnswer(
-        (_) async => tc.getUserRecordModel()
+      // user -> auth_api.getCurrentGardenUserGardenRecords()
+      final currentGarenUserGardenRecordsItems = ResultList<RecordModel>(
+        items: [
+          tc.getExpandUserGardenRecordRecordModel([
+            UserGardenRecordField.user, UserGardenRecordField.garden
+          ], role: AppUserGardenRole.owner),
+        ]
+      );
+      getCurrentGardenUserGardenRecordsStub(
+        mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
+        gardenID: tc.garden.id,
+        returnValue: currentGarenUserGardenRecordsItems
+      );
+
+      // user -> UsersRepository.getFirstListItem()
+      getFirstListItemStub(
+        mockUsersRepository: mockUsersRepository,
+        userID: tc.user.id,
+        returnValue: tc.getUserRecordModel()
       );
 
       await tester.pumpWidget(
