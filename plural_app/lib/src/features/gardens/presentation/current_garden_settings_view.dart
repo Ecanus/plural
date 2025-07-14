@@ -36,7 +36,7 @@ Future createCurrentGardenSettingsDialog(BuildContext context) async {
 class CurrentGardenSettingsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final appDialogRouter = GetIt.instance<AppDialogViewRouter>();
+    final appDialogViewRouter = GetIt.instance<AppDialogViewRouter>();
 
     return Column(
       children: [
@@ -64,10 +64,10 @@ class CurrentGardenSettingsView extends StatelessWidget {
         ),
         AppDialogNavFooter(
           leftDialogIcon: Icons.settings,
-          leftNavCallback: appDialogRouter.routeToUserSettingsView,
+          leftNavCallback: appDialogViewRouter.routeToUserSettingsView,
           leftTooltipMessage: AppDialogFooterText.navToSettingsView,
           rightDialogIcon: Icons.add,
-          rightNavCallback: appDialogRouter.routeToCreateAskView,
+          rightNavCallback: appDialogViewRouter.routeToCreateAskView,
           rightTooltipMessage: AppDialogFooterText.navToAsksView,
           title: AppDialogFooterText.garden
         )

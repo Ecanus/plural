@@ -22,7 +22,7 @@ void main() {
       final mockAppDialogViewRouter = MockAppDialogViewRouter();
       getIt.registerLazySingleton<AppDialogViewRouter>(() => mockAppDialogViewRouter);
 
-      // AppDialogRouter.routeToAskDialogListView()
+      // AppDialogViewRouter.routeToAskDialogListView()
       when(
         () => mockAppDialogViewRouter.routeToListedAsksView()
       ).thenAnswer(

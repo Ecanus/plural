@@ -19,7 +19,7 @@ class RouteToListedAsksViewButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appDialogRouter = GetIt.instance<AppDialogViewRouter>();
+    final appDialogViewRouter = GetIt.instance<AppDialogViewRouter>();
 
     return Tooltip(
       message: AskViewText.goToListedAsks,
@@ -30,7 +30,7 @@ class RouteToListedAsksViewButton extends StatelessWidget {
           iconColor: Theme.of(context).colorScheme.onPrimary,
           shape: CircleBorder(),
         ),
-        onPressed: () => appDialogRouter.routeToListedAsksView(),
+        onPressed: () => appDialogViewRouter.routeToListedAsksView(),
         child: Icon(icon)
       ),
     );

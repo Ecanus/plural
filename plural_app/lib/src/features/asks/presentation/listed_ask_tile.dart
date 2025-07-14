@@ -24,7 +24,7 @@ class ListedAskTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appDialogRouter = GetIt.instance<AppDialogViewRouter>();
+    final appDialogViewRouter = GetIt.instance<AppDialogViewRouter>();
 
     final shouldStrikethrough = ask.isDeadlinePassed || ask.targetMetDate != null;
     final textDecoration = shouldStrikethrough ? TextDecoration.lineThrough : null;
@@ -59,7 +59,7 @@ class ListedAskTile extends StatelessWidget {
         trailing: ListedAskTileTrailing(tileTrailingAvatar: tileTrailingAvatar),
         onTap: () {
           Future.delayed(AppDurations.ms80, () {
-            appDialogRouter.routeToEditAskView(ask);
+            appDialogViewRouter.routeToEditAskView(ask);
           });
         },
       ),

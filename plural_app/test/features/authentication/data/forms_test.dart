@@ -98,7 +98,7 @@ void main() {
         (_) async => (tc.getUserSettingsRecordModel(), {})
       );
 
-      // AppDialogRouter.routeToUserSettingsDialogView()
+      // AppDialogViewRouter.routeToUserSettingsDialogView()
       when(
         () => mockAppDialogViewRouter.routeToUserSettingsView()
       ).thenAnswer(
@@ -253,7 +253,7 @@ void main() {
         (_) async => (tc.getUserSettingsRecordModel(), {})
       );
 
-      // AppDialogRouter.routeToUserSettingsDialogView()
+      // AppDialogViewRouter.routeToUserSettingsDialogView()
       when(
         () => mockAppDialogViewRouter.routeToUserSettingsView()
       ).thenAnswer(
@@ -423,7 +423,7 @@ void main() {
         (_) async => (tc.getUserSettingsRecordModel(), {})
       );
 
-      // AppDialogRouter.routeToUserSettingsDialogView()
+      // AppDialogViewRouter.routeToUserSettingsDialogView()
       when(
         () => mockAppDialogViewRouter.routeToUserSettingsView()
       ).thenAnswer(
@@ -572,7 +572,7 @@ void main() {
         (_) async => (tc.getUserSettingsRecordModel(), {})
       );
 
-      // AppDialogRouter.routeToUserSettingsDialogView()
+      // AppDialogViewRouter.routeToUserSettingsDialogView()
       when(
         () => mockAppDialogViewRouter.routeToUserSettingsView()
       ).thenAnswer(

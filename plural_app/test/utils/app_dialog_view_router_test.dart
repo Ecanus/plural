@@ -36,28 +36,28 @@ import '../test_mocks.dart';
 void main() {
   group("AppDialogViewRouter", () {
     test("setRouteTo", () async {
-      final appDialogRouter = AppDialogViewRouter();
+      final appDialogViewRouter = AppDialogViewRouter();
 
-      expect(appDialogRouter.viewNotifier.value, isA<SizedBox>());
-      appDialogRouter.setRouteTo(Container());
-      expect(appDialogRouter.viewNotifier.value, isA<Container>());
+      expect(appDialogViewRouter.viewNotifier.value, isA<SizedBox>());
+      appDialogViewRouter.setRouteTo(Container());
+      expect(appDialogViewRouter.viewNotifier.value, isA<Container>());
     });
 
     test("routeToCreateAskView", () async {
-      final appDialogRouter = AppDialogViewRouter();
+      final appDialogViewRouter = AppDialogViewRouter();
 
-      expect(appDialogRouter.viewNotifier.value, isA<SizedBox>());
-      appDialogRouter.routeToCreateAskView();
-      expect(appDialogRouter.viewNotifier.value, isA<CreateAskView>());
+      expect(appDialogViewRouter.viewNotifier.value, isA<SizedBox>());
+      appDialogViewRouter.routeToCreateAskView();
+      expect(appDialogViewRouter.viewNotifier.value, isA<CreateAskView>());
     });
 
     test("routeToEditAskView", () async {
       final tc = TestContext();
-      final appDialogRouter = AppDialogViewRouter();
+      final appDialogViewRouter = AppDialogViewRouter();
 
-      expect(appDialogRouter.viewNotifier.value, isA<SizedBox>());
-      appDialogRouter.routeToEditAskView(tc.ask);
-      expect(appDialogRouter.viewNotifier.value, isA<EditAskView>());
+      expect(appDialogViewRouter.viewNotifier.value, isA<SizedBox>());
+      appDialogViewRouter.routeToEditAskView(tc.ask);
+      expect(appDialogViewRouter.viewNotifier.value, isA<EditAskView>());
     });
 
     test("routeToListedAsksView", () async {
@@ -93,27 +93,27 @@ void main() {
         (_) async => tc.getUserRecordModel()
       );
 
-      final appDialogRouter = AppDialogViewRouter();
+      final appDialogViewRouter = AppDialogViewRouter();
 
-      expect(appDialogRouter.viewNotifier.value, isA<SizedBox>());
-      await appDialogRouter.routeToListedAsksView();
-      expect(appDialogRouter.viewNotifier.value, isA<ListedAsksView>());
+      expect(appDialogViewRouter.viewNotifier.value, isA<SizedBox>());
+      await appDialogViewRouter.routeToListedAsksView();
+      expect(appDialogViewRouter.viewNotifier.value, isA<ListedAsksView>());
     });
 
     tearDown(() => GetIt.instance.reset());
 
     test("routeToAdminEditUserView", () async {
       final tc = TestContext();
-      final appDialogRouter = AppDialogViewRouter();
+      final appDialogViewRouter = AppDialogViewRouter();
 
-      expect(appDialogRouter.viewNotifier.value, isA<SizedBox>());
-      appDialogRouter.routeToAdminEditUserView(tc.userGardenRecord);
-      expect(appDialogRouter.viewNotifier.value, isA<AdminEditUserView>());
+      expect(appDialogViewRouter.viewNotifier.value, isA<SizedBox>());
+      appDialogViewRouter.routeToAdminEditUserView(tc.userGardenRecord);
+      expect(appDialogViewRouter.viewNotifier.value, isA<AdminEditUserView>());
     });
 
     test("routeToAdminListedUsersView", () async {
       final tc = TestContext();
-      final appDialogRouter = AppDialogViewRouter();
+      final appDialogViewRouter = AppDialogViewRouter();
 
       final appState = AppState.skipSubscribe()
                       ..currentGarden = tc.garden
@@ -181,9 +181,9 @@ void main() {
         (_) async => tc.getUserRecordModel()
       );
 
-      expect(appDialogRouter.viewNotifier.value, isA<SizedBox>());
-      await appDialogRouter.routeToAdminListedUsersView(mockBuildContext);
-      expect(appDialogRouter.viewNotifier.value, isA<AdminListedUsersView>());
+      expect(appDialogViewRouter.viewNotifier.value, isA<SizedBox>());
+      await appDialogViewRouter.routeToAdminListedUsersView(mockBuildContext);
+      expect(appDialogViewRouter.viewNotifier.value, isA<AdminListedUsersView>());
     });
 
     test("routeToUserSettingsView", () async {
@@ -196,29 +196,29 @@ void main() {
       final getIt = GetIt.instance;
       getIt.registerLazySingleton<AppState>(() => appState);
 
-      final appDialogRouter = AppDialogViewRouter();
+      final appDialogViewRouter = AppDialogViewRouter();
 
-      expect(appDialogRouter.viewNotifier.value, isA<SizedBox>());
-      await appDialogRouter.routeToUserSettingsView();
-      expect(appDialogRouter.viewNotifier.value, isA<UserSettingsView>());
+      expect(appDialogViewRouter.viewNotifier.value, isA<SizedBox>());
+      await appDialogViewRouter.routeToUserSettingsView();
+      expect(appDialogViewRouter.viewNotifier.value, isA<UserSettingsView>());
     });
 
     tearDown(() => GetIt.instance.reset());
 
     test("routeToAdminCurrentGardenSettingsView", () async {
-      final appDialogRouter = AppDialogViewRouter();
+      final appDialogViewRouter = AppDialogViewRouter();
 
-      expect(appDialogRouter.viewNotifier.value, isA<SizedBox>());
-      appDialogRouter.routeToAdminCurrentGardenSettingsView();
-      expect(appDialogRouter.viewNotifier.value, isA<AdminCurrentGardenSettingsView>());
+      expect(appDialogViewRouter.viewNotifier.value, isA<SizedBox>());
+      appDialogViewRouter.routeToAdminCurrentGardenSettingsView();
+      expect(appDialogViewRouter.viewNotifier.value, isA<AdminCurrentGardenSettingsView>());
     });
 
     test("routeToCurrentGardenSettingsView", () async {
-      final appDialogRouter = AppDialogViewRouter();
+      final appDialogViewRouter = AppDialogViewRouter();
 
-      expect(appDialogRouter.viewNotifier.value, isA<SizedBox>());
-      appDialogRouter.routeToCurrentGardenSettingsView();
-      expect(appDialogRouter.viewNotifier.value, isA<CurrentGardenSettingsView>());
+      expect(appDialogViewRouter.viewNotifier.value, isA<SizedBox>());
+      appDialogViewRouter.routeToCurrentGardenSettingsView();
+      expect(appDialogViewRouter.viewNotifier.value, isA<CurrentGardenSettingsView>());
     });
   });
 }

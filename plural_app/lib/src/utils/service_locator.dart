@@ -27,7 +27,7 @@ Future<void> registerGetItInstances(PocketBase pb) async {
     () => pb
   );
 
-  // AppDialogRouter
+  // AppDialogViewRouter
   getIt.registerLazySingleton<AppDialogViewRouter>(
     () => AppDialogViewRouter()
   );

@@ -22,13 +22,13 @@ class AppDialog extends StatefulWidget {
 }
 
 class _AppDialogState extends State<AppDialog> {
-  final _appDialogRouter = GetIt.instance<AppDialogViewRouter>();
+  final _appDialogViewRouter = GetIt.instance<AppDialogViewRouter>();
 
   @override
   void initState() {
     super.initState();
 
-    _appDialogRouter.setRouteTo(widget.view);
+    _appDialogViewRouter.setRouteTo(widget.view);
   }
 
   @override
@@ -60,7 +60,7 @@ class _AppDialogState extends State<AppDialog> {
                       children: [
                         Expanded(
                           child: ValueListenableBuilder(
-                            valueListenable: _appDialogRouter.viewNotifier,
+                            valueListenable: _appDialogViewRouter.viewNotifier,
                             builder: (BuildContext context, Widget view, Widget? _) {
                               return view;
                             }
