@@ -39,15 +39,16 @@ class AppDialogFooterText {
   static const editAsk = "Edit Ask";
 
   static const garden = "Garden";
+  static const gardenSettings = "Garden Settings";
 
   static const listedAsks = "My Asks";
 
   static const navToAdminCurrentGardenSettings = "Garden Settings";
   static const navToAdminListedUsers = "Users";
   static const navToAdminSettings = "Admin";
-  static const navToAsksDialog = "Asks";
-  static const navToGardenDialog = "Garden";
-  static const navToSettingsDialog = "Settings";
+  static const navToAsksView = "Asks";
+  static const navToCurrentGardenSettingsView = "Garden";
+  static const navToSettingsView = "Settings";
 
   static const settings = "Settings";
 

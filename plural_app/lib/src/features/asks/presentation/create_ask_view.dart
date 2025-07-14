@@ -179,10 +179,10 @@ class _CreateAskViewState extends State<CreateAskView> {
         AppDialogNavFooter(
           leftDialogIcon: Icons.local_florist,
           leftNavCallback: _appDialogRouter.routeToCurrentGardenSettingsView,
-          leftTooltipMessage: AppDialogFooterText.navToGardenDialog,
+          leftTooltipMessage: AppDialogFooterText.navToCurrentGardenSettingsView,
           rightDialogIcon: Icons.settings,
           rightNavCallback: _appDialogRouter.routeToUserSettingsView,
-          rightTooltipMessage: AppDialogFooterText.navToSettingsDialog,
+          rightTooltipMessage: AppDialogFooterText.navToSettingsView,
           title: AppDialogFooterText.createAsk
         )
       ],

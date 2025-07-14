@@ -65,10 +65,10 @@ class CurrentGardenSettingsView extends StatelessWidget {
         AppDialogNavFooter(
           leftDialogIcon: Icons.settings,
           leftNavCallback: appDialogRouter.routeToUserSettingsView,
-          leftTooltipMessage: AppDialogFooterText.navToSettingsDialog,
+          leftTooltipMessage: AppDialogFooterText.navToSettingsView,
           rightDialogIcon: Icons.add,
           rightNavCallback: appDialogRouter.routeToCreateAskView,
-          rightTooltipMessage: AppDialogFooterText.navToAsksDialog,
+          rightTooltipMessage: AppDialogFooterText.navToAsksView,
           title: AppDialogFooterText.garden
         )
       ],

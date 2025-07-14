@@ -81,10 +81,10 @@ class AdminListedUsersView extends StatelessWidget {
         AppDialogNavFooter(
           leftDialogIcon: Icons.question_mark,
           leftNavCallback: () {},
-          leftTooltipMessage: AppDialogFooterText.navToGardenDialog,
+          leftTooltipMessage: AppDialogFooterText.navToCurrentGardenSettingsView,
           rightDialogIcon: Icons.local_florist,
           rightNavCallback: appDialogViewRouter.routeToAdminCurrentGardenSettingsView,
-          rightTooltipMessage: AppDialogFooterText.navToSettingsDialog,
+          rightTooltipMessage: AppDialogFooterText.navToAdminCurrentGardenSettings,
           title: AppDialogFooterText.adminListedUsers
         )
       ],

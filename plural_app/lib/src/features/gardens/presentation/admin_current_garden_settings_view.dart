@@ -115,11 +115,11 @@ class _AdminCurrentGardenSettingsViewState extends State<AdminCurrentGardenSetti
         AppDialogNavFooter(
           leftDialogIcon: Icons.people_alt,
           leftNavActionCallback: _appDialogViewRouter.routeToAdminListedUsersView,
-          leftTooltipMessage: AppDialogFooterText.navToSettingsDialog,
+          leftTooltipMessage: AppDialogFooterText.navToAdminListedUsers,
           rightDialogIcon: Icons.question_mark,
           rightNavCallback: () {},
-          rightTooltipMessage: AppDialogFooterText.navToAsksDialog,
-          title: AppDialogFooterText.garden
+          rightTooltipMessage: AppDialogFooterText.navToAsksView,
+          title: AppDialogFooterText.gardenSettings
         )
       ],
     );

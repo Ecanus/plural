@@ -143,10 +143,10 @@ class _UserSettingsViewState extends State<UserSettingsView> {
         AppDialogNavFooter(
           leftDialogIcon: Icons.add,
           leftNavCallback: _appDialogRouter.routeToCreateAskView,
-          leftTooltipMessage: AppDialogFooterText.navToAsksDialog,
+          leftTooltipMessage: AppDialogFooterText.navToAsksView,
           rightDialogIcon: Icons.local_florist,
           rightNavCallback: _appDialogRouter.routeToCurrentGardenSettingsView,
-          rightTooltipMessage: AppDialogFooterText.navToGardenDialog,
+          rightTooltipMessage: AppDialogFooterText.navToCurrentGardenSettingsView,
           title: AppDialogFooterText.settings
         )
       ],

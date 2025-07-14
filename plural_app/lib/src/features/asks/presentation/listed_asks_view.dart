@@ -41,10 +41,10 @@ class ListedAsksView extends StatelessWidget {
         AppDialogNavFooter(
           leftDialogIcon: Icons.local_florist,
           leftNavCallback: appDialogRouter.routeToCurrentGardenSettingsView,
-          leftTooltipMessage: AppDialogFooterText.navToGardenDialog,
+          leftTooltipMessage: AppDialogFooterText.navToCurrentGardenSettingsView,
           rightDialogIcon: Icons.settings,
           rightNavCallback: appDialogRouter.routeToUserSettingsView,
-          rightTooltipMessage: AppDialogFooterText.navToSettingsDialog,
+          rightTooltipMessage: AppDialogFooterText.navToSettingsView,
           title: AppDialogFooterText.listedAsks
         )
       ],
