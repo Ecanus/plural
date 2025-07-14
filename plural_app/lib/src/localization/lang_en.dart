@@ -1,3 +1,9 @@
+class AdminCurrentGardenSettingsViewText {
+  static const goToGardenPageLabel = "Return to Garden";
+
+  static const name = "Garden Name";
+}
+
 class AdminListedUsersViewText {
   static const adminHeading = "Administrators";
 
@@ -33,13 +39,16 @@ class AppDialogFooterText {
   static const editAsk = "Edit Ask";
 
   static const garden = "Garden";
+  static const gardenSettings = "Garden Settings";
 
   static const listedAsks = "My Asks";
 
+  static const navToAdminCurrentGardenSettings = "Garden Settings";
   static const navToAdminListedUsers = "Users";
-  static const navToAsksDialog = "Asks";
-  static const navToGardenDialog = "Gardens";
-  static const navToSettingsDialog = "Settings";
+  static const navToAdminSettings = "Admin";
+  static const navToAsksView = "Asks";
+  static const navToCurrentGardenSettingsView = "Garden";
+  static const navToSettingsView = "Settings";
 
   static const settings = "Settings";
 
@@ -206,7 +215,8 @@ class SnackBarText {
   static const sentUserVerificationEmail = "A verification email has been sent to";
 
   static const updateAskSuccess = "Ask successfully updated!";
-  static const updateUserGardenRoleSuccess = "User role successfully updated";
+  static const updateGardenNameSuccess = "Garden name successfully changed";
+  static const updateUserGardenRoleSuccess = "User role successfully changed";
   static const updateUserSettingsSuccess = "Settings updated";
 
   static const urlError = "Invalid URL:";

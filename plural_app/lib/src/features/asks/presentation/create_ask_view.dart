@@ -50,7 +50,7 @@ class CreateAskView extends StatefulWidget {
 }
 
 class _CreateAskViewState extends State<CreateAskView> {
-  late AppDialogViewRouter _appDialogRouter;
+  late AppDialogViewRouter _appDialogViewRouter;
   late AppForm _appForm;
   late AppState _appState;
   late GlobalKey<FormState> _formKey;
@@ -59,7 +59,7 @@ class _CreateAskViewState extends State<CreateAskView> {
   void initState() {
     super.initState();
 
-    _appDialogRouter = GetIt.instance<AppDialogViewRouter>();
+    _appDialogViewRouter = GetIt.instance<AppDialogViewRouter>();
     _appState = GetIt.instance<AppState>();
     _formKey = GlobalKey<FormState>();
 
@@ -178,11 +178,11 @@ class _CreateAskViewState extends State<CreateAskView> {
         ),
         AppDialogNavFooter(
           leftDialogIcon: Icons.local_florist,
-          leftNavCallback: _appDialogRouter.routeToCurrentGardenSettingsView,
-          leftTooltipMessage: AppDialogFooterText.navToGardenDialog,
+          leftNavCallback: _appDialogViewRouter.routeToCurrentGardenSettingsView,
+          leftTooltipMessage: AppDialogFooterText.navToCurrentGardenSettingsView,
           rightDialogIcon: Icons.settings,
-          rightNavCallback: _appDialogRouter.routeToUserSettingsView,
-          rightTooltipMessage: AppDialogFooterText.navToSettingsDialog,
+          rightNavCallback: _appDialogViewRouter.routeToUserSettingsView,
+          rightTooltipMessage: AppDialogFooterText.navToSettingsView,
           title: AppDialogFooterText.createAsk
         )
       ],

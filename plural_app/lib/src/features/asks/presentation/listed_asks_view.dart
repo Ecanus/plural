@@ -25,7 +25,7 @@ class ListedAsksView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appDialogRouter = GetIt.instance<AppDialogViewRouter>();
+    final appDialogViewRouter = GetIt.instance<AppDialogViewRouter>();
 
     return Column(
       children: [
@@ -40,11 +40,11 @@ class ListedAsksView extends StatelessWidget {
         AppDialogFooterBuffer(buttons: [RouteToCreateAskViewButton()],),
         AppDialogNavFooter(
           leftDialogIcon: Icons.local_florist,
-          leftNavCallback: appDialogRouter.routeToCurrentGardenSettingsView,
-          leftTooltipMessage: AppDialogFooterText.navToGardenDialog,
+          leftNavCallback: appDialogViewRouter.routeToCurrentGardenSettingsView,
+          leftTooltipMessage: AppDialogFooterText.navToCurrentGardenSettingsView,
           rightDialogIcon: Icons.settings,
-          rightNavCallback: appDialogRouter.routeToUserSettingsView,
-          rightTooltipMessage: AppDialogFooterText.navToSettingsDialog,
+          rightNavCallback: appDialogViewRouter.routeToUserSettingsView,
+          rightTooltipMessage: AppDialogFooterText.navToSettingsView,
           title: AppDialogFooterText.listedAsks
         )
       ],
@@ -56,7 +56,7 @@ class RouteToCreateAskViewButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appDialogRouter = GetIt.instance<AppDialogViewRouter>();
+    final appDialogViewRouter = GetIt.instance<AppDialogViewRouter>();
 
     return Tooltip(
       message: AskViewText.createAsk,
@@ -67,7 +67,7 @@ class RouteToCreateAskViewButton extends StatelessWidget {
           iconColor: Theme.of(context).colorScheme.surface,
           shape: CircleBorder(),
         ),
-        onPressed: () => appDialogRouter.routeToCreateAskView(),
+        onPressed: () => appDialogViewRouter.routeToCreateAskView(),
         child: const Icon(Icons.add)
       ),
     );

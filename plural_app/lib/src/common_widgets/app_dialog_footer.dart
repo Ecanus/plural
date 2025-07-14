@@ -48,20 +48,31 @@ class AppDialogFooterBuffer extends StatelessWidget {
 class AppDialogNavFooter extends StatefulWidget {
   const AppDialogNavFooter({
     required this.leftDialogIcon,
-    required this.leftNavCallback,
+    this.leftNavActionCallback,
+    this.leftNavCallback,
     required this.leftTooltipMessage,
     required this.rightDialogIcon,
-    required this.rightNavCallback,
+    this.rightNavActionCallback,
+    this.rightNavCallback,
     required this.rightTooltipMessage,
     required this.title,
-  });
+  }) : assert(
+    leftNavActionCallback == null || leftNavCallback == null,
+    "Cannot provide both a leftNavActionCallback and a leftNavCallback"
+  ),
+  assert(
+    rightNavActionCallback == null || rightNavCallback == null,
+    "Cannot provide both a rightNavActionCallback and a rightNavCallback"
+  );
 
   final IconData leftDialogIcon;
-  final void Function() leftNavCallback;
+  final void Function(BuildContext context)? leftNavActionCallback;
+  final void Function()? leftNavCallback;
   final String leftTooltipMessage;
 
   final IconData rightDialogIcon;
-  final void Function() rightNavCallback;
+  final void Function(BuildContext context)? rightNavActionCallback;
+  final void Function()? rightNavCallback;
   final String rightTooltipMessage;
 
   final String title;
@@ -109,6 +120,7 @@ class _AppDialogNavFooterState extends State<AppDialogNavFooter> {
         child: Row(
           children: [
             AppDialogFooterNavButton(
+              actionCallback: widget.leftNavActionCallback,
               callback: widget.leftNavCallback,
               dialogIcon: widget.leftDialogIcon,
               direction: NavButtonDirection.left,
@@ -128,6 +140,7 @@ class _AppDialogNavFooterState extends State<AppDialogNavFooter> {
               ),
             ),
             AppDialogFooterNavButton(
+              actionCallback: widget.rightNavActionCallback,
               callback: widget.rightNavCallback,
               dialogIcon: widget.rightDialogIcon,
               direction: NavButtonDirection.right,

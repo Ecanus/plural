@@ -87,8 +87,27 @@ void getUserGardenRecordStub({
 
 }
 
+// Stub for GardensRepository.update()
+void updateGardenStub({
+  required MockGardensRepository mockGardensRepository,
+  required String gardenID,
+  required String gardenName,
+  required (RecordModel?, Map) returnValue,
+}) {
+  when(
+    () => mockGardensRepository.update(
+      id: gardenID,
+      body: {
+        GardenField.name: gardenName
+      }
+    )
+  ).thenAnswer(
+    (_) async => returnValue
+  );
+}
+
 // Stub for UserGardenRecordsRepository.update()
-void updateStub({
+void updateUserGardenRecordStub({
   required MockUserGardenRecordsRepository mockUserGardenRecordsRepository,
   required String userGardenRecordID,
   required String userGardenRoleName,

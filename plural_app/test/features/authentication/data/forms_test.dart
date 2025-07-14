@@ -33,8 +33,8 @@ import '../../../test_stubs.dart';
 import '../../../test_widgets.dart';
 
 void main() {
-  group("Auth submitUpdateSettings", () {
-    ft.testWidgets("valid update garden", (tester) async {
+  group("auth forms submitUpdateSettings", () {
+    ft.testWidgets("valid update garden page", (tester) async {
       final tc = TestContext();
       final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
@@ -98,7 +98,7 @@ void main() {
         (_) async => (tc.getUserSettingsRecordModel(), {})
       );
 
-      // AppDialogRouter.routeToUserSettingsDialogView()
+      // AppDialogViewRouter.routeToUserSettingsDialogView()
       when(
         () => mockAppDialogViewRouter.routeToUserSettingsView()
       ).thenAnswer(
@@ -184,7 +184,7 @@ void main() {
 
     tearDown(() => GetIt.instance.reset());
 
-    ft.testWidgets("valid update landing", (tester) async {
+    ft.testWidgets("valid update landing page", (tester) async {
       final tc = TestContext();
       final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
@@ -253,7 +253,7 @@ void main() {
         (_) async => (tc.getUserSettingsRecordModel(), {})
       );
 
-      // AppDialogRouter.routeToUserSettingsDialogView()
+      // AppDialogViewRouter.routeToUserSettingsDialogView()
       when(
         () => mockAppDialogViewRouter.routeToUserSettingsView()
       ).thenAnswer(
@@ -423,7 +423,7 @@ void main() {
         (_) async => (tc.getUserSettingsRecordModel(), {})
       );
 
-      // AppDialogRouter.routeToUserSettingsDialogView()
+      // AppDialogViewRouter.routeToUserSettingsDialogView()
       when(
         () => mockAppDialogViewRouter.routeToUserSettingsView()
       ).thenAnswer(
@@ -572,7 +572,7 @@ void main() {
         (_) async => (tc.getUserSettingsRecordModel(), {})
       );
 
-      // AppDialogRouter.routeToUserSettingsDialogView()
+      // AppDialogViewRouter.routeToUserSettingsDialogView()
       when(
         () => mockAppDialogViewRouter.routeToUserSettingsView()
       ).thenAnswer(
@@ -662,7 +662,7 @@ void main() {
     tearDown(() => GetIt.instance.reset());
   });
 
-  group("Auth submitUpdateUserGardenRecord", () {
+  group("auth forms submitUpdateUserGardenRecord", () {
     ft.testWidgets("valid", (tester) async {
       final testList = [1, 2, 3];
       void testFunc() => testList.clear();
@@ -705,7 +705,7 @@ void main() {
       );
       final recordModel = tc.getUserGardenRecordRecordModel(
         role: AppUserGardenRole.member);
-      updateStub(
+      updateUserGardenRecordStub(
         mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
         userGardenRecordID: tc.userGardenRecord.id,
         userGardenRoleName: appForm.getValue(fieldName: UserGardenRecordField.role),
@@ -796,7 +796,7 @@ void main() {
         gardenID: tc.garden.id,
         returnValue: items
       );
-      updateStub(
+      updateUserGardenRecordStub(
         mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
         userGardenRecordID: tc.userGardenRecord.id,
         userGardenRoleName: appForm.getValue(fieldName: UserGardenRecordField.role),

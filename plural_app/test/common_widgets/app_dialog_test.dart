@@ -11,10 +11,10 @@ import 'package:plural_app/src/utils/app_dialog_view_router.dart';
 void main() {
   group("AppDialog test", () {
     testWidgets("view", (tester) async {
-      final appDialogRouter = AppDialogViewRouter();
+      final appDialogViewRouter = AppDialogViewRouter();
 
       final getIt = GetIt.instance;
-      getIt.registerLazySingleton<AppDialogViewRouter>(() => appDialogRouter);
+      getIt.registerLazySingleton<AppDialogViewRouter>(() => appDialogViewRouter);
 
       await tester.pumpWidget(
         MaterialApp(
@@ -27,7 +27,7 @@ void main() {
 
       // Check AppDialog view value is rendered
       expect(find.text("AppDialog view value"), findsOneWidget);
-      expect(appDialogRouter.viewNotifier.value, isA<Text>());
+      expect(appDialogViewRouter.viewNotifier.value, isA<Text>());
     });
 
     tearDown(() => GetIt.instance.reset());

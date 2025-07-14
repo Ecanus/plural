@@ -61,7 +61,7 @@ class UserSettingsView extends StatefulWidget {
 }
 
 class _UserSettingsViewState extends State<UserSettingsView> {
-  late AppDialogViewRouter _appDialogRouter;
+  late AppDialogViewRouter _appDialogViewRouter;
   late AppForm _userAppForm;
   late AppForm _userSettingsAppForm;
   late GlobalKey<FormState> _formKey;
@@ -74,7 +74,7 @@ class _UserSettingsViewState extends State<UserSettingsView> {
     _userSettingsAppForm = AppForm.fromMap(widget.userSettings.toMap());
 
     _formKey = GlobalKey<FormState>();
-    _appDialogRouter = GetIt.instance<AppDialogViewRouter>();
+    _appDialogViewRouter = GetIt.instance<AppDialogViewRouter>();
   }
 
   @override
@@ -142,11 +142,11 @@ class _UserSettingsViewState extends State<UserSettingsView> {
         ),
         AppDialogNavFooter(
           leftDialogIcon: Icons.add,
-          leftNavCallback: _appDialogRouter.routeToCreateAskView,
-          leftTooltipMessage: AppDialogFooterText.navToAsksDialog,
+          leftNavCallback: _appDialogViewRouter.routeToCreateAskView,
+          leftTooltipMessage: AppDialogFooterText.navToAsksView,
           rightDialogIcon: Icons.local_florist,
-          rightNavCallback: _appDialogRouter.routeToCurrentGardenSettingsView,
-          rightTooltipMessage: AppDialogFooterText.navToGardenDialog,
+          rightNavCallback: _appDialogViewRouter.routeToCurrentGardenSettingsView,
+          rightTooltipMessage: AppDialogFooterText.navToCurrentGardenSettingsView,
           title: AppDialogFooterText.settings
         )
       ],
