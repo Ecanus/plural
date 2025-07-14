@@ -43,7 +43,7 @@ class AdminListedUsersView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appDialogRouter = GetIt.instance<AppDialogViewRouter>();
+    final appDialogViewRouter = GetIt.instance<AppDialogViewRouter>();
 
     final sumUsers = userGardenRecordsMap.keys.fold<int>(
       0,
@@ -79,11 +79,11 @@ class AdminListedUsersView extends StatelessWidget {
           ),
         ),
         AppDialogNavFooter(
-          leftDialogIcon: Icons.local_florist,
-          leftNavCallback: appDialogRouter.routeToCurrentGardenSettingsView,
+          leftDialogIcon: Icons.question_mark,
+          leftNavCallback: () {},
           leftTooltipMessage: AppDialogFooterText.navToGardenDialog,
-          rightDialogIcon: Icons.settings,
-          rightNavCallback: appDialogRouter.routeToUserSettingsView,
+          rightDialogIcon: Icons.local_florist,
+          rightNavCallback: appDialogViewRouter.routeToAdminCurrentGardenSettingsView,
           rightTooltipMessage: AppDialogFooterText.navToSettingsDialog,
           title: AppDialogFooterText.adminListedUsers
         )

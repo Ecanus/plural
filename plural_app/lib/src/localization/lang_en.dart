@@ -1,3 +1,9 @@
+class AdminCurrentGardenSettingsViewText {
+  static const goToGardenPageLabel = "Return to Garden";
+
+  static const name = "Garden Name";
+}
+
 class AdminListedUsersViewText {
   static const adminHeading = "Administrators";
 
@@ -36,9 +42,11 @@ class AppDialogFooterText {
 
   static const listedAsks = "My Asks";
 
+  static const navToAdminCurrentGardenSettings = "Garden Settings";
   static const navToAdminListedUsers = "Users";
+  static const navToAdminSettings = "Admin";
   static const navToAsksDialog = "Asks";
-  static const navToGardenDialog = "Gardens";
+  static const navToGardenDialog = "Garden";
   static const navToSettingsDialog = "Settings";
 
   static const settings = "Settings";

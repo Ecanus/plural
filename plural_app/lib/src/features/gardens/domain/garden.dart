@@ -20,7 +20,7 @@ class Garden {
     id = json[GenericField.id] as String,
     name = json[GardenField.name] as String;
 
-  Map toMap() {
+  Map<String, dynamic> toMap() {
     return {
       GardenField.creator: creator.id,
       GenericField.id: id,

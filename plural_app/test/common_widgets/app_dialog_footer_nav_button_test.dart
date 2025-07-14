@@ -44,6 +44,41 @@ void main() {
       expect(testList.isEmpty, true);
     });
 
+    testWidgets("actionCallback", (tester) async {
+      final testList = ["stringA", "stringB"];
+
+      void testActionFunc(BuildContext context) {
+        testList.add("stringC");
+      }
+
+      // Check testList is empty
+      expect(testList.isNotEmpty, true);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Row(
+              children: [
+                AppDialogFooterNavButton(
+                  actionCallback: testActionFunc,
+                  dialogIcon: Icons.local_florist,
+                  direction: NavButtonDirection.left,
+                  isMouseHovered: true,
+                  tooltipMessage: "message",
+                ),
+              ],
+            ),
+          ),
+        ));
+
+      // Press button (to call the callback)
+      await tester.tap(find.byType(GestureDetector));
+      await tester.pumpAndSettle();
+
+      // Check testList has "stringC" added
+      expect(testList.last, "stringC");
+    });
+
     testWidgets("NavButtonDirection", (tester) async {
       await tester.pumpWidget(
         MaterialApp(

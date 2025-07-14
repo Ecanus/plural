@@ -9,7 +9,7 @@ import 'package:plural_app/src/common_widgets/app_dialog_footer_nav_button.dart'
 import '../tester_functions.dart';
 
 void main() {
-  group("AppDialogFooterBuffer test", () {
+  group("AppDialogFooterBuffer", () {
     testWidgets("buttons", (tester) async {
       await tester.pumpWidget(
         MaterialApp(
@@ -44,7 +44,7 @@ void main() {
     });
   });
 
-  group("AppDialogNavFooter test", () {
+  group("AppDialogNavFooter", () {
     testWidgets("initial values", (tester) async {
       void leftFunc() => {};
       void rightFunc() => {};
@@ -79,9 +79,52 @@ void main() {
       // Check title is rendered
       expect(find.text("Le Titre"), findsOneWidget);
     });
+
+    testWidgets("navActionCallback asserts", (tester) async {
+      void leftFunc() => {};
+      void leftAction(BuildContext context) => {};
+      void rightFunc() => {};
+      void rightAction(BuildContext context) => {};
+
+      // AssertionError if both leftNavActionCallback and leftNavCallback
+      expect(() async => await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: AppDialogNavFooter(
+              leftDialogIcon: Icons.back_hand,
+              leftNavActionCallback: leftAction,
+              leftNavCallback: leftFunc,
+              leftTooltipMessage: "Benkum",
+              rightDialogIcon: Icons.front_hand,
+              rightNavActionCallback: rightAction,
+              rightTooltipMessage: "Nifa",
+              title: "Le Titre",
+            ),
+          ),
+        )
+      ), throwsA(predicate((e) => e is AssertionError)));
+
+      // AssertionError if both rightNavActionCallback and rightNavCallback
+      expect(() async => await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: AppDialogNavFooter(
+              leftDialogIcon: Icons.back_hand,
+              leftNavActionCallback: leftAction,
+              leftTooltipMessage: "Benkum",
+              rightDialogIcon: Icons.front_hand,
+              rightNavCallback: rightFunc,
+              rightNavActionCallback: rightAction,
+              rightTooltipMessage: "Nifa",
+              title: "Le Titre",
+            ),
+          ),
+        )
+      ), throwsA(predicate((e) => e is AssertionError)));
+    });
   });
 
-  group("AppDialogFooter test", () {
+  group("AppDialogFooter", () {
     testWidgets("initial values", (tester) async {
       await tester.pumpWidget(
         MaterialApp(

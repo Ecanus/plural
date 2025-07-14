@@ -22,6 +22,7 @@ import 'package:plural_app/src/features/authentication/presentation/admin_listed
 import 'package:plural_app/src/features/authentication/presentation/user_settings_view.dart';
 
 // Gardens
+import 'package:plural_app/src/features/gardens/presentation/admin_current_garden_settings_view.dart';
 import 'package:plural_app/src/features/gardens/presentation/current_garden_settings_view.dart';
 
 // Utils
@@ -204,51 +205,20 @@ void main() {
 
     tearDown(() => GetIt.instance.reset());
 
+    test("routeToAdminCurrentGardenSettingsView", () async {
+      final appDialogRouter = AppDialogViewRouter();
+
+      expect(appDialogRouter.viewNotifier.value, isA<SizedBox>());
+      appDialogRouter.routeToAdminCurrentGardenSettingsView();
+      expect(appDialogRouter.viewNotifier.value, isA<AdminCurrentGardenSettingsView>());
+    });
+
     test("routeToCurrentGardenSettingsView", () async {
-      final tc = TestContext();
-
-      final appState = AppState.skipSubscribe()
-                        ..currentGarden = tc.garden // for excludesCurrentGarden
-                        ..currentUser = tc.user;
-
-      final getIt = GetIt.instance;
-      final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
-      final mockUsersRepository = MockUsersRepository();
-
-      getIt.registerLazySingleton<AppState>(() => appState);
-      getIt.registerLazySingleton<UserGardenRecordsRepository>(
-        () => mockUserGardenRecordsRepository);
-      getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
-
-      // UserGardenRecordsRepository.getList()
-      when(
-        () => mockUserGardenRecordsRepository.getList(
-          expand: any(named: "expand"),
-          filter: any(named: "filter"),
-          sort: any(named: "sort")
-        )
-      ).thenAnswer(
-        (_) async => ResultList<RecordModel>(items: [
-          tc.getExpandUserGardenRecordRecordModel([UserGardenRecordField.garden])
-        ])
-      );
-
-      // UsersRepository.getFirstListItem()
-      when(
-        () => mockUsersRepository.getFirstListItem(
-          filter: any(named: "filter")
-        )
-      ).thenAnswer(
-        (_) async => tc.getUserRecordModel()
-      );
-
       final appDialogRouter = AppDialogViewRouter();
 
       expect(appDialogRouter.viewNotifier.value, isA<SizedBox>());
       appDialogRouter.routeToCurrentGardenSettingsView();
       expect(appDialogRouter.viewNotifier.value, isA<CurrentGardenSettingsView>());
     });
-
-    tearDown(() => GetIt.instance.reset());
   });
 }
