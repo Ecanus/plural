@@ -8,6 +8,7 @@ import 'package:pocketbase/pocketbase.dart';
 import 'package:test/test.dart';
 
 // Constants
+import 'package:plural_app/src/constants/fields.dart';
 import 'package:plural_app/src/constants/query_parameters.dart';
 import 'package:plural_app/src/constants/routes.dart';
 
@@ -17,6 +18,7 @@ import 'package:plural_app/src/features/asks/data/asks_repository.dart';
 // Auth
 import 'package:plural_app/src/features/authentication/data/user_garden_records_repository.dart';
 import 'package:plural_app/src/features/authentication/data/users_repository.dart';
+import 'package:plural_app/src/features/authentication/presentation/unauthorized_page.dart';
 
 // Gardens
 import 'package:plural_app/src/features/gardens/data/gardens_api.dart';
@@ -25,10 +27,12 @@ import 'package:plural_app/src/features/gardens/domain/garden.dart';
 
 // Utils
 import 'package:plural_app/src/utils/app_state.dart';
+import 'package:plural_app/src/utils/exceptions.dart';
 
 // Tests
 import '../../../test_context.dart';
 import '../../../test_mocks.dart';
+import '../../../test_stubs.dart';
 import '../../../test_widgets.dart';
 
 void main() {
@@ -225,6 +229,166 @@ void main() {
 
       verify(() => mockGardensRepository.unsubscribe()).called(1);
       verify(() => mockGardensRepository.subscribe(tc.garden.id)).called(1);
+    });
+
+    tearDown(() => GetIt.instance.reset());
+
+    ft.testWidgets("updateGardenName", (tester) async {
+      final tc = TestContext();
+
+      final Map<String, String> map = {
+        GenericField.id: "testGardenID",
+        GardenField.name: "newGardenName",
+      };
+
+      final getIt = GetIt.instance;
+      final mockAppState = MockAppState();
+      final mockGardensRepository = MockGardensRepository();
+
+      getIt.registerLazySingleton<AppState>(() => mockAppState);
+      getIt.registerLazySingleton<GardensRepository>(() => mockGardensRepository);
+
+      // AppState.verify()
+      when(
+        () => mockAppState.verify(any())
+      ).thenAnswer(
+        (_) async => {}
+      );
+
+      // GardensRepository.update()
+      updateGardenStub(
+        mockGardensRepository: mockGardensRepository,
+        gardenID: map[GenericField.id]!,
+        gardenName: map[GardenField.name]!,
+        returnValue: (tc.getGardenRecordModel(), {})
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (BuildContext context) {
+                return ElevatedButton(
+                  onPressed: () => updateGardenName(context, map),
+                  child: Text("The ElevatedButton")
+                );
+              }
+            )
+          )
+        )
+      );
+
+      // Check verify() and update() not yet called
+      verifyNever(() => mockAppState.verify(any()));
+      verifyNever(() => mockGardensRepository.update(
+        id: map[GenericField.id]!,
+        body: {
+          GardenField.name: map[GardenField.name]
+        }
+      ));
+
+      // Tap button (to call expelUserFromGarden)
+      await tester.tap(ft.find.byType(ElevatedButton));
+      await tester.pumpAndSettle();
+
+      // Check both verify() and update() are called
+      verify(() => mockAppState.verify(any())).called(1);
+      verify(() => mockGardensRepository.update(
+        id: map[GenericField.id]!,
+        body: {
+          GardenField.name: map[GardenField.name]
+        }
+      )).called(1);
+
+    });
+
+    tearDown(() => GetIt.instance.reset());
+
+    ft.testWidgets("updateGardenName bad permissions", (tester) async {
+      final tc = TestContext();
+
+      final Map<String, String> map = {
+        GenericField.id: "testGardenID",
+        GardenField.name: "newGardenName",
+      };
+
+      final getIt = GetIt.instance;
+      final mockAppState = MockAppState();
+      final mockGardensRepository = MockGardensRepository();
+
+      getIt.registerLazySingleton<AppState>(() => mockAppState);
+      getIt.registerLazySingleton<GardensRepository>(() => mockGardensRepository);
+
+      // AppState.verify()
+      when(
+        () => mockAppState.verify(any())
+      ).thenThrow(
+        PermissionException()
+      );
+
+      // GardensRepository.update()
+      updateGardenStub(
+        mockGardensRepository: mockGardensRepository,
+        gardenID: map[GenericField.id]!,
+        gardenName: map[GardenField.name]!,
+        returnValue: (tc.getGardenRecordModel(), {})
+      );
+
+      final testRouter = GoRouter(
+        initialLocation: "/test",
+        routes: [
+          GoRoute(
+            path: "/test",
+            builder: (_, __) => Scaffold(
+              body: Builder(
+                builder: (BuildContext context) {
+                  return ElevatedButton(
+                    onPressed: () => updateGardenName(context, map),
+                    child: Text("The ElevatedButton")
+                  );
+                }
+              )
+            )
+          ),
+          GoRoute(
+            path: Routes.unauthorized,
+            builder: (_, state) => UnauthorizedPage(
+            previousRoute: state.uri.queryParameters[QueryParameters.previousRoute],
+          )
+          )
+        ]
+      );
+
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routerConfig: testRouter,
+        )
+      );
+
+      // Check verify() and update() not yet called; no UnauthorizedPage() widget
+      verifyNever(() => mockAppState.verify(any()));
+      verifyNever(() => mockGardensRepository.update(
+        id: map[GenericField.id]!,
+        body: {
+          GardenField.name: map[GardenField.name]
+        }
+      ));
+      expect(ft.find.byType(UnauthorizedPage), ft.findsNothing);
+
+      // Tap button (to call expelUserFromGarden)
+      await tester.tap(ft.find.byType(ElevatedButton));
+      await tester.pumpAndSettle();
+
+      // Check only verify() is called. UnauthorizedPage() widget is found
+      verify(() => mockAppState.verify(any())).called(1);
+      verifyNever(() => mockGardensRepository.update(
+        id: map[GenericField.id]!,
+        body: {
+          GardenField.name: map[GardenField.name]
+        }
+      ));
+      expect(ft.find.byType(UnauthorizedPage), ft.findsOneWidget);
+
     });
 
     tearDown(() => GetIt.instance.reset());

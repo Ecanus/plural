@@ -1433,7 +1433,7 @@ void main() {
 
       final recordModel = tc.getUserGardenRecordRecordModel(
         role: AppUserGardenRole.administrator);
-      updateStub(
+      updateUserGardenRecordStub(
         mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
         userGardenRecordID: map[GenericField.id],
         userGardenRoleName: map[UserGardenRecordField.role],
@@ -1535,7 +1535,7 @@ void main() {
       // otherUser -> update()
       final otherUserRecordModel = tc.getUserGardenRecordRecordModel(
         role: AppUserGardenRole.administrator);
-      updateStub(
+      updateUserGardenRecordStub(
         mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
         userGardenRecordID: map[GenericField.id],
         userGardenRoleName: map[UserGardenRecordField.role],
@@ -1563,7 +1563,7 @@ void main() {
       // currentUser -> update()
       final currentUserRecordModel = tc.getUserGardenRecordRecordModel(
         role: AppUserGardenRole.administrator);
-      updateStub(
+      updateUserGardenRecordStub(
         mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
         userGardenRecordID: "testRecordID",
         userGardenRoleName: AppUserGardenRole.administrator.name,
