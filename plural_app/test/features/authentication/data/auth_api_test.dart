@@ -509,55 +509,45 @@ void main() {
       );
       getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
 
-      // UserGardenRecordsRepository.getList(), getUserGardenRecordRole()
-      when(
-        () => mockUserGardenRecordsRepository.getList(
-          filter: ""
-          "${UserGardenRecordField.user} = '${tc.user.id}' && "
-          "${UserGardenRecordField.garden} = '${tc.garden.id}'",
-          sort: "-updated"
-        )
-      ).thenAnswer(
-        (_) async => ResultList<RecordModel>(
-          items: [
-            tc.getUserGardenRecordRecordModel(role: AppUserGardenRole.administrator),
-          ]
-        )
+      // getUserGardenRecordRole()
+      final items = ResultList<RecordModel>(items: [
+        tc.getUserGardenRecordRecordModel(role: AppUserGardenRole.administrator)
+      ]);
+      getUserGardenRecordRoleStub(
+        mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
+        userID: tc.user.id,
+        gardenID: tc.garden.id,
+        returnValue: items
       );
 
-      // UserGardenRecordsRepository.getList(), getCurrentGardenUserGardenRecords()
-      when(
-        () => mockUserGardenRecordsRepository.getList(
-          expand: "${UserGardenRecordField.user}, ${UserGardenRecordField.garden}",
-          filter: "${UserGardenRecordField.garden} = '${tc.garden.id}'",
-          sort: "${UserGardenRecordField.user}.${UserField.username}"
-        )
-      ).thenAnswer(
-        (_) async => ResultList<RecordModel>(
-          items: [
-            tc.getExpandUserGardenRecordRecordModel([
-              UserGardenRecordField.user, UserGardenRecordField.garden
-            ], role: AppUserGardenRole.owner),
-            tc.getExpandUserGardenRecordRecordModel([
-              UserGardenRecordField.user, UserGardenRecordField.garden
-            ], role: AppUserGardenRole.administrator),
-            tc.getExpandUserGardenRecordRecordModel([
-              UserGardenRecordField.user, UserGardenRecordField.garden
-            ]),
-            tc.getExpandUserGardenRecordRecordModel([
-              UserGardenRecordField.user, UserGardenRecordField.garden
-            ]),
-          ]
-        )
+      // getCurrentGardenUserGardenRecords()
+      final currentGardenUserGardenRecordsItems = ResultList<RecordModel>(
+        items: [
+          tc.getExpandUserGardenRecordRecordModel([
+            UserGardenRecordField.user, UserGardenRecordField.garden
+          ], role: AppUserGardenRole.owner),
+          tc.getExpandUserGardenRecordRecordModel([
+            UserGardenRecordField.user, UserGardenRecordField.garden
+          ], role: AppUserGardenRole.administrator),
+          tc.getExpandUserGardenRecordRecordModel([
+            UserGardenRecordField.user, UserGardenRecordField.garden
+          ]),
+          tc.getExpandUserGardenRecordRecordModel([
+            UserGardenRecordField.user, UserGardenRecordField.garden
+          ]),
+        ]
+      );
+      getCurrentGardenUserGardenRecordsStub(
+        mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
+        gardenID: tc.garden.id,
+        returnValue: currentGardenUserGardenRecordsItems
       );
 
       // UsersRepository.getFirstListItem()
-      when(
-        () => mockUsersRepository.getFirstListItem(
-          filter: "${GenericField.id} = '${tc.user.id}'",
-        )
-      ).thenAnswer(
-        (_) async => tc.getUserRecordModel()
+      getFirstListItemStub(
+        mockUsersRepository: mockUsersRepository,
+        userID: tc.user.id,
+        returnValue: tc.getUserRecordModel()
       );
 
       final userGardenRecordsMap = await getCurrentGardenUserGardenRecords(

@@ -13,6 +13,7 @@ import 'package:plural_app/src/features/authentication/presentation/user_setting
 
 // Garden
 import 'package:plural_app/src/features/gardens/presentation/admin_current_garden_settings_view.dart';
+import 'package:plural_app/src/features/gardens/presentation/admin_options_view.dart';
 import 'package:plural_app/src/features/gardens/presentation/current_garden_settings_view.dart';
 
 // Localization
@@ -28,10 +29,9 @@ ButtonLayout _getButtonLayout(BuildContext context, { isAdminPage = false }) {
   if (isAdminPage) {
     final iconColor = Theme.of(context).colorScheme.surfaceDim;
 
-    // TODO: test
     return (
       leftButton: CreateAdminCurrentGardenSettingsDialogButton(iconColor: iconColor),
-      middleButton: CreateAdminSettingsDialogButton(),
+      middleButton: CreateAdminOptionsDialogButton(),
       rightButton: CreateAdminListedUsersDialogButton(iconColor: iconColor)
     );
   } else {
@@ -105,7 +105,7 @@ class CreateUserSettingsDialogButton extends StatelessWidget {
         color: iconColor,
         icon: const Icon(Icons.settings),
         iconSize: AppButtonSizes.s25,
-        tooltip: GardenPageFooterText.settingsTooltip,
+        tooltip: GardenPageBottomBarText.settingsTooltip,
         onPressed: () => createUserSettingsDialog(context),
       ),
     );
@@ -122,7 +122,7 @@ class CreateCreateAskDialogButton extends StatelessWidget {
         color: Theme.of(context).colorScheme.onPrimaryContainer,
         icon: const Icon(Icons.add),
         iconSize: AppIconSizes.s30,
-        tooltip: GardenPageFooterText.asksTooltip,
+        tooltip: GardenPageBottomBarText.asksTooltip,
         onPressed: () => createCreateAskDialog(context),
       ),
     );
@@ -144,7 +144,7 @@ class CreateCurrentGardenDialogButton extends StatelessWidget {
         color: iconColor,
         icon: const Icon(Icons.local_florist),
         iconSize: AppButtonSizes.s25,
-        tooltip: GardenPageFooterText.gardensTooltip,
+        tooltip: GardenPageBottomBarText.gardensTooltip,
         onPressed: () => createCurrentGardenSettingsDialog(context),
       ),
     );
@@ -166,14 +166,14 @@ class CreateAdminCurrentGardenSettingsDialogButton extends StatelessWidget {
         color: iconColor,
         icon: const Icon(Icons.local_florist),
         iconSize: AppButtonSizes.s25,
-        tooltip: GardenPageFooterText.usersTooltip,
+        tooltip: AdminPageBottomBarText.currentGardenSettingsTooltip,
         onPressed: () => createAdminCurrentGardenSettingsDialog(context),
       ),
     );
   }
 }
 
-class CreateAdminSettingsDialogButton extends StatelessWidget {
+class CreateAdminOptionsDialogButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CircleAvatar(
@@ -183,8 +183,8 @@ class CreateAdminSettingsDialogButton extends StatelessWidget {
         color: Theme.of(context).colorScheme.surfaceDim,
         icon: const Icon(Icons.security),
         iconSize: AppIconSizes.s30,
-        tooltip: GardenPageFooterText.asksTooltip,
-        onPressed: () => (),
+        tooltip: AdminPageBottomBarText.optionsTooltip,
+        onPressed: () => createAdminOptionsDialog(context),
       ),
     );
   }
@@ -205,7 +205,7 @@ class CreateAdminListedUsersDialogButton extends StatelessWidget {
         color: iconColor,
         icon: const Icon(Icons.people_alt),
         iconSize: AppButtonSizes.s25,
-        tooltip: GardenPageFooterText.usersTooltip,
+        tooltip: AdminPageBottomBarText.usersTooltip,
         onPressed: () => createAdminListedUsersDialog(context),
       ),
     );

@@ -23,6 +23,7 @@ import 'package:plural_app/src/features/authentication/presentation/user_setting
 
 // Gardens
 import 'package:plural_app/src/features/gardens/presentation/admin_current_garden_settings_view.dart';
+import 'package:plural_app/src/features/gardens/presentation/admin_options_view.dart';
 import 'package:plural_app/src/features/gardens/presentation/current_garden_settings_view.dart';
 
 // Utils
@@ -211,6 +212,14 @@ void main() {
       expect(appDialogViewRouter.viewNotifier.value, isA<SizedBox>());
       appDialogViewRouter.routeToAdminCurrentGardenSettingsView();
       expect(appDialogViewRouter.viewNotifier.value, isA<AdminCurrentGardenSettingsView>());
+    });
+
+    test("routeToAdminOptionsView", () async {
+      final appDialogViewRouter = AppDialogViewRouter();
+
+      expect(appDialogViewRouter.viewNotifier.value, isA<SizedBox>());
+      appDialogViewRouter.routeToAdminOptionsView();
+      expect(appDialogViewRouter.viewNotifier.value, isA<AdminOptionsView>());
     });
 
     test("routeToCurrentGardenSettingsView", () async {

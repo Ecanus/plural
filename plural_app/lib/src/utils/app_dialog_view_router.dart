@@ -22,6 +22,7 @@ import 'package:plural_app/src/features/authentication/presentation/user_setting
 
 // Gardens
 import 'package:plural_app/src/features/gardens/presentation/admin_current_garden_settings_view.dart';
+import 'package:plural_app/src/features/gardens/presentation/admin_options_view.dart';
 import 'package:plural_app/src/features/gardens/presentation/current_garden_settings_view.dart';
 
 // Utils
@@ -82,6 +83,10 @@ class AppDialogViewRouter {
   /// Gardens
   void routeToAdminCurrentGardenSettingsView() {
     viewNotifier.value = AdminCurrentGardenSettingsView();
+  }
+
+  void routeToAdminOptionsView() {
+    viewNotifier.value = AdminOptionsView();
   }
 
   void routeToCurrentGardenSettingsView() {
