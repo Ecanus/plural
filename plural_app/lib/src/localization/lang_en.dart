@@ -26,26 +26,34 @@ class AdminListedUsersViewText {
   static const userGardenRole = "Role";
 }
 
+class AdminPageBottomBarText {
+  static const currentGardenSettingsTooltip = "Garden Settings";
+  static const optionsTooltip = "Options";
+  static const usersTooltip = "Users";
+}
+
 class AppText {
   static const pluralApp = "Plural App";
 }
 
 class AppDialogFooterText {
   static const adminEditUser = "Edit User";
+  static const adminGardenSettings = "Garden Settings";
   static const adminListedUsers = "Users";
+  static const adminOptionsView = "Options";
 
   static const createAsk = "Create Ask";
 
   static const editAsk = "Edit Ask";
 
   static const garden = "Garden";
-  static const gardenSettings = "Garden Settings";
 
   static const listedAsks = "My Asks";
 
   static const navToAdminCurrentGardenSettings = "Garden Settings";
   static const navToAdminListedUsers = "Users";
   static const navToAdminSettings = "Admin";
+  static const navToAdminOptions = "Options";
   static const navToAsksView = "Asks";
   static const navToCurrentGardenSettingsView = "Garden";
   static const navToSettingsView = "Settings";
@@ -140,7 +148,7 @@ class GardenSettingsViewText {
   static const goToAdminPageLabel = "Go to Administrator page";
 }
 
-class GardenPageFooterText {
+class GardenPageBottomBarText {
   static const asksTooltip = "Asks";
 
   static const gardensTooltip = "Gardens";

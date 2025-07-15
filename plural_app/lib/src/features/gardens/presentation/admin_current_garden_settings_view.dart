@@ -26,16 +26,12 @@ import 'package:plural_app/src/utils/app_form.dart';
 import 'package:plural_app/src/utils/app_state.dart';
 
 Future createAdminCurrentGardenSettingsDialog(BuildContext context) async {
-  if (context.mounted) {
-    return showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AppDialog(
-          view: AdminCurrentGardenSettingsView()
-        );
-      }
-    );
-  }
+  return showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AppDialog(view: AdminCurrentGardenSettingsView());
+    }
+  );
 }
 
 class AdminCurrentGardenSettingsView extends StatefulWidget {
@@ -116,10 +112,10 @@ class _AdminCurrentGardenSettingsViewState extends State<AdminCurrentGardenSetti
           leftDialogIcon: Icons.people_alt,
           leftNavActionCallback: _appDialogViewRouter.routeToAdminListedUsersView,
           leftTooltipMessage: AppDialogFooterText.navToAdminListedUsers,
-          rightDialogIcon: Icons.question_mark,
-          rightNavCallback: () {},
-          rightTooltipMessage: AppDialogFooterText.navToAsksView,
-          title: AppDialogFooterText.gardenSettings
+          rightDialogIcon: Icons.security,
+          rightNavCallback: _appDialogViewRouter.routeToAdminOptionsView,
+          rightTooltipMessage: AppDialogFooterText.navToAdminOptions,
+          title: AppDialogFooterText.adminGardenSettings
         )
       ],
     );
