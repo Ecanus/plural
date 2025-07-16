@@ -96,26 +96,3 @@ Future<void> submitUpdate(
     }
   }
 }
-
-/// Submits form data to delete an existing [Ask] record in the database.
-Future<void> submitDelete(
-  BuildContext context,
-  String askID,
-) async {
-  // Deletion should also rebuild Garden Timeline via SubscribeTo
-  await GetIt.instance<AsksRepository>().delete(id: askID);
-
-  if (context.mounted) {
-    var snackBar = AppSnackBars.getSnackBar(
-      SnackBarText.deleteAskSuccess,
-      showCloseIcon: false,
-      snackbarType: SnackbarType.success
-    );
-
-    // Display Success Snackbar
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-
-    // Close Dialog
-    Navigator.pop(context);
-  }
-}

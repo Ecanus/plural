@@ -30,7 +30,7 @@ class _AdminPageState extends State<AdminPage> {
               gapH60,
               GardenHeader(isAdminPage: true,),
               gapH30,
-              GardenTimeline(),
+              GardenTimeline(isAdminPage: true),
               GardenFooter(isAdminPage: true,),
               gapH35
             ],

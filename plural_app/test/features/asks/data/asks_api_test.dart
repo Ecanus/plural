@@ -1,4 +1,8 @@
+import 'package:flutter_test/flutter_test.dart' as ft;
+
+import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:pocketbase/pocketbase.dart';
@@ -7,6 +11,8 @@ import 'package:test/test.dart';
 // Constants
 import 'package:plural_app/src/constants/fields.dart';
 import 'package:plural_app/src/constants/formats.dart';
+import 'package:plural_app/src/constants/query_parameters.dart';
+import 'package:plural_app/src/constants/routes.dart';
 
 // Asks
 import 'package:plural_app/src/features/asks/data/asks_api.dart';
@@ -15,6 +21,8 @@ import 'package:plural_app/src/features/asks/domain/ask.dart';
 
 // Auth
 import 'package:plural_app/src/features/authentication/data/users_repository.dart';
+import 'package:plural_app/src/features/authentication/domain/app_user_garden_record.dart';
+import 'package:plural_app/src/features/authentication/presentation/unauthorized_page.dart';
 
 // Localization
 import 'package:plural_app/src/localization/lang_en.dart';
@@ -28,7 +36,7 @@ import '../../../test_context.dart';
 import '../../../test_mocks.dart';
 
 void main() {
-  group("Asks api test", () {
+  group("asks_api", () {
     test("addSponsor", () async {
       final tc = TestContext();
 
@@ -93,6 +101,225 @@ void main() {
       // boon < targetSum, no error
       expect(() => checkBoonCeiling(50, 100), returnsNormally);
     });
+
+    ft.testWidgets("deleteAsk isAdminPage", (tester) async {
+      final tc = TestContext();
+
+      // GetIt
+      final getIt = GetIt.instance;
+      final mockAppState = MockAppState();
+      final mockAsksRepository = MockAsksRepository();
+      getIt.registerLazySingleton<AppState>(() => mockAppState);
+      getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
+
+      // AppState.verify()
+      when(
+        () => mockAppState.verify([AppUserGardenPermission.deleteMemberAsks])
+      ).thenAnswer(
+        (_) async => {}
+      );
+
+      // AsksRepository.delete()
+      when(
+        () => mockAsksRepository.delete(id: tc.ask.id)
+      ).thenAnswer(
+        (_) async => (true, {})
+      );
+
+      final testRouter = GoRouter(
+        initialLocation: "/test",
+        routes: [
+          GoRoute(
+            path: "/test",
+            builder: (_, __) => Scaffold(
+              body: Builder(
+                builder: (BuildContext context) {
+                  return ElevatedButton(
+                    onPressed: () => deleteAsk(context, tc.ask.id, isAdminPage: true),
+                    child: Text("The ElevatedButton")
+                  );
+                }
+              )
+            )
+          ),
+          GoRoute(
+            path: Routes.unauthorized,
+            builder: (_, state) => UnauthorizedPage(
+            previousRoute: state.uri.queryParameters[QueryParameters.previousRoute],
+          )
+          )
+        ]
+      );
+
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routerConfig: testRouter,
+        )
+      );
+
+      // Check no method calls yet; no UnauthorizedPage found
+      verifyNever(() => mockAppState.verify([AppUserGardenPermission.deleteMemberAsks]));
+      verifyNever(() => mockAsksRepository.delete(id: tc.ask.id));
+      expect(ft.find.byType(UnauthorizedPage), ft.findsNothing);
+
+      // Tap button (to call deleteAsk)
+      await tester.tap(ft.find.byType(ElevatedButton));
+      await tester.pumpAndSettle();
+
+      // Check methods called; still no UnauthorizedPage found
+      verify(() => mockAppState.verify(
+        [AppUserGardenPermission.deleteMemberAsks])).called(1);
+      verify(() => mockAsksRepository.delete(id: tc.ask.id)).called(1);
+      expect(ft.find.byType(UnauthorizedPage), ft.findsNothing);
+    });
+
+    tearDown(() => GetIt.instance.reset());
+
+    ft.testWidgets("deleteAsk !isAdminPage", (tester) async {
+      final tc = TestContext();
+
+      // GetIt
+      final getIt = GetIt.instance;
+      final mockAppState = MockAppState();
+      final mockAsksRepository = MockAsksRepository();
+      getIt.registerLazySingleton<AppState>(() => mockAppState);
+      getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
+
+      // AppState.verify()
+      when(
+        () => mockAppState.verify([AppUserGardenPermission.createAndEditAsks])
+      ).thenAnswer(
+        (_) async => {}
+      );
+
+      // AsksRepository.delete()
+      when(
+        () => mockAsksRepository.delete(id: tc.ask.id)
+      ).thenAnswer(
+        (_) async => (true, {})
+      );
+
+      final testRouter = GoRouter(
+        initialLocation: "/test",
+        routes: [
+          GoRoute(
+            path: "/test",
+            builder: (_, __) => Scaffold(
+              body: Builder(
+                builder: (BuildContext context) {
+                  return ElevatedButton(
+                    onPressed: () => deleteAsk(context, tc.ask.id, isAdminPage: false),
+                    child: Text("The ElevatedButton")
+                  );
+                }
+              )
+            )
+          ),
+          GoRoute(
+            path: Routes.unauthorized,
+            builder: (_, state) => UnauthorizedPage(
+            previousRoute: state.uri.queryParameters[QueryParameters.previousRoute],
+          )
+          )
+        ]
+      );
+
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routerConfig: testRouter,
+        )
+      );
+
+      // Check no method calls yet; no UnauthorizedPage found
+      verifyNever(() => mockAppState.verify([AppUserGardenPermission.createAndEditAsks]));
+      verifyNever(() => mockAsksRepository.delete(id: tc.ask.id));
+      expect(ft.find.byType(UnauthorizedPage), ft.findsNothing);
+
+      // Tap button (to call deleteAsk)
+      await tester.tap(ft.find.byType(ElevatedButton));
+      await tester.pumpAndSettle();
+
+      // Check methods called; still no UnauthorizedPage found
+      verify(() => mockAppState.verify(
+        [AppUserGardenPermission.createAndEditAsks])).called(1);
+      verify(() => mockAsksRepository.delete(id: tc.ask.id)).called(1);
+      expect(ft.find.byType(UnauthorizedPage), ft.findsNothing);
+    });
+
+    tearDown(() => GetIt.instance.reset());
+
+    ft.testWidgets("deleteAsk PermissionException", (tester) async {
+      final tc = TestContext();
+
+      // GetIt
+      final getIt = GetIt.instance;
+      final mockAppState = MockAppState();
+      final mockAsksRepository = MockAsksRepository();
+      getIt.registerLazySingleton<AppState>(() => mockAppState);
+      getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
+
+      // AppState.verify()
+      when(
+        () => mockAppState.verify([AppUserGardenPermission.deleteMemberAsks])
+      ).thenThrow(
+        PermissionException()
+      );
+
+      // AsksRepository.delete()
+      when(
+        () => mockAsksRepository.delete(id: tc.ask.id)
+      ).thenAnswer(
+        (_) async => (true, {})
+      );
+
+      final testRouter = GoRouter(
+        initialLocation: "/test",
+        routes: [
+          GoRoute(
+            path: "/test",
+            builder: (_, __) => Scaffold(
+              body: Builder(
+                builder: (BuildContext context) {
+                  return ElevatedButton(
+                    onPressed: () => deleteAsk(context, tc.ask.id, isAdminPage: true),
+                    child: Text("The ElevatedButton")
+                  );
+                }
+              )
+            )
+          ),
+          GoRoute(
+            path: Routes.unauthorized,
+            builder: (_, state) => UnauthorizedPage(
+            previousRoute: state.uri.queryParameters[QueryParameters.previousRoute],
+          )
+          )
+        ]
+      );
+
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routerConfig: testRouter,
+        )
+      );
+
+      // Check no method calls yet; no UnauthorizedPage found
+      verifyNever(() => mockAppState.verify([AppUserGardenPermission.deleteMemberAsks]));
+      verifyNever(() => mockAsksRepository.delete(id: tc.ask.id));
+      expect(ft.find.byType(UnauthorizedPage), ft.findsNothing);
+
+      // Tap button (to call deleteAsk)
+      await tester.tap(ft.find.byType(ElevatedButton));
+      await tester.pumpAndSettle();
+
+      // Check methods called; still no UnauthorizedPage found
+      verify(() => mockAppState.verify(
+        [AppUserGardenPermission.deleteMemberAsks])).called(1);
+      verifyNever(() => mockAsksRepository.delete(id: tc.ask.id));
+      expect(ft.find.byType(UnauthorizedPage), ft.findsOneWidget);
+    });
+
+    tearDown(() => GetIt.instance.reset());
 
     test("deleteCurrentUserAsks", () async {
       final tc = TestContext();

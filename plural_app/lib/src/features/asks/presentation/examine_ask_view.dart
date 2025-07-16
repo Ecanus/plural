@@ -1,11 +1,9 @@
  import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 
 // Common Widgets
 import 'package:plural_app/src/common_widgets/app_dialog.dart';
 import 'package:plural_app/src/common_widgets/app_dialog_footer.dart';
 import 'package:plural_app/src/common_widgets/app_hyperlinkable_text.dart';
-import 'package:plural_app/src/common_widgets/app_snackbars.dart';
 import 'package:plural_app/src/common_widgets/app_tooltip_icon.dart';
 
 // Constants
@@ -19,9 +17,6 @@ import 'package:plural_app/src/features/asks/presentation/ask_time_left_text.dar
 
 // Localization
 import 'package:plural_app/src/localization/lang_en.dart';
-
-// Utils
-import 'package:plural_app/src/utils/app_state.dart';
 
 
 Future createExamineAskDialog({
@@ -94,7 +89,7 @@ class ExamineAskView extends StatelessWidget {
             ]
           ),
         ),
-        AppDialogFooter(title: AppDialogFooterText.viewAsk)
+        AppDialogFooter(title: AppDialogFooterText.examineAsk)
       ],
     );
   }
@@ -123,25 +118,8 @@ class _ExamineAskHeaderState extends State<ExamineAskHeader> {
 
   @override
   Widget build(BuildContext context) {
-
-    Future<void> isSponsoredToggle(bool value) async {
-      var currentUserID = GetIt.instance<AppState>().currentUserID!;
-
-      if (value) {
-        await addSponsor(widget.ask.id, currentUserID);
-
-        var snackBar = AppSnackBars.getSnackBar(
-          SnackBarText.askSponsored,
-          showCloseIcon: false,
-          snackbarType: SnackbarType.success
-        );
-
-        if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      } else {
-        await removeSponsor(widget.ask.id, currentUserID);
-      }
-
-      setState(() { _isSponsored = value; });
+    void setIsSponsored(value) {
+      setState(() { _isSponsored = value; } );
     }
 
     WidgetStateProperty<Icon> thumbIcon =
@@ -181,7 +159,8 @@ class _ExamineAskHeaderState extends State<ExamineAskHeader> {
                 thumbColor: thumbColor,
                 thumbIcon: thumbIcon,
                 value: _isSponsored,
-                onChanged: (bool value) => isSponsoredToggle(value),
+                onChanged: (bool value) => isSponsoredToggle(
+                  context, value, widget.ask.id, setIsSponsored),
               ),
               gapW5,
               Tooltip(

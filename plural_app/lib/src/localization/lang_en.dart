@@ -60,7 +60,7 @@ class AppDialogFooterText {
 
   static const settings = "Settings";
 
-  static const viewAsk = "View Ask";
+  static const examineAsk = "View Ask";
 }
 
 class AppDialogFooterBufferText {

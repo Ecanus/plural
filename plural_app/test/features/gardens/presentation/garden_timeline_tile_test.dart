@@ -1,103 +1,59 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:get_it/get_it.dart';
 
 // Constants
 import 'package:plural_app/src/constants/themes.dart';
 
-// Asks
-import 'package:plural_app/src/features/asks/domain/ask.dart';
-
-// Auth
-import 'package:plural_app/src/features/authentication/domain/app_user.dart';
-
 // Gardens
 import 'package:plural_app/src/features/gardens/presentation/garden_timeline_tile.dart';
-
-// Utils
-import 'package:plural_app/src/utils/app_state.dart';
 
 // Tests
 import '../../../test_context.dart';
 import '../../../tester_functions.dart';
 
 void main() {
-  group("GardenTimelineTile test", () {
-    testWidgets("isCreatedByCurrentUser", (tester) async {
+  group("GardenTimelineTile", () {
+    testWidgets("widgets", (tester) async {
       final tc = TestContext();
-      final appState = AppState()
-                        ..currentUser = tc.user;
-
-      final getIt = GetIt.instance;
-      getIt.registerLazySingleton<AppState>(() => appState);
-
-      // When ask.isCreatedByCurrentUser
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: ListView(
-              children: [
-                GardenTimelineTile(ask: tc.ask)
-              ],
-            ),
-          )
-        )
-      );
-
-      // Check EditableGardenTimelineTile rendered; not NonEditableGardenTimelineTile
-      expect(find.byType(EditableGardenTimelineTile), findsOneWidget);
-      expect(find.byType(NonEditableGardenTimelineTile), findsNothing);
-
-      // When !ask.isCreatedByCurrentUser
-      final now = DateTime.now();
-
-      final newUser = AppUser(
-        firstName: "NewFirst",
-        id: "NEWUSER001",
-        lastName: "NewLast",
-        username: "newuser"
-      );
-
-      final newAsk = Ask(
-        id: "NEWASK",
-        boon: 0,
-        creator: newUser,
-        creationDate: now.add(const Duration(days: -10)),
-        currency: "GHS",
-        description: "",
-        deadlineDate: now.add(const Duration(days: 90)),
-        instructions: "",
-        targetSum: 500,
-        type: AskType.monetary
-      );
 
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
             body: ListView(
               children: [
-                GardenTimelineTile(ask: newAsk)
+                GardenTimelineTile(ask: tc.ask, index: 0, isAdminPage: true,)
               ],
             ),
           )
         )
       );
 
-      // Check NonEditableGardenTimelineTile rendered; not EditableGardenTimelineTile
-      expect(find.byType(NonEditableGardenTimelineTile), findsOneWidget);
-      expect(find.byType(EditableGardenTimelineTile), findsNothing);
+      // Check widgets render correctly
+      expect(find.byType(TileExamineAskButton), findsOneWidget);
+      expect(find.byType(TileBackground), findsOneWidget);
+      expect(find.byType(TileForeground), findsOneWidget);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ListView(
+              children: [
+                GardenTimelineTile(ask: tc.ask, index: 1, isAdminPage: false,)
+              ],
+            ),
+          )
+        )
+      );
+
+      // Check widgets render correctly
+      expect(find.byType(TileExamineAskButton), findsOneWidget);
+      expect(find.byType(TileBackground), findsOneWidget);
+      expect(find.byType(TileForeground), findsOneWidget);
     });
-
-    tearDown(() => GetIt.instance.reset());
 
     testWidgets("TileContents", (tester) async {
       final tc = TestContext();
       final ask = tc.ask;
-      final appState = AppState()
-                        ..currentUser = tc.user;
-
-      final getIt = GetIt.instance;
-      getIt.registerLazySingleton<AppState>(() => appState);
 
       await tester.pumpWidget(
         MaterialApp(
@@ -140,37 +96,5 @@ void main() {
       expect(find.text(ask.truncatedDescription), findsOneWidget);
       expect(text.style!.color, Colors.transparent);
     });
-
-    tearDown(() => GetIt.instance.reset());
-
-    testWidgets("TileIsSponsoredIcon", (tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: AppThemes.standard,
-          home: Scaffold(
-            body: TileIsSponsoredIcon(hasHiddenContent: false,),
-          )
-        )
-      );
-
-      // Check icon color is onSecondary when hideContent == false
-      var icon = get<Icon>(tester);
-      expect(icon.color, AppThemes.colorScheme.onSecondary);
-
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: AppThemes.standard,
-          home: Scaffold(
-            body: TileIsSponsoredIcon(hasHiddenContent: true,),
-          )
-        )
-      );
-
-      // Check icon color is transparent when hideContent == true
-      icon = get<Icon>(tester);
-      expect(icon.color, Colors.transparent);
-    });
-
-    tearDown(() => GetIt.instance.reset());
   });
 }

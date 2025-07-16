@@ -66,12 +66,12 @@ class AppDialogNavFooter extends StatefulWidget {
   );
 
   final IconData leftDialogIcon;
-  final void Function(BuildContext context)? leftNavActionCallback;
+  final void Function(BuildContext)? leftNavActionCallback;
   final void Function()? leftNavCallback;
   final String leftTooltipMessage;
 
   final IconData rightDialogIcon;
-  final void Function(BuildContext context)? rightNavActionCallback;
+  final void Function(BuildContext)? rightNavActionCallback;
   final void Function()? rightNavCallback;
   final String rightTooltipMessage;
 

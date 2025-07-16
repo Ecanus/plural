@@ -251,7 +251,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Tap on TileViewAskButton
-      await tester.tap(find.byType(TileViewAskButton));
+      await tester.tap(find.byType(TileExamineAskButton));
       await tester.pumpAndSettle();
 
       // Close Dialog
