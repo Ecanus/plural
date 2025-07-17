@@ -9,7 +9,6 @@ import 'package:plural_app/src/constants/app_values.dart';
 import 'package:plural_app/src/features/asks/domain/ask.dart';
 import 'package:plural_app/src/features/asks/presentation/admin_examine_ask_view.dart';
 import 'package:plural_app/src/features/asks/presentation/ask_time_left_text.dart';
-import 'package:plural_app/src/features/asks/presentation/edit_ask_view.dart';
 import 'package:plural_app/src/features/asks/presentation/examine_ask_view.dart';
 
 class GardenTimelineTile extends StatelessWidget {
@@ -188,33 +187,6 @@ class TileExamineAskButton extends StatelessWidget {
             createAdminExamineAskDialog(context: context, ask: ask)
             : createExamineAskDialog(context: context, ask: ask),
           padding: EdgeInsets.zero
-        ),
-      ),
-    );
-  }
-}
-
-class TileEditAskButton extends StatelessWidget {
-  const TileEditAskButton({
-    required this.ask,
-  });
-
-  final Ask ask;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: AppIconSizes.s35,
-      height: AppIconSizes.s35,
-      child: CircleAvatar(
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        child: IconButton(
-          color: Theme.of(context).colorScheme.onPrimary,
-          icon: const Icon(Icons.mode_edit_outlined),
-          hoverColor: Theme.of(context).colorScheme.onPrimary
-            .withValues(alpha: AppOpacities.point3),
-          onPressed: () => createEditAskDialog(context: context, ask: ask),
-          padding: EdgeInsets.zero,
         ),
       ),
     );

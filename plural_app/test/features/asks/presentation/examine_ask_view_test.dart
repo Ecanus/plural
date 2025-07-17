@@ -25,7 +25,7 @@ import '../../../test_context.dart';
 import '../../../test_mocks.dart';
 
 void main() {
-  group("AskDialogView test", () {
+  group("ExamineAskView", () {
     testWidgets("widgets", (tester) async {
       // TestGesture
       final gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
@@ -35,9 +35,8 @@ void main() {
 
       final tc = TestContext();
       final ask = tc.ask;
-      final appState = AppState()
-                        ..currentUser = tc.user
-                        ..currentUserSettings = tc.userSettings;
+      final appState = AppState.skipSubscribe()
+                        ..currentUser = tc.user; // for ask.isSponsoredByCurrentUser
 
       // GetIt
       final getIt = GetIt.instance;
@@ -68,7 +67,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Check expected values are found
-      expect(find.byType(ExamineAskHeader), findsOneWidget);
+      expect(find.byType(ExamineAskViewHeader), findsOneWidget);
       expect(find.text(ask.description), findsOneWidget);
       expect(find.text("${ask.boon.toString()} ${ask.currency}"), findsOneWidget);
       expect(find.text(ask.instructions), findsOneWidget);
@@ -93,7 +92,7 @@ void main() {
     tearDown(() => GetIt.instance.reset());
   });
 
-  group("NonEditableAskHeader test", () {
+  group("ExamineAskViewHeader", () {
     testWidgets("_isSponsored", (tester) async {
       // TestGesture
       final gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
@@ -102,7 +101,7 @@ void main() {
       });
 
       final tc = TestContext();
-      final appState = AppState()
+      final appState = AppState.skipSubscribe()
                         ..currentUser = tc.user;
 
       // GetIt
@@ -129,7 +128,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: ExamineAskHeader(ask: tc.ask)
+            body: ExamineAskViewHeader(ask: tc.ask)
           ),
         )
       );

@@ -372,7 +372,7 @@ void main() {
 
     tearDown(() => GetIt.instance.reset());
 
-    ft.testWidgets("expelUserFromGarden bad permissions", (tester) async {
+    ft.testWidgets("expelUserFromGarden PermissionException", (tester) async {
       final list = [1, 2, 3];
       void testCallback(BuildContext context) => list.clear();
 
@@ -560,7 +560,7 @@ void main() {
 
     tearDown(() => GetIt.instance.reset());
 
-    ft.testWidgets("getCurrentGardenUserGardenRecords bad permissions", (tester) async {
+    ft.testWidgets("getCurrentGardenUserGardenRecords PermissionException", (tester) async {
       final tc = TestContext();
 
       final getIt = GetIt.instance;
@@ -1645,7 +1645,7 @@ void main() {
 
     tearDown(() => GetIt.instance.reset());
 
-    ft.testWidgets("updateUserGardenRole bad permissions", (tester) async {
+    ft.testWidgets("updateUserGardenRole PermissionException", (tester) async {
       final tc = TestContext();
 
       final otherUser = AppUser(

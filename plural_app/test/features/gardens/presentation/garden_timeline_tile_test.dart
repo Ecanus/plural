@@ -1,11 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:get_it/get_it.dart';
 
 // Constants
 import 'package:plural_app/src/constants/themes.dart';
 
+// Asks
+import 'package:plural_app/src/features/asks/presentation/admin_examine_ask_view.dart';
+import 'package:plural_app/src/features/asks/presentation/examine_ask_view.dart';
+
 // Gardens
 import 'package:plural_app/src/features/gardens/presentation/garden_timeline_tile.dart';
+
+// Utils
+import 'package:plural_app/src/utils/app_dialog_view_router.dart';
+import 'package:plural_app/src/utils/app_state.dart';
 
 // Tests
 import '../../../test_context.dart';
@@ -96,5 +105,73 @@ void main() {
       expect(find.text(ask.truncatedDescription), findsOneWidget);
       expect(text.style!.color, Colors.transparent);
     });
+
+    testWidgets("isAdminPage", (tester) async {
+      final tc = TestContext();
+
+      final getIt = GetIt.instance;
+      getIt.registerLazySingleton<AppDialogViewRouter>(() => AppDialogViewRouter());
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ListView(
+              children: [
+                GardenTimelineTile(ask: tc.ask, index: 0, isAdminPage: true,)
+              ],
+            ),
+          )
+        )
+      );
+
+      // Check no view  displayed
+      expect(find.byType(AdminExamineAskView), findsNothing);
+      expect(find.byType(ExamineAskView), findsNothing);
+
+      await tester.tap(find.byType(TileExamineAskButton));
+      await tester.pumpAndSettle();
+
+      // Check only AdminExamineAskView shows
+      expect(find.byType(AdminExamineAskView), findsOneWidget);
+      expect(find.byType(ExamineAskView), findsNothing);
+    });
+
+    tearDown(() => GetIt.instance.reset());
+
+    testWidgets("isAdminPage false", (tester) async {
+      final tc = TestContext();
+
+      final appState = AppState.skipSubscribe()
+                        ..currentUser = tc.user; // for ask.isSponsoredByCurrentUser
+
+      final getIt = GetIt.instance;
+      getIt.registerLazySingleton<AppState>(() => appState);
+      getIt.registerLazySingleton<AppDialogViewRouter>(() => AppDialogViewRouter());
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ListView(
+              children: [
+                GardenTimelineTile(ask: tc.ask, index: 0, isAdminPage: false,)
+              ],
+            ),
+          )
+        )
+      );
+
+      // Check no view  displayed
+      expect(find.byType(AdminExamineAskView), findsNothing);
+      expect(find.byType(ExamineAskView), findsNothing);
+
+      await tester.tap(find.byType(TileExamineAskButton));
+      await tester.pumpAndSettle();
+
+      // Check only ExamineAskView shows
+      expect(find.byType(AdminExamineAskView), findsNothing);
+      expect(find.byType(ExamineAskView), findsOneWidget);
+    });
+
+    tearDown(() => GetIt.instance.reset());
   });
 }

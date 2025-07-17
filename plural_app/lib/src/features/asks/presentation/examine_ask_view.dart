@@ -44,7 +44,7 @@ class ExamineAskView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        ExamineAskHeader(ask: ask),
+        ExamineAskViewHeader(ask: ask),
         Expanded(
           child: ListView(
             padding: const EdgeInsets.all(AppPaddings.p45),
@@ -95,18 +95,18 @@ class ExamineAskView extends StatelessWidget {
   }
 }
 
-class ExamineAskHeader extends StatefulWidget {
-  const ExamineAskHeader({
+class ExamineAskViewHeader extends StatefulWidget {
+  const ExamineAskViewHeader({
     required this.ask,
   });
 
   final Ask ask;
 
   @override
-  State<ExamineAskHeader> createState() => _ExamineAskHeaderState();
+  State<ExamineAskViewHeader> createState() => _ExamineAskViewHeaderState();
 }
 
-class _ExamineAskHeaderState extends State<ExamineAskHeader> {
+class _ExamineAskViewHeaderState extends State<ExamineAskViewHeader> {
   late bool _isSponsored;
 
   @override
@@ -160,7 +160,7 @@ class _ExamineAskHeaderState extends State<ExamineAskHeader> {
                 thumbIcon: thumbIcon,
                 value: _isSponsored,
                 onChanged: (bool value) => isSponsoredToggle(
-                  context, value, widget.ask.id, setIsSponsored),
+                  context, widget.ask.id, setIsSponsored, value: value),
               ),
               gapW5,
               Tooltip(

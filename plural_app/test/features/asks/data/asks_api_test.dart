@@ -536,6 +536,99 @@ void main() {
       expect(parsedDateTime2, DateTime(1995, 06, 13));
     });
 
+    ft.testWidgets("isSponsoredToggle", (tester) async {
+      final testList = [1, 2, 3];
+      void testFunc(value) => testList.clear();
+
+      final tc = TestContext();
+
+      final appState = AppState.skipSubscribe()
+                        ..currentUser = tc.user;
+
+      final getIt = GetIt.instance;
+      final mockAsksRepository = MockAsksRepository();
+      getIt.registerLazySingleton<AppState>(() => appState);
+      getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
+
+      final recordModel = tc.getAskRecordModel();
+
+      // AsksRepository.getList()
+      when(
+        () => mockAsksRepository.getList(
+            filter: "${GenericField.id} = '${tc.ask.id}'"
+          )
+      ).thenAnswer(
+        (_) async => ResultList<RecordModel>(items: [recordModel])
+      );
+
+      // AsksRepository.update()
+      when(
+        () => mockAsksRepository.update(
+          id: tc.ask.id, body: { AskField.sponsors: [tc.user.id]})
+      ).thenAnswer(
+        (_) async => (recordModel, {})
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (BuildContext context) {
+                return ElevatedButton(
+                  onPressed: () => isSponsoredToggle(
+                    context, tc.ask.id, testFunc, value: false),
+                  child: Text("The ElevatedButton")
+                );
+              }
+            )
+          ),
+        )
+      );
+
+      // Check no snackBar and testList still has contents
+      expect(ft.find.byType(SnackBar), ft.findsNothing);
+      expect(testList.isEmpty, false);
+
+      // Tap ElevatedButton (to call isSponsoredToggle)
+      await tester.tap(ft.find.byType(ElevatedButton));
+      await tester.pumpAndSettle();
+
+      // Check still no snackBar; testList now empty
+      expect(ft.find.byType(SnackBar), ft.findsNothing);
+      expect(testList.isEmpty, true);
+
+       // Value now true
+       testList.addAll([1, 2, 3]);
+
+       await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (BuildContext context) {
+                return ElevatedButton(
+                  onPressed: () => isSponsoredToggle(
+                    context, tc.ask.id, testFunc, value: true),
+                  child: Text("The ElevatedButton")
+                );
+              }
+            )
+          ),
+        )
+      );
+
+      // Check no snackBar yet and testList still has contents
+      expect(ft.find.byType(SnackBar), ft.findsNothing);
+      expect(testList.isEmpty, false);
+
+      // Tap ElevatedButton (to call isSponsoredToggle)
+      await tester.tap(ft.find.byType(ElevatedButton));
+      await tester.pumpAndSettle();
+
+      // Check snackBar now shows; testList now empty
+      expect(ft.find.byType(SnackBar), ft.findsOneWidget);
+      expect(testList.isEmpty, true);
+
+    });
     test("removeSponsor", () async {
       final tc = TestContext();
 

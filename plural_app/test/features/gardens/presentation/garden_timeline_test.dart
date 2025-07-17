@@ -26,7 +26,7 @@ import '../../../test_context.dart';
 import '../../../test_mocks.dart';
 
 void main() {
-  group("GardenTimeline test", () {
+  group("GardenTimeline", () {
     testWidgets("snapshot.hasData", (tester) async {
       final tc = TestContext();
       final appState = AppState.skipSubscribe()
