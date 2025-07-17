@@ -1,10 +1,19 @@
 import 'dart:math';
 
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:pocketbase/pocketbase.dart';
 import 'package:get_it/get_it.dart';
 
+// Common Widgets
+import 'package:plural_app/src/common_widgets/app_snackbars.dart';
+
 // Constants
 import 'package:plural_app/src/constants/fields.dart';
+import 'package:plural_app/src/constants/formats.dart';
+import 'package:plural_app/src/constants/query_parameters.dart';
+import 'package:plural_app/src/constants/routes.dart';
 
 // Asks
 import 'package:plural_app/src/features/asks/data/asks_repository.dart';
@@ -12,6 +21,7 @@ import 'package:plural_app/src/features/asks/domain/ask.dart';
 
 // Auth
 import 'package:plural_app/src/features/authentication/data/auth_api.dart';
+import 'package:plural_app/src/features/authentication/domain/app_user_garden_record.dart';
 
 // Localization
 import 'package:plural_app/src/localization/lang_en.dart';
@@ -29,7 +39,7 @@ Future<void> addSponsor(String askID, String userID) async {
 
   // If ask already contains sponsor, return
   final askSponsorsString = resultList.items.first.toJson()[AskField.sponsors];
-  var currentSponsors = List<String>.from(askSponsorsString);
+  final currentSponsors = List<String>.from(askSponsorsString);
   if (currentSponsors.contains(userID)) return;
 
   // Else, update
@@ -56,6 +66,52 @@ void checkBoonCeiling(int boon, int targetSum) {
     };
 
     throw ClientException(response: response);
+  }
+}
+
+/// An action. Deletes the [Ask] corresponding to the given [askID].
+Future<void> deleteAsk(
+  BuildContext context,
+  String askID, {
+  bool isAdminPage = false,
+}) async {
+  try {
+    // Check permissions
+    if (isAdminPage) {
+      await GetIt.instance<AppState>().verify(
+        [AppUserGardenPermission.deleteMemberAsks]);
+    } else {
+      await GetIt.instance<AppState>().verify(
+        [AppUserGardenPermission.createAndEditAsks]);
+    }
+
+    // Deletion should also rebuild Garden Timeline via SubscribeTo
+    await GetIt.instance<AsksRepository>().delete(id: askID);
+
+    if (context.mounted) {
+      var snackBar = AppSnackBars.getSnackBar(
+        SnackBarText.deleteAskSuccess,
+        showCloseIcon: false,
+        snackbarType: SnackbarType.success
+      );
+
+      // Display Success Snackbar
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
+  } on PermissionException {
+    if (context.mounted) {
+      final newRoute = isAdminPage ? Routes.garden : Routes.landing;
+
+      // Redirect to UnauthorizedPage
+      GoRouter.of(context).go(
+        Uri(
+          path: Routes.unauthorized,
+          queryParameters: { QueryParameters.previousRoute: newRoute }
+        ).toString()
+      );
+    }
+
+    return;
   }
 }
 
@@ -145,43 +201,44 @@ Future<List<Ask>> getAsksByUserID({
 /// Returns the list of all related Asks.
 Future<List<Ask>> getAsksForListedAsksDialog({
   required String userID,
-  required String nowString,
+  required DateTime now,
 }) async {
-  // Target not met, deadline not passed
-  final filterString = ""
-    "&& ${AskField.targetMetDate} = null"
-    "&& ${AskField.deadlineDate} > '$nowString'";
+  final List<Ask> displayableAsks = [];
+  final List<Ask> deadlinePassedAsks = [];
+  final List<Ask> targetMetAsks = [];
+
   final asks = await getAsksByUserID(
-    filter: filterString,
     sort: GenericField.created,
     userID: userID,
   );
 
-  // Target not met, deadline passed
-  final deadlinePassedFilterString = ""
-    "&& ${AskField.targetMetDate} = null"
-    "&& ${AskField.deadlineDate} <= '$nowString'";
-  final deadlinePassedAsks = await getAsksByUserID(
-    filter: deadlinePassedFilterString,
-    sort: GenericField.created,
-    userID: userID,
-  );
+  for (Ask ask in asks) {
+    if (ask.targetMetDate == null) {
+      final deadlineDate = DateTime.parse(
+        DateFormat(Formats.dateYMMddHHms).format(ask.deadlineDate)).toLocal();
 
-  // Target met
-  final targetMetFilterString = "&& ${AskField.targetMetDate} != null";
-  final targetMetAsks = await getAsksByUserID(
-    filter: targetMetFilterString,
-    sort: GenericField.created,
-    userID: userID,
-  );
+      // Target not met, deadline not passed
+      if (deadlineDate.isAfter(now)) {
+        displayableAsks.add(ask);
+      }
 
-  return asks + deadlinePassedAsks + targetMetAsks;
+      // Target not met, deadline passed
+      if (deadlineDate.isAtSameMomentAs(now) || deadlineDate.isBefore(now)) {
+        deadlinePassedAsks.add(ask);
+      }
+    } else {
+      // Target met
+      targetMetAsks.add(ask);
+    }
+  }
+
+  return displayableAsks + deadlinePassedAsks + targetMetAsks;
 }
 
 /// Returns the [AskType] enum that corresponds to [askTypeString].
 AskType getAskTypeFromString(String askTypeString) {
   return AskType.values.firstWhere(
-    (a) => a.name == "AskType.$askTypeString",
+    (a) => a.name == askTypeString,
     orElse: () => AskType.monetary
   );
 }
@@ -213,6 +270,32 @@ Future<void> removeSponsor(String askID, String userID) async {
     id: askID,
     body: body,
   );
+}
+
+/// Adds or removes the currentUser as a sponsor to the [Ask] corresponding to [askID].
+Future<void> isSponsoredToggle(
+  BuildContext context,
+  String askID,
+  Function(bool) callback, {
+  required bool value,
+}) async {
+  var currentUserID = GetIt.instance<AppState>().currentUserID!;
+
+  if (value) {
+    await addSponsor(askID, currentUserID);
+
+    var snackBar = AppSnackBars.getSnackBar(
+      SnackBarText.askSponsored,
+      showCloseIcon: false,
+      snackbarType: SnackbarType.success
+    );
+
+    if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  } else {
+    await removeSponsor(askID, currentUserID);
+  }
+
+  callback(value);
 }
 
 /// Subscribes to any changes made in the [Ask] collection for any [Ask] record

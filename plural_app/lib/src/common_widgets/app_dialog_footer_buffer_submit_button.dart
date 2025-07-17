@@ -20,7 +20,7 @@ class AppDialogFooterBufferSubmitButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Tooltip(
-      message: AskDialogText.saveChanges,
+      message: AppDialogFooterBufferText.saveChanges,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           backgroundColor: Theme.of(context).colorScheme.onPrimary,

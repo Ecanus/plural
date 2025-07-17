@@ -11,14 +11,16 @@ enum NavButtonDirection {
 
 class AppDialogFooterNavButton extends StatelessWidget {
   const AppDialogFooterNavButton({
-    required this.callback,
+    this.actionCallback,
+    this.callback,
     required this.dialogIcon,
     required this.direction,
     required this.isMouseHovered,
     required this.tooltipMessage,
   });
 
-  final Function callback;
+  final void Function(BuildContext)? actionCallback;
+  final void Function()? callback;
   final IconData dialogIcon;
   final NavButtonDirection direction;
   final bool isMouseHovered;
@@ -26,19 +28,21 @@ class AppDialogFooterNavButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var isLeft = direction == NavButtonDirection.left;
+    final isLeft = direction == NavButtonDirection.left;
 
-    var alignment = isLeft ?
+    final alignment = isLeft ?
       MainAxisAlignment.start : MainAxisAlignment.end;
 
-    var arrowIcon = isLeft ?
+    final arrowIcon = isLeft ?
       Icons.keyboard_arrow_left_rounded : Icons.keyboard_arrow_right_rounded;
 
     return MouseRegion(
       cursor: SystemMouseCursors.click,
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
-        onTap: () => callback(),
+        onTap: () => {
+          actionCallback != null ? actionCallback!(context) : callback!()
+        },
         child: Row(
           mainAxisAlignment: alignment,
           children: [

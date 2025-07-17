@@ -24,11 +24,12 @@ import 'package:plural_app/src/features/asks/presentation/route_to_listed_asks_v
 
 // Auth
 import 'package:plural_app/src/features/authentication/domain/app_user.dart';
+import 'package:plural_app/src/features/authentication/domain/app_user_garden_record.dart';
 import 'package:plural_app/src/features/authentication/presentation/log_in_password_form_field.dart';
 
 // Gardens
 import 'package:plural_app/src/features/gardens/presentation/garden_timeline_tile.dart';
-import 'package:plural_app/src/features/gardens/presentation/listed_garden_tile.dart';
+import 'package:plural_app/src/features/gardens/presentation/landing_page_listed_garden_tile.dart';
 
 // Tests
 import '../test/test_context.dart';
@@ -45,7 +46,6 @@ void main() {
       tc.ask.deadlineDate = now.add(const Duration(days: 2));
 
       final otherUser = AppUser(
-        email: "otheruser@test.com",
         firstName: "OtherFirst",
         id: "OTHERUSER",
         lastName: "OtherLast",
@@ -124,7 +124,6 @@ void main() {
       ).thenAnswer(
         (_) async => tc.getUserRecordModel(
           id: otherUser.id,
-          email: otherUser.email,
           username: otherUser.username,
         )
       );
@@ -143,18 +142,19 @@ void main() {
         (_) async => tc.getGardenRecordModel()
       );
 
-      // RecordService.getList() - getGardensByUser(excludeCurrentGarden: true)
+      // RecordService.getList() - getUserGardenRecordsByUserID()
       when(
         () => recordService.getList(
-          expand: UserGardenRecordField.garden,
+          expand: "${UserGardenRecordField.user}, ${UserGardenRecordField.garden}",
           filter: ""
-            "${UserGardenRecordField.garden}.${GenericField.id} != '${tc.garden.id}' && "
             "${UserGardenRecordField.user} = '${tc.user.id}'",
           sort: "garden.name",
         )
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(
-          items: [tc.getExpandUserGardenRecordRecordModel(UserGardenRecordField.garden)]
+          items: [tc.getExpandUserGardenRecordRecordModel([
+            UserGardenRecordField.user, UserGardenRecordField.garden
+          ])]
         )
       );
       // RecordService.getList() - getUserGardenRecord()
@@ -168,7 +168,11 @@ void main() {
         )
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(
-          items: [tc.getUserGardenRecordRecordModel()]
+          items: [
+            tc.getExpandUserGardenRecordRecordModel([
+              UserGardenRecordField.user, UserGardenRecordField.garden],
+              role: AppUserGardenRole.owner),
+          ]
         )
       );
       // RecordService.getList() - getGardensByUser(excludeCurrentGarden: false)
@@ -180,7 +184,7 @@ void main() {
         )
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(
-          items: [tc.getExpandUserGardenRecordRecordModel(UserGardenRecordField.garden)]
+          items: [tc.getExpandUserGardenRecordRecordModel([UserGardenRecordField.garden])]
         )
       );
       // RecordService.getList() - getAsksByGardenID
@@ -246,8 +250,8 @@ void main() {
       await tester.tap(find.byType(LandingPageListedGardenTile));
       await tester.pumpAndSettle();
 
-      // Tap on TileViewAskButton
-      await tester.tap(find.byType(TileViewAskButton));
+      // Tap on TileExamineAskButton
+      await tester.tap(find.byType(TileExamineAskButton).first);
       await tester.pumpAndSettle();
 
       // Close Dialog
@@ -256,17 +260,7 @@ void main() {
       await tester.tap(find.byType(CloseDialogButton));
       await tester.pumpAndSettle();
 
-      // Tap on TileEditAskButton
-      await tester.tap(find.byType(TileEditAskButton));
-      await tester.pumpAndSettle();
-
-      // Close Dialog
-      await tester.ensureVisible(find.byType(CloseDialogButton));
-      await tester.pumpAndSettle();
-      await tester.tap(find.byType(CloseDialogButton));
-      await tester.pumpAndSettle();
-
-      // Open CreatableAskDialog
+      // Open CreateAskDialog
       await tester.ensureVisible(find.byIcon(Icons.add));
       await tester.pumpAndSettle();
       await tester.tap(find.byIcon(Icons.add));

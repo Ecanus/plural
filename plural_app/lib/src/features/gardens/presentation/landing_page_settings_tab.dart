@@ -12,13 +12,13 @@ import 'package:plural_app/src/common_widgets/app_currency_picker_form_field.dar
 import 'package:plural_app/src/common_widgets/app_elevated_button.dart';
 import 'package:plural_app/src/common_widgets/app_text_form_field.dart';
 import 'package:plural_app/src/common_widgets/app_tooltip_icon.dart';
-import 'package:plural_app/src/common_widgets/delete_account_button.dart';
 import 'package:plural_app/src/common_widgets/log_out_button.dart';
 
 // Auth
 import 'package:plural_app/src/features/authentication/data/forms.dart';
 import 'package:plural_app/src/features/authentication/domain/app_user.dart';
 import 'package:plural_app/src/features/authentication/domain/app_user_settings.dart';
+import 'package:plural_app/src/features/authentication/presentation/delete_account_button.dart';
 
 // Localization
 import 'package:plural_app/src/localization/lang_en.dart';
@@ -68,17 +68,17 @@ class _LandingPageSettingsTabState extends State<LandingPageSettingsTab> {
                   appForm: _userSettingsAppForm,
                   fieldName: UserSettingsField.defaultCurrency,
                   initialValue: _userSettings.defaultCurrency,
-                  label: UserSettingsDialogText.defaultCurrency,
+                  label: UserSettingsViewText.defaultCurrency,
                 ),
                 AppTextFormField(
                   appForm: _userSettingsAppForm,
                   fieldName: UserSettingsField.defaultInstructions,
                   initialValue: _userSettings.defaultInstructions,
-                  label: UserSettingsDialogText.defaultInstructions,
+                  label: UserSettingsViewText.defaultInstructions,
                   maxLength: AppMaxLengths.max200,
                   maxLines: null,
                   suffixIcon: Tooltip(
-                        message: AskDialogText.tooltipInstructions,
+                        message: AskViewText.instructionsTooltip,
                         child: AppTooltipIcon(isDark: false),
                       ),
                 ),
@@ -87,7 +87,7 @@ class _LandingPageSettingsTabState extends State<LandingPageSettingsTab> {
                   appForm: _userAppForm,
                   fieldName: UserField.firstName,
                   initialValue: _user.firstName,
-                  label: UserSettingsDialogText.firstName,
+                  label: UserSettingsViewText.firstName,
                   maxLength: AppMaxLengths.max200,
                   maxLines: null,
                   paddingTop: AppPaddings.p0,
@@ -96,7 +96,7 @@ class _LandingPageSettingsTabState extends State<LandingPageSettingsTab> {
                   appForm: _userAppForm,
                   fieldName: UserField.lastName,
                   initialValue: _user.lastName,
-                  label: UserSettingsDialogText.lastName,
+                  label: UserSettingsViewText.lastName,
                   maxLength: AppMaxLengths.max200,
                   maxLines: null,
                   paddingTop: AppPaddings.p0,

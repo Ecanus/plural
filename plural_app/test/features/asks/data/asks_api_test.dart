@@ -1,4 +1,8 @@
+import 'package:flutter_test/flutter_test.dart' as ft;
+
+import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:pocketbase/pocketbase.dart';
@@ -7,6 +11,8 @@ import 'package:test/test.dart';
 // Constants
 import 'package:plural_app/src/constants/fields.dart';
 import 'package:plural_app/src/constants/formats.dart';
+import 'package:plural_app/src/constants/query_parameters.dart';
+import 'package:plural_app/src/constants/routes.dart';
 
 // Asks
 import 'package:plural_app/src/features/asks/data/asks_api.dart';
@@ -15,6 +21,8 @@ import 'package:plural_app/src/features/asks/domain/ask.dart';
 
 // Auth
 import 'package:plural_app/src/features/authentication/data/users_repository.dart';
+import 'package:plural_app/src/features/authentication/domain/app_user_garden_record.dart';
+import 'package:plural_app/src/features/authentication/presentation/unauthorized_page.dart';
 
 // Localization
 import 'package:plural_app/src/localization/lang_en.dart';
@@ -28,7 +36,7 @@ import '../../../test_context.dart';
 import '../../../test_mocks.dart';
 
 void main() {
-  group("Asks api test", () {
+  group("asks_api", () {
     test("addSponsor", () async {
       final tc = TestContext();
 
@@ -93,6 +101,225 @@ void main() {
       // boon < targetSum, no error
       expect(() => checkBoonCeiling(50, 100), returnsNormally);
     });
+
+    ft.testWidgets("deleteAsk isAdminPage", (tester) async {
+      final tc = TestContext();
+
+      // GetIt
+      final getIt = GetIt.instance;
+      final mockAppState = MockAppState();
+      final mockAsksRepository = MockAsksRepository();
+      getIt.registerLazySingleton<AppState>(() => mockAppState);
+      getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
+
+      // AppState.verify()
+      when(
+        () => mockAppState.verify([AppUserGardenPermission.deleteMemberAsks])
+      ).thenAnswer(
+        (_) async => {}
+      );
+
+      // AsksRepository.delete()
+      when(
+        () => mockAsksRepository.delete(id: tc.ask.id)
+      ).thenAnswer(
+        (_) async => (true, {})
+      );
+
+      final testRouter = GoRouter(
+        initialLocation: "/test",
+        routes: [
+          GoRoute(
+            path: "/test",
+            builder: (_, __) => Scaffold(
+              body: Builder(
+                builder: (BuildContext context) {
+                  return ElevatedButton(
+                    onPressed: () => deleteAsk(context, tc.ask.id, isAdminPage: true),
+                    child: Text("The ElevatedButton")
+                  );
+                }
+              )
+            )
+          ),
+          GoRoute(
+            path: Routes.unauthorized,
+            builder: (_, state) => UnauthorizedPage(
+            previousRoute: state.uri.queryParameters[QueryParameters.previousRoute],
+          )
+          )
+        ]
+      );
+
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routerConfig: testRouter,
+        )
+      );
+
+      // Check no method calls yet; no UnauthorizedPage found
+      verifyNever(() => mockAppState.verify([AppUserGardenPermission.deleteMemberAsks]));
+      verifyNever(() => mockAsksRepository.delete(id: tc.ask.id));
+      expect(ft.find.byType(UnauthorizedPage), ft.findsNothing);
+
+      // Tap button (to call deleteAsk)
+      await tester.tap(ft.find.byType(ElevatedButton));
+      await tester.pumpAndSettle();
+
+      // Check methods called; still no UnauthorizedPage found
+      verify(() => mockAppState.verify(
+        [AppUserGardenPermission.deleteMemberAsks])).called(1);
+      verify(() => mockAsksRepository.delete(id: tc.ask.id)).called(1);
+      expect(ft.find.byType(UnauthorizedPage), ft.findsNothing);
+    });
+
+    tearDown(() => GetIt.instance.reset());
+
+    ft.testWidgets("deleteAsk !isAdminPage", (tester) async {
+      final tc = TestContext();
+
+      // GetIt
+      final getIt = GetIt.instance;
+      final mockAppState = MockAppState();
+      final mockAsksRepository = MockAsksRepository();
+      getIt.registerLazySingleton<AppState>(() => mockAppState);
+      getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
+
+      // AppState.verify()
+      when(
+        () => mockAppState.verify([AppUserGardenPermission.createAndEditAsks])
+      ).thenAnswer(
+        (_) async => {}
+      );
+
+      // AsksRepository.delete()
+      when(
+        () => mockAsksRepository.delete(id: tc.ask.id)
+      ).thenAnswer(
+        (_) async => (true, {})
+      );
+
+      final testRouter = GoRouter(
+        initialLocation: "/test",
+        routes: [
+          GoRoute(
+            path: "/test",
+            builder: (_, __) => Scaffold(
+              body: Builder(
+                builder: (BuildContext context) {
+                  return ElevatedButton(
+                    onPressed: () => deleteAsk(context, tc.ask.id, isAdminPage: false),
+                    child: Text("The ElevatedButton")
+                  );
+                }
+              )
+            )
+          ),
+          GoRoute(
+            path: Routes.unauthorized,
+            builder: (_, state) => UnauthorizedPage(
+            previousRoute: state.uri.queryParameters[QueryParameters.previousRoute],
+          )
+          )
+        ]
+      );
+
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routerConfig: testRouter,
+        )
+      );
+
+      // Check no method calls yet; no UnauthorizedPage found
+      verifyNever(() => mockAppState.verify([AppUserGardenPermission.createAndEditAsks]));
+      verifyNever(() => mockAsksRepository.delete(id: tc.ask.id));
+      expect(ft.find.byType(UnauthorizedPage), ft.findsNothing);
+
+      // Tap button (to call deleteAsk)
+      await tester.tap(ft.find.byType(ElevatedButton));
+      await tester.pumpAndSettle();
+
+      // Check methods called; still no UnauthorizedPage found
+      verify(() => mockAppState.verify(
+        [AppUserGardenPermission.createAndEditAsks])).called(1);
+      verify(() => mockAsksRepository.delete(id: tc.ask.id)).called(1);
+      expect(ft.find.byType(UnauthorizedPage), ft.findsNothing);
+    });
+
+    tearDown(() => GetIt.instance.reset());
+
+    ft.testWidgets("deleteAsk PermissionException", (tester) async {
+      final tc = TestContext();
+
+      // GetIt
+      final getIt = GetIt.instance;
+      final mockAppState = MockAppState();
+      final mockAsksRepository = MockAsksRepository();
+      getIt.registerLazySingleton<AppState>(() => mockAppState);
+      getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
+
+      // AppState.verify()
+      when(
+        () => mockAppState.verify([AppUserGardenPermission.deleteMemberAsks])
+      ).thenThrow(
+        PermissionException()
+      );
+
+      // AsksRepository.delete()
+      when(
+        () => mockAsksRepository.delete(id: tc.ask.id)
+      ).thenAnswer(
+        (_) async => (true, {})
+      );
+
+      final testRouter = GoRouter(
+        initialLocation: "/test",
+        routes: [
+          GoRoute(
+            path: "/test",
+            builder: (_, __) => Scaffold(
+              body: Builder(
+                builder: (BuildContext context) {
+                  return ElevatedButton(
+                    onPressed: () => deleteAsk(context, tc.ask.id, isAdminPage: true),
+                    child: Text("The ElevatedButton")
+                  );
+                }
+              )
+            )
+          ),
+          GoRoute(
+            path: Routes.unauthorized,
+            builder: (_, state) => UnauthorizedPage(
+            previousRoute: state.uri.queryParameters[QueryParameters.previousRoute],
+          )
+          )
+        ]
+      );
+
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routerConfig: testRouter,
+        )
+      );
+
+      // Check no method calls yet; no UnauthorizedPage found
+      verifyNever(() => mockAppState.verify([AppUserGardenPermission.deleteMemberAsks]));
+      verifyNever(() => mockAsksRepository.delete(id: tc.ask.id));
+      expect(ft.find.byType(UnauthorizedPage), ft.findsNothing);
+
+      // Tap button (to call deleteAsk)
+      await tester.tap(ft.find.byType(ElevatedButton));
+      await tester.pumpAndSettle();
+
+      // Check methods called; still no UnauthorizedPage found
+      verify(() => mockAppState.verify(
+        [AppUserGardenPermission.deleteMemberAsks])).called(1);
+      verifyNever(() => mockAsksRepository.delete(id: tc.ask.id));
+      expect(ft.find.byType(UnauthorizedPage), ft.findsOneWidget);
+    });
+
+    tearDown(() => GetIt.instance.reset());
 
     test("deleteCurrentUserAsks", () async {
       final tc = TestContext();
@@ -236,61 +463,34 @@ void main() {
       getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
       getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
 
-      final nowString = DateFormat(Formats.dateYMMddHms).format(DateTime.now());
+      final nowString = DateFormat(Formats.dateYMMddHHms).format(DateTime.now());
 
-      String formatFilterString(String filter) {
-        return """
+      final filterString =  """
         ${AskField.creator} = '${appState.currentUser!.id}' &&
-        ${AskField.garden} = '${appState.currentGarden!.id}' $filter
+        ${AskField.garden} = '${appState.currentGarden!.id}'
         """.trim();
-      }
 
-      // AsksRepository.getList(), target not met and deadline not passed
-      final filterString = formatFilterString(""
-        "&& ${AskField.targetMetDate} = null"
-        "&& ${AskField.deadlineDate} > '$nowString'");
+      // AsksRepository.getList()
       when(
         () => mockAsksRepository.getList(
           filter: filterString,
           sort: GenericField.created,
         )
       ).thenAnswer(
-        (_) async => ResultList<RecordModel>(items: [tc.getAskRecordModel(
-          id: "ASK001",
-          targetMetDate: null,
-          deadlineDate: DateTime.now().add(Duration(days: 50))
-        )])
-      );
-      // AsksRepository.getList(), target not met and deadline passed
-      final deadlinePassedFilterString = formatFilterString(""
-        "&& ${AskField.targetMetDate} = null"
-        "&& ${AskField.deadlineDate} <= '$nowString'");
-      when(
-        () => mockAsksRepository.getList(
-          filter: deadlinePassedFilterString,
-          sort: GenericField.created,
-        )
-      ).thenAnswer(
-        (_) async => ResultList<RecordModel>(items: [tc.getAskRecordModel(
-          id: "ASK002",
-          targetMetDate: null,
-          deadlineDate: DateTime.now().add(Duration(days: -50))
-        )])
-      );
-      // AsksRepository.getList(), target met
-      final targetMetFilterString = formatFilterString(
-        "&& ${AskField.targetMetDate} != null");
-      when(
-        () => mockAsksRepository.getList(
-          filter: targetMetFilterString,
-          sort: GenericField.created,
-        )
-      ).thenAnswer(
-        (_) async => ResultList<RecordModel>(items: [tc.getAskRecordModel(
-          id: "ASK003",
-          targetMetDate: DateTime.now(),
-          deadlineDate: DateTime.now().add(Duration(days: 50))
-        )])
+        (_) async => ResultList<RecordModel>(items: [
+          tc.getAskRecordModel(
+            id: "ASK001",
+            targetMetDate: null,
+            deadlineDate: DateTime.now().add(Duration(days: 50))),
+          tc.getAskRecordModel(
+            id: "ASK002",
+            targetMetDate: null,
+            deadlineDate: DateTime.now().add(Duration(days: -50))),
+          tc.getAskRecordModel(
+            id: "ASK003",
+            targetMetDate: DateTime.now(),
+            deadlineDate: DateTime.now().add(Duration(days: 50))),
+        ])
       );
 
       // UsersRepository.getFirstListItem()
@@ -301,7 +501,6 @@ void main() {
       ).thenAnswer(
         (_) async => tc.getUserRecordModel(
           id: tc.user.id,
-          email: tc.user.email,
           firstName: tc.user.firstName,
           lastName: tc.user.lastName,
           username: tc.user.username
@@ -309,7 +508,7 @@ void main() {
       );
 
       final asks = await getAsksForListedAsksDialog(
-        userID: tc.user.id, nowString: nowString
+        userID: tc.user.id, now: DateTime.parse(nowString)
       );
 
       // Check length and order is correct
@@ -322,12 +521,10 @@ void main() {
     tearDown(() => GetIt.instance.reset());
 
     test("getAskTypeFromString", () async {
-      final askType1 = getAskTypeFromString("monetary");
-      expect(askType1, AskType.monetary);
+      expect(getAskTypeFromString("monetary"), AskType.monetary);
 
       // Check that fallback value is monetary (for now)
-      final askType2 = getAskTypeFromString("invalidValue");
-      expect(askType2, AskType.monetary);
+      expect(getAskTypeFromString("invalidValue"), AskType.monetary);
     });
 
     test("getParsedTargetMetDate", () async {
@@ -339,6 +536,99 @@ void main() {
       expect(parsedDateTime2, DateTime(1995, 06, 13));
     });
 
+    ft.testWidgets("isSponsoredToggle", (tester) async {
+      final testList = [1, 2, 3];
+      void testFunc(value) => testList.clear();
+
+      final tc = TestContext();
+
+      final appState = AppState.skipSubscribe()
+                        ..currentUser = tc.user;
+
+      final getIt = GetIt.instance;
+      final mockAsksRepository = MockAsksRepository();
+      getIt.registerLazySingleton<AppState>(() => appState);
+      getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
+
+      final recordModel = tc.getAskRecordModel();
+
+      // AsksRepository.getList()
+      when(
+        () => mockAsksRepository.getList(
+            filter: "${GenericField.id} = '${tc.ask.id}'"
+          )
+      ).thenAnswer(
+        (_) async => ResultList<RecordModel>(items: [recordModel])
+      );
+
+      // AsksRepository.update()
+      when(
+        () => mockAsksRepository.update(
+          id: tc.ask.id, body: { AskField.sponsors: [tc.user.id]})
+      ).thenAnswer(
+        (_) async => (recordModel, {})
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (BuildContext context) {
+                return ElevatedButton(
+                  onPressed: () => isSponsoredToggle(
+                    context, tc.ask.id, testFunc, value: false),
+                  child: Text("The ElevatedButton")
+                );
+              }
+            )
+          ),
+        )
+      );
+
+      // Check no snackBar and testList still has contents
+      expect(ft.find.byType(SnackBar), ft.findsNothing);
+      expect(testList.isEmpty, false);
+
+      // Tap ElevatedButton (to call isSponsoredToggle)
+      await tester.tap(ft.find.byType(ElevatedButton));
+      await tester.pumpAndSettle();
+
+      // Check still no snackBar; testList now empty
+      expect(ft.find.byType(SnackBar), ft.findsNothing);
+      expect(testList.isEmpty, true);
+
+       // Value now true
+       testList.addAll([1, 2, 3]);
+
+       await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (BuildContext context) {
+                return ElevatedButton(
+                  onPressed: () => isSponsoredToggle(
+                    context, tc.ask.id, testFunc, value: true),
+                  child: Text("The ElevatedButton")
+                );
+              }
+            )
+          ),
+        )
+      );
+
+      // Check no snackBar yet and testList still has contents
+      expect(ft.find.byType(SnackBar), ft.findsNothing);
+      expect(testList.isEmpty, false);
+
+      // Tap ElevatedButton (to call isSponsoredToggle)
+      await tester.tap(ft.find.byType(ElevatedButton));
+      await tester.pumpAndSettle();
+
+      // Check snackBar now shows; testList now empty
+      expect(ft.find.byType(SnackBar), ft.findsOneWidget);
+      expect(testList.isEmpty, true);
+
+    });
     test("removeSponsor", () async {
       final tc = TestContext();
 

@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
-import 'package:plural_app/src/utils/app_state.dart';
+import 'package:pocketbase/pocketbase.dart';
 
 // Constants
 import 'package:plural_app/src/constants/fields.dart';
-import 'package:plural_app/src/constants/pocketbase.dart';
 import 'package:plural_app/src/constants/query_parameters.dart';
 import 'package:plural_app/src/constants/routes.dart';
 
@@ -15,10 +14,15 @@ import 'package:plural_app/src/features/asks/data/asks_repository.dart';
 // Auth
 import 'package:plural_app/src/features/authentication/data/auth_api.dart';
 import 'package:plural_app/src/features/authentication/data/user_garden_records_repository.dart';
+import 'package:plural_app/src/features/authentication/domain/app_user_garden_record.dart';
 
 // Gardens
 import 'package:plural_app/src/features/gardens/data/gardens_repository.dart';
 import 'package:plural_app/src/features/gardens/domain/garden.dart';
+
+// Utils
+import 'package:plural_app/src/utils/app_state.dart';
+import 'package:plural_app/src/utils/exceptions.dart';
 
 /// Queries on the [Garden] collection to retrieve the record corresponding to
 /// [gardenID].
@@ -35,44 +39,6 @@ Future<Garden> getGardenByID(String gardenID) async {
   return Garden.fromJson(recordJson, creator);
 }
 
-/// Returns a list of [Garden] instances corresponding to [Garden] records from the
-/// database that [userID] belongs to.
-///
-/// If [excludesCurrentGarden] is true, the [Garden] corresponding
-/// to [AppState].currentGarden will be excluded from the list of results.
-Future<List<Garden>> getGardensByUserID(
-  String userID, {
-  bool excludesCurrentGarden = true,
-}) async {
-  List<Garden> gardens = [];
-  var filter = "${UserGardenRecordField.user} = '$userID'";
-
-  // excludesCurrentGarden
-  if (excludesCurrentGarden) {
-    final currentGardenID = GetIt.instance<AppState>().currentGarden!.id;
-    filter = ""
-      "${UserGardenRecordField.garden}.${GenericField.id} != '$currentGardenID' && "
-      "$filter";
-  }
-
-  final resultList = await GetIt.instance<UserGardenRecordsRepository>().getList(
-    expand: UserGardenRecordField.garden,
-    filter: filter,
-    sort: "garden.name",
-  );
-
-  for (final record in resultList.items) {
-    final creator = await getUserByID(userID);
-    final gardenRecord =
-      record.toJson()[QueryKey.expand][UserGardenRecordField.garden];
-    final garden = Garden.fromJson(gardenRecord, creator);
-
-    gardens.add(garden);
-  }
-
-  return gardens;
-}
-
 /// Deletes the [UserGardenRecord] record corresponding to the
 /// [User] with [userID] and Garden with [exitedGardenID].
 ///
@@ -81,7 +47,7 @@ Future<List<Garden>> getGardensByUserID(
 Future<void> removeUserFromGarden(
   String userID,
   String exitedGardenID,
-  Function callback,
+  void Function() callback,
 ) async {
   final asksRepository = GetIt.instance<AsksRepository>();
   final userGardenRecordsRepository = GetIt.instance<UserGardenRecordsRepository>();
@@ -135,4 +101,38 @@ Future<Function> subscribeTo(String gardenID) async {
   await GetIt.instance<GardensRepository>().unsubscribe();
 
   return GetIt.instance<GardensRepository>().subscribe(gardenID);
+}
+
+/// An action. Updates the name of the [Garden] record corresponding to the values in
+/// [map].
+Future<(RecordModel?, Map?)> updateGardenName(
+  BuildContext context,
+  Map map,
+) async {
+  try {
+    // Check permissions first
+    await GetIt.instance<AppState>().verify(
+      [AppUserGardenPermission.changeGardenName]);
+
+    final (record, errorsMap) = await GetIt.instance<GardensRepository>().update(
+      id: map[GenericField.id],
+      body: {
+        GardenField.name: map[GardenField.name]
+      }
+    );
+
+    return (record, errorsMap);
+  } on PermissionException {
+    if (context.mounted) {
+      // Redirect to UnauthorizedPage
+      GoRouter.of(context).go(
+        Uri(
+          path: Routes.unauthorized,
+          queryParameters: { QueryParameters.previousRoute: Routes.garden }
+        ).toString()
+      );
+    }
+
+    return (null, null);
+  }
 }

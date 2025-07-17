@@ -10,7 +10,7 @@ import 'package:plural_app/src/constants/themes.dart';
 import 'package:plural_app/src/features/asks/presentation/route_to_listed_asks_view_button.dart';
 
 // Utils
-import 'package:plural_app/src/utils/app_dialog_router.dart';
+import 'package:plural_app/src/utils/app_dialog_view_router.dart';
 
 // Tests
 import '../../../test_mocks.dart';
@@ -19,12 +19,12 @@ void main() {
   group("RouteToListedAsksViewButton test", () {
     testWidgets("onPressed", (tester) async {
       final getIt = GetIt.instance;
-      final mockAppDialogRouter = MockAppDialogRouter();
-      getIt.registerLazySingleton<AppDialogRouter>(() => mockAppDialogRouter);
+      final mockAppDialogViewRouter = MockAppDialogViewRouter();
+      getIt.registerLazySingleton<AppDialogViewRouter>(() => mockAppDialogViewRouter);
 
-      // AppDialogRouter.routeToAskDialogListView()
+      // AppDialogViewRouter.routeToAskDialogListView()
       when(
-        () => mockAppDialogRouter.routeToAskDialogListView()
+        () => mockAppDialogViewRouter.routeToListedAsksView()
       ).thenAnswer(
         (_) async => {}
       );
@@ -37,12 +37,12 @@ void main() {
           ),
         ));
 
-      verifyNever(() => mockAppDialogRouter.routeToAskDialogListView());
+      verifyNever(() => mockAppDialogViewRouter.routeToListedAsksView());
 
       await tester.tap(find.byType(ElevatedButton));
       await tester.pumpAndSettle();
 
-      verify(() => mockAppDialogRouter.routeToAskDialogListView()).called(1);
+      verify(() => mockAppDialogViewRouter.routeToListedAsksView()).called(1);
     });
 
     tearDown(() => GetIt.instance.reset());

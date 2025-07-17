@@ -38,7 +38,7 @@ void main() {
       verifyNever(() => recordService.authWithPassword(any(), any()));
 
       await usersRepository.authWithPassword(
-        tc.user.email,
+        "test@email.com",
         "testpassword"
       );
 
@@ -54,7 +54,7 @@ void main() {
       // Check a ClientException is thrown
       expect(
         () async => await usersRepository.authWithPassword(
-          tc.user.email, "testpassword"),
+          "test@email.com", "testpassword"),
         throwsA(predicate((e) => e is ClientException))
       );
     });
@@ -403,6 +403,74 @@ void main() {
       // Check a ClientException is thrown
       expect(
         () async => await usersRepository.requestVerification("testEmail"),
+        throwsA(predicate((e) => e is ClientException))
+      );
+    });
+
+    test("subscribe", () async {
+      final pb = MockPocketBase();
+      final recordService = MockRecordService();
+      final usersRepository = UsersRepository(pb: pb);
+
+      // pb.collection()
+      when(
+        () => pb.collection(any())
+      ).thenAnswer(
+        (_) => recordService as RecordService
+      );
+
+
+      // RecordService.subscribe()
+      Future<void> testFunc() async { return; }
+      when(
+        () => recordService.subscribe(any(), any())
+      ).thenAnswer(
+        (_) async => testFunc
+      );
+
+      verifyNever(() => recordService.subscribe(any(), any()));
+
+      await usersRepository.subscribe("", () {});
+
+      verify(() => recordService.subscribe(any(), any())).called(1);
+    });
+
+    test("unsubscribe", () async {
+      final pb = MockPocketBase();
+      final recordService = MockRecordService();
+      final usersRepository = UsersRepository(pb: pb);
+
+      // pb.collection()
+      when(
+        () => pb.collection(any())
+      ).thenAnswer(
+        (_) => recordService as RecordService
+      );
+
+
+      // RecordService.unsubscribe()
+      when(
+        () => recordService.unsubscribe()
+      ).thenAnswer(
+        (_) async => {}
+      );
+
+      verifyNever(() => recordService.unsubscribe());
+
+      await usersRepository.unsubscribe();
+
+      verify(() => recordService.unsubscribe()).called(1);
+
+      // RecordService.unsubscribe(). Now throws error
+      when(
+        () => recordService.unsubscribe()
+      ).thenThrow(
+        ClientException()
+      );
+
+      // Check a ClientException is thrown
+      expect(
+        () async => await usersRepository.unsubscribe(),
         throwsA(predicate((e) => e is ClientException))
       );
     });

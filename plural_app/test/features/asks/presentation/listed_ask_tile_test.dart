@@ -12,7 +12,7 @@ import 'package:plural_app/src/constants/themes.dart';
 import 'package:plural_app/src/localization/lang_en.dart';
 
 // Utils
-import 'package:plural_app/src/utils/app_dialog_router.dart';
+import 'package:plural_app/src/utils/app_dialog_view_router.dart';
 import 'package:plural_app/src/utils/app_state.dart';
 
 // Tests
@@ -28,7 +28,7 @@ void main() {
 
       final getIt = GetIt.instance;
       getIt.registerLazySingleton<AppState>(() => AppState());
-      getIt.registerLazySingleton<AppDialogRouter>(() => AppDialogRouter());
+      getIt.registerLazySingleton<AppDialogViewRouter>(() => AppDialogViewRouter());
 
       await tester.pumpWidget(
         MaterialApp(
@@ -57,7 +57,7 @@ void main() {
       var subtitle = get<Text>(
         tester,
         getBy: GetBy.text,
-        text: "${AskDialogText.deadlineDueBy}: ${tc.ask.formattedDeadlineDate}",
+        text: "${AskViewText.deadlineDueBy}: ${tc.ask.formattedDeadlineDate}",
       );
       expect(subtitle.style!.color, AppThemes.colorScheme.onPrimaryFixed);
       expect(subtitle.style!.decoration, TextDecoration.lineThrough);
@@ -72,7 +72,7 @@ void main() {
 
       final getIt = GetIt.instance;
       getIt.registerLazySingleton<AppState>(() => AppState());
-      getIt.registerLazySingleton<AppDialogRouter>(() => AppDialogRouter());
+      getIt.registerLazySingleton<AppDialogViewRouter>(() => AppDialogViewRouter());
 
       await tester.pumpWidget(
         MaterialApp(
@@ -101,7 +101,7 @@ void main() {
       var subtitle = get<Text>(
         tester,
         getBy: GetBy.text,
-        text: "${AskDialogText.deadlineDueBy}: ${tc.ask.formattedDeadlineDate}",
+        text: "${AskViewText.deadlineDueBy}: ${tc.ask.formattedDeadlineDate}",
       );
       expect(subtitle.style!.color, AppThemes.colorScheme.onPrimaryFixed);
       expect(subtitle.style!.decoration, TextDecoration.lineThrough);
@@ -116,7 +116,7 @@ void main() {
 
       final getIt = GetIt.instance;
       getIt.registerLazySingleton<AppState>(() => AppState());
-      getIt.registerLazySingleton<AppDialogRouter>(() => AppDialogRouter());
+      getIt.registerLazySingleton<AppDialogViewRouter>(() => AppDialogViewRouter());
 
       await tester.pumpWidget(
         MaterialApp(
@@ -145,7 +145,7 @@ void main() {
       var subtitle = get<Text>(
         tester,
         getBy: GetBy.text,
-        text: "${AskDialogText.deadlineDueBy}: ${tc.ask.formattedDeadlineDate}",
+        text: "${AskViewText.deadlineDueBy}: ${tc.ask.formattedDeadlineDate}",
       );
       expect(subtitle.style!.color, AppThemes.colorScheme.onPrimary);
       expect(subtitle.style!.decoration, null);
@@ -168,7 +168,7 @@ void main() {
               builder: (BuildContext context) {
                 final avatar = getTileTrailingAvatar(context, isOnTimeline, isTargetMet);
                 return Scaffold(
-                  body: TileTrailing(tileTrailingAvatar: avatar,),
+                  body: ListedAskTileTrailing(tileTrailingAvatar: avatar,),
                 );
               }
             ),
@@ -191,7 +191,7 @@ void main() {
               builder: (BuildContext context) {
                 final avatar = getTileTrailingAvatar(context, isOnTimeline, isTargetMet);
                 return Scaffold(
-                  body: TileTrailing(tileTrailingAvatar: avatar,),
+                  body: ListedAskTileTrailing(tileTrailingAvatar: avatar,),
                 );
               }
             ),
@@ -217,7 +217,7 @@ void main() {
               builder: (BuildContext context) {
                 final avatar = getTileTrailingAvatar(context, isOnTimeline, isTargetMet);
                 return Scaffold(
-                  body: TileTrailing(tileTrailingAvatar: avatar,),
+                  body: ListedAskTileTrailing(tileTrailingAvatar: avatar,),
                 );
               }
             ),
@@ -240,7 +240,7 @@ void main() {
               builder: (BuildContext context) {
                 final avatar = getTileTrailingAvatar(context, isOnTimeline, isTargetMet);
                 return Scaffold(
-                  body: TileTrailing(tileTrailingAvatar: avatar,),
+                  body: ListedAskTileTrailing(tileTrailingAvatar: avatar,),
                 );
               }
             ),

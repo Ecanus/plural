@@ -24,7 +24,7 @@ import 'package:plural_app/src/features/authentication/domain/app_user_settings.
 import 'package:plural_app/src/localization/lang_en.dart';
 
 // Utils
-import 'package:plural_app/src/utils/app_dialog_router.dart';
+import 'package:plural_app/src/utils/app_dialog_view_router.dart';
 import 'package:plural_app/src/utils/app_form.dart';
 import 'package:plural_app/src/utils/app_state.dart';
 
@@ -37,7 +37,7 @@ Future createUserSettingsDialog(BuildContext context) async {
       context: context,
       builder: (BuildContext context) {
         return AppDialog(
-          view: UserSettingsDialogList(
+          view: UserSettingsView(
             user: user,
             userSettings: userSettings
           ),
@@ -47,8 +47,8 @@ Future createUserSettingsDialog(BuildContext context) async {
   }
 }
 
-class UserSettingsDialogList extends StatefulWidget {
-  const UserSettingsDialogList({
+class UserSettingsView extends StatefulWidget {
+  const UserSettingsView({
     required this.user,
     required this.userSettings,
   });
@@ -57,11 +57,11 @@ class UserSettingsDialogList extends StatefulWidget {
   final AppUserSettings userSettings;
 
   @override
-  State<UserSettingsDialogList> createState() => _UserSettingsDialogListState();
+  State<UserSettingsView> createState() => _UserSettingsViewState();
 }
 
-class _UserSettingsDialogListState extends State<UserSettingsDialogList> {
-  late AppDialogRouter _appDialogRouter;
+class _UserSettingsViewState extends State<UserSettingsView> {
+  late AppDialogViewRouter _appDialogViewRouter;
   late AppForm _userAppForm;
   late AppForm _userSettingsAppForm;
   late GlobalKey<FormState> _formKey;
@@ -74,7 +74,7 @@ class _UserSettingsDialogListState extends State<UserSettingsDialogList> {
     _userSettingsAppForm = AppForm.fromMap(widget.userSettings.toMap());
 
     _formKey = GlobalKey<FormState>();
-    _appDialogRouter = GetIt.instance<AppDialogRouter>();
+    _appDialogViewRouter = GetIt.instance<AppDialogViewRouter>();
   }
 
   @override
@@ -82,48 +82,52 @@ class _UserSettingsDialogListState extends State<UserSettingsDialogList> {
     return Column(
       children: [
         Expanded(
-          child: Form(
-            key: _formKey,
-            child: ListView(
-              padding: const EdgeInsets.all(AppPaddings.p35),
-              children: [
-                AppCurrencyPickerFormField(
-                  appForm: _userSettingsAppForm,
-                  fieldName: UserSettingsField.defaultCurrency,
-                  initialValue: widget.userSettings.defaultCurrency,
-                  label: UserSettingsDialogText.defaultCurrency,
+          child: ListView(
+            padding: const EdgeInsets.all(AppPaddings.p35),
+            children: [
+              Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    AppCurrencyPickerFormField(
+                      appForm: _userSettingsAppForm,
+                      fieldName: UserSettingsField.defaultCurrency,
+                      initialValue: widget.userSettings.defaultCurrency,
+                      label: UserSettingsViewText.defaultCurrency,
+                    ),
+                    AppTextFormField(
+                      appForm: _userSettingsAppForm,
+                      fieldName: UserSettingsField.defaultInstructions,
+                      initialValue: widget.userSettings.defaultInstructions,
+                      label: UserSettingsViewText.defaultInstructions,
+                      maxLength: AppMaxLengths.max200,
+                      maxLines: null,
+                    ),
+                    gapH30,
+                    AppTextFormField(
+                      appForm: _userAppForm,
+                      fieldName: UserField.firstName,
+                      initialValue: widget.user.firstName,
+                      label: UserSettingsViewText.firstName,
+                      maxLength: AppMaxLengths.max200,
+                      maxLines: null,
+                      paddingTop: AppPaddings.p0,
+                    ),
+                    AppTextFormField(
+                      appForm: _userAppForm,
+                      fieldName: UserField.lastName,
+                      initialValue: widget.user.lastName,
+                      label: UserSettingsViewText.lastName,
+                      maxLength: AppMaxLengths.max200,
+                      maxLines: null,
+                      paddingTop: AppPaddings.p0,
+                    ),
+                    gapH30,
+                    LogOutButton(),
+                  ],
                 ),
-                AppTextFormField(
-                  appForm: _userSettingsAppForm,
-                  fieldName: UserSettingsField.defaultInstructions,
-                  initialValue: widget.userSettings.defaultInstructions,
-                  label: UserSettingsDialogText.defaultInstructions,
-                  maxLength: AppMaxLengths.max200,
-                  maxLines: null,
-                ),
-                gapH30,
-                AppTextFormField(
-                  appForm: _userAppForm,
-                  fieldName: UserField.firstName,
-                  initialValue: widget.user.firstName,
-                  label: UserSettingsDialogText.firstName,
-                  maxLength: AppMaxLengths.max200,
-                  maxLines: null,
-                  paddingTop: AppPaddings.p0,
-                ),
-                AppTextFormField(
-                  appForm: _userAppForm,
-                  fieldName: UserField.lastName,
-                  initialValue: widget.user.lastName,
-                  label: UserSettingsDialogText.lastName,
-                  maxLength: AppMaxLengths.max200,
-                  maxLines: null,
-                  paddingTop: AppPaddings.p0,
-                ),
-                gapH30,
-                LogOutButton(),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
         AppDialogFooterBuffer(
@@ -138,11 +142,11 @@ class _UserSettingsDialogListState extends State<UserSettingsDialogList> {
         ),
         AppDialogNavFooter(
           leftDialogIcon: Icons.add,
-          leftNavCallback: _appDialogRouter.routeToCreatableAskDialogView,
-          leftTooltipMessage: AppDialogFooterText.navToAsksDialog,
+          leftNavCallback: _appDialogViewRouter.routeToCreateAskView,
+          leftTooltipMessage: AppDialogFooterText.navToAsksView,
           rightDialogIcon: Icons.local_florist,
-          rightNavCallback: _appDialogRouter.routeToCurrentGardenDialogView,
-          rightTooltipMessage: AppDialogFooterText.navToGardenDialog,
+          rightNavCallback: _appDialogViewRouter.routeToCurrentGardenSettingsView,
+          rightTooltipMessage: AppDialogFooterText.navToCurrentGardenSettingsView,
           title: AppDialogFooterText.settings
         )
       ],

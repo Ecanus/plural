@@ -17,25 +17,26 @@ import 'package:plural_app/src/features/gardens/data/gardens_api.dart';
 import 'package:plural_app/src/localization/lang_en.dart';
 
 // Utils
-import 'package:plural_app/src/utils/app_dialog_router.dart';
+import 'package:plural_app/src/utils/app_dialog_view_router.dart';
+import 'package:plural_app/src/utils/app_state.dart';
 
-Future createCurrentGardenDialog(BuildContext context) async {
+Future createCurrentGardenSettingsDialog(BuildContext context) async {
   if (context.mounted) {
     return showDialog(
       context: context,
       builder: (BuildContext context) {
         return AppDialog(
-          view: CurrentGardenDialogList(),
+          view: CurrentGardenSettingsView(),
         );
       }
     );
   }
 }
 
-class CurrentGardenDialogList extends StatelessWidget {
+class CurrentGardenSettingsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final appDialogRouter = GetIt.instance<AppDialogRouter>();
+    final appDialogViewRouter = GetIt.instance<AppDialogViewRouter>();
 
     return Column(
       children: [
@@ -46,7 +47,12 @@ class CurrentGardenDialogList extends StatelessWidget {
             top: AppPaddings.p50,
             bottom: AppPaddings.p10,
           ),
-          child: GoToLandingPageTile(),
+          child: Column(
+            children: [
+              GoToLandingPageTile(),
+              GoToAdminPageTile(),
+            ],
+          )
         ),
         Expanded(
           child: ListView(
@@ -58,11 +64,11 @@ class CurrentGardenDialogList extends StatelessWidget {
         ),
         AppDialogNavFooter(
           leftDialogIcon: Icons.settings,
-          leftNavCallback: appDialogRouter.routeToUserSettingsDialogView,
-          leftTooltipMessage: AppDialogFooterText.navToSettingsDialog,
+          leftNavCallback: appDialogViewRouter.routeToUserSettingsView,
+          leftTooltipMessage: AppDialogFooterText.navToSettingsView,
           rightDialogIcon: Icons.add,
-          rightNavCallback: appDialogRouter.routeToCreatableAskDialogView,
-          rightTooltipMessage: AppDialogFooterText.navToAsksDialog,
+          rightNavCallback: appDialogViewRouter.routeToCreateAskView,
+          rightTooltipMessage: AppDialogFooterText.navToAsksView,
           title: AppDialogFooterText.garden
         )
       ],
@@ -78,15 +84,45 @@ class GoToLandingPageTile extends StatelessWidget {
       child: ListTile(
         tileColor: Theme.of(context).colorScheme.primaryContainer,
         title: Text(
-          GardenDialogText.listedLandingPageTileLabel,
+          GardenSettingsViewText.goToLandingPageLabel,
           style: TextStyle(
             fontWeight: FontWeight.w500)
         ),
-        leading: Icon(Icons.arrow_back_rounded),
+        leading: Icon(Icons.home),
         onTap: () {
           GoRouter.of(context).go(Routes.landing);
         }
       ),
+    );
+  }
+}
+
+class GoToAdminPageTile extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<bool>(
+      future: GetIt.instance<AppState>().isAdministrator(),
+      builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+        if (snapshot.hasData && snapshot.data!) {
+          return Card(
+            elevation: AppElevations.e7,
+            child: ListTile(
+              tileColor: Theme.of(context).colorScheme.secondaryFixed,
+              title: Text(
+                GardenSettingsViewText.goToAdminPageLabel,
+                style: TextStyle(
+                  fontWeight: FontWeight.w500)
+              ),
+              leading: Icon(Icons.security),
+              onTap: () {
+                GoRouter.of(context).go(Routes.admin);
+              }
+            ),
+          );
+        } else {
+          return SizedBox();
+        }
+      }
     );
   }
 }
@@ -113,7 +149,7 @@ class ExitGardenButton extends StatelessWidget {
           ),
         ),
         child: Text(
-          UserSettingsDialogText.exitGarden,
+          GardenSettingsViewText.exitGarden,
           style: TextStyle(
             color: Theme.of(context).colorScheme.error
           ),
@@ -121,6 +157,17 @@ class ExitGardenButton extends StatelessWidget {
       ),
     );
   }
+}
+
+Future<void> showConfirmExitGardenDialog(
+  BuildContext context,
+) async {
+  await showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return ConfirmExitGardenDialog();
+    }
+  );
 }
 
 class ConfirmExitGardenDialog extends StatelessWidget {
@@ -146,7 +193,7 @@ class ConfirmExitGardenDialog extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Text(
-                  UserSettingsDialogText.confirmExitGarden,
+                  GardenSettingsViewText.confirmExitGarden,
                   style: Theme.of(context).textTheme.headlineMedium,
                 ),
               ],
@@ -157,7 +204,7 @@ class ConfirmExitGardenDialog extends StatelessWidget {
               children: [
                 Flexible(
                   child: Text(
-                    UserSettingsDialogText.confirmExitGardenSubtitle,
+                    GardenSettingsViewText.confirmExitGardenSubtitle,
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                 ),
@@ -179,7 +226,7 @@ class ConfirmExitGardenDialog extends StatelessWidget {
                       ),
                     ),
                     child: Text(
-                      UserSettingsDialogText.cancelConfirmExitGarden,
+                      GardenSettingsViewText.cancelConfirmExitGarden,
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.onSecondary
                       ),
@@ -203,7 +250,7 @@ class ConfirmExitGardenDialog extends StatelessWidget {
                         )
                       ),
                     ),
-                    child: const Text(UserSettingsDialogText.exitGarden)
+                    child: const Text(GardenSettingsViewText.exitGarden)
                   ),
                 )
               ],
@@ -213,15 +260,4 @@ class ConfirmExitGardenDialog extends StatelessWidget {
       ),
     );
   }
-}
-
-Future<void> showConfirmExitGardenDialog(
-  BuildContext context,
-) async {
-  await showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return ConfirmExitGardenDialog();
-    }
-  );
 }

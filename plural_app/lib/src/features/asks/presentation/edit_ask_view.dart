@@ -22,6 +22,7 @@ import 'package:plural_app/src/constants/themes.dart';
 // Ask
 import 'package:plural_app/src/features/asks/data/forms.dart';
 import 'package:plural_app/src/features/asks/domain/ask.dart';
+import 'package:plural_app/src/features/asks/presentation/delete_ask_button.dart';
 import 'package:plural_app/src/features/asks/presentation/route_to_listed_asks_view_button.dart';
 
 // Localization
@@ -30,7 +31,7 @@ import 'package:plural_app/src/localization/lang_en.dart';
 // Utils
 import 'package:plural_app/src/utils/app_form.dart';
 
-Future createEditableAskDialog({
+Future createEditAskDialog({
   required BuildContext context,
   required Ask ask
 }) async {
@@ -38,24 +39,24 @@ Future createEditableAskDialog({
     context: context,
     builder: (BuildContext context) {
       return AppDialog(
-        view: AskDialogEditForm(ask: ask)
+        view: EditAskView(ask: ask)
       );
     }
   );
 }
 
-class AskDialogEditForm extends StatefulWidget {
-  const AskDialogEditForm({
+class EditAskView extends StatefulWidget {
+  const EditAskView({
     required this.ask,
   });
 
   final Ask ask;
 
   @override
-  State<AskDialogEditForm> createState() => _AskDialogEditFormState();
+  State<EditAskView> createState() => _EditAskViewState();
 }
 
-class _AskDialogEditFormState extends State<AskDialogEditForm> {
+class _EditAskViewState extends State<EditAskView> {
   late AppForm _appForm;
   late GlobalKey<FormState> _formKey;
 
@@ -77,7 +78,7 @@ class _AskDialogEditFormState extends State<AskDialogEditForm> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        EditableAskHeader(ask: widget.ask),
+        EditAskHeader(ask: widget.ask),
         Expanded(
           child: ListView(
             padding: const EdgeInsets.all(AppPaddings.p35),
@@ -90,7 +91,7 @@ class _AskDialogEditFormState extends State<AskDialogEditForm> {
                       appForm: _appForm,
                       fieldName: AskField.deadlineDate,
                       initialValue: widget.ask.deadlineDate,
-                      label: AskDialogText.deadlineDate,
+                      label: AskViewText.deadlineDate,
                     ),
                     Row(
                       children: [
@@ -100,7 +101,7 @@ class _AskDialogEditFormState extends State<AskDialogEditForm> {
                             fieldName: AskField.targetSum,
                             formFieldType: FormFieldType.digitsOnly,
                             initialValue: widget.ask.targetSum.toString(),
-                            label: AskDialogText.targetSum,
+                            label: AskViewText.targetSum,
                             maxLength: AppMaxLengths.max4,
                             textFieldType: TextFieldType.digitsOnly,
                           ),
@@ -112,10 +113,10 @@ class _AskDialogEditFormState extends State<AskDialogEditForm> {
                             fieldName: AskField.boon,
                             formFieldType: FormFieldType.digitsOnly,
                             initialValue: widget.ask.boon.toString(),
-                            label: AskDialogText.boon,
+                            label: AskViewText.boon,
                             maxLength: AppMaxLengths.max4,
                             suffixIcon: Tooltip(
-                              message: AskDialogText.tooltipBoon,
+                              message: AskViewText.tooltipBoon,
                               child: AppTooltipIcon(isDark: false),
                             ),
                             textFieldType: TextFieldType.digitsOnly,
@@ -128,7 +129,7 @@ class _AskDialogEditFormState extends State<AskDialogEditForm> {
                             appForm: _appForm,
                             fieldName: AskField.currency,
                             initialValue: widget.ask.currency,
-                            label: AskDialogText.currency,
+                            label: AskViewText.currency,
                           )
                         )
                       ],
@@ -137,11 +138,11 @@ class _AskDialogEditFormState extends State<AskDialogEditForm> {
                       appForm: _appForm,
                       fieldName: AskField.description,
                       initialValue: widget.ask.description,
-                      label: AskDialogText.description,
+                      label: AskViewText.description,
                       maxLength: AppMaxLengths.max400,
                       maxLines: null,
                       suffixIcon: Tooltip(
-                        message: AskDialogText.urlFormattingText,
+                        message: AskViewText.urlFormattingText,
                         child: AppTooltipIcon(isDark: false),
                       ),
                     ),
@@ -149,11 +150,11 @@ class _AskDialogEditFormState extends State<AskDialogEditForm> {
                       appForm: _appForm,
                       fieldName: AskField.instructions,
                       initialValue: widget.ask.instructions,
-                      label: AskDialogText.instructions,
+                      label: AskViewText.instructions,
                       maxLength: AppMaxLengths.max200,
                       maxLines: null,
                       suffixIcon: Tooltip(
-                        message: AskDialogText.tooltipInstructions,
+                        message: AskViewText.instructionsTooltip,
                         child: AppTooltipIcon(isDark: false),
                       ),
                     ),
@@ -165,7 +166,7 @@ class _AskDialogEditFormState extends State<AskDialogEditForm> {
                           appForm: _appForm,
                           fieldName: AskField.targetMetDate,
                           formFieldType: FormFieldType.datetimeNow,
-                          text: AskDialogText.targetMet,
+                          text: AskViewText.targetMet,
                           value: widget.ask.isTargetMet,
                         ),
                       ],
@@ -176,7 +177,7 @@ class _AskDialogEditFormState extends State<AskDialogEditForm> {
                         appForm: _appForm,
                         fieldName: AskField.type,
                         initialValue: AskType.monetary.name, // Hardcoded value for now
-                        label: AskDialogText.type,
+                        label: AskViewText.type,
                       ),
                     ),
                     DeleteAskButton(askID: widget.ask.id),
@@ -188,7 +189,7 @@ class _AskDialogEditFormState extends State<AskDialogEditForm> {
         ),
         AppDialogFooterBuffer(
           buttons: [
-            RouteToListedAsksViewButton(),
+            RouteToListedAsksViewButton(icon: Icons.arrow_back),
             AppDialogFooterBufferSubmitButton(
               callback: submitUpdate,
               positionalArguments: [context, _formKey, _appForm],
@@ -201,139 +202,8 @@ class _AskDialogEditFormState extends State<AskDialogEditForm> {
   }
 }
 
-class DeleteAskButton extends StatelessWidget {
-  const DeleteAskButton({
-    required this.askID,
-  });
-
-  final String askID;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      constraints: BoxConstraints(
-        minWidth: double.infinity,
-        minHeight: AppHeights.h50
-      ),
-      child: FilledButton.icon(
-        icon: const Icon(Icons.delete),
-        label: const Text(AskDialogText.deleteAsk),
-        onPressed: () => showConfirmDeleteAskDialog(context, askID),
-        style: ButtonStyle(
-          backgroundColor: WidgetStateProperty.all<Color>(
-           Theme.of(context).colorScheme.error
-          ),
-          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-            RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(AppBorderRadii.r5)
-            )
-          )
-        ),
-      ),
-    );
-  }
-}
-
-class ConfirmDeleteAskDialog extends StatelessWidget {
-  const ConfirmDeleteAskDialog({
-    required this.askID
-  });
-
-  final String askID;
-
-  @override
-  Widget build(BuildContext context) {
-    return Dialog(
-      child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppPaddings.p20,
-        ),
-        constraints: BoxConstraints.expand(
-          width: AppConstraints.c400,
-          height: AppConstraints.c180
-        ),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(AppBorderRadii.r15),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text(
-                  AskDialogText.confirmDeleteAsk,
-                  style: Theme.of(context).textTheme.headlineMedium,
-                ),
-              ],
-            ),
-            gapH35,
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Container(
-                  constraints: BoxConstraints(minHeight: AppHeights.h40),
-                  child: OutlinedButton(
-                    onPressed: () => Navigator.pop(context),
-                    style: ButtonStyle(
-                      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(AppBorderRadii.r5)
-                        )
-                      ),
-                    ),
-                    child: Text(
-                      AskDialogText.cancelConfirmDeleteAsk,
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSecondary
-                      ),
-                    )
-                  ),
-                ),
-                gapW15,
-                Container(
-                  constraints: BoxConstraints(minHeight: AppHeights.h40),
-                  child: FilledButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      submitDelete(context, askID);
-                    },
-                    style: ButtonStyle(
-                      backgroundColor: WidgetStateProperty.all<Color>(
-                        Theme.of(context).colorScheme.error
-                      ),
-                      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(AppBorderRadii.r5)
-                        )
-                      ),
-                    ),
-                    child: const Text(AskDialogText.deleteAsk)
-                  ),
-                )
-              ],
-            )
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-Future<void> showConfirmDeleteAskDialog(
-  BuildContext context,
-  String askID
-) async {
-  await showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return ConfirmDeleteAskDialog(askID: askID);
-    }
-  );
-}
-
-class EditableAskHeader extends StatelessWidget {
-  const EditableAskHeader({
+class EditAskHeader extends StatelessWidget {
+  const EditAskHeader({
     required this.ask,
   });
 
@@ -376,10 +246,10 @@ class VisibleOnTimelineLabel extends StatelessWidget {
       AppThemes.positiveColor : Theme.of(context).colorScheme.onPrimaryFixed;
 
     var firstText = isOnTimeline ?
-      AskDialogText.visibleOnTimeline : AskDialogText.notVisibleOnTimeline;
+      AskViewText.visibleOnTimeline : AskViewText.notVisibleOnTimeline;
 
-    var deadlineText = isDeadlinePassed ? " ${AskDialogText.reasonDeadlinePassed}" : "";
-    var targetMetText = isTargetMet ? " ${AskDialogText.reasonTargetMet}" : "";
+    var deadlineText = isDeadlinePassed ? " ${AskViewText.reasonDeadlinePassed}" : "";
+    var targetMetText = isTargetMet ? " ${AskViewText.reasonTargetMet}" : "";
     var secondText = [targetMetText, deadlineText].firstWhere(
       (val) => val.isNotEmpty, orElse: () => "");
 
@@ -436,7 +306,7 @@ class IsTargetMetLabel extends StatelessWidget {
         gapW10,
         Text(
           isTargetMet ?
-            AskDialogText.targetMet : AskDialogText.targetNotMet,
+            AskViewText.targetMet : AskViewText.targetNotMet,
           style: TextStyle(
             color: color,
             fontWeight: FontWeight.w500,

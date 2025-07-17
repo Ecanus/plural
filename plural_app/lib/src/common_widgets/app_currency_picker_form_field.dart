@@ -43,8 +43,7 @@ class _AppCurrencyPickerFormFieldState extends State<AppCurrencyPickerFormField>
     _controller.text = widget.initialValue ?? "";
 
     // Currencies
-    var keys = Currencies.all.keys.toList();
-    keys.sort();
+    var keys = Currencies.all.keys.toList()..sort();
 
     _sortedCurrencyCards = keys.map(
       (String currencyCode) {
@@ -97,7 +96,7 @@ class _AppCurrencyPickerFormFieldState extends State<AppCurrencyPickerFormField>
 
 Future<void> showCurrencyPicker(
   BuildContext context,
-  Function setTextCallback,
+  void Function(String) setTextCallback,
   List<CurrencyCard> currencyCards,
 ) async {
   final String? currencyCode = await showDialog<String>(

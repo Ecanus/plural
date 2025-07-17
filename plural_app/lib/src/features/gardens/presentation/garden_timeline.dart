@@ -14,6 +14,11 @@ import 'package:plural_app/src/features/gardens/presentation/garden_timeline_til
 import 'package:plural_app/src/utils/app_state.dart';
 
 class GardenTimeline extends StatelessWidget {
+  const GardenTimeline({
+    this.isAdminPage = false,
+  });
+
+  final bool isAdminPage;
 
   @override
   Widget build(BuildContext context) {
@@ -25,10 +30,11 @@ class GardenTimeline extends StatelessWidget {
             Consumer<AppState>(
               builder: (_, appState, __) {
                 return FutureBuilder<List<Ask>>(
-                  future: appState.getTimelineAsks(),
+                  future: appState.getTimelineAsks(context, isAdminPage: isAdminPage),
                   builder: (BuildContext context, AsyncSnapshot<List<Ask>> snapshot) {
                     if (snapshot.hasData) {
-                      return GardenTimelineList(asks: snapshot.data!);
+                      return GardenTimelineList(
+                        asks: snapshot.data!, isAdminPage: isAdminPage);
                     } else if (snapshot.hasError) {
                       return GardenTimelineError(error: snapshot.error);
                     } else {
@@ -48,9 +54,11 @@ class GardenTimeline extends StatelessWidget {
 class GardenTimelineList extends StatelessWidget {
   const GardenTimelineList({
     required this.asks,
+    required this.isAdminPage,
   });
 
   final List<Ask> asks;
+  final bool isAdminPage;
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +66,12 @@ class GardenTimelineList extends StatelessWidget {
       child: ListView(
         padding: const EdgeInsets.all(AppPaddings.p8),
         children: [
-          for (Ask ask in asks) GardenTimelineTile(ask: ask)
+          for (int index = 0; index < asks.length; index++)
+            GardenTimelineTile(
+              ask: asks[index],
+              index: index,
+              isAdminPage: isAdminPage
+            )
         ],
       ),
     );

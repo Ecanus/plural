@@ -51,7 +51,6 @@ void main() {
       final userSettings = tc.userSettings;
 
       final differentUser = AppUser(
-        email: "other@email.com",
         firstName: "DifferentFirst",
         id: "OTHERID",
         lastName: "DifferentLast",
@@ -61,6 +60,7 @@ void main() {
       // Identity
       expect(userSettings == userSettings, true);
 
+      // Same ID and User
       final sameIDAndUser = AppUserSettings(
         defaultCurrency: "KRW",
         defaultInstructions: "Instructions!!",
@@ -70,6 +70,7 @@ void main() {
 
       expect(userSettings == sameIDAndUser, true);
 
+      // Different ID and User
       final differentIDAndUser = AppUserSettings(
         defaultCurrency: "KRW",
         defaultInstructions: "Instructions!!",
@@ -79,6 +80,7 @@ void main() {
 
       expect(userSettings == differentIDAndUser, false);
 
+      // Same ID and Different User
       final sameIDAndDifferentUser = AppUserSettings(
         defaultCurrency: "KRW",
         defaultInstructions: "Instructions!!",
@@ -88,13 +90,13 @@ void main() {
 
       expect(userSettings == sameIDAndDifferentUser, false);
 
+      // Different ID and Same User
       final differentIDAndSameUser = AppUserSettings(
         defaultCurrency: "KRW",
         defaultInstructions: "Instructions!!",
         id: "DIFFERENTID",
         user: tc.user
       );
-
 
       expect(userSettings == differentIDAndSameUser, false);
     });

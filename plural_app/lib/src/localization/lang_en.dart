@@ -1,8 +1,47 @@
+class AdminCurrentGardenSettingsViewText {
+  static const goToGardenPageLabel = "Return to Garden";
+
+  static const name = "Garden Name";
+}
+
+class AdminListedUsersViewText {
+  static const adminHeading = "Administrators";
+
+  static const cancelConfirmExpelUser = "Cancel";
+  static const confirmExpelUser = "Expel User?";
+  static const confirmExpelUserSubtitle = ""
+    "Expelling this user will remove them from the Garden, and they will need a new "
+    "invitation to return.";
+
+  static const expelUser = "Expel user";
+  static const expelUserPrefix = "Expel";
+
+  static const memberHeading = "Members";
+
+  static const ownerHeading = "Owner";
+
+  static const noAdministrators = "This Garden has no administrators.";
+  static const noMembers = "This Garden has no other members.";
+
+  static const userGardenRole = "Role";
+}
+
+class AdminPageBottomBarText {
+  static const currentGardenSettingsTooltip = "Garden Settings";
+  static const optionsTooltip = "Options";
+  static const usersTooltip = "Users";
+}
+
 class AppText {
   static const pluralApp = "Plural App";
 }
 
 class AppDialogFooterText {
+  static const adminEditUser = "Edit User";
+  static const adminGardenSettings = "Garden Settings";
+  static const adminListedUsers = "Users";
+  static const adminOptionsView = "Options";
+
   static const createAsk = "Create Ask";
 
   static const editAsk = "Edit Ask";
@@ -11,32 +50,39 @@ class AppDialogFooterText {
 
   static const listedAsks = "My Asks";
 
-  static const navToAsksDialog = "Asks";
-  static const navToGardenDialog = "Gardens";
-  static const navToSettingsDialog = "Settings";
-  static const navToUsers = "Users";
+  static const navToAdminCurrentGardenSettings = "Garden Settings";
+  static const navToAdminListedUsers = "Users";
+  static const navToAdminSettings = "Admin";
+  static const navToAdminOptions = "Options";
+  static const navToAsksView = "Asks";
+  static const navToCurrentGardenSettingsView = "Garden";
+  static const navToSettingsView = "Settings";
 
   static const settings = "Settings";
 
-  static const users = "Users";
-
-  static const viewAsk = "View Ask";
+  static const examineAsk = "View Ask";
 }
 
-class AskDialogText {
+class AppDialogFooterBufferText {
+  static const adminListedUsersTooltip = "Return to Users";
+
+  static const saveChanges = "Save changes";
+}
+
+class AskViewText {
   static const askTimeLeftBrace = "—";
 
   static const boon = "Boon";
 
   static const cancelConfirmDeleteAsk = "Cancel";
-  static const confirmDeleteAsk = "Delete ask?";
+  static const confirmDeleteAsk = "Delete Ask?";
   static const createAsk = "Create new Ask";
   static const creator = "Creator";
   static const currency = "Currency";
 
   static const deadlineDate = "Deadline date";
   static const deadlineDueBy = "due";
-  static const deleteAsk = "Delete ask";
+  static const deleteAsk = "Delete Ask";
   static const description = "Description";
 
   static const emptyListedAskTilesMessage = "No Asks found";
@@ -46,6 +92,8 @@ class AskDialogText {
   static const goToListedAsks = "Go to My Asks";
 
   static const instructions = "Instructions";
+  static const instructionsTooltip = "How funds can be sent to you.\n"
+                                      "$urlFormattingText";
 
   static const markAsSponsored = "Click to mark as sponsored";
 
@@ -54,7 +102,6 @@ class AskDialogText {
   static const reasonDeadlinePassed = "(deadline passed)";
   static const reasonTargetMet = "(target met)";
 
-  static const saveChanges = "Save changes";
   static const selectDateLabel = "Select date";
 
   static const targetMet = "Target met";
@@ -62,8 +109,6 @@ class AskDialogText {
   static const targetSum = "Target Sum";
   static const tooltipBoon = "The smallest ideal donation amount, "
                               "e.g. \$5 boon for \$20 target sum";
-  static const tooltipInstructions = "How funds can be sent to you.\n"
-                                      "$urlFormattingText";
   static const type = "Type";
 
   static const unmarkAsSponsored = "Click to unmark as sponsored";
@@ -89,11 +134,21 @@ class ForgotPasswordDialogText {
     "Please enter the email address to send password reset instructions to");
 }
 
-class GardenDialogText {
-  static const listedLandingPageTileLabel = "Go to Landing page";
+class GardenSettingsViewText {
+  static const cancelConfirmExitGarden = "Cancel";
+  static const confirmExitGarden = "Are you sure?";
+  static const confirmExitGardenSubtitle = ""
+    "Leaving will permanently remove you from this Garden."
+    "\n\nAll your Asks—fulfilled or unfulfilled—will be deleted, "
+    "and you will need a new invitation to return.";
+
+  static const exitGarden = "Exit Garden";
+
+  static const goToLandingPageLabel = "Go to Landing page";
+  static const goToAdminPageLabel = "Go to Administrator page";
 }
 
-class GardenFooterText {
+class GardenPageBottomBarText {
   static const asksTooltip = "Asks";
 
   static const gardensTooltip = "Gardens";
@@ -152,7 +207,7 @@ class SignInPageText {
   static const usernameOrEmail = "Username or Email";
 }
 
-class SnackbarText {
+class SnackBarText {
   static const askSponsored = "Ask successfully sponsored!";
 
   static const createAskSuccess = "Ask successfully created";
@@ -162,31 +217,33 @@ class SnackbarText {
   static const deletedUserAccountFailed = ""
     "An error occurred while trying to delete your account";
 
-  static const invalidGardenPermissions = ""
-    "You do not have access to this Garden.";
+  static const expelUserSuccess = "Successfully expelled user:";
 
   static const sentPasswordResetEmail = "Password reset instructions have been sent to";
   static const sentUserVerificationEmail = "A verification email has been sent to";
 
   static const updateAskSuccess = "Ask successfully updated!";
+  static const updateGardenNameSuccess = "Garden name successfully changed";
+  static const updateUserGardenRoleSuccess = "User role successfully changed";
   static const updateUserSettingsSuccess = "Settings updated";
 
   static const urlError = "Invalid URL:";
 }
 
-class UserSettingsDialogText {
-  static const cancelConfirmExitGarden = "Cancel";
-  static const confirmExitGarden = "Are you sure?";
-  static const confirmExitGardenSubtitle = ""
-    "Leaving will permanently remove you from this Garden."
-    "\n\nAll your Asks—fulfilled or unfulfilled—will be deleted, "
-    "and you will need a new invitation to return.";
+class UnauthorizedPageText {
+  static const buttonText = "Return";
 
+  static const messageBody = ""
+    "You do not have the necessary permissions to access this page.";
+  static const messageHeader = "Unauthorized Access";
+
+}
+
+class UserSettingsViewText {
   static const defaultCurrency = "Default currency";
   static const defaultInstructions = "Default instructions";
 
   static const firstName = "First name";
 
   static const lastName = "Last name";
-  static const exitGarden = "Leave Garden";
 }

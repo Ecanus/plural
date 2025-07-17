@@ -31,7 +31,7 @@ void main() {
             appForm: appForm,
             fieldName: AskField.targetMetDate,
             formFieldType: FormFieldType.datetimeNow,
-            text: AskDialogText.targetMet,
+            text: AskViewText.targetMet,
             value: tc.ask.isTargetMet
           ),
       ));
@@ -65,7 +65,7 @@ void main() {
                 appForm: appForm,
                 fieldName: AskField.targetMetDate,
                 formFieldType: FormFieldType.datetimeNow,
-                text: AskDialogText.targetMet,
+                text: AskViewText.targetMet,
                 value: true
               ),
             ),

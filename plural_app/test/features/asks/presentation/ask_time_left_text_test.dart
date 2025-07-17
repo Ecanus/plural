@@ -29,7 +29,7 @@ void main() {
       // Check text correctly rendered
       final askString = tc.ask.timeRemainingString;
       expect(find.text(
-        "${AskDialogText.askTimeLeftBrace} $askString ${AskDialogText.askTimeLeftBrace}"
+        "${AskViewText.askTimeLeftBrace} $askString ${AskViewText.askTimeLeftBrace}"
       ), findsOneWidget);
     });
   });

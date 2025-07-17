@@ -27,30 +27,30 @@ import 'package:plural_app/src/features/asks/presentation/route_to_listed_asks_v
 import 'package:plural_app/src/localization/lang_en.dart';
 
 // Utils
-import 'package:plural_app/src/utils/app_dialog_router.dart';
+import 'package:plural_app/src/utils/app_dialog_view_router.dart';
 import 'package:plural_app/src/utils/app_form.dart';
 import 'package:plural_app/src/utils/app_state.dart';
 
-Future createCreatableAskDialog(BuildContext context) async {
+Future createCreateAskDialog(BuildContext context) async {
   if (context.mounted) {
     return showDialog(
       context: context,
       builder: (BuildContext context) {
         return AppDialog(
-          view: AskDialogCreateForm(),
+          view: CreateAskView(),
         );
       }
     );
   }
 }
 
-class AskDialogCreateForm extends StatefulWidget {
+class CreateAskView extends StatefulWidget {
   @override
-  State<AskDialogCreateForm> createState() => _AskDialogCreateFormState();
+  State<CreateAskView> createState() => _CreateAskViewState();
 }
 
-class _AskDialogCreateFormState extends State<AskDialogCreateForm> {
-  late AppDialogRouter _appDialogRouter;
+class _CreateAskViewState extends State<CreateAskView> {
+  late AppDialogViewRouter _appDialogViewRouter;
   late AppForm _appForm;
   late AppState _appState;
   late GlobalKey<FormState> _formKey;
@@ -59,13 +59,13 @@ class _AskDialogCreateFormState extends State<AskDialogCreateForm> {
   void initState() {
     super.initState();
 
-    _appDialogRouter = GetIt.instance<AppDialogRouter>();
+    _appDialogViewRouter = GetIt.instance<AppDialogViewRouter>();
     _appState = GetIt.instance<AppState>();
     _formKey = GlobalKey<FormState>();
 
     _appForm = AppForm.fromMap(Ask.emptyMap());
-    _appForm.setValue(fieldName: AskField.creator, value: _appState.currentUser!);
-    _appForm.setValue(fieldName: AskField.garden, value: _appState.currentGarden!);
+    _appForm.setValue(fieldName: AskField.creator, value: _appState.currentUser!.id);
+    _appForm.setValue(fieldName: AskField.garden, value: _appState.currentGarden!.id);
     _appForm.setValue(
       fieldName: AppFormFields.rebuild,
       value: () { setState(() {}); },
@@ -88,7 +88,7 @@ class _AskDialogCreateFormState extends State<AskDialogCreateForm> {
                     AppDatePickerFormField(
                       appForm: _appForm,
                       fieldName: AskField.deadlineDate,
-                      label: AskDialogText.deadlineDate,
+                      label: AskViewText.deadlineDate,
                     ),
                     Row(
                       children: [
@@ -97,7 +97,7 @@ class _AskDialogCreateFormState extends State<AskDialogCreateForm> {
                             appForm: _appForm,
                             fieldName: AskField.targetSum,
                             formFieldType: FormFieldType.digitsOnly,
-                            label: AskDialogText.targetSum,
+                            label: AskViewText.targetSum,
                             maxLength: AppMaxLengths.max4,
                             textFieldType: TextFieldType.digitsOnly,
                           ),
@@ -108,10 +108,10 @@ class _AskDialogCreateFormState extends State<AskDialogCreateForm> {
                             appForm: _appForm,
                             fieldName: AskField.boon,
                             formFieldType: FormFieldType.digitsOnly,
-                            label: AskDialogText.boon,
+                            label: AskViewText.boon,
                             maxLength: AppMaxLengths.max4,
                             suffixIcon: Tooltip(
-                              message: AskDialogText.tooltipBoon,
+                              message: AskViewText.tooltipBoon,
                               child: AppTooltipIcon(isDark: false),
                             ),
                             textFieldType: TextFieldType.digitsOnly,
@@ -124,7 +124,7 @@ class _AskDialogCreateFormState extends State<AskDialogCreateForm> {
                             appForm: _appForm,
                             fieldName: AskField.currency,
                             initialValue: _appState.currentUserSettings!.defaultCurrency,
-                            label: AskDialogText.currency,
+                            label: AskViewText.currency,
                           )
                         )
                       ],
@@ -132,11 +132,11 @@ class _AskDialogCreateFormState extends State<AskDialogCreateForm> {
                     AppTextFormField(
                       appForm: _appForm,
                       fieldName: AskField.description,
-                      label: AskDialogText.description,
+                      label: AskViewText.description,
                       maxLength: AppMaxLengths.max400,
                       maxLines: null,
                       suffixIcon: Tooltip(
-                        message: AskDialogText.urlFormattingText,
+                        message: AskViewText.urlFormattingText,
                         child: AppTooltipIcon(isDark: false),
                       ),
                     ),
@@ -144,11 +144,11 @@ class _AskDialogCreateFormState extends State<AskDialogCreateForm> {
                       appForm: _appForm,
                       fieldName: AskField.instructions,
                       initialValue: _appState.currentUserSettings!.defaultInstructions,
-                      label: AskDialogText.instructions,
+                      label: AskViewText.instructions,
                       maxLength: AppMaxLengths.max200,
                       maxLines: null,
                       suffixIcon: Tooltip(
-                        message: AskDialogText.tooltipInstructions,
+                        message: AskViewText.instructionsTooltip,
                         child: AppTooltipIcon(isDark: false),
                       ),
                     ),
@@ -158,7 +158,7 @@ class _AskDialogCreateFormState extends State<AskDialogCreateForm> {
                         appForm: _appForm,
                         fieldName: AskField.type,
                         initialValue: AskType.monetary.name, // Hardcoded value for now
-                        label: AskDialogText.type,
+                        label: AskViewText.type,
                       ),
                     ),
                   ],
@@ -178,11 +178,11 @@ class _AskDialogCreateFormState extends State<AskDialogCreateForm> {
         ),
         AppDialogNavFooter(
           leftDialogIcon: Icons.local_florist,
-          leftNavCallback: _appDialogRouter.routeToCurrentGardenDialogView,
-          leftTooltipMessage: AppDialogFooterText.navToGardenDialog,
+          leftNavCallback: _appDialogViewRouter.routeToCurrentGardenSettingsView,
+          leftTooltipMessage: AppDialogFooterText.navToCurrentGardenSettingsView,
           rightDialogIcon: Icons.settings,
-          rightNavCallback: _appDialogRouter.routeToUserSettingsDialogView,
-          rightTooltipMessage: AppDialogFooterText.navToSettingsDialog,
+          rightNavCallback: _appDialogViewRouter.routeToUserSettingsView,
+          rightTooltipMessage: AppDialogFooterText.navToSettingsView,
           title: AppDialogFooterText.createAsk
         )
       ],

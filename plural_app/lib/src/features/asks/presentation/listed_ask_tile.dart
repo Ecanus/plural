@@ -13,7 +13,7 @@ import 'package:plural_app/src/features/asks/domain/ask.dart';
 import 'package:plural_app/src/localization/lang_en.dart';
 
 // Utils
-import 'package:plural_app/src/utils/app_dialog_router.dart';
+import 'package:plural_app/src/utils/app_dialog_view_router.dart';
 
 class ListedAskTile extends StatelessWidget {
   const ListedAskTile({
@@ -24,7 +24,7 @@ class ListedAskTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appDialogRouter = GetIt.instance<AppDialogRouter>();
+    final appDialogViewRouter = GetIt.instance<AppDialogViewRouter>();
 
     final shouldStrikethrough = ask.isDeadlinePassed || ask.targetMetDate != null;
     final textDecoration = shouldStrikethrough ? TextDecoration.lineThrough : null;
@@ -49,17 +49,17 @@ class ListedAskTile extends StatelessWidget {
           ),
         ),
         subtitle: Text(
-          "${AskDialogText.deadlineDueBy}: ${ask.formattedDeadlineDate}",
+          "${AskViewText.deadlineDueBy}: ${ask.formattedDeadlineDate}",
           style: TextStyle(
             color: textColor,
             decoration: textDecoration,
             fontStyle: FontStyle.italic,
           ),
         ),
-        trailing: TileTrailing(tileTrailingAvatar: tileTrailingAvatar),
+        trailing: ListedAskTileTrailing(tileTrailingAvatar: tileTrailingAvatar),
         onTap: () {
           Future.delayed(AppDurations.ms80, () {
-            appDialogRouter.routeToEditableAskDialogView(ask);
+            appDialogViewRouter.routeToEditAskView(ask);
           });
         },
       ),
@@ -67,8 +67,8 @@ class ListedAskTile extends StatelessWidget {
   }
 }
 
-class TileTrailing extends StatelessWidget {
-  const TileTrailing({
+class ListedAskTileTrailing extends StatelessWidget {
+  const ListedAskTileTrailing({
     required this.tileTrailingAvatar,
   });
 

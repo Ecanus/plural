@@ -1,10 +1,16 @@
+import 'package:flutter_test/flutter_test.dart' as ft;
+
+import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:pocketbase/pocketbase.dart';
 import 'package:test/test.dart';
 
 // Constants
 import 'package:plural_app/src/constants/fields.dart';
+import 'package:plural_app/src/constants/routes.dart';
+import 'package:plural_app/src/constants/query_parameters.dart';
 
 // Asks
 import 'package:plural_app/src/features/asks/data/asks_repository.dart';
@@ -13,30 +19,86 @@ import 'package:plural_app/src/features/asks/domain/ask.dart';
 // Auth
 import 'package:plural_app/src/features/authentication/data/user_garden_records_repository.dart';
 import 'package:plural_app/src/features/authentication/data/users_repository.dart';
+import 'package:plural_app/src/features/authentication/domain/app_user_garden_record.dart';
+import 'package:plural_app/src/features/authentication/presentation/unauthorized_page.dart';
 
 // Gardens
 import 'package:plural_app/src/features/gardens/data/gardens_repository.dart';
 
 // Utils
 import 'package:plural_app/src/utils/app_state.dart';
+import 'package:plural_app/src/utils/exceptions.dart';
 
 // Tests
 import '../test_context.dart';
 import '../test_mocks.dart';
+import '../test_stubs.dart';
 
 void main() {
-  group("App state test", () {
+  group("AppState", () {
+    test("clearGardenAndSubscriptions", () async {
+      final appState = AppState.skipSubscribe();
+
+      final pb = MockPocketBase();
+      final recordService = MockRecordService();
+
+      final getIt = GetIt.instance;
+      getIt.registerLazySingleton<PocketBase>(() => pb);
+
+      // pb.collection()
+      when(
+        () => pb.collection(any())
+      ).thenAnswer(
+        (_) => recordService as RecordService
+      );
+
+
+      // RecordService.unsubscribe()
+      when(
+        () => recordService.unsubscribe()
+      ).thenAnswer(
+        (_) async => {}
+      );
+
+      verifyNever(() => recordService.unsubscribe());
+
+      await appState.clearGardenAndSubscriptions();
+
+      verify(() => recordService.unsubscribe()).called(4);
+    });
+
     test("getTimelineAsks", () async {
       final tc = TestContext();
 
       final appState = AppState.skipSubscribe()
-                        ..currentGarden = tc.garden;
+                        ..currentGarden = tc.garden
+                        ..currentUser = tc.user;
 
       final getIt = GetIt.instance;
+      final mockBuildContext = MockBuildContext();
       final mockAsksRepository = MockAsksRepository();
+      final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
       final mockUsersRepository = MockUsersRepository();
+
       getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
+      getIt.registerLazySingleton<UserGardenRecordsRepository>(
+        () => mockUserGardenRecordsRepository
+      );
       getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
+
+      // UserGardenRecordsRepository.getList()
+      when(
+        () => mockUserGardenRecordsRepository.getList(
+          filter: ""
+            "${UserGardenRecordField.user} = '${tc.user.id}' && "
+            "${UserGardenRecordField.garden} = '${tc.garden.id}'",
+          sort: "-updated"
+        )
+      ).thenAnswer(
+        (_) async => ResultList<RecordModel>(
+          items: [tc.getUserGardenRecordRecordModel()]
+        )
+      );
 
       // AsksRepository.getList()
       when(
@@ -56,7 +118,14 @@ void main() {
         (_) async => tc.getUserRecordModel()
       );
 
-      final asks = await appState.getTimelineAsks();
+      // BuildContext.mounted
+      when(
+        () => mockBuildContext.mounted
+      ).thenAnswer(
+        (_) => true
+      );
+
+      final asks = await appState.getTimelineAsks(mockBuildContext, isAdminPage: false);
       expect(asks.length, 1);
 
       final ask = asks.first;
@@ -77,17 +146,101 @@ void main() {
 
     tearDown(() => GetIt.instance.reset());
 
+    ft.testWidgets("getTimelineAsks PermissionException", (tester) async {
+      final tc = TestContext();
+
+      final appState = AppState.skipSubscribe()
+                        ..currentGarden = tc.garden
+                        ..currentUser = tc.user;
+
+      final getIt = GetIt.instance;
+      final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
+      getIt.registerLazySingleton<UserGardenRecordsRepository>(
+        () => mockUserGardenRecordsRepository
+      );
+
+      getUserGardenRecordRoleStub(
+        mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
+        userID: tc.user.id,
+        gardenID: tc.garden.id,
+        returnValue: ResultList<RecordModel>(items: []) // empty list will throw PermissionException
+      );
+
+      final testRouter = GoRouter(
+        initialLocation: "/test",
+        routes: [
+          GoRoute(
+            path: "/test",
+            builder: (_, __) => Scaffold(
+              body: Builder(
+                builder: (BuildContext context) {
+                  return ElevatedButton(
+                    onPressed: () => appState.getTimelineAsks(context, isAdminPage: true),
+                    child: Text("The ElevatedButton")
+                  );
+                }
+              )
+            )
+          ),
+          GoRoute(
+            path: Routes.unauthorized,
+            builder: (_, state) => UnauthorizedPage(
+            previousRoute: state.uri.queryParameters[QueryParameters.previousRoute],
+          )
+          )
+        ]
+      );
+
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routerConfig: testRouter,
+        )
+      );
+
+      expect(ft.find.byType(UnauthorizedPage), ft.findsNothing);
+
+      // Tap button (to call getTimelineAsks)
+      await tester.tap(ft.find.byType(ElevatedButton));
+      await tester.pumpAndSettle();
+
+      expect(ft.find.byType(UnauthorizedPage), ft.findsOneWidget);
+    });
+
     test("refreshTimelineAsks", () async {
       final tc = TestContext();
 
       final appState = AppState.skipSubscribe()
-                        ..currentGarden = tc.garden;
+                        ..currentGarden = tc.garden
+                        ..currentUser = tc.user;
 
       final getIt = GetIt.instance;
       final mockAsksRepository = MockAsksRepository();
+      final mockBuildContext = MockBuildContext();
+      final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
       final mockUsersRepository = MockUsersRepository();
       getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
+      getIt.registerLazySingleton<UserGardenRecordsRepository>(
+        () => mockUserGardenRecordsRepository
+      );
       getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
+
+      // UserGardenRecordsRepository.getList()
+      when(
+        () => mockUserGardenRecordsRepository.getList(
+          filter: ""
+            "${UserGardenRecordField.user} = '${tc.user.id}' && "
+            "${UserGardenRecordField.garden} = '${tc.garden.id}'",
+          sort: any(named: "sort")
+          )
+      ).thenAnswer(
+        (_) async => ResultList<RecordModel>(
+          items: [
+            tc.getExpandUserGardenRecordRecordModel([
+              UserGardenRecordField.user, UserGardenRecordField.garden
+            ]),
+          ]
+        )
+      );
 
       // AsksRepository.getList()
       when(
@@ -107,7 +260,14 @@ void main() {
         (_) async => tc.getUserRecordModel()
       );
 
-      final asks = await appState.getTimelineAsks();
+      // BuildContext.mounted
+      when(
+        () => mockBuildContext.mounted
+      ).thenAnswer(
+        (_) => true
+      );
+
+      final asks = await appState.getTimelineAsks(mockBuildContext);
       expect(asks.length, 1);
 
       // refreshTimelineAsks() should clear AppState._timelineAsks
@@ -135,7 +295,8 @@ void main() {
 
       getIt.registerLazySingleton<GardensRepository>(() => mockGardensRepository);
       getIt.registerLazySingleton<UserGardenRecordsRepository>(
-        () => mockUserGardenRecordsRepository);
+        () => mockUserGardenRecordsRepository
+      );
       getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
 
       // UserGardenRecordsRepository.getList()
@@ -150,15 +311,6 @@ void main() {
         (_) async => ResultList<RecordModel>(
           items: []
         )
-      );
-
-      // GardensRepository.getFirstListItem()
-      when(
-        () => mockGardensRepository.getFirstListItem(
-          filter: "${GenericField.id} = '${tc.garden.id}'"
-          )
-      ).thenAnswer(
-        (_) async => tc.getGardenRecordModel()
       );
 
       // UsersRepository.getFirstListItem()
@@ -177,31 +329,23 @@ void main() {
         true
       );
 
-      // GoRouter.refresh()
-      when(
-        () => mockGoRouter.refresh()
-      ).thenReturn(null);
-
       // Check currentGarden is null
       expect(appState.currentGarden, null);
 
       // Check methods not yet called
       verifyNever(() => mockBuildContext.mounted);
-      verifyNever(() => mockGoRouter.refresh());
 
       await appState.setGardenAndReroute(
         mockBuildContext,
         tc.garden,
-        goRouter: mockGoRouter,
-        showsSnackbar: false
+        goRouter: mockGoRouter
       );
 
-      // Check curerentGarden is still null
+      // Check currentGarden is still null (was never set because no userGardenRecord was found)
       expect(appState.currentGarden, null);
 
       // Check methods were called
       verify(() => mockBuildContext.mounted).called(1);
-      verify(() => mockGoRouter.refresh()).called(1);
 
       // UserGardenRecordsRepository.getList(), now returns RecordModel
       when(
@@ -213,21 +357,25 @@ void main() {
           )
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(
-          items: [tc.getUserGardenRecordRecordModel()]
+          items: [
+            tc.getExpandUserGardenRecordRecordModel([
+              UserGardenRecordField.user, UserGardenRecordField.garden
+            ], role: AppUserGardenRole.member),
+          ]
         )
       );
 
       // GoRouter.go()
       when(
-        () => mockGoRouter.go(any())
+        () => mockGoRouter.go(Routes.garden)
       ).thenReturn(null);
 
-      // Check currentGarden is null
+      // Check currentGarden is null (call not yet made)
       expect(appState.currentGarden, null);
 
       // Check methods not yet called
       verifyNever(() => mockBuildContext.mounted);
-      verifyNever(() => mockGoRouter.go(any()));
+      verifyNever(() => mockGoRouter.go(Routes.garden));
 
       await appState.setGardenAndReroute(
         mockBuildContext, tc.garden, goRouter: mockGoRouter);
@@ -237,9 +385,150 @@ void main() {
 
       // Check methods were called
       verify(() => mockBuildContext.mounted).called(1);
-      verify(() => mockGoRouter.go(any())).called(1);
+      verify(() => mockGoRouter.go(Routes.garden)).called(1);
     });
 
     tearDown(() => GetIt.instance.reset());
+
+    test("isAdministrator, isOwner", () async {
+      final tc = TestContext();
+
+      final appState = AppState.skipSubscribe()
+                        ..currentGarden = tc.garden
+                        ..currentUser = tc.user;
+
+      final getIt = GetIt.instance;
+      final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
+
+      getIt.registerLazySingleton<UserGardenRecordsRepository>(
+        () => mockUserGardenRecordsRepository
+      );
+
+      // UserGardenRecordsRepository.getList()
+      when(
+        () => mockUserGardenRecordsRepository.getList(
+          filter: ""
+            "${UserGardenRecordField.user} = '${tc.user.id}' && "
+            "${UserGardenRecordField.garden} = '${tc.garden.id}'",
+          sort: "-updated"
+        )
+      ).thenAnswer(
+        (_) async => ResultList<RecordModel>(
+          items: [
+            tc.getUserGardenRecordRecordModel(role: AppUserGardenRole.member)
+          ]
+        )
+      );
+
+      expect(await appState.isAdministrator(), false);
+      expect(await appState.isOwner(), false);
+
+      // UserGardenRecordsRepository.getList(). Returns record with role == administrator
+      when(
+        () => mockUserGardenRecordsRepository.getList(
+          filter: ""
+            "${UserGardenRecordField.user} = '${tc.user.id}' && "
+            "${UserGardenRecordField.garden} = '${tc.garden.id}'",
+          sort: "-updated"
+        )
+      ).thenAnswer(
+        (_) async => ResultList<RecordModel>(
+          items: [
+            tc.getUserGardenRecordRecordModel(role: AppUserGardenRole.administrator)
+          ]
+        )
+      );
+
+      expect(await appState.isAdministrator(), true);
+      expect(await appState.isOwner(), false);
+
+      // UserGardenRecordsRepository.getList(). Returns record with role == owner
+      when(
+        () => mockUserGardenRecordsRepository.getList(
+          filter: ""
+            "${UserGardenRecordField.user} = '${tc.user.id}' && "
+            "${UserGardenRecordField.garden} = '${tc.garden.id}'",
+          sort: "-updated"
+        )
+      ).thenAnswer(
+        (_) async => ResultList<RecordModel>(
+          items: [
+            tc.getUserGardenRecordRecordModel(role: AppUserGardenRole.owner)
+          ]
+        )
+      );
+
+      expect(await appState.isAdministrator(), true);
+      expect(await appState.isOwner(), true);
+    });
+
+    test("verify", () async {
+      final tc = TestContext();
+
+      final appState = AppState.skipSubscribe()
+                        ..currentGarden = tc.garden
+                        ..currentUser = tc.user;
+
+      final getIt = GetIt.instance;
+      final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
+
+      getIt.registerLazySingleton<UserGardenRecordsRepository>(
+        () => mockUserGardenRecordsRepository
+      );
+
+      // UserGardenRecordsRepository.getList()
+      when(
+        () => mockUserGardenRecordsRepository.getList(
+          filter: ""
+            "${UserGardenRecordField.user} = '${tc.user.id}' && "
+            "${UserGardenRecordField.garden} = '${tc.garden.id}'",
+          sort: "-updated"
+        )
+      ).thenAnswer(
+        (_) async => ResultList<RecordModel>(
+          items: [tc.getUserGardenRecordRecordModel(role: AppUserGardenRole.member)]
+        )
+      );
+
+      final ownerPermissions = [
+        AppUserGardenPermission.changeOwner,
+        AppUserGardenPermission.deleteGarden,
+      ];
+
+      final memberPermissions = [
+        AppUserGardenPermission.createAndEditAsks,
+        AppUserGardenPermission.viewGardenTimeline,
+      ];
+
+      // Check no exceptions thrown
+      await appState.verify(memberPermissions);
+
+      // Check throws exception because insufficient permissions
+      expect(
+        () async => await appState.verify(ownerPermissions),
+        throwsA(predicate((e) => e is PermissionException))
+      );
+
+      // UserGardenRecordsRepository.getList() Returns empty list
+      when(
+        () => mockUserGardenRecordsRepository.getList(
+          filter: ""
+            "${UserGardenRecordField.user} = '${tc.user.id}' && "
+            "${UserGardenRecordField.garden} = '${tc.garden.id}'",
+          sort: "-updated"
+        )
+      ).thenAnswer(
+        (_) async => ResultList<RecordModel>(
+          items: []
+        )
+      );
+
+      // Check throws exception because no UserGardenRecord was found (empty list)
+      expect(
+        () async => await appState.verify(ownerPermissions),
+        throwsA(predicate((e) => e is PermissionException))
+      );
+    });
+
   });
 }

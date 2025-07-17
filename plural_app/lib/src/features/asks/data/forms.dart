@@ -14,7 +14,7 @@ import 'package:plural_app/src/features/asks/data/asks_repository.dart';
 import 'package:plural_app/src/localization/lang_en.dart';
 
 // Utils
-import 'package:plural_app/src/utils/app_dialog_router.dart';
+import 'package:plural_app/src/utils/app_dialog_view_router.dart';
 import 'package:plural_app/src/utils/app_form.dart';
 
 
@@ -34,8 +34,8 @@ Future<void> submitCreate(
     );
 
     if (record != null && context.mounted) {
-      var snackBar = AppSnackbars.getSnackbar(
-        SnackbarText.createAskSuccess,
+      var snackBar = AppSnackBars.getSnackBar(
+        SnackBarText.createAskSuccess,
         showCloseIcon: false,
         snackbarType: SnackbarType.success
       );
@@ -43,8 +43,8 @@ Future<void> submitCreate(
       // Display Success Snackbar
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
 
-      // Route to Listed Asks Dialog
-      GetIt.instance<AppDialogRouter>().routeToAskDialogListView();
+      // Route to Listed Asks View
+      GetIt.instance<AppDialogViewRouter>().routeToListedAsksView();
     } else {
       // Add errors to corresponding fields
       appForm.setErrors(errorsMap: errorsMap);
@@ -74,8 +74,8 @@ Future<void> submitUpdate(
       );
 
     if (record != null && context.mounted) {
-      var snackBar = AppSnackbars.getSnackbar(
-        SnackbarText.updateAskSuccess,
+      var snackBar = AppSnackBars.getSnackBar(
+        SnackBarText.updateAskSuccess,
         showCloseIcon: false,
         snackbarType: SnackbarType.success
       );
@@ -94,28 +94,5 @@ Future<void> submitUpdate(
         fieldName: AppFormFields.rebuild,
         isAux: true)();
     }
-  }
-}
-
-/// Submits form data to delete an existing [Ask] record in the database.
-Future<void> submitDelete(
-  BuildContext context,
-  String askID,
-) async {
-  // Deletion should also rebuild Garden Timeline via SubscribeTo
-  await GetIt.instance<AsksRepository>().delete(id: askID);
-
-  if (context.mounted) {
-    var snackBar = AppSnackbars.getSnackbar(
-      SnackbarText.deleteAskSuccess,
-      showCloseIcon: false,
-      snackbarType: SnackbarType.success
-    );
-
-    // Display Success Snackbar
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-
-    // Close Dialog
-    Navigator.pop(context);
   }
 }

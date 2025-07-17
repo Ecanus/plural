@@ -3,11 +3,15 @@ import 'package:get_it/get_it.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:pocketbase/pocketbase.dart';
 
+// Constants
+import 'package:plural_app/src/constants/fields.dart';
+
 // Asks
 import 'package:plural_app/src/features/asks/data/asks_repository.dart';
 import 'package:plural_app/src/features/asks/domain/ask.dart';
 
 // Auth
+import 'package:plural_app/src/features/authentication/data/user_garden_records_repository.dart';
 import 'package:plural_app/src/features/authentication/data/users_repository.dart';
 
 // Utils
@@ -91,13 +95,34 @@ void main() {
       // GetIt
       final getIt = GetIt.instance;
       final appState = AppState.skipSubscribe()
-                        ..currentGarden = tc.garden;
+                        ..currentGarden = tc.garden
+                        ..currentUser = tc.user;
 
       final mockAsksRepository = MockAsksRepository();
+      final mockBuildContext = MockBuildContext();
+      final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
       final mockUsersRepository = MockUsersRepository();
+
       getIt.registerLazySingleton<AppState>(() => appState);
       getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
       getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
+       getIt.registerLazySingleton<UserGardenRecordsRepository>(
+        () => mockUserGardenRecordsRepository
+      );
+
+      // UserGardenRecordsRepository.getList()
+      when(
+        () => mockUserGardenRecordsRepository.getList(
+          filter: ""
+            "${UserGardenRecordField.user} = '${tc.user.id}' && "
+            "${UserGardenRecordField.garden} = '${tc.garden.id}'",
+          sort: "-updated"
+        )
+      ).thenAnswer(
+        (_) async => ResultList<RecordModel>(
+          items: [tc.getUserGardenRecordRecordModel()]
+        )
+      );
 
       // AsksRepository.getList()
       when(
@@ -111,7 +136,7 @@ void main() {
         ])
       );
 
-      // mockUsersRepository.getFirstListItem()
+      // UsersRepository.getFirstListItem()
       when(
         () => mockUsersRepository.getFirstListItem(
           filter: any(named: "filter")
@@ -120,10 +145,17 @@ void main() {
         (_) async => tc.getUserRecordModel()
       );
 
+      // BuildContext.mounted
+      when(
+        () => mockBuildContext.mounted
+      ).thenAnswer(
+        (_) => true
+      );
+
       expect(tc.ask.isOnTimeline, false);
 
       // Call AppState.getTimelineAsks() to populate its _timelineAsks
-      await GetIt.instance<AppState>().getTimelineAsks();
+      await GetIt.instance<AppState>().getTimelineAsks(mockBuildContext);
 
       expect(tc.ask.isOnTimeline, true);
     });

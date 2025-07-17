@@ -6,15 +6,14 @@ import 'package:get_it/get_it.dart';
 import 'package:plural_app/src/constants/themes.dart';
 
 // Asks
-import 'package:plural_app/src/features/asks/domain/ask.dart';
-
-// Auth
-import 'package:plural_app/src/features/authentication/domain/app_user.dart';
+import 'package:plural_app/src/features/asks/presentation/admin_examine_ask_view.dart';
+import 'package:plural_app/src/features/asks/presentation/examine_ask_view.dart';
 
 // Gardens
 import 'package:plural_app/src/features/gardens/presentation/garden_timeline_tile.dart';
 
 // Utils
+import 'package:plural_app/src/utils/app_dialog_view_router.dart';
 import 'package:plural_app/src/utils/app_state.dart';
 
 // Tests
@@ -22,83 +21,48 @@ import '../../../test_context.dart';
 import '../../../tester_functions.dart';
 
 void main() {
-  group("GardenTimelineTile test", () {
-    testWidgets("isCreatedByCurrentUser", (tester) async {
+  group("GardenTimelineTile", () {
+    testWidgets("widgets", (tester) async {
       final tc = TestContext();
-      final appState = AppState()
-                        ..currentUser = tc.user;
-
-      final getIt = GetIt.instance;
-      getIt.registerLazySingleton<AppState>(() => appState);
-
-      // When ask.isCreatedByCurrentUser
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: ListView(
-              children: [
-                GardenTimelineTile(ask: tc.ask)
-              ],
-            ),
-          )
-        )
-      );
-
-      // Check EditableGardenTimelineTile rendered; not NonEditableGardenTimelineTile
-      expect(find.byType(EditableGardenTimelineTile), findsOneWidget);
-      expect(find.byType(NonEditableGardenTimelineTile), findsNothing);
-
-      // When !ask.isCreatedByCurrentUser
-      final now = DateTime.now();
-
-      final newUser = AppUser(
-        email: "new@user.com",
-        firstName: "NewFirst",
-        id: "NEWUSER001",
-        lastName: "NewLast",
-        username: "newuser"
-      );
-
-      final newAsk = Ask(
-        id: "NEWASK",
-        boon: 0,
-        creator: newUser,
-        creationDate: now.add(const Duration(days: -10)),
-        currency: "GHS",
-        description: "",
-        deadlineDate: now.add(const Duration(days: 90)),
-        instructions: "",
-        targetSum: 500,
-        type: AskType.monetary
-      );
 
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
             body: ListView(
               children: [
-                GardenTimelineTile(ask: newAsk)
+                GardenTimelineTile(ask: tc.ask, index: 0, isAdminPage: true,)
               ],
             ),
           )
         )
       );
 
-      // Check NonEditableGardenTimelineTile rendered; not EditableGardenTimelineTile
-      expect(find.byType(NonEditableGardenTimelineTile), findsOneWidget);
-      expect(find.byType(EditableGardenTimelineTile), findsNothing);
+      // Check widgets render correctly
+      expect(find.byType(TileExamineAskButton), findsOneWidget);
+      expect(find.byType(TileBackground), findsOneWidget);
+      expect(find.byType(TileForeground), findsOneWidget);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ListView(
+              children: [
+                GardenTimelineTile(ask: tc.ask, index: 1, isAdminPage: false,)
+              ],
+            ),
+          )
+        )
+      );
+
+      // Check widgets render correctly
+      expect(find.byType(TileExamineAskButton), findsOneWidget);
+      expect(find.byType(TileBackground), findsOneWidget);
+      expect(find.byType(TileForeground), findsOneWidget);
     });
-
-    tearDown(() => GetIt.instance.reset());
 
     testWidgets("TileContents", (tester) async {
       final tc = TestContext();
       final ask = tc.ask;
-      final appState = AppState()
-                        ..currentUser = tc.user;
-
-      final getIt = GetIt.instance;
-      getIt.registerLazySingleton<AppState>(() => appState);
 
       await tester.pumpWidget(
         MaterialApp(
@@ -142,34 +106,70 @@ void main() {
       expect(text.style!.color, Colors.transparent);
     });
 
+    testWidgets("isAdminPage", (tester) async {
+      final tc = TestContext();
+
+      final getIt = GetIt.instance;
+      getIt.registerLazySingleton<AppDialogViewRouter>(() => AppDialogViewRouter());
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ListView(
+              children: [
+                GardenTimelineTile(ask: tc.ask, index: 0, isAdminPage: true,)
+              ],
+            ),
+          )
+        )
+      );
+
+      // Check no view  displayed
+      expect(find.byType(AdminExamineAskView), findsNothing);
+      expect(find.byType(ExamineAskView), findsNothing);
+
+      await tester.tap(find.byType(TileExamineAskButton));
+      await tester.pumpAndSettle();
+
+      // Check only AdminExamineAskView shows
+      expect(find.byType(AdminExamineAskView), findsOneWidget);
+      expect(find.byType(ExamineAskView), findsNothing);
+    });
+
     tearDown(() => GetIt.instance.reset());
 
-    testWidgets("TileIsSponsoredIcon", (tester) async {
+    testWidgets("isAdminPage false", (tester) async {
+      final tc = TestContext();
+
+      final appState = AppState.skipSubscribe()
+                        ..currentUser = tc.user; // for ask.isSponsoredByCurrentUser
+
+      final getIt = GetIt.instance;
+      getIt.registerLazySingleton<AppState>(() => appState);
+      getIt.registerLazySingleton<AppDialogViewRouter>(() => AppDialogViewRouter());
+
       await tester.pumpWidget(
         MaterialApp(
-          theme: AppThemes.standard,
           home: Scaffold(
-            body: TileIsSponsoredIcon(hasHiddenContent: false,),
+            body: ListView(
+              children: [
+                GardenTimelineTile(ask: tc.ask, index: 0, isAdminPage: false,)
+              ],
+            ),
           )
         )
       );
 
-      // Check icon color is onSecondary when hideContent == false
-      var icon = get<Icon>(tester);
-      expect(icon.color, AppThemes.colorScheme.onSecondary);
+      // Check no view  displayed
+      expect(find.byType(AdminExamineAskView), findsNothing);
+      expect(find.byType(ExamineAskView), findsNothing);
 
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: AppThemes.standard,
-          home: Scaffold(
-            body: TileIsSponsoredIcon(hasHiddenContent: true,),
-          )
-        )
-      );
+      await tester.tap(find.byType(TileExamineAskButton));
+      await tester.pumpAndSettle();
 
-      // Check icon color is transparent when hideContent == true
-      icon = get<Icon>(tester);
-      expect(icon.color, Colors.transparent);
+      // Check only ExamineAskView shows
+      expect(find.byType(AdminExamineAskView), findsNothing);
+      expect(find.byType(ExamineAskView), findsOneWidget);
     });
 
     tearDown(() => GetIt.instance.reset());

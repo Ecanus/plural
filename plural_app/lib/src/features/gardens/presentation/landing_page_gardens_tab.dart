@@ -4,10 +4,12 @@ import 'package:get_it/get_it.dart';
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
 
+// Auth
+import 'package:plural_app/src/features/authentication/data/auth_api.dart';
+import 'package:plural_app/src/features/authentication/domain/app_user_garden_record.dart';
+
 // Gardens
-import 'package:plural_app/src/features/gardens/data/gardens_api.dart';
-import 'package:plural_app/src/features/gardens/domain/garden.dart';
-import 'package:plural_app/src/features/gardens/presentation/listed_garden_tile.dart';
+import 'package:plural_app/src/features/gardens/presentation/landing_page_listed_garden_tile.dart';
 
 // Localization
 import 'package:plural_app/src/localization/lang_en.dart';
@@ -22,11 +24,13 @@ class LandingPageGardensTab extends StatelessWidget {
 
     return Column(
       children: [
-        FutureBuilder<List<Garden>>(
-          future: getGardensByUserID(appState.currentUserID!, excludesCurrentGarden: false),
-          builder: (BuildContext context, AsyncSnapshot<List<Garden>> snapshot) {
+        FutureBuilder<List<AppUserGardenRecord>>(
+          future: getUserGardenRecordsByUserID(appState.currentUserID!),
+          builder: (
+              BuildContext context,
+              AsyncSnapshot<List<AppUserGardenRecord>> snapshot) {
             if (snapshot.hasData) {
-              return LandingPageGardensList(gardens: snapshot.data!);
+              return LandingPageGardensList(userGardenRecords: snapshot.data!);
             } else if (snapshot.hasError) {
               return LandingPageGardensListError(error: snapshot.error);
             } else {
@@ -41,20 +45,21 @@ class LandingPageGardensTab extends StatelessWidget {
 
 class LandingPageGardensList extends StatelessWidget {
   const LandingPageGardensList({
-    required this.gardens,
+    required this.userGardenRecords,
   });
 
-  final List<Garden> gardens;
+  final List<AppUserGardenRecord> userGardenRecords;
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: gardens.isEmpty ?
+      child: userGardenRecords.isEmpty ?
       EmptyLandingPageGardensListMessage() :
       ListView(
         padding: const EdgeInsets.all(AppPaddings.p35),
         children: [
-          for (Garden garden in gardens) LandingPageListedGardenTile(garden: garden)
+          for (AppUserGardenRecord record in userGardenRecords)
+            LandingPageListedGardenTile(garden: record.garden)
         ],
       ),
     );

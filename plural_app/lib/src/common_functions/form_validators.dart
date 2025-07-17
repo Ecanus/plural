@@ -4,6 +4,9 @@ import 'package:validators/validators.dart';
 import 'package:plural_app/src/constants/app_values.dart';
 import 'package:plural_app/src/constants/currencies.dart';
 
+// Auth
+import 'package:plural_app/src/features/authentication/domain/app_user_garden_record.dart';
+
 // Localization
 import 'package:plural_app/src/localization/lang_en.dart';
 
@@ -93,6 +96,21 @@ String? validateNewPassword(String? value) {
 /// Returns null if valid, else returns a String.
 String? validateText(String? value) {
   if (value == null || value.isEmpty) return AppFormText.invalidValue;
+
+  return null;
+}
+
+/// Validates that [value] is a valid UserGardenRole.
+///
+/// Returns null if valid, else returns a String.
+String? validateUserGardenRole(String? value) {
+  if (
+    value == null
+    || value.isEmpty
+    || !AppUserGardenRole.values.any((e) => e.name == value)
+  ) {
+    return AppFormText.invalidValue;
+  }
 
   return null;
 }

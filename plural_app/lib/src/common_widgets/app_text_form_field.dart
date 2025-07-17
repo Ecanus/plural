@@ -43,7 +43,7 @@ class AppTextFormField extends StatefulWidget {
   final double paddingTop;
   final Widget? suffixIcon;
   final TextFieldType textFieldType;
-  final Function? validator;
+  final String? Function(String?)? validator;
 
   @override
   State<AppTextFormField> createState() => _AppTextFormFieldState();
@@ -51,7 +51,7 @@ class AppTextFormField extends StatefulWidget {
 
 class _AppTextFormFieldState extends State<AppTextFormField> {
   final _controller = TextEditingController();
-  late Function _validator;
+  late String? Function(String?) _validator;
 
   @override
   void dispose() {
@@ -67,7 +67,7 @@ class _AppTextFormFieldState extends State<AppTextFormField> {
     _validator = widget.validator ?? getValidator();
   }
 
-  Function getValidator() {
+  String? Function(String?) getValidator() {
     var formFieldTypeName = widget.formFieldType.name;
     var textFieldTypeName = widget.textFieldType.name;
 

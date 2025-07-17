@@ -7,14 +7,11 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:pocketbase/pocketbase.dart';
 
-// Common Widgets
-import 'package:plural_app/src/common_widgets/app_snackbars.dart';
-
 // Constants
-import 'package:plural_app/src/constants/app_values.dart';
 import 'package:plural_app/src/constants/fields.dart';
 import 'package:plural_app/src/constants/formats.dart';
 import 'package:plural_app/src/constants/pocketbase.dart';
+import 'package:plural_app/src/constants/query_parameters.dart';
 import 'package:plural_app/src/constants/routes.dart';
 
 // Asks
@@ -23,14 +20,15 @@ import 'package:plural_app/src/features/asks/domain/ask.dart';
 // Auth
 import 'package:plural_app/src/features/authentication/data/auth_api.dart';
 import 'package:plural_app/src/features/authentication/domain/app_user.dart';
+import 'package:plural_app/src/features/authentication/domain/app_user_garden_record.dart';
 import 'package:plural_app/src/features/authentication/domain/app_user_settings.dart';
 
 // Gardens
 import 'package:plural_app/src/features/gardens/domain/constants.dart';
 import 'package:plural_app/src/features/gardens/domain/garden.dart';
 
-// Localization
-import 'package:plural_app/src/localization/lang_en.dart';
+// Utils
+import 'package:plural_app/src/utils/exceptions.dart' show PermissionException;
 
 class AppState with ChangeNotifier {
 
@@ -81,47 +79,6 @@ class AppState with ChangeNotifier {
   // _timelineAsks
   List<Ask>? get timelineAsks => _timelineAsksList;
 
-  /// Verifies the existence of a [UserGardenRecord] record associated with
-  /// both the [currentUser] and the given [newGarden] before rerouting to the
-  /// Garden page.
-  ///
-  /// If no corresponding [UserGardenRecord] is found, an error Snackbar will appear,
-  /// and the page will be refreshed.
-  Future<void> setGardenAndReroute(
-    BuildContext context,
-    Garden newGarden, {
-    GoRouter? goRouter, // primarily for testing
-    bool showsSnackbar = true, // primarily for testing
-  }) async {
-    // Check there exists a UserGardenRecord corresponding to currentUser and newGarden
-    final userGardenRecord = await getUserGardenRecord(
-      userID: currentUser!.id,
-      gardenID: newGarden.id
-    );
-
-    if (context.mounted) {
-      final router = goRouter ?? GoRouter.of(context);
-
-      // If corresponding UserGardenRecord is found, reroute to garden
-      if (userGardenRecord != null) {
-        currentGarden = newGarden; // will also call notifyListeners() and updateSubscriptions()
-        router.go(Routes.garden);
-      } else {
-        var snackBar = AppSnackbars.getSnackbar(
-            SnackbarText.invalidGardenPermissions,
-            duration: AppDurations.s9,
-            snackbarType: SnackbarType.error
-          );
-
-          // Display error Snackbar
-          if (showsSnackbar) ScaffoldMessenger.of(context).showSnackBar(snackBar);
-
-          // Refresh
-          router.refresh();
-      }
-    }
-  }
-
   /// Sets the value of [_currentGarden] to null without notifying listeners.
   ///
   /// Clears all database subscriptions as well.
@@ -132,7 +89,103 @@ class AppState with ChangeNotifier {
     final pb = GetIt.instance<PocketBase>();
     await pb.collection(Collection.asks).unsubscribe();
     await pb.collection(Collection.gardens).unsubscribe();
+    await pb.collection(Collection.userGardenRecords).unsubscribe();
     await pb.collection(Collection.users).unsubscribe();
+  }
+
+  /// An action. Returns the list of [Ask]s to be displayed in the [Garden] timeline.
+  Future<List<Ask>> getTimelineAsks(
+    BuildContext context, {
+    bool isAdminPage = false,
+  }) async {
+    try {
+      if (isAdminPage) {
+        await verify([AppUserGardenPermission.viewAdminGardenTimeline]);
+      } else {
+        await verify([AppUserGardenPermission.viewGardenTimeline]);
+      }
+
+      final count = isAdminPage ? null : GardenConstants.numTimelineAsks;
+      final nowString = DateFormat(Formats.dateYMMddHHms).format(DateTime.now());
+
+      // Asks with target met, or deadlineDate passed are filtered out.
+      final filterString = ""
+        "&& ${AskField.targetMetDate} = null"
+        "&& ${AskField.deadlineDate} > '$nowString'"
+        "&& ${AskField.creator} != '${currentUser!.id}'";
+
+      List<Ask> asks = await asks_api.getAsksByGardenID(
+        gardenID: currentGarden!.id,
+        count: count,
+        filter: filterString
+      );
+
+      _timelineAsksList = asks;
+
+      return asks;
+    } on PermissionException {
+      // Redirect to UnauthorizedPage
+      if (context.mounted) {
+        final newRoute = isAdminPage ? Routes.garden : Routes.landing;
+
+        GoRouter.of(context).go(
+          Uri(
+            path: Routes.unauthorized,
+            queryParameters: { QueryParameters.previousRoute: newRoute }
+          ).toString()
+        );
+      }
+
+      return [];
+    }
+  }
+
+  Future<bool> isAdministrator() async {
+    return await currentUser!.hasRole(currentGarden!.id, AppUserGardenRole.administrator);
+  }
+
+  Future<bool> isOwner() async {
+    return await currentUser!.hasRole(currentGarden!.id, AppUserGardenRole.owner);
+  }
+
+  void notifyAllListeners() {
+    notifyListeners();
+  }
+
+  void refreshTimelineAsks() {
+    _timelineAsksList.clear();
+    notifyListeners();
+  }
+
+  /// Verifies the existence of a [UserGardenRecord] record associated with
+  /// both the [currentUser] and the given [newGarden] before rerouting to the
+  /// Garden page.
+  ///
+  /// If no corresponding [UserGardenRecord] is found, an error Snackbar will appear,
+  /// and the page will be refreshed.
+  Future<void> setGardenAndReroute(
+    BuildContext context,
+    Garden newGarden, {
+    GoRouter? goRouter, // primarily for testing
+  }) async {
+    final isMember = await currentUser!.hasRole(newGarden.id, AppUserGardenRole.member);
+
+    if (context.mounted) {
+      final router = goRouter ?? GoRouter.of(context);
+
+      if (isMember) {
+        currentGarden = newGarden; // will also call updateSubscriptions() and notifyListeners()
+        router.go(Routes.garden);
+      } else {
+        // Redirect to UnauthorizedPage
+        router.go(
+          Uri(
+            path: Routes.unauthorized,
+            queryParameters: { QueryParameters.previousRoute: Routes.landing }
+          ).toString()
+        );
+      }
+    }
   }
 
   /// Resets the database subscriptions for all Collections dependant on
@@ -150,6 +203,12 @@ class AppState with ChangeNotifier {
       newGarden.id
     );
 
+    // UserGardenRecords
+    subscribeToUserGardenRecords(
+      newGarden.id,
+      notifyAllListeners
+    );
+
     // Users
     subscribeToUsers(
       newGarden.id,
@@ -157,32 +216,19 @@ class AppState with ChangeNotifier {
     );
   }
 
-  /// Returns the list of [Ask]s to be displayed in the [Garden] timeline.
-  Future<List<Ask>> getTimelineAsks() async {
-    var nowString = DateFormat(Formats.dateYMMddHms).format(DateTime.now());
-
-    // Asks with target met, or deadlineDate passed are filtered out.
-    var filterString = ""
-      "&& ${AskField.targetMetDate} = null"
-      "&& ${AskField.deadlineDate} > '$nowString'";
-
-    List<Ask> asks = await asks_api.getAsksByGardenID(
-      gardenID: currentGarden!.id,
-      count: GardenConstants.numTimelineAsks,
-      filter: filterString
+  /// Checks if [currentUser]'s role in the [currentGarden]
+  /// has correct matching [permissions].
+  ///
+  /// Throws a [PermissionException] if no match is found.
+  Future<void> verify(List<AppUserGardenPermission> permissions) async {
+    final userRole = await getUserGardenRecordRole(
+      userID: currentUser!.id,
+      gardenID: currentGarden!.id
     );
 
-    _timelineAsksList = asks;
+    if (userRole == null) throw PermissionException();
 
-    return asks;
-  }
-
-  void notifyAllListeners() {
-    notifyListeners();
-  }
-
-  void refreshTimelineAsks() {
-    _timelineAsksList.clear();
-    notifyListeners();
+    final userPermissions = getUserGardenPermissionGroup(userRole);
+    if (!userPermissions.toSet().containsAll(permissions)) throw PermissionException();
   }
 }

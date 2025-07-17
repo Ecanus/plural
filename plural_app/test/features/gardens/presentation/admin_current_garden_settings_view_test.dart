@@ -10,29 +10,27 @@ import 'package:plural_app/src/common_widgets/app_dialog_footer.dart';
 import 'package:plural_app/src/constants/routes.dart';
 
 // Gardens
-import 'package:plural_app/src/features/gardens/presentation/current_garden_dialog.dart';
+import 'package:plural_app/src/features/gardens/presentation/admin_current_garden_settings_view.dart';
 
 // Localization
 import 'package:plural_app/src/localization/lang_en.dart';
 
 // Utils
-import 'package:plural_app/src/utils/app_dialog_router.dart';
+import 'package:plural_app/src/utils/app_dialog_view_router.dart';
 import 'package:plural_app/src/utils/app_state.dart';
 
-// Tests
 import '../../../test_context.dart';
 
 void main() {
-  group("CurrentGardenDialogList test", () {
+  group("AdminCurrentGardenSettingsView", () {
     testWidgets("widgets", (tester) async {
       final tc = TestContext();
       final appState = AppState.skipSubscribe()
-                        ..currentGarden = tc.garden
-                        ..currentUser = tc.user;
+                        ..currentGarden = tc.garden;
 
       final getIt = GetIt.instance;
       getIt.registerLazySingleton<AppState>(() => appState);
-      getIt.registerLazySingleton<AppDialogRouter>(() => AppDialogRouter()); // for AppDialogNavFooter
+      getIt.registerLazySingleton<AppDialogViewRouter>(() => AppDialogViewRouter()); // for AppDialogNavFooter
 
       await tester.pumpWidget(
         MaterialApp(
@@ -40,7 +38,7 @@ void main() {
             body: Builder(
               builder: (BuildContext context) {
                 return ElevatedButton(
-                  onPressed: () => createCurrentGardenDialog(context),
+                  onPressed: () => createAdminCurrentGardenSettingsDialog(context),
                   child: Text("The ElevatedButton")
                 );
               }
@@ -49,44 +47,29 @@ void main() {
         )
       );
 
-      // Check CurrentGardenDialogList not yet displayed
-      expect(find.byType(CurrentGardenDialogList), findsNothing);
+      // Check AdminCurrentGardenDialogList not yet displayed
+      expect(find.byType(AdminCurrentGardenSettingsView), findsNothing);
+      expect(find.byType(AppDialogFooterBuffer), findsNothing);
+      expect(find.byType(AppDialogNavFooter), findsNothing);
 
       // Tap ElevatedButton (to open dialog)
       await tester.tap(find.byType(ElevatedButton));
       await tester.pumpAndSettle();
 
       // Check expected values are found
-      expect(find.byType(CurrentGardenDialogList), findsOneWidget);
+      expect(find.byType(AdminCurrentGardenSettingsView), findsOneWidget);
+      expect(find.byType(AppDialogFooterBuffer), findsOneWidget);
       expect(find.byType(AppDialogNavFooter), findsOneWidget);
-
-      // Tap ExitGardenButton (to open another dialog)
-      await tester.ensureVisible(find.byType(ExitGardenButton));
-      await tester.pumpAndSettle();
-      await tester.tap(find.byType(ExitGardenButton));
-      await tester.pumpAndSettle();
-
-      // Check ConfirmExitGardenDialog has been created
-      expect(find.byType(ConfirmExitGardenDialog), findsOneWidget);
-
-      // Tap close dialog button
-      await tester.tap(find.text(UserSettingsDialogText.cancelConfirmExitGarden));
-      await tester.pumpAndSettle();
-
-      // Check ConfirmExitGardenDialog has been removed
-      expect(find.byType(ConfirmExitGardenDialog), findsNothing);
     });
 
-    tearDown(() => GetIt.instance.reset());
-
-    testWidgets("ListedLandingPageTile", (tester) async {
-      var testRouter = GoRouter(
+    testWidgets("GoToCurrentGardenPageTile", (tester) async {
+      final testRouter = GoRouter(
         initialLocation: "/test_listed_landing_page_tile",
         routes: [
           GoRoute(
-            path: Routes.landing,
+            path: Routes.garden,
             builder: (_, __) => SizedBox(
-              child: Text("Test routing to Landing Page was successful."),
+              child: Text("Test routing to Garden Page was successful."),
             )
           ),
           GoRoute(
@@ -94,7 +77,7 @@ void main() {
             builder: (_, __) => Scaffold(
             body: Builder(
                 builder: (BuildContext context) {
-                  return GoToLandingPageTile();
+                  return GoToCurrentGardenPageTile();
                 }
               ),
             ),
@@ -109,16 +92,19 @@ void main() {
       );
 
       // Check routed text not rendered, widget is present, and tile label is rendered
-      expect(find.text("Test routing to Landing Page was successful."), findsNothing);
-      expect(find.text(GardenDialogText.listedLandingPageTileLabel), findsOneWidget);
-      expect(find.byType(GoToLandingPageTile), findsOneWidget);
+      expect(find.text("Test routing to Garden Page was successful."), findsNothing);
+      expect(
+        find.text(AdminCurrentGardenSettingsViewText.goToGardenPageLabel),
+        findsOneWidget
+      );
+      expect(find.byType(GoToCurrentGardenPageTile), findsOneWidget);
 
       // Tap on the ListTile
-      await tester.tap(find.byType(GoToLandingPageTile));
+      await tester.tap(find.byType(GoToCurrentGardenPageTile));
       await tester.pumpAndSettle();
 
       // Check successful reroute (text should now appear)
-      expect(find.text("Test routing to Landing Page was successful."), findsOneWidget);
+      expect(find.text("Test routing to Garden Page was successful."), findsOneWidget);
     });
   });
 }

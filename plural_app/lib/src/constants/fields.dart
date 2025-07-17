@@ -35,7 +35,7 @@ class SignInField {
 
 class UserField {
   static const email = "email";
-  static const emailVisibility = "emailVisibility"; // only used for User creation in db
+  static const emailVisibility = "emailVisibility";
   static const firstName = "firstName";
   static const instructions = "instructions";
   static const lastName = "lastName";
@@ -46,6 +46,7 @@ class UserField {
 
 class UserGardenRecordField {
   static const garden = "garden";
+  static const role = "role";
   static const user = "user";
 }
 

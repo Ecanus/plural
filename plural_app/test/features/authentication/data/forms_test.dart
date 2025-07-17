@@ -15,24 +15,26 @@ import 'package:plural_app/src/constants/routes.dart';
 
 // Auth
 import 'package:plural_app/src/features/authentication/data/forms.dart';
+import 'package:plural_app/src/features/authentication/data/user_garden_records_repository.dart';
 import 'package:plural_app/src/features/authentication/data/user_settings_repository.dart';
 import 'package:plural_app/src/features/authentication/data/users_repository.dart';
-
+import 'package:plural_app/src/features/authentication/domain/app_user_garden_record.dart';
 // Localization
 import 'package:plural_app/src/localization/lang_en.dart';
 
 // Utils
-import 'package:plural_app/src/utils/app_dialog_router.dart';
+import 'package:plural_app/src/utils/app_dialog_view_router.dart';
 import 'package:plural_app/src/utils/app_form.dart';
 
 // Tests
 import '../../../test_context.dart';
 import '../../../test_mocks.dart';
+import '../../../test_stubs.dart';
 import '../../../test_widgets.dart';
 
 void main() {
-  group("Auth submitUpdateSettings", () {
-    ft.testWidgets("valid update garden", (tester) async {
+  group("auth forms submitUpdateSettings", () {
+    ft.testWidgets("valid update garden page", (tester) async {
       final tc = TestContext();
       final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
@@ -68,10 +70,10 @@ void main() {
 
       // GetIt
       final getIt = GetIt.instance;
-      final mockAppDialogRouter = MockAppDialogRouter();
+      final mockAppDialogViewRouter = MockAppDialogViewRouter();
       final mockUserSettingsRepository = MockUserSettingsRepository();
       final mockUsersRepository = MockUsersRepository();
-      getIt.registerLazySingleton<AppDialogRouter>(() => mockAppDialogRouter);
+      getIt.registerLazySingleton<AppDialogViewRouter>(() => mockAppDialogViewRouter);
       getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
       getIt.registerLazySingleton<UserSettingsRepository>(
         () => mockUserSettingsRepository);
@@ -96,9 +98,9 @@ void main() {
         (_) async => (tc.getUserSettingsRecordModel(), {})
       );
 
-      // AppDialogRouter.routeToUserSettingsDialogView()
+      // AppDialogViewRouter.routeToUserSettingsDialogView()
       when(
-        () => mockAppDialogRouter.routeToUserSettingsDialogView()
+        () => mockAppDialogViewRouter.routeToUserSettingsView()
       ).thenAnswer(
         (_) async => {}
       );
@@ -150,7 +152,7 @@ void main() {
 
       // Check no method calls before submit; no snackbar
       expect(ft.find.byType(SnackBar), ft.findsNothing);
-      verifyNever(() => mockAppDialogRouter.routeToUserSettingsDialogView());
+      verifyNever(() => mockAppDialogViewRouter.routeToUserSettingsView());
       verifyNever(() => mockUsersRepository.update(
         id: any(named: "id"), body: any(named: "body")
       ));
@@ -175,14 +177,14 @@ void main() {
         id: any(named: "id"), body: any(named: "body")
       )).called(1);
 
-      verify(() => mockAppDialogRouter.routeToUserSettingsDialogView()).called(1);
+      verify(() => mockAppDialogViewRouter.routeToUserSettingsView()).called(1);
       expect(formKey.currentState!.validate(), true);
       expect(ft.find.byType(SnackBar), ft.findsOneWidget);
     });
 
     tearDown(() => GetIt.instance.reset());
 
-    ft.testWidgets("valid update landing", (tester) async {
+    ft.testWidgets("valid update landing page", (tester) async {
       final tc = TestContext();
       final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
@@ -222,10 +224,10 @@ void main() {
 
       // GetIt
       final getIt = GetIt.instance;
-      final mockAppDialogRouter = MockAppDialogRouter();
+      final mockAppDialogViewRouter = MockAppDialogViewRouter();
       final mockUserSettingsRepository = MockUserSettingsRepository();
       final mockUsersRepository = MockUsersRepository();
-      getIt.registerLazySingleton<AppDialogRouter>(() => mockAppDialogRouter);
+      getIt.registerLazySingleton<AppDialogViewRouter>(() => mockAppDialogViewRouter);
       getIt.registerLazySingleton<AppState>(() => appState);
       getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
       getIt.registerLazySingleton<UserSettingsRepository>(
@@ -251,9 +253,9 @@ void main() {
         (_) async => (tc.getUserSettingsRecordModel(), {})
       );
 
-      // AppDialogRouter.routeToUserSettingsDialogView()
+      // AppDialogViewRouter.routeToUserSettingsDialogView()
       when(
-        () => mockAppDialogRouter.routeToUserSettingsDialogView()
+        () => mockAppDialogViewRouter.routeToUserSettingsView()
       ).thenAnswer(
         (_) async => {}
       );
@@ -314,7 +316,7 @@ void main() {
 
       // Check no method calls before submit; no snackbar
       expect(ft.find.byType(SnackBar), ft.findsNothing);
-      verifyNever(() => mockAppDialogRouter.routeToUserSettingsDialogView());
+      verifyNever(() => mockAppDialogViewRouter.routeToUserSettingsView());
       verifyNever(() => mockUsersRepository.update(
         id: any(named: "id"), body: any(named: "body")
       ));
@@ -344,7 +346,7 @@ void main() {
 
       // Check no route call was made; check UsersRepository.getFirstListItem()
       // was called once, due to updating the AppState.currentUser
-      verifyNever(() => mockAppDialogRouter.routeToUserSettingsDialogView());
+      verifyNever(() => mockAppDialogViewRouter.routeToUserSettingsView());
       verify(() => mockUsersRepository.getFirstListItem(
         filter: any(named: "filter")
       )).called(1);
@@ -388,10 +390,10 @@ void main() {
 
       // GetIt
       final getIt = GetIt.instance;
-      final mockAppDialogRouter = MockAppDialogRouter();
+      final mockAppDialogViewRouter = MockAppDialogViewRouter();
       final mockUserSettingsRepository = MockUserSettingsRepository();
       final mockUsersRepository = MockUsersRepository();
-      getIt.registerLazySingleton<AppDialogRouter>(() => mockAppDialogRouter);
+      getIt.registerLazySingleton<AppDialogViewRouter>(() => mockAppDialogViewRouter);
       getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
       getIt.registerLazySingleton<UserSettingsRepository>(
         () => mockUserSettingsRepository);
@@ -421,9 +423,9 @@ void main() {
         (_) async => (tc.getUserSettingsRecordModel(), {})
       );
 
-      // AppDialogRouter.routeToUserSettingsDialogView()
+      // AppDialogViewRouter.routeToUserSettingsDialogView()
       when(
-        () => mockAppDialogRouter.routeToUserSettingsDialogView()
+        () => mockAppDialogViewRouter.routeToUserSettingsView()
       ).thenAnswer(
         (_) async => {}
       );
@@ -475,7 +477,7 @@ void main() {
 
       // Check no method calls before submit; no snackbar
       expect(ft.find.byType(SnackBar), ft.findsNothing);
-      verifyNever(() => mockAppDialogRouter.routeToUserSettingsDialogView());
+      verifyNever(() => mockAppDialogViewRouter.routeToUserSettingsView());
       verifyNever(() => mockUsersRepository.update(
         id: any(named: "id"), body: any(named: "body")
       ));
@@ -501,7 +503,7 @@ void main() {
       // Check no snackbar; check appForm has error; check method called
       expect(ft.find.byType(SnackBar), ft.findsNothing);
       expect(userAppForm.getError(fieldName: UserField.firstName), "Error for firstName");
-      verify(() => mockAppDialogRouter.routeToUserSettingsDialogView()).called(1);
+      verify(() => mockAppDialogViewRouter.routeToUserSettingsView()).called(1);
     });
 
     tearDown(() => GetIt.instance.reset());
@@ -542,10 +544,10 @@ void main() {
 
       // GetIt
       final getIt = GetIt.instance;
-      final mockAppDialogRouter = MockAppDialogRouter();
+      final mockAppDialogViewRouter = MockAppDialogViewRouter();
       final mockUserSettingsRepository = MockUserSettingsRepository();
       final mockUsersRepository = MockUsersRepository();
-      getIt.registerLazySingleton<AppDialogRouter>(() => mockAppDialogRouter);
+      getIt.registerLazySingleton<AppDialogViewRouter>(() => mockAppDialogViewRouter);
       getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
       getIt.registerLazySingleton<UserSettingsRepository>(
         () => mockUserSettingsRepository);
@@ -570,9 +572,9 @@ void main() {
         (_) async => (tc.getUserSettingsRecordModel(), {})
       );
 
-      // AppDialogRouter.routeToUserSettingsDialogView()
+      // AppDialogViewRouter.routeToUserSettingsDialogView()
       when(
-        () => mockAppDialogRouter.routeToUserSettingsDialogView()
+        () => mockAppDialogViewRouter.routeToUserSettingsView()
       ).thenAnswer(
         (_) async => {}
       );
@@ -624,7 +626,7 @@ void main() {
 
        // Check no method calls before submit; no snackbar
       expect(ft.find.byType(SnackBar), ft.findsNothing);
-      verifyNever(() => mockAppDialogRouter.routeToUserSettingsDialogView());
+      verifyNever(() => mockAppDialogViewRouter.routeToUserSettingsView());
       verifyNever(() => mockUsersRepository.update(
         id: any(named: "id"), body: any(named: "body")
       ));
@@ -648,13 +650,198 @@ void main() {
 
       // Check no method calls after submit; no snackbar
       expect(ft.find.byType(SnackBar), ft.findsNothing);
-      verifyNever(() => mockAppDialogRouter.routeToUserSettingsDialogView());
+      verifyNever(() => mockAppDialogViewRouter.routeToUserSettingsView());
       verifyNever(() => mockUsersRepository.update(
         id: any(named: "id"), body: any(named: "body")
       ));
       verifyNever(() => mockUserSettingsRepository.update(
         id: any(named: "id"), body: any(named: "body")
       ));
+    });
+
+    tearDown(() => GetIt.instance.reset());
+  });
+
+  group("auth forms submitUpdateUserGardenRecord", () {
+    ft.testWidgets("valid", (tester) async {
+      final testList = [1, 2, 3];
+      void testFunc() => testList.clear();
+
+      final tc = TestContext();
+      final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+      final appForm = AppForm()
+        ..setValue(
+            fieldName: GenericField.id, value: tc.userGardenRecord.id)
+        ..setValue(
+            fieldName: UserGardenRecordField.garden, value: tc.userGardenRecord.garden.id)
+        ..setValue(
+            fieldName: UserGardenRecordField.role, value: AppUserGardenRole.member.name)
+        ..setValue(
+            fieldName: UserGardenRecordField.user, value: tc.userGardenRecord.user.id)
+          ..setValue(
+            fieldName: AppFormFields.rebuild, value: testFunc, isAux: true);
+
+      final appState = AppState.skipSubscribe()
+                      ..currentGarden = tc.garden
+                      ..currentUser = tc.user;
+
+      final getIt = GetIt.instance;
+      final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
+      getIt.registerLazySingleton<AppState>(() => appState);
+      getIt.registerLazySingleton<UserGardenRecordsRepository>(
+        () => mockUserGardenRecordsRepository
+      );
+
+      // Stubs
+      final items = ResultList<RecordModel>(items: [
+        tc.getUserGardenRecordRecordModel(role: AppUserGardenRole.administrator)
+      ]);
+      getUserGardenRecordRoleStub(
+        mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
+        userID: tc.user.id,
+        gardenID: tc.garden.id,
+        returnValue: items
+      );
+      final recordModel = tc.getUserGardenRecordRecordModel(
+        role: AppUserGardenRole.member);
+      updateUserGardenRecordStub(
+        mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
+        userGardenRecordID: tc.userGardenRecord.id,
+        userGardenRoleName: appForm.getValue(fieldName: UserGardenRecordField.role),
+        returnValue: (recordModel, {})
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (BuildContext context) {
+                return Form(
+                  key: formKey,
+                  child: ListView(
+                    children: [
+                      TextFormField(
+                        onSaved: (value) => appForm.save(
+                          fieldName: "testField",
+                          value: "New Random Value!",
+                        ),
+                        validator: (value) => null,
+                      ),
+                      ElevatedButton(
+                        onPressed: () => submitUpdateUserGardenRecord(
+                          context, formKey, appForm),
+                        child: Text("x")
+                      ),
+                    ],
+                  ),
+                );
+              })
+          ),
+        )
+      );
+
+      // check no snackBar, testList still has contents
+      expect(ft.find.byType(SnackBar), ft.findsNothing);
+      expect(testList.isEmpty, false);
+
+      // Tap ElevatedButton (to call submitUpdateUserGardenRecord)
+      await tester.tap(ft.find.byType(ElevatedButton));
+      await tester.pumpAndSettle();
+
+      // check snackBar now appears; testList still has contents
+      expect(ft.find.byType(SnackBar), ft.findsOneWidget);
+      expect(testList.isEmpty, false);
+    });
+
+    tearDown(() => GetIt.instance.reset());
+
+    ft.testWidgets("invalid", (tester) async {
+      final testList = [1, 2, 3];
+      void testFunc() => testList.clear();
+
+      final tc = TestContext();
+      final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+      final appForm = AppForm()
+        ..setValue(
+            fieldName: GenericField.id, value: tc.userGardenRecord.id)
+        ..setValue(
+            fieldName: UserGardenRecordField.garden, value: tc.userGardenRecord.garden.id)
+        ..setValue(
+            fieldName: UserGardenRecordField.role, value: AppUserGardenRole.member.name)
+        ..setValue(
+            fieldName: UserGardenRecordField.user, value: tc.userGardenRecord.user.id)
+          ..setValue(
+            fieldName: AppFormFields.rebuild, value: testFunc, isAux: true);
+
+      final appState = AppState.skipSubscribe()
+                      ..currentGarden = tc.garden
+                      ..currentUser = tc.user;
+
+      final getIt = GetIt.instance;
+      final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
+      getIt.registerLazySingleton<AppState>(() => appState);
+      getIt.registerLazySingleton<UserGardenRecordsRepository>(
+        () => mockUserGardenRecordsRepository
+      );
+
+      // Stubs
+      final items = ResultList<RecordModel>(items: [
+        tc.getUserGardenRecordRecordModel(role: AppUserGardenRole.administrator)
+      ]);
+      getUserGardenRecordRoleStub(
+        mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
+        userID: tc.user.id,
+        gardenID: tc.garden.id,
+        returnValue: items
+      );
+      updateUserGardenRecordStub(
+        mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
+        userGardenRecordID: tc.userGardenRecord.id,
+        userGardenRoleName: appForm.getValue(fieldName: UserGardenRecordField.role),
+        returnValue: (null, {})
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (BuildContext context) {
+                return Form(
+                  key: formKey,
+                  child: ListView(
+                    children: [
+                      TextFormField(
+                        onSaved: (value) => appForm.save(
+                          fieldName: "testField",
+                          value: "New Random Value!",
+                        ),
+                        validator: (value) => null,
+                      ),
+                      ElevatedButton(
+                        onPressed: () => submitUpdateUserGardenRecord(
+                          context, formKey, appForm),
+                        child: Text("x")
+                      ),
+                    ],
+                  ),
+                );
+              })
+          ),
+        )
+      );
+
+      expect(ft.find.byType(SnackBar), ft.findsNothing);
+      expect(testList.isEmpty, false);
+
+      // Tap ElevatedButton (to call submitUpdateUserGardenRecord)
+      await tester.tap(ft.find.byType(ElevatedButton));
+      await tester.pumpAndSettle();
+
+      // Check no snackBar; testList is now empty (rebuild() method was called)
+      expect(ft.find.byType(SnackBar), ft.findsNothing);
+      expect(testList.isEmpty, true);
     });
 
     tearDown(() => GetIt.instance.reset());
