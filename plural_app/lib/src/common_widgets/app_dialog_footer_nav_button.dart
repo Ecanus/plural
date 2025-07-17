@@ -19,7 +19,7 @@ class AppDialogFooterNavButton extends StatelessWidget {
     required this.tooltipMessage,
   });
 
-  final void Function(BuildContext context)? actionCallback;
+  final void Function(BuildContext)? actionCallback;
   final void Function()? callback;
   final IconData dialogIcon;
   final NavButtonDirection direction;

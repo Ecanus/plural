@@ -304,7 +304,7 @@ void main() {
 
     tearDown(() => GetIt.instance.reset());
 
-    ft.testWidgets("updateGardenName bad permissions", (tester) async {
+    ft.testWidgets("updateGardenName PermissionException", (tester) async {
       final tc = TestContext();
 
       final Map<String, String> map = {

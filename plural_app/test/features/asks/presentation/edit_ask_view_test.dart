@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
+import 'package:mocktail/mocktail.dart';
 
 // Common Widgets
 import 'package:plural_app/src/common_widgets/app_checkbox_list_tile_form_field.dart';
@@ -10,7 +11,12 @@ import 'package:plural_app/src/common_widgets/app_dialog_footer_buffer_submit_bu
 import 'package:plural_app/src/common_widgets/app_text_form_field.dart';
 
 // Asks
+import 'package:plural_app/src/features/asks/data/asks_repository.dart';
+import 'package:plural_app/src/features/asks/presentation/delete_ask_button.dart';
 import 'package:plural_app/src/features/asks/presentation/edit_ask_view.dart';
+
+// Auth
+import 'package:plural_app/src/features/authentication/domain/app_user_garden_record.dart';
 
 // Utils
 import 'package:plural_app/src/utils/app_dialog_view_router.dart';
@@ -18,17 +24,41 @@ import 'package:plural_app/src/utils/app_state.dart';
 
 // Tests
 import '../../../test_context.dart';
+import '../../../test_mocks.dart';
 
 void main() {
-  group("EditAskView test", () {
+  group("EditAskView", () {
     testWidgets("widgets", (tester) async {
       final tc = TestContext();
-      final appState = AppState();
 
       // GetIt
       final getIt = GetIt.instance;
-      getIt.registerLazySingleton<AppState>(() => appState);
+      final mockAppState = MockAppState();
+      final mockAsksRepository = MockAsksRepository();
+      getIt.registerLazySingleton<AppState>(() => mockAppState);
       getIt.registerLazySingleton<AppDialogViewRouter>(() => AppDialogViewRouter());
+      getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
+
+      // AppState.verify()
+      when(
+        () => mockAppState.verify([AppUserGardenPermission.createAndEditAsks])
+      ).thenAnswer(
+        (_) async => {}
+      );
+
+      // AppState.timelineAsks
+      when(
+        () => mockAppState.timelineAsks
+      ).thenAnswer(
+        (_) => [tc.ask]
+      );
+
+      // AsksRepository.delete()
+      when(
+        () => mockAsksRepository.delete(id: tc.ask.id)
+      ).thenAnswer(
+        (_) async => (true, {})
+      );
 
       await tester.pumpWidget(
         MaterialApp(
@@ -71,12 +101,17 @@ void main() {
       // Check ConfirmDeleteAskDialog has been created
       expect(find.byType(ConfirmDeleteAskDialog), findsOneWidget);
 
-      // Tap OutlinedButton (to close ConfirmDeleteAskDialog)
-      await tester.tap(find.byType(OutlinedButton));
-      await tester.pumpAndSettle();
+      // Check verify() and delete() not yet called
+      verifyNever(() => mockAppState.verify(
+        [AppUserGardenPermission.createAndEditAsks]));
+      verifyNever(() => mockAsksRepository.delete(id: tc.ask.id));
 
-      // Check ConfirmDeleteAskDialog has removed
-      expect(find.byType(ConfirmDeleteAskDialog), findsNothing);
+      await tester.tap(find.byType(FilledButton));
+
+      // Check verify() and delete() were called
+      verify(() => mockAppState.verify(
+        [AppUserGardenPermission.createAndEditAsks])).called(1);
+      verify(() => mockAsksRepository.delete(id: tc.ask.id)).called(1);
     });
 
     tearDown(() => GetIt.instance.reset());

@@ -94,20 +94,29 @@ class AppState with ChangeNotifier {
   }
 
   /// An action. Returns the list of [Ask]s to be displayed in the [Garden] timeline.
-  Future<List<Ask>> getTimelineAsks(BuildContext context) async {
+  Future<List<Ask>> getTimelineAsks(
+    BuildContext context, {
+    bool isAdminPage = false,
+  }) async {
     try {
-      await verify([AppUserGardenPermission.viewGardenTimeline]);
+      if (isAdminPage) {
+        await verify([AppUserGardenPermission.viewAdminGardenTimeline]);
+      } else {
+        await verify([AppUserGardenPermission.viewGardenTimeline]);
+      }
 
-      var nowString = DateFormat(Formats.dateYMMddHHms).format(DateTime.now());
+      final count = isAdminPage ? null : GardenConstants.numTimelineAsks;
+      final nowString = DateFormat(Formats.dateYMMddHHms).format(DateTime.now());
 
       // Asks with target met, or deadlineDate passed are filtered out.
-      var filterString = ""
+      final filterString = ""
         "&& ${AskField.targetMetDate} = null"
-        "&& ${AskField.deadlineDate} > '$nowString'";
+        "&& ${AskField.deadlineDate} > '$nowString'"
+        "&& ${AskField.creator} != '${currentUser!.id}'";
 
       List<Ask> asks = await asks_api.getAsksByGardenID(
         gardenID: currentGarden!.id,
-        count: GardenConstants.numTimelineAsks,
+        count: count,
         filter: filterString
       );
 
@@ -117,10 +126,12 @@ class AppState with ChangeNotifier {
     } on PermissionException {
       // Redirect to UnauthorizedPage
       if (context.mounted) {
+        final newRoute = isAdminPage ? Routes.garden : Routes.landing;
+
         GoRouter.of(context).go(
           Uri(
             path: Routes.unauthorized,
-            queryParameters: { QueryParameters.previousRoute: Routes.landing }
+            queryParameters: { QueryParameters.previousRoute: newRoute }
           ).toString()
         );
       }

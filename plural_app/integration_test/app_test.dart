@@ -250,18 +250,8 @@ void main() {
       await tester.tap(find.byType(LandingPageListedGardenTile));
       await tester.pumpAndSettle();
 
-      // Tap on TileViewAskButton
-      await tester.tap(find.byType(TileViewAskButton));
-      await tester.pumpAndSettle();
-
-      // Close Dialog
-      await tester.ensureVisible(find.byType(CloseDialogButton));
-      await tester.pumpAndSettle();
-      await tester.tap(find.byType(CloseDialogButton));
-      await tester.pumpAndSettle();
-
-      // Tap on TileEditAskButton
-      await tester.tap(find.byType(TileEditAskButton));
+      // Tap on TileExamineAskButton
+      await tester.tap(find.byType(TileExamineAskButton).first);
       await tester.pumpAndSettle();
 
       // Close Dialog

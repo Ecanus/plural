@@ -124,7 +124,7 @@ Future<void> deleteCurrentUserSettings() async {
 Future<void> expelUserFromGarden(
   BuildContext context,
   AppUserGardenRecord userGardenRecord, {
-  void Function(BuildContext context)? callback,
+  void Function(BuildContext)? callback,
 }) async {
   late SnackBar snackBar;
 

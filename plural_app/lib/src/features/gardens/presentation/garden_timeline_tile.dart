@@ -7,119 +7,54 @@ import 'package:plural_app/src/constants/app_values.dart';
 
 // Asks
 import 'package:plural_app/src/features/asks/domain/ask.dart';
+import 'package:plural_app/src/features/asks/presentation/admin_examine_ask_view.dart';
 import 'package:plural_app/src/features/asks/presentation/ask_time_left_text.dart';
-import 'package:plural_app/src/features/asks/presentation/edit_ask_view.dart';
 import 'package:plural_app/src/features/asks/presentation/examine_ask_view.dart';
 
 class GardenTimelineTile extends StatelessWidget {
   const GardenTimelineTile({
     required this.ask,
+    required this.index,
+    required this.isAdminPage,
   });
 
   final Ask ask;
+  final int index;
+  final bool isAdminPage;
 
   @override
   Widget build(BuildContext context) {
-
-    var timelineTileLineStyle = LineStyle(
-      color: Theme.of(context).colorScheme.tertiaryFixed,
-      thickness: AppTimelineSizes.timelineThickness,
-    );
-
-    var appIndicatorStyle = IndicatorStyle(
-      color: Theme.of(context).colorScheme.tertiaryFixed,
-      width: AppTimelineSizes.indicatorWidth,
-    );
-
-
-    return ask.isCreatedByCurrentUser ?
-      EditableGardenTimelineTile(
-        appIndicatorStyle: appIndicatorStyle,
-        ask: ask,
-        timelineTileLineStyle: timelineTileLineStyle
-      )
-      : NonEditableGardenTimelineTile(
-        appIndicatorStyle: appIndicatorStyle,
-        ask: ask,
-        timelineTileLineStyle: timelineTileLineStyle
-      );
-  }
-}
-
-class EditableGardenTimelineTile extends StatelessWidget {
-  const EditableGardenTimelineTile({
-    required this.appIndicatorStyle,
-    required this.ask,
-    required this.timelineTileLineStyle,
-  });
-
-  final IndicatorStyle appIndicatorStyle;
-  final Ask ask;
-  final LineStyle timelineTileLineStyle;
-
-  @override
-  Widget build(BuildContext context) {
-    return TimelineTile(
-      alignment: TimelineAlign.center,
-      indicatorStyle: appIndicatorStyle,
-      beforeLineStyle: timelineTileLineStyle,
-      startChild: Container(
-        padding: const EdgeInsets.all(AppPaddings.p10),
-        child: Align(
-          alignment: Alignment.centerRight,
-          child: TileEditAskButton(ask: ask),
-        ),
+    final examineButtonContainer = Container(
+      padding: const EdgeInsets.all(AppPaddings.p10),
+      child: Align(
+        alignment: (index % 2 == 0) ? Alignment.centerLeft : Alignment.centerRight,
+        child: TileExamineAskButton(ask: ask, isAdminPage: isAdminPage),
       ),
-      endChild: BaseGardenTimelineTile(ask: ask,),
     );
-  }
-}
 
-class NonEditableGardenTimelineTile extends StatelessWidget {
-  const NonEditableGardenTimelineTile({
-    required this.appIndicatorStyle,
-    required this.ask,
-    required this.timelineTileLineStyle,
-  });
+    final timelineTileStack = Stack(
+      children: [
+        TileBackground(ask: ask, index: index),
+        TileForeground(ask: ask),
+      ],
+    );
 
-  final IndicatorStyle appIndicatorStyle;
-  final Ask ask;
-  final LineStyle timelineTileLineStyle;
+    final widgets = (index % 2 == 0) ?
+      [timelineTileStack, examineButtonContainer]
+      : [examineButtonContainer, timelineTileStack];
 
-  @override
-  Widget build(BuildContext context) {
     return TimelineTile(
       alignment: TimelineAlign.center,
-      indicatorStyle: appIndicatorStyle,
-      beforeLineStyle: timelineTileLineStyle,
-      startChild: BaseGardenTimelineTile(ask: ask,),
-      endChild: ask.isCreatedByCurrentUser ?
-        Container() // Return empty Container because TimelineTile bug adds padding inside the card if null is returned,
-        : Container(
-          padding: const EdgeInsets.all(AppPaddings.p10),
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: TileViewAskButton(ask: ask),
-          ),
-        )
-    );
-  }
-}
-
-class BaseGardenTimelineTile extends StatelessWidget {
-  const BaseGardenTimelineTile({
-    required this.ask,
-  });
-
-  final Ask ask;
-
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        TileBackground(ask: ask,),
-        TileForeground(ask: ask,),
-      ],
+      beforeLineStyle: LineStyle(
+        color: Theme.of(context).colorScheme.tertiaryFixed,
+        thickness: AppTimelineSizes.timelineThickness,
+      ),
+      indicatorStyle: IndicatorStyle(
+        color: Theme.of(context).colorScheme.tertiaryFixed,
+        width: AppTimelineSizes.indicatorWidth,
+      ),
+      startChild: widgets[0],
+      endChild: widgets[1],
     );
   }
 }
@@ -127,13 +62,15 @@ class BaseGardenTimelineTile extends StatelessWidget {
 class TileBackground extends StatelessWidget {
   const TileBackground({
     required this.ask,
+    required this.index,
   });
 
   final Ask ask;
+  final int index;
 
   @override
   Widget build(BuildContext context) {
-    var sign = ask.isCreatedByCurrentUser ? -1 : 1;
+    final sign = (index % 2 == 0) ? -1 : 1;
 
     return RotationTransition(
       turns: AlwaysStoppedAnimation(sign * AppRotations.degrees10),
@@ -219,9 +156,6 @@ class TileContents extends StatelessWidget {
                 ]
               ),
               gapH20,
-              TileIsSponsoredIcon(
-                hasHiddenContent: !ask.isSponsoredByCurrentUser || hasHiddenContent, // Always "show" the icon else the icon in the TileViewButton will misalign on redraws of the GardenTimeline
-              )
             ]
           ),
         ),
@@ -230,12 +164,14 @@ class TileContents extends StatelessWidget {
   }
 }
 
-class TileViewAskButton extends StatelessWidget {
-  const TileViewAskButton({
-    required this.ask
+class TileExamineAskButton extends StatelessWidget {
+  const TileExamineAskButton({
+    required this.ask,
+    required this.isAdminPage,
   });
 
   final Ask ask;
+  final bool isAdminPage;
 
   @override
   Widget build(BuildContext context) {
@@ -247,57 +183,12 @@ class TileViewAskButton extends StatelessWidget {
         child: IconButton(
           color: Theme.of(context).colorScheme.secondaryFixed,
           icon: const Icon(Icons.more_horiz_rounded),
-          onPressed: () => createExamineAskDialog(context: context, ask: ask),
+          onPressed: () => isAdminPage ?
+            createAdminExamineAskDialog(context: context, ask: ask)
+            : createExamineAskDialog(context: context, ask: ask),
           padding: EdgeInsets.zero
         ),
       ),
-    );
-  }
-}
-
-class TileEditAskButton extends StatelessWidget {
-  const TileEditAskButton({
-    required this.ask,
-  });
-
-  final Ask ask;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: AppIconSizes.s35,
-      height: AppIconSizes.s35,
-      child: CircleAvatar(
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        child: IconButton(
-          color: Theme.of(context).colorScheme.onPrimary,
-          icon: const Icon(Icons.mode_edit_outlined),
-          hoverColor: Theme.of(context).colorScheme.onPrimary
-            .withValues(alpha: AppOpacities.point3),
-          onPressed: () => createEditAskDialog(context: context, ask: ask),
-          padding: EdgeInsets.zero,
-        ),
-      ),
-    );
-  }
-}
-
-class TileIsSponsoredIcon extends StatelessWidget {
-  const TileIsSponsoredIcon({
-    this.hasHiddenContent = false,
-  });
-
-  final bool hasHiddenContent;
-
-  @override
-  Widget build(BuildContext context) {
-    final textColor = hasHiddenContent ?
-      Colors.transparent : Theme.of(context).colorScheme.onSecondary;
-
-    return Icon(
-      Icons.check,
-      color: textColor,
-      size: AppIconSizes.s15,
     );
   }
 }
