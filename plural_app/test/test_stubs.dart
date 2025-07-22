@@ -8,6 +8,28 @@ import 'package:plural_app/src/constants/fields.dart';
 import 'test_mocks.dart';
 
 
+void getAsksByGardenIDStub({
+  required MockAsksRepository mockAsksRepository,
+  required ResultList<RecordModel> asksReturnValue,
+  required MockUsersRepository mockUsersRepository,
+  required String userID,
+  required RecordModel usersReturnValue
+}) {
+  when(
+    () => mockAsksRepository.getList(
+      filter: any(named: "filter"), // Use 'any' because of DateTime.now in the filter
+      sort: any(named: "sort"))
+  ).thenAnswer(
+    (_) async => asksReturnValue
+  );
+
+  // For Ask creator
+  usersRepositoryGetFirstListItemStub(
+    mockUsersRepository: mockUsersRepository,
+    userID: userID,
+    returnValue: usersReturnValue
+  );
+}
 void getCurrentGardenUserGardenRecordsStub({
   required MockUserGardenRecordsRepository mockUserGardenRecordsRepository,
   required String gardenID,
@@ -24,7 +46,7 @@ void getCurrentGardenUserGardenRecordsStub({
   );
 }
 
-void getFirstListItemStub({
+void usersRepositoryGetFirstListItemStub({
   required MockUsersRepository mockUsersRepository,
   required String userID,
   required RecordModel returnValue,
@@ -79,7 +101,7 @@ void getUserGardenRecordStub({
   );
 
   // For Garden Creator
-  getFirstListItemStub(
+  usersRepositoryGetFirstListItemStub(
     mockUsersRepository: mockUsersRepository,
     userID: gardenCreatorID,
     returnValue: gardenCreatorReturnValue
@@ -88,7 +110,7 @@ void getUserGardenRecordStub({
 }
 
 // Stub for GardensRepository.update()
-void updateGardenStub({
+void gardensRepositoryUpdateStub({
   required MockGardensRepository mockGardensRepository,
   required String gardenID,
   required String gardenName,
@@ -107,7 +129,7 @@ void updateGardenStub({
 }
 
 // Stub for UserGardenRecordsRepository.update()
-void updateUserGardenRecordStub({
+void userGardenRecordsRepositoryUpdateStub({
   required MockUserGardenRecordsRepository mockUserGardenRecordsRepository,
   required String userGardenRecordID,
   required String userGardenRoleName,

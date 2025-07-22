@@ -65,7 +65,7 @@ class _GardenFooterState extends State<GardenFooter>
     ));
   }
 
-  void _mouseEnter(_) => setState(() {
+  void _mouseEnter(dynamic _) => setState(() {
     _isMouseHovered = true;
 
     final delayValues = [
@@ -81,7 +81,7 @@ class _GardenFooterState extends State<GardenFooter>
     });
   });
 
-  void _mouseExit(_) => setState(() {
+  void _mouseExit(dynamic _) => setState(() {
     _isMouseHovered = false;
 
     _leftButtonAnimationController.reverse();

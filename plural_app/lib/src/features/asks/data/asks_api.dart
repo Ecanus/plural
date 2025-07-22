@@ -139,11 +139,11 @@ Future<List<Ask>> getAsksByGardenID({
   }) async {
     List<Ask> asks = [];
 
-    var finalFilter = "${AskField.garden} = '$gardenID' $filter".trim();
+    final filterString = "${AskField.garden} = '$gardenID' $filter".trim();
 
     // Query
     var resultList = await GetIt.instance<AsksRepository>().getList(
-      filter: finalFilter,
+      filter: filterString,
       sort: sort
     );
 

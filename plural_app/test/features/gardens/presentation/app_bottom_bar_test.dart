@@ -309,7 +309,7 @@ void main() {
       );
 
       // UsersRepository.getFirstListItem()
-      getFirstListItemStub(
+      usersRepositoryGetFirstListItemStub(
         mockUsersRepository: mockUsersRepository,
         userID: tc.user.id,
         returnValue: tc.getUserRecordModel()
