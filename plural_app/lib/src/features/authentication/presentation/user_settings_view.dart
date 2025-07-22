@@ -142,14 +142,7 @@ class _UserSettingsViewState extends State<UserSettingsView> {
                       value: _currentSliderValue.toDouble(),
                       onChanged: (double value) => _updateGardenTimelineDisplayCount(value),
                     ),
-                    gapH30,
-                    Divider(
-                      color: Theme.of(context).colorScheme.onPrimary,
-                      indent: AppIndents.i200,
-                      endIndent: AppIndents.i200,
-                      thickness: AppDividerThicknesses.dpt2,
-                    ),
-                    gapH30,
+                    gapH60,
                     UserSettingsCategoryHeader(
                       text: UserSettingsViewText.personalInformationHeader
                     ),
