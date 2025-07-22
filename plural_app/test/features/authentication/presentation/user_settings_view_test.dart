@@ -57,6 +57,7 @@ void main() {
       expect(find.byType(UserSettingsView), findsOneWidget);
       expect(find.byType(AppCurrencyPickerFormField), findsOneWidget);
       expect(find.byType(AppTextFormField), findsNWidgets(3));
+      expect(find.byType(Slider), findsOneWidget);
       expect(find.byType(LogOutButton), findsOneWidget);
       expect(find.byType(AppDialogFooterBuffer), findsOneWidget);
       expect(find.byType(AppDialogNavFooter), findsOneWidget);

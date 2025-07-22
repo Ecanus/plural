@@ -54,4 +54,5 @@ class UserSettingsField {
   static const user = "user";
   static const defaultCurrency = "defaultCurrency";
   static const defaultInstructions = "defaultInstructions";
+  static const gardenTimelineDisplayCount = "gardenTimelineDisplayCount";
 }
