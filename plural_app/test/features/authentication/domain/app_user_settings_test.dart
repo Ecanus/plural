@@ -11,17 +11,20 @@ import 'package:plural_app/src/features/authentication/domain/app_user_settings.
 import '../../../test_context.dart';
 
 void main() {
-  group("AppUserSettings test", () {
+  group("AppUserSettings", () {
     test("constructor", () {
       final tc = TestContext();
       final userSettings = AppUserSettings(
         defaultCurrency: "GHS",
         defaultInstructions: "The default instructions!!",
+        gardenTimelineDisplayCount: 3,
         id: "USERSETTINGSTEST",
-        user: tc.user);
+        user: tc.user
+      );
 
       expect(userSettings.defaultCurrency == "GHS", true);
       expect(userSettings.defaultInstructions == "The default instructions!!", true);
+      expect(userSettings.gardenTimelineDisplayCount == 3, true);
       expect(userSettings.id == "USERSETTINGSTEST", true);
       expect(userSettings.user == tc.user, true);
     });
@@ -32,6 +35,7 @@ void main() {
       var settingsToMap = AppUserSettings(
         defaultCurrency: "KRW",
         defaultInstructions: "The default instructions to map",
+        gardenTimelineDisplayCount: 3,
         id: "TESTUSERSETTINGS2",
         user: tc.user,
       );
@@ -39,6 +43,7 @@ void main() {
       var map = {
         UserSettingsField.defaultCurrency: "KRW",
         UserSettingsField.defaultInstructions: "The default instructions to map",
+        UserSettingsField.gardenTimelineDisplayCount: 3,
         GenericField.id: "TESTUSERSETTINGS2",
         UserSettingsField.user: tc.user.id,
       };
@@ -64,6 +69,7 @@ void main() {
       final sameIDAndUser = AppUserSettings(
         defaultCurrency: "KRW",
         defaultInstructions: "Instructions!!",
+        gardenTimelineDisplayCount: 3,
         id: userSettings.id,
         user: tc.user
       );
@@ -74,6 +80,7 @@ void main() {
       final differentIDAndUser = AppUserSettings(
         defaultCurrency: "KRW",
         defaultInstructions: "Instructions!!",
+        gardenTimelineDisplayCount: 3,
         id: "DIFFERENTID",
         user: differentUser
       );
@@ -84,6 +91,7 @@ void main() {
       final sameIDAndDifferentUser = AppUserSettings(
         defaultCurrency: "KRW",
         defaultInstructions: "Instructions!!",
+        gardenTimelineDisplayCount: 3,
         id: userSettings.id,
         user: differentUser
       );
@@ -94,6 +102,7 @@ void main() {
       final differentIDAndSameUser = AppUserSettings(
         defaultCurrency: "KRW",
         defaultInstructions: "Instructions!!",
+        gardenTimelineDisplayCount: 3,
         id: "DIFFERENTID",
         user: tc.user
       );

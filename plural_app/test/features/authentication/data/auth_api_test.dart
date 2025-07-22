@@ -1817,8 +1817,10 @@ void main() {
           id: map[GenericField.id],
           body: {
             UserSettingsField.defaultCurrency: map[UserSettingsField.defaultCurrency],
-            UserSettingsField.defaultInstructions: map[
-              UserSettingsField.defaultInstructions],
+            UserSettingsField.defaultInstructions:
+              map[UserSettingsField.defaultInstructions],
+            UserSettingsField.gardenTimelineDisplayCount:
+              map[UserSettingsField.gardenTimelineDisplayCount],
           }
         )
       ).thenAnswer(
@@ -1836,8 +1838,10 @@ void main() {
           id: map[GenericField.id],
           body: {
             UserSettingsField.defaultCurrency: map[UserSettingsField.defaultCurrency],
-            UserSettingsField.defaultInstructions: map[
-              UserSettingsField.defaultInstructions],
+            UserSettingsField.defaultInstructions:
+              map[UserSettingsField.defaultInstructions],
+            UserSettingsField.gardenTimelineDisplayCount:
+              map[UserSettingsField.gardenTimelineDisplayCount],
           }
         )
       ).thenAnswer(

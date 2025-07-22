@@ -51,6 +51,7 @@ class TestContext {
     userSettings = AppUserSettings(
       defaultCurrency: "GHS",
       defaultInstructions: "The default instructions",
+      gardenTimelineDisplayCount: 3,
       id: "USERSETTINGS1",
       user: user
     );
@@ -222,6 +223,7 @@ class TestContext {
   RecordModel getUserSettingsRecordModel({
     String? defaultCurrency,
     String? defaultInstructions,
+    int? gardenTimelineDisplayCount,
     String? userID,
   }) {
     return RecordModel({
@@ -231,6 +233,8 @@ class TestContext {
       UserSettingsField.defaultCurrency: defaultCurrency ?? "GHS",
       UserSettingsField.defaultInstructions:
         defaultInstructions ?? "UserSettings record instructions",
+      UserSettingsField.gardenTimelineDisplayCount:
+        gardenTimelineDisplayCount ?? userSettings.gardenTimelineDisplayCount,
       UserSettingsField.user: userID ?? user.id,
     });
   }

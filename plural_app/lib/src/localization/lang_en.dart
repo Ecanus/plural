@@ -242,8 +242,14 @@ class UnauthorizedPageText {
 class UserSettingsViewText {
   static const defaultCurrency = "Default currency";
   static const defaultInstructions = "Default instructions";
+  static const defaultValuesHeader = "Default Values";
 
   static const firstName = "First name";
 
+  static const gardenTimelineDisplayCountHeaderStart = "Display up to ";
+  static const gardenTimelineDisplayCountHeaderEnd = "Asks in Timeline";
+
   static const lastName = "Last name";
+
+  static const personalInformationHeader = "Personal Information";
 }
