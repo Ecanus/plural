@@ -33,7 +33,9 @@ class ListedAskTile extends StatelessWidget {
       : Theme.of(context).colorScheme.onPrimary;
 
     final tileTrailingAvatar = getTileTrailingAvatar(
-      context, ask.isOnTimeline, ask.isTargetMet
+      context: context,
+      isOnTimeline: ask.isOnTimeline,
+      isTargetMet: ask.isTargetMet
     );
 
     return Card(
@@ -90,7 +92,11 @@ class ListedAskTileTrailing extends StatelessWidget {
   }
 }
 
-Widget getTileTrailingAvatar(context, isOnTimeline, isTargetMet) {
+Widget getTileTrailingAvatar({
+  required BuildContext context,
+  required bool isOnTimeline,
+  required bool isTargetMet
+}) {
   if (isOnTimeline) {
     return CircleAvatar(
       backgroundColor: AppThemes.positiveColor,

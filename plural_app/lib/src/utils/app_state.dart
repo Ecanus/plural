@@ -24,7 +24,6 @@ import 'package:plural_app/src/features/authentication/domain/app_user_garden_re
 import 'package:plural_app/src/features/authentication/domain/app_user_settings.dart';
 
 // Gardens
-import 'package:plural_app/src/features/gardens/domain/constants.dart';
 import 'package:plural_app/src/features/gardens/domain/garden.dart';
 
 // Utils
@@ -93,7 +92,8 @@ class AppState with ChangeNotifier {
     await pb.collection(Collection.users).unsubscribe();
   }
 
-  /// An action. Returns the list of [Ask]s to be displayed in the [Garden] timeline.
+  /// An action. Returns the list of [Ask]s to be displayed in the [Garden], or Admin,
+  /// timeline.
   Future<List<Ask>> getTimelineAsks(
     BuildContext context, {
     bool isAdminPage = false,
@@ -105,14 +105,17 @@ class AppState with ChangeNotifier {
         await verify([AppUserGardenPermission.viewGardenTimeline]);
       }
 
-      final count = isAdminPage ? null : GardenConstants.numTimelineAsks;
+      final count = isAdminPage ? null : currentUserSettings!.gardenTimelineDisplayCount;
       final nowString = DateFormat(Formats.dateYMMddHHms).format(DateTime.now());
 
       // Asks with target met, or deadlineDate passed are filtered out.
-      final filterString = ""
+      var filterString = ""
         "&& ${AskField.targetMetDate} = null"
         "&& ${AskField.deadlineDate} > '$nowString'"
         "&& ${AskField.creator} != '${currentUser!.id}'";
+
+      // (in Garden page only) sponsored Asks are filtered out.
+      if (!isAdminPage) filterString += "&& ${AskField.sponsors} !~ '${currentUser!.id}'";
 
       List<Ask> asks = await asks_api.getAsksByGardenID(
         gardenID: currentGarden!.id,

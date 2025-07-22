@@ -5,9 +5,6 @@ import 'package:mocktail/mocktail.dart';
 import 'package:pocketbase/pocketbase.dart';
 import 'package:provider/provider.dart';
 
-// Constants
-import 'package:plural_app/src/constants/fields.dart';
-
 // Asks
 import 'package:plural_app/src/features/asks/data/asks_repository.dart';
 
@@ -24,6 +21,7 @@ import 'package:plural_app/src/utils/app_state.dart';
 // Tests
 import '../../../test_context.dart';
 import '../../../test_mocks.dart';
+import '../../../test_stubs.dart';
 
 void main() {
   group("GardenTimeline", () {
@@ -31,7 +29,8 @@ void main() {
       final tc = TestContext();
       final appState = AppState.skipSubscribe()
                         ..currentUser = tc.user // For Ask.isCreatedByCurrentUser
-                        ..currentGarden = tc.garden;
+                        ..currentGarden = tc.garden
+                        ..currentUserSettings = tc.userSettings;
 
       final getIt = GetIt.instance;
       final mockAsksRepository = MockAsksRepository();
@@ -45,37 +44,19 @@ void main() {
       );
       getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
 
-      // UserGardenRecordsRepository.getList()
-      when(
-        () => mockUserGardenRecordsRepository.getList(
-          filter: ""
-            "${UserGardenRecordField.user} = '${tc.user.id}' && "
-            "${UserGardenRecordField.garden} = '${tc.garden.id}'",
-          sort: "-updated"
-        )
-      ).thenAnswer(
-        (_) async => ResultList<RecordModel>(
-          items: [tc.getUserGardenRecordRecordModel()]
-        )
+      // Stubs
+      getUserGardenRecordRoleStub(
+        mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
+        userID: tc.user.id,
+        gardenID: tc.garden.id,
+        returnValue: ResultList<RecordModel>(items: [tc.getUserGardenRecordRecordModel()])
       );
-
-      // AsksRepository.getList()
-      when(
-        () => mockAsksRepository.getList(
-          filter: any(named: "filter"),
-          sort: any(named: "sort"),
-        )
-      ).thenAnswer(
-        (_) async => ResultList<RecordModel>(items: [tc.getAskRecordModel()])
-      );
-
-      // mockUsersRepository.getFirstListItem()
-      when(
-        () => mockUsersRepository.getFirstListItem(
-          filter: any(named: "filter")
-        )
-      ).thenAnswer(
-        (_) async => tc.getUserRecordModel()
+      getAsksByGardenIDStub(
+        mockAsksRepository: mockAsksRepository,
+        asksReturnValue: ResultList<RecordModel>(items: [tc.getAskRecordModel()]),
+        mockUsersRepository: mockUsersRepository,
+        userID: tc.user.id,
+        usersReturnValue: tc.getUserRecordModel(),
       );
 
       await tester.pumpWidget(

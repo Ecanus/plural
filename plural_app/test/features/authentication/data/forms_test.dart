@@ -705,7 +705,7 @@ void main() {
       );
       final recordModel = tc.getUserGardenRecordRecordModel(
         role: AppUserGardenRole.member);
-      updateUserGardenRecordStub(
+      userGardenRecordsRepositoryUpdateStub(
         mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
         userGardenRecordID: tc.userGardenRecord.id,
         userGardenRoleName: appForm.getValue(fieldName: UserGardenRecordField.role),
@@ -796,7 +796,7 @@ void main() {
         gardenID: tc.garden.id,
         returnValue: items
       );
-      updateUserGardenRecordStub(
+      userGardenRecordsRepositoryUpdateStub(
         mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
         userGardenRecordID: tc.userGardenRecord.id,
         userGardenRoleName: appForm.getValue(fieldName: UserGardenRecordField.role),

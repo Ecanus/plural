@@ -166,7 +166,11 @@ void main() {
           home: Material(
             child: Builder(
               builder: (BuildContext context) {
-                final avatar = getTileTrailingAvatar(context, isOnTimeline, isTargetMet);
+                final avatar = getTileTrailingAvatar(
+                  context: context,
+                  isOnTimeline: isOnTimeline,
+                  isTargetMet: isTargetMet
+                );
                 return Scaffold(
                   body: ListedAskTileTrailing(tileTrailingAvatar: avatar,),
                 );
@@ -189,7 +193,11 @@ void main() {
           home: Material(
             child: Builder(
               builder: (BuildContext context) {
-                final avatar = getTileTrailingAvatar(context, isOnTimeline, isTargetMet);
+                final avatar = getTileTrailingAvatar(
+                  context: context,
+                  isOnTimeline: isOnTimeline,
+                  isTargetMet: isTargetMet
+                );
                 return Scaffold(
                   body: ListedAskTileTrailing(tileTrailingAvatar: avatar,),
                 );
@@ -215,7 +223,11 @@ void main() {
           home: Material(
             child: Builder(
               builder: (BuildContext context) {
-                final avatar = getTileTrailingAvatar(context, isOnTimeline, isTargetMet);
+                final avatar = getTileTrailingAvatar(
+                  context: context,
+                  isOnTimeline: isOnTimeline,
+                  isTargetMet: isTargetMet
+                );
                 return Scaffold(
                   body: ListedAskTileTrailing(tileTrailingAvatar: avatar,),
                 );
@@ -238,7 +250,11 @@ void main() {
           home: Material(
             child: Builder(
               builder: (BuildContext context) {
-                final avatar = getTileTrailingAvatar(context, isOnTimeline, isTargetMet);
+                final avatar = getTileTrailingAvatar(
+                  context: context,
+                  isOnTimeline: isOnTimeline,
+                  isTargetMet: isTargetMet
+                );
                 return Scaffold(
                   body: ListedAskTileTrailing(tileTrailingAvatar: avatar,),
                 );
