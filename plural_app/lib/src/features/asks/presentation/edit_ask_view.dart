@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
 // Common Functions
 import 'package:plural_app/src/common_functions/input_formatters.dart';
@@ -23,13 +24,14 @@ import 'package:plural_app/src/constants/themes.dart';
 import 'package:plural_app/src/features/asks/data/forms.dart';
 import 'package:plural_app/src/features/asks/domain/ask.dart';
 import 'package:plural_app/src/features/asks/presentation/delete_ask_button.dart';
-import 'package:plural_app/src/features/asks/presentation/route_to_listed_asks_view_button.dart';
 
 // Localization
 import 'package:plural_app/src/localization/lang_en.dart';
 
 // Utils
+import 'package:plural_app/src/utils/app_dialog_view_router.dart';
 import 'package:plural_app/src/utils/app_form.dart';
+import 'package:plural_app/src/utils/route_to_view_button.dart';
 
 Future createEditAskDialog({
   required BuildContext context,
@@ -57,12 +59,15 @@ class EditAskView extends StatefulWidget {
 }
 
 class _EditAskViewState extends State<EditAskView> {
+  late AppDialogViewRouter _appDialogViewRouter;
   late AppForm _appForm;
   late GlobalKey<FormState> _formKey;
 
   @override
   void initState() {
     super.initState();
+
+    _appDialogViewRouter = GetIt.instance<AppDialogViewRouter>();
 
     _appForm = AppForm.fromMap(widget.ask.toMap());
     _appForm.setValue(
@@ -189,7 +194,11 @@ class _EditAskViewState extends State<EditAskView> {
         ),
         AppDialogFooterBuffer(
           buttons: [
-            RouteToListedAsksViewButton(icon: Icons.arrow_back),
+            RouteToViewButton(
+              icon: Icons.arrow_back,
+              message: AskViewText.goToListedAsks,
+              onPressed: _appDialogViewRouter.routeToListedAsksView,
+            ),
             AppDialogFooterBufferSubmitButton(
               callback: submitUpdate,
               positionalArguments: [context, _formKey, _appForm],
@@ -216,42 +225,31 @@ class EditAskHeader extends StatelessWidget {
       child: Column(
         children: [
           gapH35,
-          VisibleOnTimelineLabel(
+          IsOnTimelineLabel(isOnTimeline: ask.isOnTimeline),
+          gapH15,
+          IsDeadlinePassedLabel(
             isDeadlinePassed: ask.isDeadlinePassed,
-            isOnTimeline: ask.isOnTimeline,
             isTargetMet: ask.isTargetMet,
           ),
-          gapH15,
-          IsTargetMetLabel(targetMetDateString: ask.formattedTargetMetDate,),
+          ask.isDeadlinePassed ? gapH15 : SizedBox(),
+          IsTargetMetLabel(isTargetMet: ask.formattedTargetMetDate.isNotEmpty),
         ]
       ),
     );
   }
 }
 
-class VisibleOnTimelineLabel extends StatelessWidget {
-  const VisibleOnTimelineLabel({
-    required this.isDeadlinePassed,
+class IsOnTimelineLabel extends StatelessWidget {
+  const IsOnTimelineLabel({
     required this.isOnTimeline,
-    required this.isTargetMet,
   });
 
-  final bool isDeadlinePassed;
   final bool isOnTimeline;
-  final bool isTargetMet;
 
   @override
   Widget build(BuildContext context) {
-    var color = isOnTimeline ?
+    final color = isOnTimeline ?
       AppThemes.positiveColor : Theme.of(context).colorScheme.onPrimaryFixed;
-
-    var firstText = isOnTimeline ?
-      AskViewText.visibleOnTimeline : AskViewText.notVisibleOnTimeline;
-
-    var deadlineText = isDeadlinePassed ? " ${AskViewText.reasonDeadlinePassed}" : "";
-    var targetMetText = isTargetMet ? " ${AskViewText.reasonTargetMet}" : "";
-    var secondText = [targetMetText, deadlineText].firstWhere(
-      (val) => val.isNotEmpty, orElse: () => "");
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -262,37 +260,67 @@ class VisibleOnTimelineLabel extends StatelessWidget {
           color: color,
         ),
         gapW10,
-        Expanded(
-          child: Text.rich(
-            TextSpan(
-              style: TextStyle(
-                color: color,
-                fontWeight: FontWeight.w500,
-              ),
-              children: [
-                TextSpan(text: firstText),
-                TextSpan(text: secondText)
-              ]
-            ),
-          ),
-        ),
+        Text(
+          isOnTimeline ? AskViewText.visibleOnTimeline : AskViewText.notVisibleOnTimeline,
+          style: TextStyle(
+            color: color,
+            fontWeight: FontWeight.w500,
+          )
+        )
       ],
     );
   }
 }
 
-class IsTargetMetLabel extends StatelessWidget {
-  const IsTargetMetLabel({
-    required this.targetMetDateString,
+class IsDeadlinePassedLabel extends StatelessWidget {
+  const IsDeadlinePassedLabel({
+    required this.isDeadlinePassed,
+    required this.isTargetMet,
   });
 
-  final String targetMetDateString;
+  final bool isDeadlinePassed;
+  final bool isTargetMet;
 
   @override
   Widget build(BuildContext context) {
-    var isTargetMet = targetMetDateString.isNotEmpty;
-    var color = isTargetMet ?
-      Theme.of(context).colorScheme.primary
+    final color = isTargetMet ?
+      Theme.of(context).colorScheme.onPrimaryFixed
+      : Theme.of(context).colorScheme.error;
+
+    return isDeadlinePassed ?
+      Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Icon(
+            Icons.event_busy,
+            size: AppIconSizes.s25,
+            color: color,
+          ),
+          gapW10,
+          Text(
+            AskViewText.deadlinePassed,
+            style: TextStyle(
+              color: color,
+              fontWeight: FontWeight.w500,
+            )
+          )
+        ],
+      )
+      : SizedBox();
+  }
+}
+
+class IsTargetMetLabel extends StatelessWidget {
+  const IsTargetMetLabel({
+    required this.isTargetMet,
+  });
+
+  final bool isTargetMet;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = isTargetMet ?
+      AppThemes.positiveColor
       : Theme.of(context).colorScheme.onPrimaryFixed;
 
     return Row(

@@ -6,17 +6,15 @@ import 'package:mocktail/mocktail.dart';
 // Constants
 import 'package:plural_app/src/constants/themes.dart';
 
-// Asks
-import 'package:plural_app/src/features/asks/presentation/route_to_listed_asks_view_button.dart';
-
 // Utils
 import 'package:plural_app/src/utils/app_dialog_view_router.dart';
+import 'package:plural_app/src/utils/route_to_view_button.dart';
 
 // Tests
-import '../../../test_mocks.dart';
+import '../test_mocks.dart';
 
 void main() {
-  group("RouteToListedAsksViewButton test", () {
+  group("RouteToViewButton", () {
     testWidgets("onPressed", (tester) async {
       final getIt = GetIt.instance;
       final mockAppDialogViewRouter = MockAppDialogViewRouter();
@@ -33,7 +31,11 @@ void main() {
         MaterialApp(
           theme: AppThemes.standard,
           home: Scaffold(
-            body: RouteToListedAsksViewButton()
+            body: RouteToViewButton(
+              icon: Icons.abc,
+              message: "test message!",
+              onPressed: mockAppDialogViewRouter.routeToListedAsksView,
+            )
           ),
         ));
 

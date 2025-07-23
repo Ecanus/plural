@@ -19,6 +19,7 @@ import 'package:plural_app/src/constants/routes.dart';
 import 'package:plural_app/src/features/authentication/data/forms.dart';
 import 'package:plural_app/src/features/authentication/domain/app_user.dart';
 import 'package:plural_app/src/features/authentication/domain/app_user_settings.dart';
+import 'package:plural_app/src/features/authentication/domain/constants.dart';
 
 // Localization
 import 'package:plural_app/src/localization/lang_en.dart';
@@ -66,6 +67,9 @@ class _UserSettingsViewState extends State<UserSettingsView> {
   late AppForm _userSettingsAppForm;
   late GlobalKey<FormState> _formKey;
 
+  late int _divisions;
+  late int _currentSliderValue;
+
   @override
   void initState() {
     super.initState();
@@ -75,6 +79,20 @@ class _UserSettingsViewState extends State<UserSettingsView> {
 
     _formKey = GlobalKey<FormState>();
     _appDialogViewRouter = GetIt.instance<AppDialogViewRouter>();
+
+    _divisions = (
+      UserSettingsConstants.maxGardenTimelineDisplayCount -
+      UserSettingsConstants.minGardenTimelineDisplayCount).toInt();
+    _currentSliderValue = widget.userSettings.gardenTimelineDisplayCount;
+  }
+
+  void _updateGardenTimelineDisplayCount(double value) {
+    setState(() {
+      _currentSliderValue = value.toInt();
+      _userSettingsAppForm.setValue(
+        fieldName: UserSettingsField.gardenTimelineDisplayCount,
+        value: _currentSliderValue);
+    });
   }
 
   @override
@@ -89,6 +107,10 @@ class _UserSettingsViewState extends State<UserSettingsView> {
                 key: _formKey,
                 child: Column(
                   children: [
+                   UserSettingsCategoryHeader(
+                      text: UserSettingsViewText.defaultValuesHeader
+                    ),
+                    gapH20,
                     AppCurrencyPickerFormField(
                       appForm: _userSettingsAppForm,
                       fieldName: UserSettingsField.defaultCurrency,
@@ -103,7 +125,28 @@ class _UserSettingsViewState extends State<UserSettingsView> {
                       maxLength: AppMaxLengths.max200,
                       maxLines: null,
                     ),
-                    gapH30,
+                    gapH10,
+                    GardenTimelineDisplayCountHeader(sliderValue: _currentSliderValue),
+                    gapH10,
+                    Slider(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: AppPaddings.p10,
+                        vertical: AppPaddings.p10,
+                      ),
+                      divisions: _divisions,
+                      label: "$_currentSliderValue",
+                      min: UserSettingsConstants.minGardenTimelineDisplayCount,
+                      max: UserSettingsConstants.maxGardenTimelineDisplayCount,
+                      secondaryActiveColor: Theme.of(context).colorScheme.secondaryFixed,
+                      secondaryTrackValue: UserSettingsConstants.maxGardenTimelineDisplayCount,
+                      value: _currentSliderValue.toDouble(),
+                      onChanged: (double value) => _updateGardenTimelineDisplayCount(value),
+                    ),
+                    gapH60,
+                    UserSettingsCategoryHeader(
+                      text: UserSettingsViewText.personalInformationHeader
+                    ),
+                    gapH20,
                     AppTextFormField(
                       appForm: _userAppForm,
                       fieldName: UserField.firstName,
@@ -149,6 +192,73 @@ class _UserSettingsViewState extends State<UserSettingsView> {
           rightTooltipMessage: AppDialogFooterText.navToCurrentGardenSettingsView,
           title: AppDialogFooterText.settings
         )
+      ],
+    );
+  }
+}
+
+class UserSettingsCategoryHeader extends StatelessWidget {
+  const UserSettingsCategoryHeader({
+    required this.text,
+  });
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Text(
+          text,
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.primary,
+            fontSize: AppFontSizes.s16,
+            fontWeight: FontWeight.w400,
+          )
+        ),
+      ],
+    );
+  }
+}
+
+class GardenTimelineDisplayCountHeader extends StatelessWidget {
+  const GardenTimelineDisplayCountHeader({
+    required this.sliderValue,
+  });
+
+  final int sliderValue;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Text.rich(
+          TextSpan(
+            children: [
+              TextSpan(
+                style: TextStyle(
+                  fontWeight: FontWeight.w400
+                ),
+                text: UserSettingsViewText.gardenTimelineDisplayCountHeaderStart
+              ),
+              TextSpan(
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.primary,
+                  fontWeight: FontWeight.w700
+                ),
+                text: "$sliderValue "
+              ),
+              TextSpan(
+                style: TextStyle(
+                  fontWeight: FontWeight.w400
+                ),
+                text: UserSettingsViewText.gardenTimelineDisplayCountHeaderEnd
+              )
+            ]
+          ),
+        ),
       ],
     );
   }

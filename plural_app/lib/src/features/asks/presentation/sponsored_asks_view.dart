@@ -8,7 +8,7 @@ import 'package:plural_app/src/common_widgets/app_dialog_footer.dart';
 import 'package:plural_app/src/constants/app_sizes.dart';
 
 // Asks
-import 'package:plural_app/src/features/asks/presentation/listed_ask_tile.dart';
+import 'package:plural_app/src/features/asks/presentation/sponsored_ask_tile.dart';
 
 // Localization
 import 'package:plural_app/src/localization/lang_en.dart';
@@ -17,12 +17,12 @@ import 'package:plural_app/src/localization/lang_en.dart';
 import 'package:plural_app/src/utils/app_dialog_view_router.dart';
 import 'package:plural_app/src/utils/route_to_view_button.dart';
 
-class ListedAsksView extends StatelessWidget {
-  const ListedAsksView({
-    required this.listedAskTiles,
+class SponsoredAsksView extends StatelessWidget {
+  const SponsoredAsksView({
+    required this.sponsoredAskTiles,
   });
 
-  final List<ListedAskTile> listedAskTiles;
+  final List<SponsoredAskTile> sponsoredAskTiles;
 
   @override
   Widget build(BuildContext context) {
@@ -31,25 +31,23 @@ class ListedAsksView extends StatelessWidget {
     return Column(
       children: [
         Expanded(
-          child: listedAskTiles.isEmpty ?
-            EmptyListedAskTilesMessage() :
-            ListView(
-              padding: const EdgeInsets.all(AppPaddings.p35),
-              children: listedAskTiles,
-            )
+          child: ListView(
+            padding: const EdgeInsets.all(AppPaddings.p35),
+            children: sponsoredAskTiles,
+          ),
         ),
         AppDialogFooterBuffer(
           buttons: [
             RouteToViewButton(
-              icon: Icons.volunteer_activism,
-              message: AskViewText.goToSponsoredAsks,
-              onPressed: appDialogViewRouter.routeToSponsoredAsksView,
+              icon: Icons.toc_rounded,
+              message: AskViewText.goToListedAsks,
+              onPressed: appDialogViewRouter.routeToListedAsksView,
             ),
             RouteToViewButton(
               icon: Icons.add,
               message: AskViewText.createAsk,
               onPressed: appDialogViewRouter.routeToCreateAskView
-            )
+            ),
           ],
         ),
         AppDialogNavFooter(
@@ -59,31 +57,9 @@ class ListedAsksView extends StatelessWidget {
           rightDialogIcon: Icons.settings,
           rightNavCallback: appDialogViewRouter.routeToUserSettingsView,
           rightTooltipMessage: AppDialogFooterText.navToSettingsView,
-          title: AppDialogFooterText.listedAsks
+          title: AppDialogFooterText.sponsoredAsks
         )
       ],
-    );
-  }
-}
-
-class EmptyListedAskTilesMessage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            AskViewText.emptyListedAskTilesMessage,
-            style: Theme.of(context).textTheme.headlineSmall
-          ),
-          gapH25,
-          Text(
-            AskViewText.emptyListedAskTilesSubtitle,
-            style: Theme.of(context).textTheme.bodyMedium
-          ),
-        ],
-      ),
     );
   }
 }

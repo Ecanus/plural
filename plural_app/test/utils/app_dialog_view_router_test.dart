@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:intl/intl.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:pocketbase/pocketbase.dart';
 import 'package:test/test.dart';
 
 // Constants
 import 'package:plural_app/src/constants/fields.dart';
+import 'package:plural_app/src/constants/formats.dart';
 
 // Asks
 import 'package:plural_app/src/features/asks/data/asks_repository.dart';
 import 'package:plural_app/src/features/asks/presentation/create_ask_view.dart';
 import 'package:plural_app/src/features/asks/presentation/edit_ask_view.dart';
+import 'package:plural_app/src/features/asks/presentation/examine_ask_view.dart';
 import 'package:plural_app/src/features/asks/presentation/listed_asks_view.dart';
+import 'package:plural_app/src/features/asks/presentation/sponsored_asks_view.dart';
 
 // Auth
 import 'package:plural_app/src/features/authentication/data/user_garden_records_repository.dart';
@@ -33,6 +37,7 @@ import 'package:plural_app/src/utils/app_state.dart';
 // Tests
 import '../test_context.dart';
 import '../test_mocks.dart';
+import '../test_stubs.dart';
 
 void main() {
   group("AppDialogViewRouter", () {
@@ -61,6 +66,15 @@ void main() {
       expect(appDialogViewRouter.viewNotifier.value, isA<EditAskView>());
     });
 
+    test("routeToExamineAskView", () async {
+      final tc = TestContext();
+      final appDialogViewRouter = AppDialogViewRouter();
+
+      expect(appDialogViewRouter.viewNotifier.value, isA<SizedBox>());
+      appDialogViewRouter.routeToExamineAskView(tc.ask);
+      expect(appDialogViewRouter.viewNotifier.value, isA<ExamineAskView>());
+    });
+
     test("routeToListedAsksView", () async {
       final tc = TestContext();
 
@@ -75,23 +89,15 @@ void main() {
       getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
       getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
 
-      // AsksRepository.getList()
-      when(
-        () => mockAsksRepository.getList(
-          filter: any(named: "filter"),
-          sort: any(named: "sort"),
-        )
-      ).thenAnswer(
-        (_) async => ResultList<RecordModel>(items: [tc.getAskRecordModel()])
-      );
-
-      // UsersRepository.getFirstListItem()
-      when(
-        () => mockUsersRepository.getFirstListItem(
-          filter: any(named: "filter")
-        )
-      ).thenAnswer(
-        (_) async => tc.getUserRecordModel()
+      // Stubs
+      getAsksByUserIDStub(
+        mockAsksRepository: mockAsksRepository,
+        asksSort: GenericField.created,
+        gardenID: tc.garden.id,
+        asksReturnValue: ResultList<RecordModel>(items: [tc.getAskRecordModel()]),
+        mockUsersRepository: mockUsersRepository,
+        userID: tc.user.id,
+        usersReturnValue: tc.getUserRecordModel(),
       );
 
       final appDialogViewRouter = AppDialogViewRouter();
@@ -102,6 +108,47 @@ void main() {
     });
 
     tearDown(() => GetIt.instance.reset());
+
+    test("routeToSponsoredAsksView", () async {
+      final tc = TestContext();
+
+      final appState = AppState.skipSubscribe()
+                        ..currentGarden = tc.garden // for getAsksByUserID
+                        ..currentUser = tc.user;
+
+      final getIt = GetIt.instance;
+      final mockAsksRepository = MockAsksRepository();
+      final mockUsersRepository = MockUsersRepository();
+      getIt.registerLazySingleton<AppState>(() => appState);
+      getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
+      getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
+
+      final datetimeNow = DateTime.parse(
+        DateFormat(Formats.dateYMMddHHms).format(DateTime.now())).toLocal();
+      final nowString = DateFormat(Formats.dateYMMddHHms).format(datetimeNow);
+
+      final asksFilter = ""
+        "${AskField.garden} = '${tc.garden.id}' " // mind the trailing space
+        "&& ${AskField.targetMetDate} = null"
+        "&& ${AskField.deadlineDate} > '$nowString'"
+        "&& ${AskField.creator} != '${tc.user.id}'"
+        "&& ${AskField.sponsors} ~ '${tc.user.id}'";
+
+      getAsksByGardenIDStub(
+        mockAsksRepository: mockAsksRepository,
+        asksFilter: asksFilter,
+        asksReturnValue: ResultList<RecordModel>(items: [tc.getAskRecordModel()]),
+        mockUsersRepository: mockUsersRepository,
+        userID: tc.user.id,
+        usersReturnValue: tc.getUserRecordModel(),
+      );
+
+      final appDialogViewRouter = AppDialogViewRouter();
+
+      expect(appDialogViewRouter.viewNotifier.value, isA<SizedBox>());
+      await appDialogViewRouter.routeToSponsoredAsksView();
+      expect(appDialogViewRouter.viewNotifier.value, isA<SponsoredAsksView>());
+    });
 
     test("routeToAdminEditUserView", () async {
       final tc = TestContext();

@@ -8,6 +8,7 @@ import 'package:pocketbase/pocketbase.dart';
 
 // Common Widgets
 import 'package:plural_app/src/common_widgets/app_dialog_footer.dart';
+import 'package:plural_app/src/common_widgets/app_tooltip_icon.dart';
 
 // Asks
 import 'package:plural_app/src/features/asks/data/asks_repository.dart';
@@ -75,14 +76,14 @@ void main() {
       expect(find.byType(AppDialogFooter), findsOneWidget);
 
       // Check isSponsored tooltip message is correct
-      var tooltip = find.byType(Tooltip).first;
+      var tooltip = find.byType(AppTooltipIcon).first;
       await gesture.moveTo(tester.getCenter(tooltip));
       await tester.pumpAndSettle();
 
       expect(find.text(AskViewText.markAsSponsored), findsOneWidget);
 
       // Check boon tooltip message is correct
-      tooltip = find.byType(Tooltip).last;
+      tooltip = find.byType(AppTooltipIcon).last;
       await gesture.moveTo(tester.getCenter(tooltip));
       await tester.pumpAndSettle();
 

@@ -72,7 +72,8 @@ void main() {
 
       final appState = AppState.skipSubscribe()
                         ..currentGarden = tc.garden
-                        ..currentUser = tc.user;
+                        ..currentUser = tc.user
+                        ..currentUserSettings = tc.userSettings;
 
       final getIt = GetIt.instance;
       final mockBuildContext = MockBuildContext();
@@ -86,36 +87,19 @@ void main() {
       );
       getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
 
-      // UserGardenRecordsRepository.getList()
-      when(
-        () => mockUserGardenRecordsRepository.getList(
-          filter: ""
-            "${UserGardenRecordField.user} = '${tc.user.id}' && "
-            "${UserGardenRecordField.garden} = '${tc.garden.id}'",
-          sort: "-updated"
-        )
-      ).thenAnswer(
-        (_) async => ResultList<RecordModel>(
-          items: [tc.getUserGardenRecordRecordModel()]
-        )
+      // Stubs
+      getUserGardenRecordRoleStub(
+        mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
+        userID: tc.user.id,
+        gardenID: tc.garden.id,
+        returnValue: ResultList<RecordModel>(items: [tc.getUserGardenRecordRecordModel()])
       );
-
-      // AsksRepository.getList()
-      when(
-        () => mockAsksRepository.getList(
-          filter: any(named: "filter"),
-          sort: any(named: "sort"))
-      ).thenAnswer(
-        (_) async => ResultList<RecordModel>(items: [tc.getAskRecordModel()])
-      );
-
-      // UsersRepository.getFirstListItem()
-      when(
-        () => mockUsersRepository.getFirstListItem(
-          filter: any(named: "filter")
-        )
-      ).thenAnswer(
-        (_) async => tc.getUserRecordModel()
+      getAsksByGardenIDStub(
+        mockAsksRepository: mockAsksRepository,
+        asksReturnValue: ResultList<RecordModel>(items: [tc.getAskRecordModel()]),
+        mockUsersRepository: mockUsersRepository,
+        userID: tc.user.id,
+        usersReturnValue: tc.getUserRecordModel(),
       );
 
       // BuildContext.mounted
@@ -211,7 +195,8 @@ void main() {
 
       final appState = AppState.skipSubscribe()
                         ..currentGarden = tc.garden
-                        ..currentUser = tc.user;
+                        ..currentUser = tc.user
+                        ..currentUserSettings = tc.userSettings;
 
       final getIt = GetIt.instance;
       final mockAsksRepository = MockAsksRepository();
@@ -224,40 +209,19 @@ void main() {
       );
       getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
 
-      // UserGardenRecordsRepository.getList()
-      when(
-        () => mockUserGardenRecordsRepository.getList(
-          filter: ""
-            "${UserGardenRecordField.user} = '${tc.user.id}' && "
-            "${UserGardenRecordField.garden} = '${tc.garden.id}'",
-          sort: any(named: "sort")
-          )
-      ).thenAnswer(
-        (_) async => ResultList<RecordModel>(
-          items: [
-            tc.getExpandUserGardenRecordRecordModel([
-              UserGardenRecordField.user, UserGardenRecordField.garden
-            ]),
-          ]
-        )
+      // Stubs
+      getUserGardenRecordRoleStub(
+        mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
+        userID: tc.user.id,
+        gardenID: tc.garden.id,
+        returnValue: ResultList<RecordModel>(items: [tc.getUserGardenRecordRecordModel()])
       );
-
-      // AsksRepository.getList()
-      when(
-        () => mockAsksRepository.getList(
-          filter: any(named: "filter"),
-          sort: any(named: "sort"))
-      ).thenAnswer(
-        (_) async => ResultList<RecordModel>(items: [tc.getAskRecordModel()])
-      );
-
-      // UsersRepository.getFirstListItem()
-      when(
-        () => mockUsersRepository.getFirstListItem(
-          filter: any(named: "filter")
-        )
-      ).thenAnswer(
-        (_) async => tc.getUserRecordModel()
+      getAsksByGardenIDStub(
+        mockAsksRepository: mockAsksRepository,
+        asksReturnValue: ResultList<RecordModel>(items: [tc.getAskRecordModel()]),
+        mockUsersRepository: mockUsersRepository,
+        userID: tc.user.id,
+        usersReturnValue: tc.getUserRecordModel(),
       );
 
       // BuildContext.mounted

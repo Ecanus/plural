@@ -67,7 +67,7 @@ void main() {
         gardenID: tc.garden.id,
         returnValue: items
       );
-      updateGardenStub(
+      gardensRepositoryUpdateStub(
         mockGardensRepository: mockGardensRepository,
         gardenID: tc.garden.id,
         gardenName: appForm.getValue(fieldName: GardenField.name),
@@ -158,7 +158,7 @@ void main() {
         gardenID: tc.garden.id,
         returnValue: items
       );
-      updateGardenStub(
+      gardensRepositoryUpdateStub(
         mockGardensRepository: mockGardensRepository,
         gardenID: tc.garden.id,
         gardenName: appForm.getValue(fieldName: GardenField.name),

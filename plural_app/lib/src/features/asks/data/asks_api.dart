@@ -139,11 +139,11 @@ Future<List<Ask>> getAsksByGardenID({
   }) async {
     List<Ask> asks = [];
 
-    var finalFilter = "${AskField.garden} = '$gardenID' $filter".trim();
+    final filterString = "${AskField.garden} = '$gardenID' $filter".trim();
 
     // Query
     var resultList = await GetIt.instance<AsksRepository>().getList(
-      filter: finalFilter,
+      filter: filterString,
       sort: sort
     );
 
@@ -156,9 +156,12 @@ Future<List<Ask>> getAsksByGardenID({
       asks.add(ask);
     }
 
-    // If count is non-null, return a sublist up to the lesser of count or asks.length
-    final limit = count != null ? min(count, asks.length) : asks.length;
-    return asks.sublist(0, limit);
+    if (count == null) {
+      return asks;
+    } else {
+      // Return a sublist up to the lesser of count or asks.length
+      return asks.sublist(0, min(count, asks.length));
+    }
 }
 
 /// Queries on the [Ask] collection to retrieve all records corresponding
@@ -173,10 +176,9 @@ Future<List<Ask>> getAsksByUserID({
   List<Ask> asks = [];
 
   final currentGarden = GetIt.instance<AppState>().currentGarden!;
-  final finalFilter = """
-        ${AskField.creator} = '$userID' &&
-        ${AskField.garden} = '${currentGarden.id}' $filter
-        """.trim();
+  final finalFilter = ""
+    "${AskField.creator} = '$userID' && "
+    "${AskField.garden} = '${currentGarden.id}' $filter".trim();
 
   // Query
   var resultList = await GetIt.instance<AsksRepository>().getList(
@@ -199,7 +201,7 @@ Future<List<Ask>> getAsksByUserID({
 /// corresponding to [userID] and the current [Garden].
 ///
 /// Returns the list of all related Asks.
-Future<List<Ask>> getAsksForListedAsksDialog({
+Future<List<Ask>> getAsksForListedAsksView({
   required String userID,
   required DateTime now,
 }) async {
@@ -233,6 +235,30 @@ Future<List<Ask>> getAsksForListedAsksDialog({
   }
 
   return displayableAsks + deadlinePassedAsks + targetMetAsks;
+}
+
+/// Queries on the [Ask] collection to create a list of all Asks
+/// in the current Garden that the current User has already sponsored.
+///
+/// Returns the list of all related Asks.
+Future<List<Ask>> getAsksForSponsoredAsksView({
+  required DateTime now,
+}) async {
+  final currentUser = GetIt.instance<AppState>().currentUser!;
+  final nowString = DateFormat(Formats.dateYMMddHHms).format(now);
+
+  final filter = ""
+    "&& ${AskField.targetMetDate} = null"
+    "&& ${AskField.deadlineDate} > '$nowString'"
+    "&& ${AskField.creator} != '${currentUser.id}'"
+    "&& ${AskField.sponsors} ~ '${currentUser.id}'";
+
+  List<Ask> asks = await getAsksByGardenID(
+    gardenID: GetIt.instance<AppState>().currentGarden!.id,
+    filter: filter
+  );
+
+  return asks;
 }
 
 /// Returns the [AskType] enum that corresponds to [askTypeString].

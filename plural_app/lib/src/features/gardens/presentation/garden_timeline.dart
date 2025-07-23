@@ -10,6 +10,9 @@ import 'package:plural_app/src/features/asks/domain/ask.dart';
 // Gardens
 import 'package:plural_app/src/features/gardens/presentation/garden_timeline_tile.dart';
 
+// Localization
+import 'package:plural_app/src/localization/lang_en.dart';
+
 // Utils
 import 'package:plural_app/src/utils/app_state.dart';
 
@@ -63,15 +66,45 @@ class GardenTimelineList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: ListView(
-        padding: const EdgeInsets.all(AppPaddings.p8),
+      child: asks.isEmpty ?
+        EmptyTimelineMessage() :
+        ListView(
+          padding: const EdgeInsets.all(AppPaddings.p8),
+          children: [
+            for (int index = 0; index < asks.length; index++)
+              GardenTimelineTile(
+                ask: asks[index],
+                index: index,
+                isAdminPage: isAdminPage
+              )
+          ],
+        ),
+    );
+  }
+}
+
+class EmptyTimelineMessage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          for (int index = 0; index < asks.length; index++)
-            GardenTimelineTile(
-              ask: asks[index],
-              index: index,
-              isAdminPage: isAdminPage
-            )
+          Icon(
+            Icons.emoji_food_beverage,
+            size: AppIconSizes.s40,
+            color: Theme.of(context).colorScheme.onPrimary,
+          ),
+          gapH5,
+          Text(
+            GardenTimelineText.emptyTimelineMessage,
+            style: Theme.of(context).textTheme.headlineSmall
+          ),
+          gapH10,
+          Text(
+            GardenTimelineText.emptyTimelineSubtitle,
+            style: Theme.of(context).textTheme.bodyMedium
+          ),
         ],
       ),
     );

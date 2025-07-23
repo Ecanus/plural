@@ -256,7 +256,7 @@ void main() {
       );
 
       // GardensRepository.update()
-      updateGardenStub(
+      gardensRepositoryUpdateStub(
         mockGardensRepository: mockGardensRepository,
         gardenID: map[GenericField.id]!,
         gardenName: map[GardenField.name]!,
@@ -327,7 +327,7 @@ void main() {
       );
 
       // GardensRepository.update()
-      updateGardenStub(
+      gardensRepositoryUpdateStub(
         mockGardensRepository: mockGardensRepository,
         gardenID: map[GenericField.id]!,
         gardenName: map[GardenField.name]!,

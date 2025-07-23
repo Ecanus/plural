@@ -544,7 +544,7 @@ void main() {
       );
 
       // UsersRepository.getFirstListItem()
-      getFirstListItemStub(
+      usersRepositoryGetFirstListItemStub(
         mockUsersRepository: mockUsersRepository,
         userID: tc.user.id,
         returnValue: tc.getUserRecordModel()
@@ -1423,7 +1423,7 @@ void main() {
 
       final recordModel = tc.getUserGardenRecordRecordModel(
         role: AppUserGardenRole.administrator);
-      updateUserGardenRecordStub(
+      userGardenRecordsRepositoryUpdateStub(
         mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
         userGardenRecordID: map[GenericField.id],
         userGardenRoleName: map[UserGardenRecordField.role],
@@ -1525,7 +1525,7 @@ void main() {
       // otherUser -> update()
       final otherUserRecordModel = tc.getUserGardenRecordRecordModel(
         role: AppUserGardenRole.administrator);
-      updateUserGardenRecordStub(
+      userGardenRecordsRepositoryUpdateStub(
         mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
         userGardenRecordID: map[GenericField.id],
         userGardenRoleName: map[UserGardenRecordField.role],
@@ -1553,7 +1553,7 @@ void main() {
       // currentUser -> update()
       final currentUserRecordModel = tc.getUserGardenRecordRecordModel(
         role: AppUserGardenRole.administrator);
-      updateUserGardenRecordStub(
+      userGardenRecordsRepositoryUpdateStub(
         mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
         userGardenRecordID: "testRecordID",
         userGardenRoleName: AppUserGardenRole.administrator.name,
@@ -1817,8 +1817,10 @@ void main() {
           id: map[GenericField.id],
           body: {
             UserSettingsField.defaultCurrency: map[UserSettingsField.defaultCurrency],
-            UserSettingsField.defaultInstructions: map[
-              UserSettingsField.defaultInstructions],
+            UserSettingsField.defaultInstructions:
+              map[UserSettingsField.defaultInstructions],
+            UserSettingsField.gardenTimelineDisplayCount:
+              map[UserSettingsField.gardenTimelineDisplayCount],
           }
         )
       ).thenAnswer(
@@ -1836,8 +1838,10 @@ void main() {
           id: map[GenericField.id],
           body: {
             UserSettingsField.defaultCurrency: map[UserSettingsField.defaultCurrency],
-            UserSettingsField.defaultInstructions: map[
-              UserSettingsField.defaultInstructions],
+            UserSettingsField.defaultInstructions:
+              map[UserSettingsField.defaultInstructions],
+            UserSettingsField.gardenTimelineDisplayCount:
+              map[UserSettingsField.gardenTimelineDisplayCount],
           }
         )
       ).thenAnswer(

@@ -437,7 +437,7 @@ Future<bool> login(
 
 /// Logs out of the database and clears all [GetIt] instances.
 Future<void> logout(
-  context, {
+  BuildContext context, {
   GoRouter? goRouter // primarily for testing
 }) async {
   final usersRepository = GetIt.instance<UsersRepository>();
@@ -660,6 +660,7 @@ Future<(RecordModel?, Map)> updateUserSettings(Map map) async {
     body: {
       UserSettingsField.defaultCurrency: map[UserSettingsField.defaultCurrency],
       UserSettingsField.defaultInstructions: map[UserSettingsField.defaultInstructions],
+      UserSettingsField.gardenTimelineDisplayCount: map[UserSettingsField.gardenTimelineDisplayCount],
   });
 
   return (record, errorsMap);
