@@ -1,4 +1,5 @@
  import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
 // Common Widgets
 import 'package:plural_app/src/common_widgets/app_dialog.dart';
@@ -18,6 +19,10 @@ import 'package:plural_app/src/features/asks/presentation/ask_time_left_text.dar
 // Localization
 import 'package:plural_app/src/localization/lang_en.dart';
 
+// Utils
+import 'package:plural_app/src/utils/app_dialog_view_router.dart';
+import 'package:plural_app/src/utils/route_to_view_button.dart';
+
 
 Future createExamineAskDialog({
   required BuildContext context,
@@ -27,7 +32,10 @@ Future createExamineAskDialog({
       context: context,
       builder: (BuildContext context) {
         return AppDialog(
-          view: ExamineAskView(ask: ask),
+          view: ExamineAskView(
+            ask: ask,
+            routeToIcon: Icons.volunteer_activism,
+          ),
         );
       }
     );
@@ -36,12 +44,16 @@ Future createExamineAskDialog({
 class ExamineAskView extends StatelessWidget {
   const ExamineAskView({
     required this.ask,
+    required this.routeToIcon,
   });
 
   final Ask ask;
+  final IconData routeToIcon;
 
   @override
   Widget build(BuildContext context) {
+    final appDialogViewRouter = GetIt.instance<AppDialogViewRouter>();
+
     return Column(
       children: [
         ExamineAskViewHeader(ask: ask),
@@ -88,6 +100,15 @@ class ExamineAskView extends StatelessWidget {
               ),
             ]
           ),
+        ),
+        AppDialogFooterBuffer(
+          buttons: [
+            RouteToViewButton(
+              icon: routeToIcon,
+              message: AskViewText.goToSponsoredAsks,
+              onPressed: appDialogViewRouter.routeToSponsoredAsksView,
+            ),
+          ]
         ),
         AppDialogFooter(title: AppDialogFooterText.examineAsk)
       ],

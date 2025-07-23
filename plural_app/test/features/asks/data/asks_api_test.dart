@@ -34,6 +34,7 @@ import 'package:plural_app/src/utils/exceptions.dart';
 // Tests
 import '../../../test_context.dart';
 import '../../../test_mocks.dart';
+import '../../../test_stubs.dart';
 
 void main() {
   group("asks_api", () {
@@ -449,7 +450,7 @@ void main() {
 
     tearDown(() => GetIt.instance.reset());
 
-    test("getAsksForListedAsksDialog", () async {
+    test("getAsksForListedAsksView", () async {
       final tc = TestContext();
 
       final appState = AppState.skipSubscribe()
@@ -465,10 +466,9 @@ void main() {
 
       final nowString = DateFormat(Formats.dateYMMddHHms).format(DateTime.now());
 
-      final filterString =  """
-        ${AskField.creator} = '${appState.currentUser!.id}' &&
-        ${AskField.garden} = '${appState.currentGarden!.id}'
-        """.trim();
+      final filterString =  ""
+        "${AskField.creator} = '${appState.currentUser!.id}' && " // mind trailing space
+        "${AskField.garden} = '${appState.currentGarden!.id}'".trim();
 
       // AsksRepository.getList()
       when(
@@ -507,7 +507,7 @@ void main() {
         )
       );
 
-      final asks = await getAsksForListedAsksDialog(
+      final asks = await getAsksForListedAsksView(
         userID: tc.user.id, now: DateTime.parse(nowString)
       );
 
@@ -516,6 +516,51 @@ void main() {
       expect(asks[0].id, "ASK001");
       expect(asks[1].id, "ASK002");
       expect(asks[2].id, "ASK003");
+    });
+
+    tearDown(() => GetIt.instance.reset());
+
+    test("getAsksForSponsoredAsksView", () async {
+      final tc = TestContext();
+
+      final appState = AppState.skipSubscribe()
+                        ..currentGarden = tc.garden
+                        ..currentUser = tc.user;
+
+      final getIt = GetIt.instance;
+      final mockAsksRepository = MockAsksRepository();
+      final mockUsersRepository = MockUsersRepository();
+      getIt.registerLazySingleton<AppState>(() => appState);
+      getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
+      getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
+
+      final datetimeNow = DateTime.parse(
+        DateFormat(Formats.dateYMMddHHms).format(DateTime.now())).toLocal();
+      final nowString = DateFormat(Formats.dateYMMddHHms).format(datetimeNow);
+
+      final filter = ""
+        "${AskField.garden} = '${tc.garden.id}' " // mind the trailing space
+        "&& ${AskField.targetMetDate} = null"
+        "&& ${AskField.deadlineDate} > '$nowString'"
+        "&& ${AskField.creator} != '${tc.user.id}'"
+        "&& ${AskField.sponsors} ~ '${tc.user.id}'";
+
+      getAsksByGardenIDStub(
+        mockAsksRepository: mockAsksRepository,
+        asksReturnValue: ResultList<RecordModel>(items: [tc.getAskRecordModel()]),
+        asksFilter: filter,
+        mockUsersRepository: mockUsersRepository,
+        userID: tc.user.id,
+        usersReturnValue: tc.getUserRecordModel()
+      );
+
+      // call function
+      await getAsksForSponsoredAsksView(now: datetimeNow);
+
+      verify(() => mockAsksRepository.getList(
+        filter: filter,
+        sort: any(named: "sort"))
+      ).called(1);
     });
 
     tearDown(() => GetIt.instance.reset());

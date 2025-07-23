@@ -10,6 +10,9 @@ import 'package:plural_app/src/common_widgets/app_date_picker_form_field.dart';
 import 'package:plural_app/src/common_widgets/app_dialog_footer_buffer_submit_button.dart';
 import 'package:plural_app/src/common_widgets/app_text_form_field.dart';
 
+// Constants
+import 'package:plural_app/src/constants/themes.dart';
+
 // Asks
 import 'package:plural_app/src/features/asks/data/asks_repository.dart';
 import 'package:plural_app/src/features/asks/presentation/delete_ask_button.dart';
@@ -18,6 +21,9 @@ import 'package:plural_app/src/features/asks/presentation/edit_ask_view.dart';
 // Auth
 import 'package:plural_app/src/features/authentication/domain/app_user_garden_record.dart';
 
+// Localization
+import 'package:plural_app/src/localization/lang_en.dart';
+
 // Utils
 import 'package:plural_app/src/utils/app_dialog_view_router.dart';
 import 'package:plural_app/src/utils/app_state.dart';
@@ -25,6 +31,7 @@ import 'package:plural_app/src/utils/app_state.dart';
 // Tests
 import '../../../test_context.dart';
 import '../../../test_mocks.dart';
+import '../../../tester_functions.dart';
 
 void main() {
   group("EditAskView", () {
@@ -115,5 +122,200 @@ void main() {
     });
 
     tearDown(() => GetIt.instance.reset());
+
+    testWidgets("IsOnTimelineLabel", (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppThemes.standard,
+          home: Scaffold(
+            body: Builder(
+              builder: (BuildContext context) {
+                return IsOnTimelineLabel(isOnTimeline: true);
+              }
+            )
+          ),
+        )
+      );
+
+      // isOnTimeline == true, color is positiveColor, icon is local_florist
+      expect(find.byIcon(Icons.local_florist), findsOneWidget);
+      expect(find.byIcon(Icons.visibility_off_rounded), findsNothing);
+      expect(get<Icon>(tester).color, AppThemes.positiveColor);
+
+      // isOnTimeline == true, text is visibleOnTimeline
+      expect(find.text(AskViewText.visibleOnTimeline), findsOneWidget);
+      expect(find.text(AskViewText.notVisibleOnTimeline), findsNothing);
+      expect(get<Text>(tester).style!.color, AppThemes.positiveColor);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppThemes.standard,
+          home: Scaffold(
+            body: Builder(
+              builder: (BuildContext context) {
+                return IsOnTimelineLabel(isOnTimeline: false);
+              }
+            )
+          ),
+        )
+      );
+
+      // isOnTimeline == false, color is onPrimaryFixed, icon is visibility_off_rounded
+      expect(find.byIcon(Icons.local_florist), findsNothing);
+      expect(find.byIcon(Icons.visibility_off_rounded), findsOneWidget);
+      expect(get<Icon>(tester).color, AppThemes.colorScheme.onPrimaryFixed);
+
+      // isOnTimeline == false, text is notVisibleOnTimeline
+      expect(find.text(AskViewText.visibleOnTimeline), findsNothing);
+      expect(find.text(AskViewText.notVisibleOnTimeline), findsOneWidget);
+      expect(
+        get<Text>(tester).style!.color,
+        AppThemes.standard.colorScheme.onPrimaryFixed
+      );
+    });
+
+    testWidgets("IsDeadlinePassedLabel", (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppThemes.standard,
+          home: Scaffold(
+            body: Builder(
+              builder: (BuildContext context) {
+                return IsDeadlinePassedLabel(
+                  isDeadlinePassed: false,
+                  isTargetMet: true
+                );
+              }
+            )
+          ),
+        )
+      );
+
+      // isDeadlinePassed == false, find nothing
+      expect(find.byType(Icon), findsNothing);
+      expect(find.byType(Text), findsNothing);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppThemes.standard,
+          home: Scaffold(
+            body: Builder(
+              builder: (BuildContext context) {
+                return IsDeadlinePassedLabel(
+                  isDeadlinePassed: false,
+                  isTargetMet: false
+                );
+              }
+            )
+          ),
+        )
+      );
+
+      // isDeadlinePassed == false, find nothing
+      expect(find.byType(Icon), findsNothing);
+      expect(find.byType(Text), findsNothing);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppThemes.standard,
+          home: Scaffold(
+            body: Builder(
+              builder: (BuildContext context) {
+                return IsDeadlinePassedLabel(
+                  isDeadlinePassed: true,
+                  isTargetMet: true
+                );
+              }
+            )
+          ),
+        )
+      );
+
+      // isTargetMet == true, color is onPrimaryFixed
+      expect(find.byType(Icon), findsOneWidget);
+      expect(get<Icon>(tester).color, AppThemes.standard.colorScheme.onPrimaryFixed);
+
+      expect(find.byType(Text), findsOneWidget);
+      expect(
+        get<Text>(tester).style!.color,
+        AppThemes.standard.colorScheme.onPrimaryFixed
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppThemes.standard,
+          home: Scaffold(
+            body: Builder(
+              builder: (BuildContext context) {
+                return IsDeadlinePassedLabel(
+                  isDeadlinePassed: true,
+                  isTargetMet: false
+                );
+              }
+            )
+          ),
+        )
+      );
+
+      // isTargetMet == false, color is error
+      expect(find.byType(Icon), findsOneWidget);
+      expect(get<Icon>(tester).color, AppThemes.standard.colorScheme.error);
+
+      expect(find.byType(Text), findsOneWidget);
+      expect(
+        get<Text>(tester).style!.color,
+        AppThemes.standard.colorScheme.error
+      );
+    });
+
+    testWidgets("IsTargetMetLabel", (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppThemes.standard,
+          home: Scaffold(
+            body: Builder(
+              builder: (BuildContext context) {
+                return IsTargetMetLabel(
+                  isTargetMet: true
+                );
+              }
+            )
+          ),
+        )
+      );
+
+      expect(find.byIcon(Icons.check), findsOneWidget);
+      expect(find.byIcon(Icons.not_interested), findsNothing);
+      expect(get<Icon>(tester).color, AppThemes.positiveColor);
+
+      expect(find.text(AskViewText.targetMet), findsOneWidget);
+      expect(find.text(AskViewText.targetNotMet), findsNothing);
+      expect(get<Text>(tester).style!.color, AppThemes.positiveColor);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppThemes.standard,
+          home: Scaffold(
+            body: Builder(
+              builder: (BuildContext context) {
+                return IsTargetMetLabel(
+                  isTargetMet: false
+                );
+              }
+            )
+          ),
+        )
+      );
+
+      expect(find.byIcon(Icons.check), findsNothing);
+      expect(find.byIcon(Icons.not_interested), findsOneWidget);
+      expect(get<Icon>(tester).color, AppThemes.standard.colorScheme.onPrimaryFixed);
+
+      expect(find.text(AskViewText.targetMet), findsNothing);
+      expect(find.text(AskViewText.targetNotMet), findsOneWidget);
+      expect(
+        get<Text>(tester).style!.color,
+        AppThemes.standard.colorScheme.onPrimaryFixed);
+    });
   });
 }

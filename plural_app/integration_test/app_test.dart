@@ -20,7 +20,6 @@ import 'package:plural_app/src/constants/pocketbase.dart';
 
 // Asks
 import 'package:plural_app/src/features/asks/domain/ask.dart';
-import 'package:plural_app/src/features/asks/presentation/route_to_listed_asks_view_button.dart';
 
 // Auth
 import 'package:plural_app/src/features/authentication/domain/app_user.dart';
@@ -30,6 +29,9 @@ import 'package:plural_app/src/features/authentication/presentation/log_in_passw
 // Gardens
 import 'package:plural_app/src/features/gardens/presentation/garden_timeline_tile.dart';
 import 'package:plural_app/src/features/gardens/presentation/landing_page_listed_garden_tile.dart';
+
+// Utils
+import 'package:plural_app/src/utils/route_to_view_button.dart';
 
 // Tests
 import '../test/test_context.dart';
@@ -260,16 +262,16 @@ void main() {
       await tester.tap(find.byType(CloseDialogButton));
       await tester.pumpAndSettle();
 
-      // Open CreateAskDialog
+      // Open CreateAskView
       await tester.ensureVisible(find.byIcon(Icons.add));
       await tester.pumpAndSettle();
       await tester.tap(find.byIcon(Icons.add));
       await tester.pumpAndSettle();
 
-      // Tap RouteToListedAsksViewButton
-      await tester.ensureVisible(find.byType(RouteToListedAsksViewButton));
+      // Tap first RouteToButton to go to ListedAsksView
+      await tester.ensureVisible(find.byType(RouteToViewButton).first);
       await tester.pumpAndSettle();
-      await tester.tap(find.byType(RouteToListedAsksViewButton));
+      await tester.tap(find.byType(RouteToViewButton).first);
       await tester.pumpAndSettle();
 
       // Navigate to GardenDialogList (first NavButton is on the left)

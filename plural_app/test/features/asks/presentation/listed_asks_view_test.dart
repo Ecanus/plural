@@ -14,12 +14,13 @@ import 'package:plural_app/src/features/asks/presentation/listed_asks_view.dart'
 // Utils
 import 'package:plural_app/src/utils/app_dialog_view_router.dart';
 import 'package:plural_app/src/utils/app_state.dart';
+import 'package:plural_app/src/utils/route_to_view_button.dart';
 
 // Tests
 import '../../../test_context.dart';
 
 void main() {
-  group("ListedAsksView test", () {
+  group("ListedAsksView", () {
     testWidgets("widgets", (tester) async {
       final tc = TestContext();
       final appState = AppState.skipSubscribe()
@@ -55,13 +56,13 @@ void main() {
       // Check AskDialogCreateForm not yet in view
       expect(find.byType(CreateAskView), findsNothing);
 
-      // Tap RouteToCreateAskViewButton (to route to another form view)
-      await tester.ensureVisible(find.byType(RouteToCreateAskViewButton));
+      // Tap last RouteToViewButton to go to CreateAskView
+      await tester.ensureVisible(find.byType(RouteToViewButton).last);
       await tester.pumpAndSettle();
-      await tester.tap(find.byType(RouteToCreateAskViewButton));
+      await tester.tap(find.byType(RouteToViewButton).last);
       await tester.pumpAndSettle();
 
-      // Check RouteToCreateAskViewButton has been created
+      // Check CreateAskView has been created
       expect(find.byType(CreateAskView), findsOneWidget);
     });
 
@@ -99,13 +100,13 @@ void main() {
       // Check AskDialogCreateForm not yet in view
       expect(find.byType(CreateAskView), findsNothing);
 
-      // Tap RouteToCreateAskViewButton (to route to another form view)
-      await tester.ensureVisible(find.byType(RouteToCreateAskViewButton));
+      // Tap last RouteToViewButton to go go CreateAskView
+      await tester.ensureVisible(find.byType(RouteToViewButton).last);
       await tester.pumpAndSettle();
-      await tester.tap(find.byType(RouteToCreateAskViewButton));
+      await tester.tap(find.byType(RouteToViewButton).last);
       await tester.pumpAndSettle();
 
-      // Check RouteToCreateAskViewButton has been created
+      // Check CreateAskView has been created
       expect(find.byType(CreateAskView), findsOneWidget);
     });
 

@@ -59,6 +59,7 @@ class AppDialogFooterText {
   static const navToSettingsView = "Settings";
 
   static const settings = "Settings";
+  static const sponsoredAsks = "Sponsored Asks";
 
   static const examineAsk = "View Ask";
 }
@@ -82,6 +83,7 @@ class AskViewText {
 
   static const deadlineDate = "Deadline date";
   static const deadlineDueBy = "due";
+  static const deadlinePassed = "Deadline passed";
   static const deleteAsk = "Delete Ask";
   static const description = "Description";
 
@@ -90,6 +92,7 @@ class AskViewText {
     "Click the '$createAsk' button below to get started.";
 
   static const goToListedAsks = "Go to My Asks";
+  static const goToSponsoredAsks = "Go to Sponsored Asks";
 
   static const instructions = "Instructions";
   static const instructionsTooltip = "How funds can be sent to you.\n"
@@ -98,9 +101,6 @@ class AskViewText {
   static const markAsSponsored = "Click to mark as sponsored";
 
   static const notVisibleOnTimeline = "Not visible on timeline";
-
-  static const reasonDeadlinePassed = "(deadline passed)";
-  static const reasonTargetMet = "(target met)";
 
   static const selectDateLabel = "Select date";
 
@@ -156,6 +156,11 @@ class GardenPageBottomBarText {
   static const settingsTooltip = "Settings";
 
   static const usersTooltip = "Users";
+}
+
+class GardenTimelineText {
+  static const emptyTimelineMessage = "No unsponsored Asks left";
+  static const emptyTimelineSubtitle = "Please check again later!";
 }
 
 class LandingPageText {

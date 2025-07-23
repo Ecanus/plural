@@ -10,6 +10,7 @@ import 'test_mocks.dart';
 
 void getAsksByGardenIDStub({
   required MockAsksRepository mockAsksRepository,
+  String? asksFilter,
   required ResultList<RecordModel> asksReturnValue,
   required MockUsersRepository mockUsersRepository,
   required String userID,
@@ -17,7 +18,7 @@ void getAsksByGardenIDStub({
 }) {
   when(
     () => mockAsksRepository.getList(
-      filter: any(named: "filter"), // Use 'any' because of DateTime.now in the filter
+      filter: asksFilter ?? any(named: "filter"), // 'any' is for filters using DateTime.now
       sort: any(named: "sort"))
   ).thenAnswer(
     (_) async => asksReturnValue
@@ -30,6 +31,36 @@ void getAsksByGardenIDStub({
     returnValue: usersReturnValue
   );
 }
+
+void getAsksByUserIDStub({
+  required MockAsksRepository mockAsksRepository,
+  String asksFilter = "",
+  String asksSort = "",
+  required String gardenID,
+  required ResultList<RecordModel> asksReturnValue,
+  required MockUsersRepository mockUsersRepository,
+  required String userID,
+  required RecordModel usersReturnValue
+}) {
+  when(
+    () => mockAsksRepository.getList(
+      filter: ""
+        "${AskField.creator} = '$userID' && "
+        "${AskField.garden} = '$gardenID' $asksFilter".trim(),
+      sort: asksSort,
+    )
+  ).thenAnswer(
+    (_) async => asksReturnValue
+  );
+
+  // For Ask creator
+  usersRepositoryGetFirstListItemStub(
+    mockUsersRepository: mockUsersRepository,
+    userID: userID,
+    returnValue: usersReturnValue
+  );
+}
+
 void getCurrentGardenUserGardenRecordsStub({
   required MockUserGardenRecordsRepository mockUserGardenRecordsRepository,
   required String gardenID,

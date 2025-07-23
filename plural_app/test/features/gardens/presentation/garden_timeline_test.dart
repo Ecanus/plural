@@ -5,6 +5,9 @@ import 'package:mocktail/mocktail.dart';
 import 'package:pocketbase/pocketbase.dart';
 import 'package:provider/provider.dart';
 
+// Constants
+import 'package:plural_app/src/constants/themes.dart';
+
 // Asks
 import 'package:plural_app/src/features/asks/data/asks_repository.dart';
 
@@ -14,6 +17,9 @@ import 'package:plural_app/src/features/authentication/data/users_repository.dar
 
 // Gardens
 import 'package:plural_app/src/features/gardens/presentation/garden_timeline.dart';
+
+// Localization
+import 'package:plural_app/src/localization/lang_en.dart';
 
 // Utils
 import 'package:plural_app/src/utils/app_state.dart';
@@ -25,6 +31,21 @@ import '../../../test_stubs.dart';
 
 void main() {
   group("GardenTimeline", () {
+    testWidgets("emptyTimelineMessage", (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppThemes.standard,
+          home: Scaffold(
+            body: EmptyTimelineMessage(),
+          ),
+        )
+      );
+
+      expect(find.byIcon(Icons.emoji_food_beverage), findsOneWidget);
+      expect(find.text(GardenTimelineText.emptyTimelineMessage), findsOneWidget);
+      expect(find.text(GardenTimelineText.emptyTimelineSubtitle), findsOneWidget);
+    });
+
     testWidgets("snapshot.hasData", (tester) async {
       final tc = TestContext();
       final appState = AppState.skipSubscribe()
@@ -85,6 +106,71 @@ void main() {
 
       // Check that GardenTimelineList is rendered next
       expect(find.byType(GardenTimelineList), findsOneWidget);
+    });
+
+    tearDown(() => GetIt.instance.reset());
+
+    testWidgets("snapshot.hasData empty", (tester) async {
+      final tc = TestContext();
+      final appState = AppState.skipSubscribe()
+                        ..currentUser = tc.user // For Ask.isCreatedByCurrentUser
+                        ..currentGarden = tc.garden
+                        ..currentUserSettings = tc.userSettings;
+
+      final getIt = GetIt.instance;
+      final mockAsksRepository = MockAsksRepository();
+      final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
+      final mockUsersRepository = MockUsersRepository();
+
+      getIt.registerLazySingleton<AppState>(() => appState);
+      getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
+      getIt.registerLazySingleton<UserGardenRecordsRepository>(
+        () => mockUserGardenRecordsRepository
+      );
+      getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
+
+      // Stubs
+      getUserGardenRecordRoleStub(
+        mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
+        userID: tc.user.id,
+        gardenID: tc.garden.id,
+        returnValue: ResultList<RecordModel>(items: [tc.getUserGardenRecordRecordModel()])
+      );
+      getAsksByGardenIDStub(
+        mockAsksRepository: mockAsksRepository,
+        asksReturnValue: ResultList<RecordModel>(items: []),
+        mockUsersRepository: mockUsersRepository,
+        userID: tc.user.id,
+        usersReturnValue: tc.getUserRecordModel(),
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: ChangeNotifierProvider<AppState>.value(
+            value: appState,
+            child: Scaffold(
+              body: Builder(
+                builder: (BuildContext context) {
+                  return Column(
+                    children: [
+                      GardenTimeline(),
+                    ],
+                  );
+                }
+              )
+            )
+          )
+        ));
+
+      // Check that GardenTimelineLoading is rendered first
+      expect(find.byType(GardenTimelineLoading), findsOneWidget);
+
+      // Finish animations
+      await tester.pumpAndSettle();
+
+      // Check that GardenTimelineList is not rendered. EmptyTimelineMessage is rendered
+      expect(find.byType(GardenTimelineList), findsNothing);
+      expect(find.byType(EmptyTimelineMessage), findsOneWidget);
     });
 
     tearDown(() => GetIt.instance.reset());

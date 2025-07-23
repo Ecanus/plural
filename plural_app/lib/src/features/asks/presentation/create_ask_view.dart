@@ -21,7 +21,6 @@ import 'package:plural_app/src/constants/fields.dart';
 // Asks
 import 'package:plural_app/src/features/asks/data/forms.dart';
 import 'package:plural_app/src/features/asks/domain/ask.dart';
-import 'package:plural_app/src/features/asks/presentation/route_to_listed_asks_view_button.dart';
 
 // Localization
 import 'package:plural_app/src/localization/lang_en.dart';
@@ -30,6 +29,7 @@ import 'package:plural_app/src/localization/lang_en.dart';
 import 'package:plural_app/src/utils/app_dialog_view_router.dart';
 import 'package:plural_app/src/utils/app_form.dart';
 import 'package:plural_app/src/utils/app_state.dart';
+import 'package:plural_app/src/utils/route_to_view_button.dart';
 
 Future createCreateAskDialog(BuildContext context) async {
   if (context.mounted) {
@@ -169,10 +169,19 @@ class _CreateAskViewState extends State<CreateAskView> {
         ),
         AppDialogFooterBuffer(
           buttons: [
-            RouteToListedAsksViewButton(),
+            RouteToViewButton(
+              icon: Icons.toc_rounded,
+              message: AskViewText.goToListedAsks,
+              onPressed: _appDialogViewRouter.routeToListedAsksView,
+            ),
             AppDialogFooterBufferSubmitButton(
               callback: submitCreate,
               positionalArguments: [context, _formKey, _appForm],
+            ),
+            RouteToViewButton(
+              icon: Icons.volunteer_activism,
+              message: AskViewText.goToSponsoredAsks,
+              onPressed: _appDialogViewRouter.routeToSponsoredAsksView,
             ),
           ]
         ),
