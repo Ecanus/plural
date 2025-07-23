@@ -10,8 +10,11 @@ import 'package:plural_app/src/features/asks/data/asks_api.dart';
 import 'package:plural_app/src/features/asks/domain/ask.dart';
 import 'package:plural_app/src/features/asks/presentation/create_ask_view.dart';
 import 'package:plural_app/src/features/asks/presentation/edit_ask_view.dart';
+import 'package:plural_app/src/features/asks/presentation/examine_ask_view.dart';
 import 'package:plural_app/src/features/asks/presentation/listed_asks_view.dart';
 import 'package:plural_app/src/features/asks/presentation/listed_ask_tile.dart';
+import 'package:plural_app/src/features/asks/presentation/sponsored_ask_tile.dart';
+import 'package:plural_app/src/features/asks/presentation/sponsored_asks_view.dart';
 
 // Auth
 import 'package:plural_app/src/features/authentication/data/auth_api.dart';
@@ -44,19 +47,35 @@ class AppDialogViewRouter {
     viewNotifier.value = EditAskView(ask: ask);
   }
 
+  Future<void> routeToExamineAskView(Ask ask) async {
+    viewNotifier.value = ExamineAskView(
+      ask: ask,
+      routeToIcon: Icons.arrow_back,
+    );
+  }
+
   Future<void> routeToListedAsksView() async {
-    final currentUserID = GetIt.instance<AppState>().currentUserID!;
-
     final datetimeNow = DateTime.parse(
-        DateFormat(Formats.dateYMMddHHms).format(DateTime.now())).toLocal();
+      DateFormat(Formats.dateYMMddHHms).format(DateTime.now())).toLocal();
 
-    final asks = await getAsksForListedAsksDialog(
-      userID: currentUserID,
+    final asks = await getAsksForListedAsksView(
+      userID: GetIt.instance<AppState>().currentUserID!,
       now: datetimeNow,
     );
 
     viewNotifier.value = ListedAsksView(
       listedAskTiles: [for (Ask ask in asks) ListedAskTile(ask: ask)]
+    );
+  }
+
+  Future<void> routeToSponsoredAsksView() async {
+    final datetimeNow = DateTime.parse(
+      DateFormat(Formats.dateYMMddHHms).format(DateTime.now())).toLocal();
+
+    final asks = await getAsksForSponsoredAsksView(now: datetimeNow);
+
+    viewNotifier.value = SponsoredAsksView(
+      sponsoredAskTiles: [for (Ask ask in asks) SponsoredAskTile(ask: ask)]
     );
   }
 

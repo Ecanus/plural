@@ -78,7 +78,7 @@ class Ask {
 
   bool get isDeadlinePassed => deadlineDate.isBefore(DateTime.now());
 
-  bool get isOnTimeline => GetIt.instance<AppState>().timelineAsks!.contains(this);
+  bool get isOnTimeline => !isDeadlinePassed && !isTargetMet;
 
   bool get isSponsoredByCurrentUser =>
     sponsorIDS.contains(GetIt.instance<AppState>().currentUserID!);

@@ -20,7 +20,7 @@ import '../../../test_context.dart';
 import '../../../tester_functions.dart';
 
 void main() {
-  group("ListedAskTile test", () {
+  group("ListedAskTile", () {
     testWidgets("shouldStrikethrough deadlineDate", (tester) async {
       final tc = TestContext()
                   ..ask.deadlineDate = DateTime.now().add(const Duration(days: -10))

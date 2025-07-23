@@ -1,26 +1,16 @@
 import 'package:test/test.dart';
 import 'package:get_it/get_it.dart';
-import 'package:mocktail/mocktail.dart';
-import 'package:pocketbase/pocketbase.dart';
 
-// Asks
-import 'package:plural_app/src/features/asks/data/asks_repository.dart';
 import 'package:plural_app/src/features/asks/domain/ask.dart';
-
-// Auth
-import 'package:plural_app/src/features/authentication/data/user_garden_records_repository.dart';
-import 'package:plural_app/src/features/authentication/data/users_repository.dart';
 
 // Utils
 import 'package:plural_app/src/utils/app_state.dart';
 
 // Tests
 import '../../../test_context.dart';
-import '../../../test_mocks.dart';
-import '../../../test_stubs.dart';
 
 void main() {
-  group("Ask test", () {
+  group("Ask", () {
     test("constructor", () {
       final tc = TestContext();
       final ask = tc.ask;
@@ -90,57 +80,26 @@ void main() {
     test("isOnTimeline", () async {
       final tc = TestContext();
 
-      // GetIt
-      final getIt = GetIt.instance;
-      final appState = AppState.skipSubscribe()
-                        ..currentGarden = tc.garden
-                        ..currentUser = tc.user
-                        ..currentUserSettings = tc.userSettings;
-
-      final mockAsksRepository = MockAsksRepository();
-      final mockBuildContext = MockBuildContext();
-      final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
-      final mockUsersRepository = MockUsersRepository();
-
-      getIt.registerLazySingleton<AppState>(() => appState);
-      getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
-      getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
-       getIt.registerLazySingleton<UserGardenRecordsRepository>(
-        () => mockUserGardenRecordsRepository
-      );
-
-      // Stubs
-      getUserGardenRecordRoleStub(
-        mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
-        userID: tc.user.id,
-        gardenID: tc.garden.id,
-        returnValue: ResultList<RecordModel>(items: [tc.getUserGardenRecordRecordModel()])
-      );
-      getAsksByGardenIDStub(
-        mockAsksRepository: mockAsksRepository,
-        asksReturnValue: ResultList<RecordModel>(
-          items: [tc.getAskRecordModel(id: tc.ask.id)]), // Set ID so comparison is possible
-        mockUsersRepository: mockUsersRepository,
-        userID: tc.user.id,
-        usersReturnValue: tc.getUserRecordModel(),
-      );
-
-      // BuildContext.mounted
-      when(
-        () => mockBuildContext.mounted
-      ).thenAnswer(
-        (_) => true
-      );
-
+      // false. Both deadlineDate and targetMetDate have passed
+      tc.ask.deadlineDate = DateTime.now().add(const Duration(days: -5));
+      tc.ask.targetMetDate = DateTime.now().add(const Duration(days: -7));
       expect(tc.ask.isOnTimeline, false);
 
-      // Call AppState.getTimelineAsks() to populate its _timelineAsks
-      await GetIt.instance<AppState>().getTimelineAsks(mockBuildContext);
+      // false. deadlineDate has passed
+      tc.ask.deadlineDate = DateTime.now().add(const Duration(days: -5));
+      tc.ask.targetMetDate = null;
+      expect(tc.ask.isOnTimeline, false);
 
+      // false. targetMetDate has passed
+      tc.ask.deadlineDate = DateTime.now().add(const Duration(days: 5));
+      tc.ask.targetMetDate = DateTime.now().add(const Duration(days: -7));
+      expect(tc.ask.isOnTimeline, false);
+
+      // true. deadlineDate has not passed. targetMetDate is null
+      tc.ask.deadlineDate = DateTime.now().add(const Duration(days: 5));
+      tc.ask.targetMetDate = null;
       expect(tc.ask.isOnTimeline, true);
     });
-
-    tearDown(() => GetIt.instance.reset());
 
     test("isSponsoredByCurrentUser", () {
       final tc = TestContext();

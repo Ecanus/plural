@@ -1,28 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
 
-// Localization
-import 'package:plural_app/src/localization/lang_en.dart';
-
-// Utils
-import 'package:plural_app/src/utils/app_dialog_view_router.dart';
-
-class RouteToListedAsksViewButton extends StatelessWidget {
-  const RouteToListedAsksViewButton({
-    this.icon = Icons.toc_rounded,
+class RouteToViewButton extends StatelessWidget {
+  const RouteToViewButton({
+    required this.icon,
+    required this.message,
+    required this.onPressed,
   });
 
   final IconData icon;
+  final String message;
+  final void Function() onPressed;
 
   @override
   Widget build(BuildContext context) {
-    final appDialogViewRouter = GetIt.instance<AppDialogViewRouter>();
-
     return Tooltip(
-      message: AskViewText.goToListedAsks,
+      message: message,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           backgroundColor: Theme.of(context).colorScheme.surface,
@@ -30,7 +25,7 @@ class RouteToListedAsksViewButton extends StatelessWidget {
           iconColor: Theme.of(context).colorScheme.onPrimary,
           shape: CircleBorder(),
         ),
-        onPressed: () => appDialogViewRouter.routeToListedAsksView(),
+        onPressed: () => onPressed(),
         child: Icon(icon)
       ),
     );
