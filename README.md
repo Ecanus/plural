@@ -50,8 +50,8 @@ Help us keep the Plural app open and inclusive. Please read and follow our [Code
 
 Plural uses the following open source packages:
 
-- [Flutter (v3.32.0)](https://flutter.dev/)
-- [PocketBase (v0.28.1)](https://pocketbase.io/)
+- [Flutter (v3.32.7)](https://flutter.dev/)
+- [PocketBase (v0.29.0)](https://pocketbase.io/)
 
 
 [contributing]: CONTRIBUTING.md
