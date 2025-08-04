@@ -9,6 +9,7 @@ import 'package:plural_app/src/constants/routes.dart';
 
 // Common Widgets
 import 'package:plural_app/src/common_widgets/app_currency_picker_form_field.dart';
+import 'package:plural_app/src/common_widgets/app_dialog_category_header.dart';
 import 'package:plural_app/src/common_widgets/app_elevated_button.dart';
 import 'package:plural_app/src/common_widgets/app_text_form_field.dart';
 import 'package:plural_app/src/common_widgets/app_tooltip_icon.dart';
@@ -19,7 +20,6 @@ import 'package:plural_app/src/features/authentication/data/forms.dart';
 import 'package:plural_app/src/features/authentication/domain/app_user.dart';
 import 'package:plural_app/src/features/authentication/domain/app_user_settings.dart';
 import 'package:plural_app/src/features/authentication/presentation/delete_account_button.dart';
-import 'package:plural_app/src/features/authentication/presentation/user_settings_view.dart';
 
 // Localization
 import 'package:plural_app/src/localization/lang_en.dart';
@@ -67,7 +67,7 @@ class _LandingPageSettingsTabState extends State<LandingPageSettingsTab> {
                 key: _formKey,
                 child: Column(
                   children: [
-                    UserSettingsCategoryHeader(
+                    AppDialogCategoryHeader(
                       text: UserSettingsViewText.defaultValuesHeader
                     ),
                     gapH20,
@@ -90,7 +90,7 @@ class _LandingPageSettingsTabState extends State<LandingPageSettingsTab> {
                           ),
                     ),
                     gapH30,
-                    UserSettingsCategoryHeader(
+                    AppDialogCategoryHeader(
                       text: UserSettingsViewText.personalInformationHeader
                     ),
                     gapH20,
@@ -113,7 +113,7 @@ class _LandingPageSettingsTabState extends State<LandingPageSettingsTab> {
                       paddingTop: AppPaddings.p0,
                     ),
                     gapH30,
-                    UserSettingsCategoryHeader(
+                    AppDialogCategoryHeader(
                       color: Theme.of(context).colorScheme.error,
                       text: UserSettingsViewText.deleteAccountHeader
                     ),

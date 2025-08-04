@@ -26,6 +26,12 @@ class AdminListedUsersViewText {
   static const userGardenRole = "Role";
 }
 
+class AdminOptionsViewText {
+  static const createInvitationLabel = "Create Invitation";
+
+  static const invitationsHeader = "Invitations";
+}
+
 class AdminPageBottomBarText {
   static const currentGardenSettingsTooltip = "Garden Settings";
   static const optionsTooltip = "Options";
