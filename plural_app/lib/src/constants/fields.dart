@@ -29,6 +29,15 @@ class GenericField {
   static const updated = "updated";
 }
 
+class InvitationField {
+  static const creator = "creator";
+  static const expiryDate = "expiryDate";
+  static const garden = "garden";
+  static const type = "type";
+  static const usernameOrEmail = "usernameOrEmail";
+  static const uuid = "uuid";
+}
+
 class SignInField {
   static const usernameOrEmail = "usernameOrEmail";
 }
