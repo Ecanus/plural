@@ -10,6 +10,7 @@ body:
         - sign in page
         - landing page
         - garden page (timeline)
+        - administrator page
         - Don't know / other
     validations:
       required: true

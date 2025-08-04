@@ -199,9 +199,11 @@ class _UserSettingsViewState extends State<UserSettingsView> {
 
 class UserSettingsCategoryHeader extends StatelessWidget {
   const UserSettingsCategoryHeader({
+    this.color,
     required this.text,
   });
 
+  final Color? color;
   final String text;
 
   @override
@@ -212,7 +214,7 @@ class UserSettingsCategoryHeader extends StatelessWidget {
         Text(
           text,
           style: TextStyle(
-            color: Theme.of(context).colorScheme.primary,
+            color: color ?? Theme.of(context).colorScheme.primary,
             fontSize: AppFontSizes.s16,
             fontWeight: FontWeight.w400,
           )

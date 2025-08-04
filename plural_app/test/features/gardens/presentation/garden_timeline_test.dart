@@ -17,6 +17,7 @@ import 'package:plural_app/src/features/authentication/data/users_repository.dar
 
 // Gardens
 import 'package:plural_app/src/features/gardens/presentation/garden_timeline.dart';
+import 'package:plural_app/src/features/gardens/presentation/garden_timeline_tile.dart';
 
 // Localization
 import 'package:plural_app/src/localization/lang_en.dart';
@@ -164,12 +165,15 @@ void main() {
 
       // Check that GardenTimelineLoading is rendered first
       expect(find.byType(GardenTimelineLoading), findsOneWidget);
+      expect(find.byType(GardenTimelineTile), findsNothing);
+      expect(find.byType(EmptyTimelineMessage), findsNothing);
 
       // Finish animations
       await tester.pumpAndSettle();
 
       // Check that GardenTimelineList is not rendered. EmptyTimelineMessage is rendered
-      expect(find.byType(GardenTimelineList), findsNothing);
+      expect(find.byType(GardenTimelineLoading), findsNothing);
+      expect(find.byType(GardenTimelineTile), findsNothing);
       expect(find.byType(EmptyTimelineMessage), findsOneWidget);
     });
 
@@ -223,11 +227,13 @@ void main() {
 
       // Check that GardenTimelineLoading is rendered first
       expect(find.byType(GardenTimelineLoading), findsOneWidget);
+      expect(find.byType(GardenTimelineError), findsNothing);
 
       // Finish animations
       await tester.pumpAndSettle();
 
       // Check that GardenTimelineError is rendered next (because of exception)
+      expect(find.byType(GardenTimelineLoading), findsNothing);
       expect(find.byType(GardenTimelineError), findsOneWidget);
     });
 

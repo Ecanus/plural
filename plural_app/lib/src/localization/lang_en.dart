@@ -248,6 +248,7 @@ class UserSettingsViewText {
   static const defaultCurrency = "Default currency";
   static const defaultInstructions = "Default instructions";
   static const defaultValuesHeader = "Default Values";
+  static const deleteAccountHeader = "Delete Account";
 
   static const firstName = "First name";
 
