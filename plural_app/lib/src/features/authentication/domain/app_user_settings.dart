@@ -19,12 +19,11 @@ class AppUserSettings {
   final String id;
   final AppUser user;
 
-  AppUserSettings.fromJson(Map<String, dynamic> json, AppUser recordUser) :
+  AppUserSettings.fromJson(Map<String, dynamic> json, this.user) :
     defaultCurrency = json[UserSettingsField.defaultCurrency],
     defaultInstructions = json[UserSettingsField.defaultInstructions],
     gardenTimelineDisplayCount = json[UserSettingsField.gardenTimelineDisplayCount],
-    id = json[GenericField.id],
-    user = recordUser;
+    id = json[GenericField.id];
 
   Map<String, dynamic> toMap() {
     return {
