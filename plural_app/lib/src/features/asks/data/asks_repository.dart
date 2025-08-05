@@ -66,8 +66,7 @@ class AsksRepository implements Repository {
         error: e,
       );
 
-      var errorsMap = getErrorsMapFromClientException(e);
-      return (null, errorsMap);
+      return (null, getErrorsMapFromClientException(e));
     }
   }
 
@@ -201,8 +200,7 @@ class AsksRepository implements Repository {
         error: e,
       );
 
-      var errorsMap = getErrorsMapFromClientException(e);
-      return (null, errorsMap);
+      return (null, getErrorsMapFromClientException(e));
     }
   }
 }

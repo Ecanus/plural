@@ -16,6 +16,9 @@ import 'package:plural_app/src/features/authentication/data/users_repository.dar
 // Gardens
 import 'package:plural_app/src/features/gardens/data/gardens_repository.dart';
 
+// Invitations
+import 'package:plural_app/src/features/invitations/data/invitations_repository.dart';
+
 // Utils
 import 'package:plural_app/src/utils/app_dialog_view_router.dart';
 import 'package:plural_app/src/utils/app_state.dart';
@@ -26,6 +29,7 @@ class MockAsksRepository extends Mock implements AsksRepository {}
 class MockBuildContext extends Mock implements BuildContext {}
 class MockGardensRepository extends Mock implements GardensRepository {}
 class MockGoRouter extends Mock implements GoRouter {}
+class MockInvitationsRepository extends Mock implements InvitationsRepository {}
 class MockPocketBase extends Mock implements PocketBase {}
 class MockRecordService extends Mock implements RecordService {}
 class MockUrlLauncher extends Mock with MockPlatformInterfaceMixin

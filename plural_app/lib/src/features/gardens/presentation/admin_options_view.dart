@@ -38,7 +38,7 @@ class AdminOptionsView extends StatelessWidget {
             children: [
               Column(
                 children: [
-                  gapH80,
+                  gapH50,
                   AppDialogCategoryHeader(
                     text: AdminOptionsViewText.invitationsHeader,
                   ),

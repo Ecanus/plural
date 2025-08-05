@@ -37,6 +37,12 @@ class _AppCurrencyPickerFormFieldState extends State<AppCurrencyPickerFormField>
   late List<CurrencyCard> _sortedCurrencyCards;
 
   @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   void initState() {
     super.initState();
 

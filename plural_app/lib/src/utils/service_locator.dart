@@ -13,6 +13,9 @@ import 'package:plural_app/src/features/authentication/data/users_repository.dar
 // Gardens
 import 'package:plural_app/src/features/gardens/data/gardens_repository.dart';
 
+// Invitations
+import 'package:plural_app/src/features/invitations/data/invitations_repository.dart';
+
 // Utils
 import 'package:plural_app/src/utils/app_dialog_view_router.dart';
 import 'package:plural_app/src/utils/app_state.dart';
@@ -51,6 +54,13 @@ Future<void> registerGetItInstances(PocketBase pb) async {
   // GardensRepository
   getIt.registerLazySingleton<GardensRepository>(
     () => GardensRepository(
+      pb: getIt<PocketBase>(),
+    )
+  );
+
+  // InvitationsRepository
+  getIt.registerLazySingleton<InvitationsRepository>(
+    () => InvitationsRepository(
       pb: getIt<PocketBase>(),
     )
   );
