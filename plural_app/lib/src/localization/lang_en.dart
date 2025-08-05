@@ -4,6 +4,7 @@ class AdminInvitationViewText {
     "1) The user exists\n"
     "2) The user is not already a member of this Garden\n"
     "3) An Invitation to this user is not already active";
+
   static const expiryDate = "Expiry date";
 
   static const returnToAdminOptionsLabel = "Return to Options";
