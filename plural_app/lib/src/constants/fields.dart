@@ -34,7 +34,7 @@ class InvitationField {
   static const expiryDate = "expiryDate";
   static const garden = "garden";
   static const type = "type";
-  static const usernameOrEmail = "usernameOrEmail";
+  static const invitee = "invitee";
   static const uuid = "uuid";
 }
 

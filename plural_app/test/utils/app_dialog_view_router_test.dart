@@ -30,6 +30,9 @@ import 'package:plural_app/src/features/gardens/presentation/admin_current_garde
 import 'package:plural_app/src/features/gardens/presentation/admin_options_view.dart';
 import 'package:plural_app/src/features/gardens/presentation/current_garden_settings_view.dart';
 
+// Invitations
+import 'package:plural_app/src/features/invitations/presentation/admin_create_invitation_view.dart';
+
 // Utils
 import 'package:plural_app/src/utils/app_dialog_view_router.dart';
 import 'package:plural_app/src/utils/app_state.dart';
@@ -275,6 +278,14 @@ void main() {
       expect(appDialogViewRouter.viewNotifier.value, isA<SizedBox>());
       appDialogViewRouter.routeToCurrentGardenSettingsView();
       expect(appDialogViewRouter.viewNotifier.value, isA<CurrentGardenSettingsView>());
+    });
+
+    test("routeToAdminCreateInvitationView", () async {
+      final appDialogViewRouter = AppDialogViewRouter();
+
+      expect(appDialogViewRouter.viewNotifier.value, isA<SizedBox>());
+      appDialogViewRouter.routeToAdminCreateInvitationView();
+      expect(appDialogViewRouter.viewNotifier.value, isA<AdminCreateInvitationView>());
     });
   });
 }

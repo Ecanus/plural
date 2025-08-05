@@ -4,6 +4,7 @@ import 'package:get_it/get_it.dart';
 // Common Widgets
 import 'package:plural_app/src/common_widgets/app_currency_picker_form_field.dart';
 import 'package:plural_app/src/common_widgets/app_dialog.dart';
+import 'package:plural_app/src/common_widgets/app_dialog_category_header.dart';
 import 'package:plural_app/src/common_widgets/app_dialog_footer.dart';
 import 'package:plural_app/src/common_widgets/app_dialog_footer_buffer_submit_button.dart';
 import 'package:plural_app/src/common_widgets/app_text_form_field.dart';
@@ -107,7 +108,7 @@ class _UserSettingsViewState extends State<UserSettingsView> {
                 key: _formKey,
                 child: Column(
                   children: [
-                   UserSettingsCategoryHeader(
+                   AppDialogCategoryHeader(
                       text: UserSettingsViewText.defaultValuesHeader
                     ),
                     gapH20,
@@ -143,7 +144,7 @@ class _UserSettingsViewState extends State<UserSettingsView> {
                       onChanged: (double value) => _updateGardenTimelineDisplayCount(value),
                     ),
                     gapH60,
-                    UserSettingsCategoryHeader(
+                    AppDialogCategoryHeader(
                       text: UserSettingsViewText.personalInformationHeader
                     ),
                     gapH20,
@@ -192,33 +193,6 @@ class _UserSettingsViewState extends State<UserSettingsView> {
           rightTooltipMessage: AppDialogFooterText.navToCurrentGardenSettingsView,
           title: AppDialogFooterText.settings
         )
-      ],
-    );
-  }
-}
-
-class UserSettingsCategoryHeader extends StatelessWidget {
-  const UserSettingsCategoryHeader({
-    this.color,
-    required this.text,
-  });
-
-  final Color? color;
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        Text(
-          text,
-          style: TextStyle(
-            color: color ?? Theme.of(context).colorScheme.primary,
-            fontSize: AppFontSizes.s16,
-            fontWeight: FontWeight.w400,
-          )
-        ),
       ],
     );
   }

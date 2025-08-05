@@ -37,6 +37,12 @@ class _AppUserGardenRolePickerFormFieldState extends State<AppUserGardenRolePick
   final _controller = TextEditingController();
 
   @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   void initState() {
     super.initState();
 

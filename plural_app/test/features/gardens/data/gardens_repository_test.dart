@@ -10,7 +10,7 @@ import '../../../test_context.dart';
 import '../../../test_mocks.dart';
 
 void main() {
-  group("GardensRepository tests", () {
+  group("GardensRepository", () {
     test("bulkDelete", () async {
       final tc = TestContext();
 

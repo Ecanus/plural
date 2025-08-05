@@ -27,7 +27,7 @@ class Garden {
     };
   }
 
-  static Map emptyMap() {
+  static Map<String, dynamic> emptyMap() {
     return {
       GardenField.creator: null,
       GenericField.id: null,

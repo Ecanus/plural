@@ -97,7 +97,7 @@ void main() {
       body[AskField.boon] = 5;
       body[AskField.targetSum] = 10;
 
-      var (record1, errorsMap1) = await asksRepository.create(body: body);
+      final (record1, errorsMap1) = await asksRepository.create(body: body);
       expect(record1, isNotNull);
       expect(errorsMap1.isEmpty, true);
 
@@ -105,7 +105,7 @@ void main() {
       body[AskField.boon] = 5;
       body[AskField.targetSum] = 5;
 
-      var (record2, errorsMap2) = await asksRepository.create(body: body);
+      final (record2, errorsMap2) = await asksRepository.create(body: body);
       expect(record2, null);
       expect(errorsMap2.isEmpty, false);
 

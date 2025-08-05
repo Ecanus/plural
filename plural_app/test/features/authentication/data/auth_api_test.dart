@@ -871,6 +871,8 @@ void main() {
       expect(userGardenRecord2, null);
     });
 
+    tearDown(() => GetIt.instance.reset());
+
     test("getUserGardenRecordRole", () async {
       final tc = TestContext();
 

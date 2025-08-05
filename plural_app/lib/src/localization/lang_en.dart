@@ -1,3 +1,19 @@
+class AdminInvitationViewText {
+  static const createInvitationError = ""
+    "An error occurred. Please ensure:\n"
+    "1) The user exists\n"
+    "2) The user is not already a member of this Garden\n"
+    "3) An Invitation to this user is not already active";
+
+  static const expiryDate = "Expiry date";
+
+  static const returnToAdminOptionsLabel = "Return to Options";
+
+  static const type = "Invitation type";
+
+  static const invitee = "Invitee (username)";
+}
+
 class AdminCurrentGardenSettingsViewText {
   static const goToGardenPageLabel = "Return to Garden";
 
@@ -26,6 +42,12 @@ class AdminListedUsersViewText {
   static const userGardenRole = "Role";
 }
 
+class AdminOptionsViewText {
+  static const createInvitationLabel = "Create Invitation";
+
+  static const invitationsHeader = "Invitations";
+}
+
 class AdminPageBottomBarText {
   static const currentGardenSettingsTooltip = "Garden Settings";
   static const optionsTooltip = "Options";
@@ -37,6 +59,7 @@ class AppText {
 }
 
 class AppDialogFooterText {
+  static const adminCreateInvitation = "Create Invitation";
   static const adminEditUser = "Edit User";
   static const adminGardenSettings = "Garden Settings";
   static const adminListedUsers = "Users";
@@ -216,6 +239,7 @@ class SnackBarText {
   static const askSponsored = "Ask successfully sponsored!";
 
   static const createAskSuccess = "Ask successfully created";
+  static const createInvitationSuccess = "Invitation successfully created";
 
   static const deleteAskSuccess = "Ask successfully deleted";
   static const deletedUserAccount = "Your account has been deleted";

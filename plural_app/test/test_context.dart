@@ -19,10 +19,16 @@ import 'package:plural_app/src/features/authentication/domain/app_user_settings.
 // Gardens
 import 'package:plural_app/src/features/gardens/domain/garden.dart';
 
+// Invitations
+import 'package:plural_app/src/features/invitations/domain/invitation.dart';
+
 class TestContext {
   late Ask ask;
   late Garden garden;
+  late Invitation openInvitation;
+  late Invitation privateInvitation;
   late AppUser user;
+  late AppUser otherUser;
   late AppUserGardenRecord userGardenRecord;
   late AppUserSettings userSettings;
   late ClientException clientException;
@@ -35,10 +41,37 @@ class TestContext {
       username: "testuser"
     );
 
+    otherUser = AppUser(
+      firstName: "otherUserFirstName",
+      id: "TESTOTHERUSER1",
+      lastName: "otherUserLastName",
+      username: "otherUser"
+    );
+
     garden = Garden(
       creator: user,
       id: "TESTGARDEN1",
       name: "Petunia"
+    );
+
+    openInvitation = Invitation(
+      creator: user,
+      createdDate: DateTime(2025, 8, 15),
+      expiryDate: DateTime(2050, 8, 15),
+      garden: garden,
+      id: "TESTINVITATIONOPEN",
+      type: InvitationType.open,
+      uuid: "UUUU-II-D-DDDDD",
+    );
+
+    privateInvitation = Invitation(
+      creator: user,
+      createdDate: DateTime(2025, 8, 15),
+      expiryDate: DateTime(2050, 8, 15),
+      garden: garden,
+      id: "TESTINVITATIONPRIVATE",
+      type: InvitationType.private,
+      invitee: otherUser,
     );
 
     userGardenRecord = AppUserGardenRecord(
@@ -151,6 +184,43 @@ class TestContext {
       "collectionName": Collection.gardens,
       GardenField.creator: creatorID ?? user.id,
       GardenField.name: name ?? garden.name,
+    });
+  }
+
+  RecordModel getOpenInvitationRecordModel({
+    String? id,
+    String? creatorID,
+    DateTime? expiryDate,
+    String? gardenID,
+  }) {
+    return RecordModel({
+      "id": id ?? openInvitation.id,
+      "created": DateFormat(Formats.dateYMMdd).format(openInvitation.createdDate),
+      "collectionName": Collection.invitations,
+      InvitationField.creator: creatorID ?? user.id,
+      InvitationField.expiryDate: expiryDate ?? openInvitation.expiryDate,
+      InvitationField.garden: gardenID ?? garden.id,
+      InvitationField.type: InvitationType.open.name,
+      InvitationField.uuid: "UUUU-II-D-DDDDD"
+    });
+  }
+
+  RecordModel getPrivateInvitationRecordModel({
+    String? id,
+    String? creatorID,
+    DateTime? expiryDate,
+    String? gardenID,
+    String? otherUserID,
+  }) {
+    return RecordModel({
+      "id": id ?? privateInvitation.id,
+      "created": DateFormat(Formats.dateYMMdd).format(privateInvitation.createdDate),
+      "collectionName": Collection.invitations,
+      InvitationField.creator: creatorID ?? user.id,
+      InvitationField.expiryDate: expiryDate ?? privateInvitation.expiryDate,
+      InvitationField.garden: gardenID ?? garden.id,
+      InvitationField.type: InvitationType.private.name,
+      InvitationField.invitee: otherUserID ?? otherUser.id,
     });
   }
 

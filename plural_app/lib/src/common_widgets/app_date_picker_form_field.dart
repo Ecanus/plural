@@ -41,6 +41,12 @@ class _AppDatePickerFormFieldState extends State<AppDatePickerFormField> {
   late double _paddingTop;
 
   @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   void initState() {
     super.initState();
 

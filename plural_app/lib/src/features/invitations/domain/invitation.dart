@@ -1,3 +1,7 @@
+import 'dart:collection';
+
+import 'package:flutter/material.dart';
+
 // Constants
 import 'package:plural_app/src/constants/fields.dart';
 
@@ -10,9 +14,27 @@ import 'package:plural_app/src/features/gardens/domain/garden.dart';
 // Invitations
 import 'package:plural_app/src/features/invitations/data/invitations_api.dart';
 
+typedef InvitationTypeEntry = DropdownMenuEntry<InvitationType>;
+
 enum InvitationType {
-  open,
-  private
+  open(displayName: "Open"),
+  private(displayName: "Private");
+
+  const InvitationType({
+    required this.displayName,
+  });
+
+  final String displayName;
+
+  static final List<InvitationTypeEntry> entries =
+    UnmodifiableListView<InvitationTypeEntry>(
+      values.map<InvitationTypeEntry>(
+        (InvitationType type) => InvitationTypeEntry(
+          value: type,
+          label: type.displayName
+        )
+      ),
+    );
 }
 
 class Invitation {
@@ -22,17 +44,17 @@ class Invitation {
     required this.expiryDate,
     required this.garden,
     required this.id,
+    this.invitee,
     required this.type,
-    this.usernameOrEmail,
     this.uuid
   }) : assert(
-    usernameOrEmail == null || uuid == null,
-    "Cannot provide both usernameOrEmail and uuid"
+    invitee == null || uuid == null,
+    "Cannot provide both invitee and uuid"
   ),
   assert(
     (type == InvitationType.open && uuid != null) ||
-    (type == InvitationType.private && usernameOrEmail != null),
-    "Open Invitations require uuid, private Invitations require usernameOrEmail"
+    (type == InvitationType.private && invitee != null),
+    "Open Invitations require uuid. Private Invitations require invitee"
   );
 
   final AppUser creator;
@@ -41,24 +63,28 @@ class Invitation {
   final Garden garden;
   final String id;
   final InvitationType type;
-  final String? usernameOrEmail;
+  final AppUser? invitee;
   final String? uuid;
 
-  Invitation.fromJson(Map<String, dynamic> json, this.creator, this.garden) :
+  Invitation.fromJson(
+    Map<String, dynamic> json,
+    this.creator,
+    this.garden,
+    this.invitee
+  ) :
     createdDate = DateTime.parse(json[GenericField.created]),
     expiryDate = DateTime.parse(json[InvitationField.expiryDate]),
     id = json[GenericField.id] as String,
     type = getInvitationTypeFromString(json[InvitationField.type])!,
-    usernameOrEmail = json[InvitationField.usernameOrEmail],
     uuid = json[InvitationField.uuid];
 
-  static Map emptyMap() {
+  static Map<String, dynamic> emptyMap() {
     return {
       InvitationField.creator: null,
       InvitationField.expiryDate: null,
       InvitationField.garden: null,
+      InvitationField.invitee: null,
       InvitationField.type: null,
-      InvitationField.usernameOrEmail: null,
       InvitationField.uuid: null,
     };
   }
@@ -84,7 +110,7 @@ class Invitation {
         return ""
           "Invitation(id: $id, garden: '${garden.name}', "
           "creator: '${creator.username}', type: ${type.name}, "
-          "usernameOrEmail: '$usernameOrEmail')";
+          "invitee: '${invitee!.username}')";
     }
   }
 }

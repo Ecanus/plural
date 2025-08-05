@@ -98,7 +98,8 @@ void main() {
                     ],
                   ),
                 );
-              })
+              }
+            )
           ),
         )
       );
@@ -164,7 +165,7 @@ void main() {
       getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
       getIt.registerLazySingleton<AppDialogViewRouter>(() => mockAppDialogViewRouter);
 
-      // AsksRepository.create()
+      // AsksRepository.create(). Return null recordModel and non-null errorsMap
       when(
         () => mockAsksRepository.create(body: appForm.fields)
       ).thenAnswer(

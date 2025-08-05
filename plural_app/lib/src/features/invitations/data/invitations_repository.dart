@@ -1,3 +1,5 @@
+import 'dart:developer' as developer;
+
 import 'package:pocketbase/pocketbase.dart';
 
 // Common Interfaces
@@ -5,6 +7,9 @@ import 'package:plural_app/src/common_interfaces/repository.dart';
 
 // Constants
 import 'package:plural_app/src/constants/pocketbase.dart';
+
+// Utils
+import 'package:plural_app/src/utils/exceptions.dart';
 
 class InvitationsRepository implements Repository {
   InvitationsRepository({
@@ -25,7 +30,20 @@ class InvitationsRepository implements Repository {
   Future<(RecordModel?, Map)> create({
     required Map<String, dynamic> body
   }) async {
-   throw UnimplementedError();
+   try {
+    final record = await pb.collection(_collection).create(body: body);
+    return (record, {});
+   } on ClientException catch(e) {
+      developer.log(
+        ""
+        "--\n"
+        "$runtimeType.create(), "
+        "\n--",
+        error: e,
+      );
+
+      return (null, getErrorsMapFromClientException(e));
+   }
   }
 
   @override
@@ -48,7 +66,29 @@ class InvitationsRepository implements Repository {
     String filter = "",
     String sort = "",
   }) async {
-    throw UnimplementedError();
+    try {
+      return await pb.collection(_collection).getList(
+        expand: expand,
+        filter: filter,
+        sort: sort,
+      );
+    } on ClientException catch(e) {
+      developer.log(
+        ""
+        "--\n"
+        "$runtimeType.getList()"
+        "\n"
+        "expand: $expand"
+        "\n"
+        "filter: $filter"
+        "\n"
+        "sort: $sort"
+        "\n--",
+        error: e,
+      );
+
+      rethrow;
+    }
   }
 
   @override
