@@ -1,8 +1,11 @@
+import 'package:intl/intl.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:pocketbase/pocketbase.dart';
 import 'package:test/test.dart';
 
 // Constants
+import 'package:plural_app/src/constants/fields.dart';
+import 'package:plural_app/src/constants/formats.dart';
 import 'package:plural_app/src/constants/pocketbase.dart';
 
 // Invitations
@@ -115,5 +118,58 @@ void main() {
       );
     });
 
+    test("update", () async {
+      final tc = TestContext();
+
+      final body = {
+        InvitationField.expiryDate: DateFormat(Formats.dateYMMdd).format(DateTime.now()),
+      };
+
+      final pb = MockPocketBase();
+      final recordService = MockRecordService();
+      final invitationsRepository = InvitationsRepository(pb: pb);
+
+      // pb.collection()
+      when(
+        () => pb.collection(Collection.invitations)
+      ).thenAnswer(
+        (_) => recordService as RecordService
+      );
+
+      // RecordService.update()
+      when(
+        () => recordService.update(
+          tc.openInvitation.id,
+          body: body
+        )
+      ).thenAnswer(
+        (_) async => tc.getOpenInvitationRecordModel()
+      );
+
+      // Check record is not null, and errorsMap is empty
+      final (record, errorsMap) = await invitationsRepository.update(
+        id: tc.openInvitation.id,
+        body: body
+      );
+      expect(record, isNotNull);
+      expect(errorsMap.isEmpty, true);
+
+      // RecordService.update(), Now throws exception
+      when(
+        () => recordService.update(
+          tc.openInvitation.id,
+          body: body
+        )
+      ).thenThrow(
+        tc.clientException
+      );
+
+      // Check record is null, errorsMap is not empty
+      final (record2, errorsMap2) = await invitationsRepository.update(
+        id: tc.openInvitation.id, body: body);
+
+      expect(record2, null);
+      expect(errorsMap2.isEmpty, false);
+    });
   });
 }

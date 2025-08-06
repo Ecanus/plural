@@ -8,7 +8,6 @@ import 'package:plural_app/src/common_widgets/app_dialog_footer.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
-import 'package:plural_app/src/constants/app_values.dart';
 
 // Localization
 import 'package:plural_app/src/localization/lang_en.dart';
@@ -46,7 +45,12 @@ class AdminOptionsView extends StatelessWidget {
                   AdminOptionsTile(
                     callback: appDialogViewRouter.routeToAdminCreateInvitationView,
                     icon: Icons.mail,
-                    title: AdminOptionsViewText.createInvitationLabel,
+                    title: AdminOptionsViewText.createInvitation,
+                  ),
+                  AdminOptionsTile(
+                    actionCallback: appDialogViewRouter.routeToAdminListedInvitationsView,
+                    icon: Icons.outbox,
+                    title: AdminOptionsViewText.activeInvitations,
                   )
                 ],
               ),
@@ -69,12 +73,17 @@ class AdminOptionsView extends StatelessWidget {
 
 class AdminOptionsTile extends StatelessWidget {
   const AdminOptionsTile({
-    required this.callback,
+    this.actionCallback,
+    this.callback,
     required this.icon,
     required this.title,
-  });
+  }) : assert(
+    actionCallback == null || callback == null,
+    "Cannot provide both actionCallback and callback"
+  );
 
-  final void Function() callback;
+  final void Function(BuildContext)? actionCallback;
+  final void Function()? callback;
   final IconData icon;
   final String title;
 
@@ -96,9 +105,8 @@ class AdminOptionsTile extends StatelessWidget {
           color: Theme.of(context).colorScheme.onSecondary,
         ),
         onTap: () {
-          Future.delayed(AppDurations.ms80, () {
-            callback();
-          });
+          if (callback != null) callback!();
+          if (actionCallback != null ) actionCallback!(context);
         },
       ),
     );

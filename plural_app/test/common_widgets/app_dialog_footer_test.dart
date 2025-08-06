@@ -87,22 +87,26 @@ void main() {
       void rightAction(BuildContext context) => {};
 
       // AssertionError if both leftNavActionCallback and leftNavCallback
-      expect(() async => await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: AppDialogNavFooter(
-              leftDialogIcon: Icons.back_hand,
-              leftNavActionCallback: leftAction,
-              leftNavCallback: leftFunc,
-              leftTooltipMessage: "Benkum",
-              rightDialogIcon: Icons.front_hand,
-              rightNavActionCallback: rightAction,
-              rightTooltipMessage: "Nifa",
-              title: "Le Titre",
+      expect(
+        () async =>
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: AppDialogNavFooter(
+                leftDialogIcon: Icons.back_hand,
+                leftNavActionCallback: leftAction,
+                leftNavCallback: leftFunc,
+                leftTooltipMessage: "Benkum",
+                rightDialogIcon: Icons.front_hand,
+                rightNavActionCallback: rightAction,
+                rightTooltipMessage: "Nifa",
+                title: "Le Titre",
+              ),
             ),
-          ),
-        )
-      ), throwsA(predicate((e) => e is AssertionError)));
+          )
+        ),
+        throwsA(predicate((e) => e is AssertionError))
+      );
 
       // AssertionError if both rightNavActionCallback and rightNavCallback
       expect(() async => await tester.pumpWidget(

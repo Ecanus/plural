@@ -113,13 +113,18 @@ class _AdminCreateInvitationViewState extends State<AdminCreateInvitationView> {
         AppDialogFooterBuffer(
           buttons: [
             RouteToViewButton(
+              callback: _appDialogViewRouter.routeToAdminOptionsView,
               icon: Icons.arrow_back,
-              message: AdminInvitationViewText.returnToAdminOptionsLabel,
-              onPressed: _appDialogViewRouter.routeToAdminOptionsView
+              message: AdminInvitationViewText.returnToAdminOptions,
             ),
             AppDialogFooterBufferSubmitButton(
               callback: submitCreate,
               positionalArguments: [context, _formKey, _appForm],
+            ),
+            RouteToViewButton(
+              actionCallback: _appDialogViewRouter.routeToAdminListedInvitationsView,
+              icon: Icons.outbox,
+              message: AdminInvitationViewText.goToActiveInvitations,
             ),
           ]
         ),

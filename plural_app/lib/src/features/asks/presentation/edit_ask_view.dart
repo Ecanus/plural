@@ -195,9 +195,9 @@ class _EditAskViewState extends State<EditAskView> {
         AppDialogFooterBuffer(
           buttons: [
             RouteToViewButton(
+              callback: _appDialogViewRouter.routeToListedAsksView,
               icon: Icons.arrow_back,
               message: AskViewText.goToListedAsks,
-              onPressed: _appDialogViewRouter.routeToListedAsksView,
             ),
             AppDialogFooterBufferSubmitButton(
               callback: submitUpdate,

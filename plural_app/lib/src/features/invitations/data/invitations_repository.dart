@@ -96,6 +96,24 @@ class InvitationsRepository implements Repository {
     required String id,
     Map<String, dynamic> body = const {},
   }) async {
-    throw UnimplementedError();
+    try {
+      final record = await pb.collection(_collection).update(
+        id,
+        body: body
+      );
+      return (record, {});
+    } on ClientException catch(e) {
+      developer.log(
+        ""
+        "--\n"
+        "$runtimeType.update(), "
+        "id: $id, "
+        "body: $body, "
+        "\n--",
+        error: e,
+      );
+
+      return (null, getErrorsMapFromClientException(e));
+    }
   }
 }
