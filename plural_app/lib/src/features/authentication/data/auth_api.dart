@@ -178,7 +178,7 @@ Future<void> expelUserFromGarden(
 /// An action. Queries on the [UserGardenRecord] collection to retrieve all records
 /// with the same [Garden] as the currentGarden.
 ///
-/// Returns the list of retrieved [AppUserGardenRecord]s.
+/// Returns a map of retrieved [AppUserGardenRecord]s.
 Future<Map<AppUserGardenRole, List<AppUserGardenRecord>>> getCurrentGardenUserGardenRecords(
   BuildContext context,
 ) async {
@@ -191,11 +191,11 @@ Future<Map<AppUserGardenRole, List<AppUserGardenRecord>>> getCurrentGardenUserGa
     final List<AppUserGardenRecord> administrators = [];
     final List<AppUserGardenRecord> members = [];
 
-    String currentGardenID = GetIt.instance<AppState>().currentGarden!.id;
+    final currentGarden = GetIt.instance<AppState>().currentGarden!;
 
     final resultList = await GetIt.instance<UserGardenRecordsRepository>().getList(
-      expand: "${UserGardenRecordField.user}, ${UserGardenRecordField.garden}",
-      filter: "${UserGardenRecordField.garden} = '$currentGardenID'",
+      expand: UserGardenRecordField.user,
+      filter: "${UserGardenRecordField.garden} = '${currentGarden.id}'",
       sort: "${UserGardenRecordField.user}.${UserField.username}"
     );
 
@@ -205,11 +205,8 @@ Future<Map<AppUserGardenRole, List<AppUserGardenRecord>>> getCurrentGardenUserGa
       final userRecord = recordJson[QueryKey.expand][UserGardenRecordField.user];
       final user = AppUser.fromJson(userRecord);
 
-      final gardenRecord = recordJson[QueryKey.expand][UserGardenRecordField.garden];
-      final garden = Garden.fromJson(gardenRecord, await getUserByID(
-        gardenRecord[GardenField.creator]));
-
-      final userGardenRecord = AppUserGardenRecord.fromJson(recordJson, user, garden);
+      final userGardenRecord = AppUserGardenRecord.fromJson(
+        recordJson, user, currentGarden);
 
       // Owner
       if (userGardenRecord.role == AppUserGardenRole.owner) {
@@ -295,6 +292,8 @@ List<AppUserGardenPermission> getUserGardenPermissionGroup(AppUserGardenRole rol
       AppUserGardenPermission.createInvitations,
       AppUserGardenPermission.deleteMemberAsks,
       AppUserGardenPermission.expelMembers,
+      AppUserGardenPermission.expireInvitations,
+      AppUserGardenPermission.viewActiveInvitations,
       AppUserGardenPermission.viewAdminGardenTimeline,
       AppUserGardenPermission.viewAllUsers,
       AppUserGardenPermission.viewAuditLog,

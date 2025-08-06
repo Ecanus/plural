@@ -1,13 +1,30 @@
 class AdminInvitationViewText {
+  static const cancelConfirmExpireInvitation = "Cancel";
+  static const confirmExpireInvitation = "Expire Invitation?";
+  static const confirmExpireInvitationSubtitle = ""
+    "Expiring an Invitation will disable and remove it from all lists. "
+    "This cannot be undone.";
+  static const copyCode = "Copy code";
+  static const createInvitation = "Create Invitation";
   static const createInvitationError = ""
     "An error occurred. Please ensure:\n"
     "1) The user exists\n"
     "2) The user is not already a member of this Garden\n"
     "3) An Invitation to this user is not already active";
 
+  static const expires = "expires: ";
+  static const expireInvitation = "Expire Invitation";
   static const expiryDate = "Expiry date";
 
-  static const returnToAdminOptionsLabel = "Return to Options";
+  static const goToActiveInvitations = "Go to Active Invitations";
+
+  static const invalidInvitation = "Invalid Invitation";
+
+  static const openInvitations = "Open Invitations";
+
+  static const privateInvitations = "Private Invitations";
+
+  static const returnToAdminOptions = "Return to Options";
 
   static const type = "Invitation type";
 
@@ -15,7 +32,7 @@ class AdminInvitationViewText {
 }
 
 class AdminCurrentGardenSettingsViewText {
-  static const goToGardenPageLabel = "Return to Garden";
+  static const returnToGardenPage = "Return to Garden";
 
   static const name = "Garden Name";
 }
@@ -43,7 +60,9 @@ class AdminListedUsersViewText {
 }
 
 class AdminOptionsViewText {
-  static const createInvitationLabel = "Create Invitation";
+  static const activeInvitations = "Active Invitations";
+
+  static const createInvitation = "Create Invitation";
 
   static const invitationsHeader = "Invitations";
 }
@@ -62,6 +81,7 @@ class AppDialogFooterText {
   static const adminCreateInvitation = "Create Invitation";
   static const adminEditUser = "Edit User";
   static const adminGardenSettings = "Garden Settings";
+  static const adminListedInvitations = "Active Invitations";
   static const adminListedUsers = "Users";
   static const adminOptionsView = "Options";
 
@@ -238,6 +258,7 @@ class SignInPageText {
 class SnackBarText {
   static const askSponsored = "Ask successfully sponsored!";
 
+  static const copiedToClipboard = "Copied to clipboard!";
   static const createAskSuccess = "Ask successfully created";
   static const createInvitationSuccess = "Invitation successfully created";
 

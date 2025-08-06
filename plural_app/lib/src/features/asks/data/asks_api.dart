@@ -310,7 +310,7 @@ Future<void> isSponsoredToggle(
   if (value) {
     await addSponsor(askID, currentUserID);
 
-    var snackBar = AppSnackBars.getSnackBar(
+    final snackBar = AppSnackBars.getSnackBar(
       SnackBarText.askSponsored,
       showCloseIcon: false,
       snackbarType: SnackbarType.success

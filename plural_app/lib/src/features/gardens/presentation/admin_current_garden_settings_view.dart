@@ -130,7 +130,7 @@ class GoToCurrentGardenPageTile extends StatelessWidget {
       child: ListTile(
         tileColor: Theme.of(context).colorScheme.primaryContainer,
         title: Text(
-          AdminCurrentGardenSettingsViewText.goToGardenPageLabel,
+          AdminCurrentGardenSettingsViewText.returnToGardenPage,
           style: TextStyle(
             fontWeight: FontWeight.w500)
         ),

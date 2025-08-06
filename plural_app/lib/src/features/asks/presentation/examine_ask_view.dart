@@ -106,7 +106,7 @@ class ExamineAskView extends StatelessWidget {
             RouteToViewButton(
               icon: routeToIcon,
               message: AskViewText.goToSponsoredAsks,
-              onPressed: appDialogViewRouter.routeToSponsoredAsksView,
+              callback: appDialogViewRouter.routeToSponsoredAsksView,
             ),
           ]
         ),

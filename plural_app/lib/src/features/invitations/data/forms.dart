@@ -31,13 +31,13 @@ Future<void> submitCreate(
     final (record, errorsMap) = await createInvitation(context, appForm.fields);
 
     if (record != null && context.mounted) {
-      var snackBar = AppSnackBars.getSnackBar(
+      final snackBar = AppSnackBars.getSnackBar(
         SnackBarText.createInvitationSuccess,
         showCloseIcon: false,
         snackbarType: SnackbarType.success
       );
 
-      // Display Success Snackbar
+      // Display Success SnackBar
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
 
       // Route to Listed Asks View

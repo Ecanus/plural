@@ -94,7 +94,7 @@ void main() {
       // Check routed text not rendered, widget is present, and tile label is rendered
       expect(find.text("Test routing to Garden Page was successful."), findsNothing);
       expect(
-        find.text(AdminCurrentGardenSettingsViewText.goToGardenPageLabel),
+        find.text(AdminCurrentGardenSettingsViewText.returnToGardenPage),
         findsOneWidget
       );
       expect(find.byType(GoToCurrentGardenPageTile), findsOneWidget);

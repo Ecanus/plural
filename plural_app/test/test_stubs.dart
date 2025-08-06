@@ -68,7 +68,7 @@ void getCurrentGardenUserGardenRecordsStub({
 }) {
   when(
     () => mockUserGardenRecordsRepository.getList(
-      expand: "${UserGardenRecordField.user}, ${UserGardenRecordField.garden}",
+      expand: UserGardenRecordField.user,
       filter: "${UserGardenRecordField.garden} = '$gardenID'",
       sort: "${UserGardenRecordField.user}.${UserField.username}"
     )

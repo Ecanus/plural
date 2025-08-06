@@ -5,14 +5,19 @@ import 'package:plural_app/src/constants/app_sizes.dart';
 
 class RouteToViewButton extends StatelessWidget {
   const RouteToViewButton({
+    this.actionCallback,
+    this.callback,
     required this.icon,
     required this.message,
-    required this.onPressed,
-  });
+  }) : assert(
+    actionCallback == null || callback == null,
+    "Cannot provide both actionCallback and callback"
+  );
 
+  final void Function(BuildContext)? actionCallback;
+  final void Function()? callback;
   final IconData icon;
   final String message;
-  final void Function() onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +30,10 @@ class RouteToViewButton extends StatelessWidget {
           iconColor: Theme.of(context).colorScheme.onPrimary,
           shape: CircleBorder(),
         ),
-        onPressed: () => onPressed(),
+        onPressed: () {
+          if (callback != null) callback!();
+          if (actionCallback != null) actionCallback!(context);
+        },
         child: Icon(icon)
       ),
     );

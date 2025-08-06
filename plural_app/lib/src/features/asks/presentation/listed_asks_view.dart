@@ -43,12 +43,12 @@ class ListedAsksView extends StatelessWidget {
             RouteToViewButton(
               icon: Icons.volunteer_activism,
               message: AskViewText.goToSponsoredAsks,
-              onPressed: appDialogViewRouter.routeToSponsoredAsksView,
+              callback: appDialogViewRouter.routeToSponsoredAsksView,
             ),
             RouteToViewButton(
               icon: Icons.add,
               message: AskViewText.createAsk,
-              onPressed: appDialogViewRouter.routeToCreateAskView
+              callback: appDialogViewRouter.routeToCreateAskView
             )
           ],
         ),

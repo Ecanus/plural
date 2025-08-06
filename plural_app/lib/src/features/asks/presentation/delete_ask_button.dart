@@ -44,6 +44,19 @@ class DeleteAskButton extends StatelessWidget {
   }
 }
 
+Future<void> showConfirmDeleteAskDialog(
+  BuildContext context,
+  String askID,
+  bool isAdminPage,
+) async {
+  await showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return ConfirmDeleteAskDialog(askID: askID, isAdminPage: isAdminPage,);
+    }
+  );
+}
+
 class ConfirmDeleteAskDialog extends StatelessWidget {
   const ConfirmDeleteAskDialog({
     required this.askID,
@@ -132,17 +145,4 @@ class ConfirmDeleteAskDialog extends StatelessWidget {
       ),
     );
   }
-}
-
-Future<void> showConfirmDeleteAskDialog(
-  BuildContext context,
-  String askID,
-  bool isAdminPage,
-) async {
-  await showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return ConfirmDeleteAskDialog(askID: askID, isAdminPage: isAdminPage,);
-    }
-  );
 }
