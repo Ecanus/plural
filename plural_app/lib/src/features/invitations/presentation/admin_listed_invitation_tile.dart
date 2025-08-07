@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
+
+// Common Widgets
+import 'package:plural_app/src/common_widgets/app_snackbars.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
@@ -13,6 +17,7 @@ import 'package:plural_app/src/features/invitations/domain/invitation.dart';
 import 'package:plural_app/src/localization/lang_en.dart';
 
 // Utils
+import 'package:plural_app/src/utils/app_dialog_view_router.dart';
 import 'package:plural_app/src/utils/utils_api.dart';
 
 class AdminListedInvitationTile extends StatelessWidget {
@@ -25,6 +30,7 @@ class AdminListedInvitationTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      elevation: AppElevations.e7,
       child: ListTile(
         tileColor: Theme.of(context).colorScheme.secondary,
         title: Text(
@@ -53,11 +59,11 @@ class AdminListedInvitationTile extends StatelessWidget {
               ) : SizedBox(),
             IconButton(
               icon: Icon(
-                Icons.event_busy,
+                Icons.delete,
                 color: Theme.of(context).colorScheme.error,
               ),
               onPressed: () => showConfirmExpireInvitationDialog(context, invitation.id),
-              tooltip: AdminInvitationViewText.expireInvitation,
+              tooltip: AdminInvitationViewText.deleteInvitation,
             ),
           ],
         ),
@@ -91,43 +97,30 @@ class ConfirmExpireInvitationDialog extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(
           horizontal: AppPaddings.p20,
-          vertical: AppPaddings.p10,
-        ),
-        constraints: BoxConstraints.expand(
-          width: AppConstraints.c450,
-          height: AppConstraints.c215
+          vertical: AppPaddings.p20,
         ),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(AppBorderRadii.r15),
         ),
-        child: ListView( // ListView instead of Column because test keeps gettin overflow error with Column
+        child: Column( // ListView instead of Column because test keeps getting overflow error with Column
+          mainAxisSize: MainAxisSize.min,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Flexible(
                   child: Text(
-                    AdminInvitationViewText.confirmExpireInvitation,
+                    AdminInvitationViewText.confirmDeleteInvitation,
                     style: Theme.of(context).textTheme.headlineMedium,
                   ),
                 ),
               ],
             ),
-            gapH20,
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Flexible(
-                  child: Text(
-                    AdminInvitationViewText.confirmExpireInvitationSubtitle,
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                ),
-              ],
-            ),
-            gapH35,
+            gapH40,
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
                   constraints: BoxConstraints(minHeight: AppHeights.h40),
@@ -141,7 +134,7 @@ class ConfirmExpireInvitationDialog extends StatelessWidget {
                       ),
                     ),
                     child: Text(
-                      AdminInvitationViewText.cancelConfirmExpireInvitation,
+                      AdminInvitationViewText.cancelConfirmDeleteInvitation,
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.onSecondary
                       )
@@ -154,7 +147,21 @@ class ConfirmExpireInvitationDialog extends StatelessWidget {
                   child: FilledButton(
                     onPressed: () {
                       Navigator.pop(context);
-                      expireInvitation(context, invitationID);
+                      deleteInvitation(invitationID, callback: () {
+                        if (context.mounted) {
+                          final snackBar = AppSnackBars.getSnackBar(
+                            SnackBarText.invitationDeleted,
+                            showCloseIcon: false,
+                            snackbarType: SnackbarType.success
+                          );
+
+                          // Show SnackBar
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+                          // Route to same view (to refresh)
+                          GetIt.instance<AppDialogViewRouter>().routeToAdminListedInvitationsView(context);
+                        }
+                      });
                     },
                     style: ButtonStyle(
                       backgroundColor: WidgetStateProperty.all<Color>(
@@ -166,7 +173,7 @@ class ConfirmExpireInvitationDialog extends StatelessWidget {
                         )
                       ),
                     ),
-                    child: const Text(AdminInvitationViewText.expireInvitation)
+                    child: const Text(AdminInvitationViewText.deleteInvitation)
                   )
                 ),
               ],

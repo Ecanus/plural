@@ -6,14 +6,16 @@ import 'package:plural_app/src/constants/app_sizes.dart';
 
 // Auth
 import 'package:plural_app/src/features/authentication/data/auth_api.dart';
+import 'package:plural_app/src/features/authentication/presentation/landing_page_settings_tab.dart';
 
 // Gardens
 import 'package:plural_app/src/features/gardens/data/gardens_api.dart';
-import 'package:plural_app/src/features/gardens/presentation/landing_page_settings_tab.dart';
 import 'package:plural_app/src/features/gardens/presentation/landing_page_gardens_tab.dart';
 
+// Invitations
+import 'package:plural_app/src/features/invitations/presentation/landing_page_invitations_tab.dart';
+
 // Localization
-import 'package:plural_app/src/localization/lang_en.dart';
 import 'package:plural_app/src/utils/app_state.dart';
 
 class LandingPage extends StatefulWidget {
@@ -40,8 +42,8 @@ class _LandingPageState extends State<LandingPage> {
     if (widget.exitedGardenID == null) {
       setState(() => _canQueryGardens = true);
     } else {
-      // LandingPageSettingsTab() should not display until the currentUser
-      // has been successfully removed from the Garden with exitedGardenID
+      // LandingPageGardensTab() should not display until the currentUser
+      // has been successfully removed from the Garden matching exitedGardenID
       removeUserFromGarden(
         appState.currentUser!.id,
         widget.exitedGardenID!,
@@ -50,15 +52,16 @@ class _LandingPageState extends State<LandingPage> {
     }
 
     _tabs = <Tab>[
-      Tab(text: LandingPageText.gardens),
-      Tab(text: LandingPageText.settings)
+      Tab(icon: Icon(Icons.local_florist)),
+      Tab(icon: Icon(Icons.mail)),
+      Tab(icon: Icon(Icons.settings)),
     ];
 
     // Subscribe to UserSettings
     subscribeToUserSettings();
 
-    // Always set currentGarden to null and
-    // clear garden-specific database subscriptions when loading this page
+    // Always set currentGarden to null
+    // and clear garden-specific database subscriptions when loading this page
     GetIt.instance<AppState>().clearGardenAndSubscriptions();
   }
 
@@ -80,7 +83,9 @@ class _LandingPageState extends State<LandingPage> {
               body: TabBarView(
                 children: [
                   _canQueryGardens ?
-                    LandingPageGardensTab() : BlankLandingPageGardensTab(),
+                    LandingPageGardensTab()
+                    : BlankLandingPageGardensTab(),
+                  LandingPageInvitationsTab(),
                   LandingPageSettingsTab(),
                 ]
               ),
