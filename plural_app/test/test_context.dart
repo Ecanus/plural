@@ -19,10 +19,16 @@ import 'package:plural_app/src/features/authentication/domain/app_user_settings.
 // Gardens
 import 'package:plural_app/src/features/gardens/domain/garden.dart';
 
+// Invitations
+import 'package:plural_app/src/features/invitations/domain/invitation.dart';
+
 class TestContext {
   late Ask ask;
   late Garden garden;
+  late Invitation openInvitation;
+  late Invitation privateInvitation;
   late AppUser user;
+  late AppUser otherUser;
   late AppUserGardenRecord userGardenRecord;
   late AppUserSettings userSettings;
   late ClientException clientException;
@@ -35,10 +41,39 @@ class TestContext {
       username: "testuser"
     );
 
+    otherUser = AppUser(
+      firstName: "otherUserFirstName",
+      id: "TESTOTHERUSER1",
+      lastName: "otherUserLastName",
+      username: "otherUser"
+    );
+
     garden = Garden(
       creator: user,
       id: "TESTGARDEN1",
       name: "Petunia"
+    );
+
+    openInvitation = Invitation(
+      creator: user,
+      createdDate: DateTime(2025, 8, 15),
+      expiryDate: DateTime(2050, 8, 15),
+      garden: garden,
+      id: "TESTINVITATIONOPEN",
+      invitee: null,
+      type: InvitationType.open,
+      uuid: "UUUU-II-D-DDDDD",
+    );
+
+    privateInvitation = Invitation(
+      creator: user,
+      createdDate: DateTime(2025, 8, 15),
+      expiryDate: DateTime(2050, 8, 15),
+      garden: garden,
+      id: "TESTINVITATIONPRIVATE",
+      invitee: otherUser,
+      type: InvitationType.private,
+      uuid: null,
     );
 
     userGardenRecord = AppUserGardenRecord(
@@ -154,6 +189,58 @@ class TestContext {
     });
   }
 
+  RecordModel getOpenInvitationRecordModel({
+    String? id,
+    String? creatorID,
+    String? expiryDate,
+    String? gardenID,
+    List<String> expand = const [],
+  }) {
+    Map<String, dynamic> map = {};
+
+    addExpandFields(expand, map);
+
+    return RecordModel({
+      "id": id ?? openInvitation.id,
+      "created": DateFormat(Formats.dateYMMdd).format(openInvitation.createdDate),
+      "collectionName": Collection.invitations,
+      InvitationField.creator: creatorID ?? user.id,
+      InvitationField.expiryDate: expiryDate ??
+        DateFormat(Formats.dateYMMdd).format(openInvitation.expiryDate),
+      InvitationField.garden: gardenID ?? garden.id,
+      InvitationField.type: InvitationType.open.name,
+      InvitationField.uuid: "UUUU-II-D-DDDDD",
+      "expand": map,
+    });
+  }
+
+  RecordModel getPrivateInvitationRecordModel({
+    String? id,
+    String? creatorID,
+    String? expiryDate,
+    String? gardenID,
+    String? otherUserID,
+    List<String> expand = const [],
+  }) {
+    Map<String, dynamic> map = {};
+
+    addExpandFields(expand, map);
+
+    return RecordModel({
+      "id": id ?? privateInvitation.id,
+      "created": DateFormat(Formats.dateYMMdd).format(privateInvitation.createdDate),
+      "collectionName": Collection.invitations,
+      InvitationField.creator: creatorID ?? user.id,
+      InvitationField.expiryDate: expiryDate ??
+        DateFormat(Formats.dateYMMdd).format(privateInvitation.expiryDate),
+      InvitationField.garden: gardenID ?? garden.id,
+      InvitationField.type: InvitationType.private.name,
+      InvitationField.invitee: otherUserID ?? otherUser.id,
+      "expand": map,
+    });
+  }
+
+
   RecordModel getUserGardenRecordRecordModel({
     String? id,
     AppUserGardenRole? role,
@@ -175,24 +262,7 @@ class TestContext {
 }) {
     Map<String, dynamic> map = {};
 
-    if (expand.contains(UserGardenRecordField.user)) {
-      map[UserGardenRecordField.user] = {
-        GenericField.id: user.id,
-        GenericField.created: "1992-12-23",
-        UserField.firstName: user.firstName,
-        UserField.lastName: user.lastName,
-        UserField.username: user.username
-      };
-    }
-
-    if (expand.contains(UserGardenRecordField.garden)) {
-      map[UserGardenRecordField.garden] = {
-        GenericField.id: garden.id,
-        GenericField.created: "1993-11-11",
-        GardenField.creator: user.id,
-        GardenField.name: garden.name,
-      };
-    }
+    addExpandFields(expand, map);
 
     return RecordModel.fromJson({
       GenericField.id: recordID ?? userGardenRecord.id,
@@ -237,6 +307,50 @@ class TestContext {
         gardenTimelineDisplayCount ?? userSettings.gardenTimelineDisplayCount,
       UserSettingsField.user: userID ?? user.id,
     });
+  }
+
+  void addExpandFields(List<String> expandFields, Map<String, dynamic> map) {
+    if (expandFields.contains(UserGardenRecordField.user)) {
+      map[UserGardenRecordField.user] = {
+        GenericField.id: user.id,
+        GenericField.created: "1992-12-23",
+        UserField.firstName: user.firstName,
+        UserField.lastName: user.lastName,
+        UserField.username: user.username
+      };
+    }
+
+    if (
+        expandFields.contains(UserGardenRecordField.garden) ||
+        expandFields.contains(InvitationField.garden)
+      ) {
+      map[UserGardenRecordField.garden] = {
+        GenericField.id: garden.id,
+        GenericField.created: "1993-11-11",
+        GardenField.creator: user.id,
+        GardenField.name: garden.name,
+      };
+    }
+
+    if (expandFields.contains(InvitationField.creator)) {
+      map[InvitationField.creator] = {
+        GenericField.id: user.id,
+        GenericField.created: "1992-12-23",
+        UserField.firstName: user.firstName,
+        UserField.lastName: user.lastName,
+        UserField.username: user.username
+      };
+    }
+
+    if (expandFields.contains(InvitationField.invitee)) {
+      map[InvitationField.invitee] = {
+        GenericField.id: otherUser.id,
+        GenericField.created: "1992-12-23",
+        UserField.firstName: otherUser.firstName,
+        UserField.lastName: otherUser.lastName,
+        UserField.username: otherUser.username
+      };
+    }
   }
 
   ClientException getClientException({

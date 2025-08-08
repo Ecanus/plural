@@ -48,10 +48,9 @@ class Ask {
   int targetSum;
   AskType type;
 
-  Ask.fromJson(Map<String, dynamic> json, AppUser user) :
+  Ask.fromJson(Map<String, dynamic> json, this.creator) :
     id = json[GenericField.id] as String,
     boon = json[AskField.boon] as int,
-    creator = user,
     creationDate = DateTime.parse(json[GenericField.created]),
     currency = json[AskField.currency],
     description = json[AskField.description],

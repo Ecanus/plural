@@ -41,12 +41,12 @@ class SponsoredAsksView extends StatelessWidget {
             RouteToViewButton(
               icon: Icons.toc_rounded,
               message: AskViewText.goToListedAsks,
-              onPressed: appDialogViewRouter.routeToListedAsksView,
+              callback: appDialogViewRouter.routeToListedAsksView,
             ),
             RouteToViewButton(
               icon: Icons.add,
               message: AskViewText.createAsk,
-              onPressed: appDialogViewRouter.routeToCreateAskView
+              callback: appDialogViewRouter.routeToCreateAskView
             ),
           ],
         ),

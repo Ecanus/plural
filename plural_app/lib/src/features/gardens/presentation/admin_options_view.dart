@@ -3,6 +3,7 @@ import 'package:get_it/get_it.dart';
 
 // Common Widgets
 import 'package:plural_app/src/common_widgets/app_dialog.dart';
+import 'package:plural_app/src/common_widgets/app_dialog_category_header.dart';
 import 'package:plural_app/src/common_widgets/app_dialog_footer.dart';
 
 // Constants
@@ -31,17 +32,29 @@ class AdminOptionsView extends StatelessWidget {
     return Column(
       children: [
         Expanded(
-          child: Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  "Feature not yet implemented",
-                  style: Theme.of(context).textTheme.headlineSmall
-                ),
-                gapH25,
-              ]
-            )
+          child: ListView(
+            padding: const EdgeInsets.all(AppPaddings.p35),
+            children: [
+              Column(
+                children: [
+                  gapH50,
+                  AppDialogCategoryHeader(
+                    text: AdminOptionsViewText.invitationsHeader,
+                  ),
+                  gapH20,
+                  AdminOptionsTile(
+                    callback: appDialogViewRouter.routeToAdminCreateInvitationView,
+                    icon: Icons.mail,
+                    title: AdminOptionsViewText.createInvitation,
+                  ),
+                  AdminOptionsTile(
+                    actionCallback: appDialogViewRouter.routeToAdminListedInvitationsView,
+                    icon: Icons.outbox,
+                    title: AdminOptionsViewText.activeInvitations,
+                  )
+                ],
+              ),
+            ]
           )
         ),
         AppDialogNavFooter(
@@ -54,6 +67,48 @@ class AdminOptionsView extends StatelessWidget {
           title: AppDialogFooterText.adminOptionsView
         ),
       ],
+    );
+  }
+}
+
+class AdminOptionsTile extends StatelessWidget {
+  const AdminOptionsTile({
+    this.actionCallback,
+    this.callback,
+    required this.icon,
+    required this.title,
+  }) : assert(
+    actionCallback == null || callback == null,
+    "Cannot provide both actionCallback and callback"
+  );
+
+  final void Function(BuildContext)? actionCallback;
+  final void Function()? callback;
+  final IconData icon;
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: AppElevations.e7,
+      child: ListTile(
+        tileColor: Theme.of(context).colorScheme.secondary,
+        title: Text(
+          title,
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onPrimary,
+            fontWeight: FontWeight.w500
+          ),
+        ),
+        leading: Icon(
+          icon,
+          color: Theme.of(context).colorScheme.onSecondary,
+        ),
+        onTap: () {
+          if (callback != null) callback!();
+          if (actionCallback != null ) actionCallback!(context);
+        },
+      ),
     );
   }
 }

@@ -343,10 +343,11 @@ void main() {
       // Check record is not null, and errorsMap is empty
       final (record, errorsMap) = await userGardenRecordsRepository.update(
         id: tc.userGardenRecord.id, body: body);
+
       expect(record, isNotNull);
       expect(errorsMap.isEmpty, true);
 
-      // RecordService.create(), Now throws exception
+      // RecordService.update(), Now throws exception
       when(
         () => recordService.update(any(), body: any(named: "body"))
       ).thenThrow(
@@ -355,6 +356,7 @@ void main() {
       // Check record is null, errorsMap is not empty
       final (record2, errorsMap2) = await userGardenRecordsRepository.update(
         id: tc.userGardenRecord.id, body: body);
+
       expect(record2, null);
       expect(errorsMap2.isEmpty, false);
     });

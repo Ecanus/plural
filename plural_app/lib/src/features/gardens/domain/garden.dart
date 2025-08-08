@@ -15,8 +15,7 @@ class Garden {
   final String id;
   final String name;
 
-  Garden.fromJson(Map<String, dynamic> json, AppUser user) :
-    creator = user,
+  Garden.fromJson(Map<String, dynamic> json, this.creator) :
     id = json[GenericField.id] as String,
     name = json[GardenField.name] as String;
 
@@ -28,7 +27,7 @@ class Garden {
     };
   }
 
-  static Map emptyMap() {
+  static Map<String, dynamic> emptyMap() {
     return {
       GardenField.creator: null,
       GenericField.id: null,

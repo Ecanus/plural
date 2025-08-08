@@ -13,7 +13,7 @@ import 'package:plural_app/src/features/gardens/domain/garden.dart';
 import '../../../test_context.dart';
 
 void main() {
-  group("Garden test", () {
+  group("Garden", () {
     test("constructor", () {
       final tc = TestContext();
 

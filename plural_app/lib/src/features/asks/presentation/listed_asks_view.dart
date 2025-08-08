@@ -32,7 +32,7 @@ class ListedAsksView extends StatelessWidget {
       children: [
         Expanded(
           child: listedAskTiles.isEmpty ?
-            EmptyListedAskTilesMessage() :
+            EmptyListedAsksViewMessage() :
             ListView(
               padding: const EdgeInsets.all(AppPaddings.p35),
               children: listedAskTiles,
@@ -43,12 +43,12 @@ class ListedAsksView extends StatelessWidget {
             RouteToViewButton(
               icon: Icons.volunteer_activism,
               message: AskViewText.goToSponsoredAsks,
-              onPressed: appDialogViewRouter.routeToSponsoredAsksView,
+              callback: appDialogViewRouter.routeToSponsoredAsksView,
             ),
             RouteToViewButton(
               icon: Icons.add,
               message: AskViewText.createAsk,
-              onPressed: appDialogViewRouter.routeToCreateAskView
+              callback: appDialogViewRouter.routeToCreateAskView
             )
           ],
         ),
@@ -66,7 +66,7 @@ class ListedAsksView extends StatelessWidget {
   }
 }
 
-class EmptyListedAskTilesMessage extends StatelessWidget {
+class EmptyListedAsksViewMessage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -74,12 +74,12 @@ class EmptyListedAskTilesMessage extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            AskViewText.emptyListedAskTilesMessage,
+            AskViewText.emptyListedAsksView,
             style: Theme.of(context).textTheme.headlineSmall
           ),
           gapH25,
           Text(
-            AskViewText.emptyListedAskTilesSubtitle,
+            AskViewText.emptyListedAsksViewSubtitle,
             style: Theme.of(context).textTheme.bodyMedium
           ),
         ],

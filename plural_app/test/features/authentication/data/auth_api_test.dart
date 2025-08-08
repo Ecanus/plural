@@ -759,6 +759,7 @@ void main() {
           AppUserGardenPermission.createInvitations,
           AppUserGardenPermission.deleteMemberAsks,
           AppUserGardenPermission.expelMembers,
+          AppUserGardenPermission.viewActiveInvitations,
           AppUserGardenPermission.viewAdminGardenTimeline,
           AppUserGardenPermission.viewAllUsers,
           AppUserGardenPermission.viewAuditLog,
@@ -776,6 +777,7 @@ void main() {
           AppUserGardenPermission.createInvitations,
           AppUserGardenPermission.deleteMemberAsks,
           AppUserGardenPermission.expelMembers,
+          AppUserGardenPermission.viewActiveInvitations,
           AppUserGardenPermission.viewAdminGardenTimeline,
           AppUserGardenPermission.viewAllUsers,
           AppUserGardenPermission.viewAuditLog,
@@ -870,6 +872,8 @@ void main() {
       // Check null is now returned
       expect(userGardenRecord2, null);
     });
+
+    tearDown(() => GetIt.instance.reset());
 
     test("getUserGardenRecordRole", () async {
       final tc = TestContext();

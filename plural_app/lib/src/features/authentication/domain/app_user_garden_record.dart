@@ -32,6 +32,7 @@ enum AppUserGardenPermission {
   deleteGarden,
   deleteMemberAsks,
   expelMembers,
+  viewActiveInvitations,
   viewAdminGardenTimeline,
   viewAllUsers,
   viewAuditLog,

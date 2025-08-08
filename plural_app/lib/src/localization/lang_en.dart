@@ -1,5 +1,41 @@
+class AdminInvitationViewText {
+  static const cancelConfirmDeleteInvitation = "Cancel";
+  static const confirmDeleteInvitation = "Delete Invitation?";
+  static const copyCode = "Copy code";
+  static const createInvitation = "Create Invitation";
+  static const createInvitationError = ""
+    "An error occurred. Please ensure:\n"
+    "1) The user exists\n"
+    "2) The user is not already a member of this Garden\n"
+    "3) An Invitation to this user is not already active";
+
+  static const deleteInvitation = "Delete Invitation";
+
+  static const emptyAdminListedInvitationsViewOpen = ""
+    "No active open Invitations found";
+  static const emptyAdminListedInvitationsViewPrivate = ""
+    "No active private Invitations found";
+
+  static const expires = "expires:";
+  static const expiryDate = "Expiry date";
+
+  static const goToActiveInvitations = "Go to Active Invitations";
+
+  static const invalidInvitation = "Invalid Invitation";
+
+  static const openInvitations = "Open Invitations";
+
+  static const privateInvitations = "Private Invitations";
+
+  static const returnToAdminOptions = "Return to Options";
+
+  static const type = "Invitation type";
+
+  static const invitee = "Invitee (username)";
+}
+
 class AdminCurrentGardenSettingsViewText {
-  static const goToGardenPageLabel = "Return to Garden";
+  static const returnToGardenPage = "Return to Garden";
 
   static const name = "Garden Name";
 }
@@ -26,6 +62,14 @@ class AdminListedUsersViewText {
   static const userGardenRole = "Role";
 }
 
+class AdminOptionsViewText {
+  static const activeInvitations = "Active Invitations";
+
+  static const createInvitation = "Create Invitation";
+
+  static const invitationsHeader = "Invitations";
+}
+
 class AdminPageBottomBarText {
   static const currentGardenSettingsTooltip = "Garden Settings";
   static const optionsTooltip = "Options";
@@ -37,8 +81,10 @@ class AppText {
 }
 
 class AppDialogFooterText {
+  static const adminCreateInvitation = "Create Invitation";
   static const adminEditUser = "Edit User";
   static const adminGardenSettings = "Garden Settings";
+  static const adminListedInvitations = "Active Invitations";
   static const adminListedUsers = "Users";
   static const adminOptionsView = "Options";
 
@@ -87,8 +133,8 @@ class AskViewText {
   static const deleteAsk = "Delete Ask";
   static const description = "Description";
 
-  static const emptyListedAskTilesMessage = "No Asks found";
-  static const emptyListedAskTilesSubtitle = ""
+  static const emptyListedAsksView = "No Asks found";
+  static const emptyListedAsksViewSubtitle = ""
     "Click the '$createAsk' button below to get started.";
 
   static const goToListedAsks = "Go to My Asks";
@@ -163,7 +209,14 @@ class GardenTimelineText {
   static const emptyTimelineSubtitle = "Please check again later!";
 }
 
+class InvitationsText {
+  static const createUserGardenRecordError = "An error occurred while joining the Garden";
+  static const invalidInvitationError = "Invalid invitation code";
+}
+
 class LandingPageText {
+  static const acceptInvitation = "Accept Invitation";
+
   static const cancelConfirmDeleteAccount = "Cancel";
   static const confirmDeleteAccount = "Deleting account";
   static const confirmDeleteAccountPrompt = "To confirm this, type";
@@ -173,15 +226,21 @@ class LandingPageText {
     "database. This cannot be undone.";
   static const createGarden = "Create Garden";
 
+  static const declineInvitation = "Decline Invitation";
   static const deleteAccount = "Delete account";
 
   static const emptyLandingPageGardensListMessage = "No Gardens found";
+  static const emptyLandingPageInvitationsMessage = "No Invitations found";
+  static const expires = "expires:";
 
-  static const gardens = "Gardens";
+  static const invalidInvitationUUID = "Invalid Invitation code";
+
+  static const openInvitationCode = "Open Invitation Code";
+
+  static const privateInvitations = "Private Invitations";
 
   static const saveChanges = "Save changes";
   static const seeInvites = "See invitations";
-  static const settings = "Settings";
 }
 
 class SignInPageText {
@@ -213,11 +272,16 @@ class SignInPageText {
 }
 
 class SnackBarText {
+  static const acceptedInvitation = "Invitation accepted";
   static const askSponsored = "Ask successfully sponsored!";
 
+  static const copiedToClipboard = "Copied to clipboard!";
   static const createAskSuccess = "Ask successfully created";
+  static const createInvitationSuccess = "Invitation successfully created";
 
+  static const declinedInvitation = "Invitation declined";
   static const deleteAskSuccess = "Ask successfully deleted";
+  static const deletedInvitation = "Invitation deleted";
   static const deletedUserAccount = "Your account has been deleted";
   static const deletedUserAccountFailed = ""
     "An error occurred while trying to delete your account";
@@ -233,6 +297,8 @@ class SnackBarText {
   static const updateUserSettingsSuccess = "Settings updated";
 
   static const urlError = "Invalid URL:";
+
+  static const validInvitationUUID = "Valid Invitation code for";
 }
 
 class UnauthorizedPageText {
@@ -248,6 +314,7 @@ class UserSettingsViewText {
   static const defaultCurrency = "Default currency";
   static const defaultInstructions = "Default instructions";
   static const defaultValuesHeader = "Default Values";
+  static const deleteAccountHeader = "Delete Account";
 
   static const firstName = "First name";
 

@@ -28,6 +28,11 @@ import 'package:plural_app/src/features/gardens/presentation/admin_current_garde
 import 'package:plural_app/src/features/gardens/presentation/admin_options_view.dart';
 import 'package:plural_app/src/features/gardens/presentation/current_garden_settings_view.dart';
 
+// Invitations
+import 'package:plural_app/src/features/invitations/data/invitations_api.dart';
+import 'package:plural_app/src/features/invitations/presentation/admin_create_invitation_view.dart';
+import 'package:plural_app/src/features/invitations/presentation/admin_listed_invitations_view.dart';
+
 // Utils
 import 'package:plural_app/src/utils/app_state.dart';
 
@@ -38,7 +43,7 @@ class AppDialogViewRouter {
     viewNotifier.value = widget;
   }
 
-  /// Asks
+  // Asks
   void routeToCreateAskView() {
     viewNotifier.value = CreateAskView();
   }
@@ -79,7 +84,7 @@ class AppDialogViewRouter {
     );
   }
 
-  /// Auth
+  // Auth
   void routeToAdminEditUserView(AppUserGardenRecord userGardenRecord) {
     viewNotifier.value = AdminEditUserView(userGardenRecord: userGardenRecord);
   }
@@ -99,7 +104,7 @@ class AppDialogViewRouter {
     );
   }
 
-  /// Gardens
+  // Gardens
   void routeToAdminCurrentGardenSettingsView() {
     viewNotifier.value = AdminCurrentGardenSettingsView();
   }
@@ -110,5 +115,16 @@ class AppDialogViewRouter {
 
   void routeToCurrentGardenSettingsView() {
     viewNotifier.value = CurrentGardenSettingsView();
+  }
+
+  // Invitations
+  void routeToAdminCreateInvitationView() {
+    viewNotifier.value = AdminCreateInvitationView();
+  }
+
+  Future<void> routeToAdminListedInvitationsView(BuildContext context) async {
+    final invitationsMap = await getCurrentGardenInvitations(context);
+
+    viewNotifier.value = AdminListedInvitationsView(invitationsMap: invitationsMap,);
   }
 }

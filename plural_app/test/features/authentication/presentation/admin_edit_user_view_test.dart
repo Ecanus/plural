@@ -92,7 +92,7 @@ void main() {
 
       verifyNever(
         () => mockUserGardenRecordsRepository.getList(
-          expand: "${UserGardenRecordField.user}, ${UserGardenRecordField.garden}",
+          expand: UserGardenRecordField.user,
           filter: "${UserGardenRecordField.garden} = '${tc.garden.id}'",
           sort: "${UserGardenRecordField.user}.${UserField.username}"
         )
@@ -106,7 +106,7 @@ void main() {
 
       verify(
         () => mockUserGardenRecordsRepository.getList(
-          expand: "${UserGardenRecordField.user}, ${UserGardenRecordField.garden}",
+          expand: UserGardenRecordField.user,
           filter: "${UserGardenRecordField.garden} = '${tc.garden.id}'",
           sort: "${UserGardenRecordField.user}.${UserField.username}"
         )

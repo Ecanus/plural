@@ -170,18 +170,18 @@ class _CreateAskViewState extends State<CreateAskView> {
         AppDialogFooterBuffer(
           buttons: [
             RouteToViewButton(
+              callback: _appDialogViewRouter.routeToListedAsksView,
               icon: Icons.toc_rounded,
               message: AskViewText.goToListedAsks,
-              onPressed: _appDialogViewRouter.routeToListedAsksView,
             ),
             AppDialogFooterBufferSubmitButton(
               callback: submitCreate,
               positionalArguments: [context, _formKey, _appForm],
             ),
             RouteToViewButton(
+              callback: _appDialogViewRouter.routeToSponsoredAsksView,
               icon: Icons.volunteer_activism,
               message: AskViewText.goToSponsoredAsks,
-              onPressed: _appDialogViewRouter.routeToSponsoredAsksView,
             ),
           ]
         ),

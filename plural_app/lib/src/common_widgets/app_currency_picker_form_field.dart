@@ -37,6 +37,12 @@ class _AppCurrencyPickerFormFieldState extends State<AppCurrencyPickerFormField>
   late List<CurrencyCard> _sortedCurrencyCards;
 
   @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   void initState() {
     super.initState();
 
@@ -63,7 +69,7 @@ class _AppCurrencyPickerFormFieldState extends State<AppCurrencyPickerFormField>
 
   @override
   Widget build(BuildContext context) {
-    var showDialogButton = IconButton(
+    final showDialogButton = IconButton(
       onPressed: () => showCurrencyPicker(
         context,
         _setControllerText,

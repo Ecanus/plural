@@ -62,7 +62,8 @@ class AppHeights {
   static const h40 = 40.0;
   static const h50 = 50.0;
   static const h60 = 60.0;
-  static const h800 = 800;
+  static const h250 = 250.0;
+  static const h800 = 800.0;
 }
 
 class AppIconSizes {
