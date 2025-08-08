@@ -7,7 +7,6 @@ import 'package:plural_app/src/common_widgets/app_snackbars.dart';
 // Localization
 import 'package:plural_app/src/localization/lang_en.dart';
 
-// TODO: test
 /// Copies the given [content] to the system's clipboard.
 Future<void> copyToClipboard(BuildContext context, String content) async {
   await Clipboard.setData(ClipboardData(text: content));

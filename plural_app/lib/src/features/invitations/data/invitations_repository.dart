@@ -50,7 +50,21 @@ class InvitationsRepository implements Repository {
   Future<void> delete({
     required String id,
   }) async {
-    throw UnimplementedError();
+     try {
+      await pb.collection(_collection).delete(id);
+    } on ClientException catch(e) {
+      developer.log(
+        ""
+        "--\n"
+        "$runtimeType.delete()"
+        "\n"
+        "id: $id"
+        "\n--",
+        error: e,
+      );
+
+      rethrow;
+    }
   }
 
   @override

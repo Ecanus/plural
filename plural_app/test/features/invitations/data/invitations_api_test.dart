@@ -42,6 +42,89 @@ import '../../../test_stubs.dart';
 
 void main() {
   group("invitations_api", () {
+    test("acceptInvitationAndCreateUserGardenRecord", () async {
+      final list = [1, 2, 3];
+      void testFunc() => list.clear();
+
+      final tc = TestContext();
+
+      final appState = AppState.skipSubscribe()
+        ..currentUser = tc.user;
+
+      final getIt = GetIt.instance;
+      final mockInvitationsRepository = MockInvitationsRepository();
+      final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
+
+      getIt.registerLazySingleton<AppState>(() => appState);
+      getIt.registerLazySingleton<InvitationsRepository>(
+        () => mockInvitationsRepository
+      );
+      getIt.registerLazySingleton<UserGardenRecordsRepository>(
+        () => mockUserGardenRecordsRepository
+      );
+
+      // InvitationsRepository.delete
+      when(
+        () => mockInvitationsRepository.delete(id: tc.openInvitation.id)
+      ).thenAnswer(
+        (_) async => {}
+      );
+
+      // UserGardenRecordsRepository.create
+      when(
+        () => mockUserGardenRecordsRepository.create(
+          body: {
+            UserGardenRecordField.garden: tc.openInvitation.garden.id,
+            UserGardenRecordField.role: AppUserGardenRole.member.name,
+            UserGardenRecordField.user: GetIt.instance<AppState>().currentUser!.id,
+          }
+        )
+      ).thenAnswer(
+        (_) async => (tc.getUserGardenRecordRecordModel(), {})
+      );
+
+      // Check list still has contents (i.e. callback not called)
+      expect(list.isEmpty, false);
+
+      // Check methods not called
+      verifyNever(
+        () => mockInvitationsRepository.delete(id: tc.openInvitation.id)
+      );
+      verifyNever(
+        () => mockUserGardenRecordsRepository.create(
+          body: {
+            UserGardenRecordField.garden: tc.openInvitation.garden.id,
+            UserGardenRecordField.role: AppUserGardenRole.member.name,
+            UserGardenRecordField.user: GetIt.instance<AppState>().currentUser!.id,
+          }
+        )
+      );
+
+      await acceptInvitationAndCreateUserGardenRecord(
+        tc.openInvitation,
+        callback: testFunc
+      );
+
+      // Check list no longer has contents (i.e. callback called)
+      expect(list.isEmpty, true);
+
+      // Check methods called
+      verify(
+        () => mockInvitationsRepository.delete(id: tc.openInvitation.id)
+      ).called(1);
+      verify(
+        () => mockUserGardenRecordsRepository.create(
+          body: {
+            UserGardenRecordField.garden: tc.openInvitation.garden.id,
+            UserGardenRecordField.role: AppUserGardenRole.member.name,
+            UserGardenRecordField.user: GetIt.instance<AppState>().currentUser!.id,
+          }
+        )
+      ).called(1);
+    });
+
+    tearDown(() => GetIt.instance.reset());
+
     test("createInvitation", () async {
       final tc = TestContext();
 
@@ -64,20 +147,24 @@ void main() {
       );
 
       // UsersRepository.getList
+      final formattedDate = DateFormat(Formats.dateYMMdd).format(DateTime.now());
       final userGardenRecordsBackRelation = ""
         "${Collection.userGardenRecords}_via_${UserGardenRecordField.user}"
         ".${UserGardenRecordField.garden}";
-
-      final invitationsBackRelation = ""
+      final invitationsInviteeBackRelation = ""
         "${Collection.invitations}_via_${InvitationField.invitee}"
         ".${InvitationField.invitee}"
         ".${UserField.username}";
+      final invitationsExpiryDateBackRelation = ""
+        "${Collection.invitations}_via_${InvitationField.invitee}"
+        ".${InvitationField.expiryDate}";
       when(
         () => mockUsersRepository.getList(
           filter: ""
-          "${UserField.username} = '${tc.otherUser.username}' && "
-          "$userGardenRecordsBackRelation != '${tc.garden.id}' && "
-          "$invitationsBackRelation != '${tc.otherUser.username}'"
+            "${UserField.username} = '${tc.otherUser.username}' && "
+            "$userGardenRecordsBackRelation != '${tc.garden.id}' && "
+            "($invitationsInviteeBackRelation != '${tc.otherUser.username}' || "
+            "$invitationsExpiryDateBackRelation < '$formattedDate')"
         )
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(items: [tc.getUserRecordModel()])
@@ -107,9 +194,10 @@ void main() {
       verifyNever(
         () => mockUsersRepository.getList(
           filter: ""
-          "${UserField.username} = '${tc.otherUser.username}' && "
-          "$userGardenRecordsBackRelation != '${tc.garden.id}' && "
-          "$invitationsBackRelation != '${tc.otherUser.username}'"
+            "${UserField.username} = '${tc.otherUser.username}' && "
+            "$userGardenRecordsBackRelation != '${tc.garden.id}' && "
+            "($invitationsInviteeBackRelation != '${tc.otherUser.username}' || "
+            "$invitationsExpiryDateBackRelation < '$formattedDate')"
         )
       );
       verifyNever(
@@ -135,9 +223,10 @@ void main() {
       verifyNever(
         () => mockUsersRepository.getList(
           filter: ""
-          "${UserField.username} = '${tc.otherUser.username}' && "
-          "$userGardenRecordsBackRelation != '${tc.garden.id}' && "
-          "$invitationsBackRelation != '${tc.otherUser.username}'"
+            "${UserField.username} = '${tc.otherUser.username}' && "
+            "$userGardenRecordsBackRelation != '${tc.garden.id}' && "
+            "($invitationsInviteeBackRelation != '${tc.otherUser.username}' || "
+            "$invitationsExpiryDateBackRelation < '$formattedDate')"
         )
       );
 
@@ -153,9 +242,10 @@ void main() {
       verifyNever(
         () => mockUsersRepository.getList(
           filter: ""
-          "${UserField.username} = '${tc.otherUser.username}' && "
-          "$userGardenRecordsBackRelation != '${tc.garden.id}' && "
-          "$invitationsBackRelation != '${tc.otherUser.username}'"
+            "${UserField.username} = '${tc.otherUser.username}' && "
+            "$userGardenRecordsBackRelation != '${tc.garden.id}' && "
+            "($invitationsInviteeBackRelation != '${tc.otherUser.username}' || "
+            "$invitationsExpiryDateBackRelation < '$formattedDate')"
         )
       );
       verifyNever(
@@ -174,9 +264,10 @@ void main() {
       verify(
         () => mockUsersRepository.getList(
           filter: ""
-          "${UserField.username} = '${tc.otherUser.username}' && "
-          "$userGardenRecordsBackRelation != '${tc.garden.id}' && "
-          "$invitationsBackRelation != '${tc.otherUser.username}'"
+            "${UserField.username} = '${tc.otherUser.username}' && "
+            "$userGardenRecordsBackRelation != '${tc.garden.id}' && "
+            "($invitationsInviteeBackRelation != '${tc.otherUser.username}' || "
+            "$invitationsExpiryDateBackRelation < '$formattedDate')"
         )
       ).called(1);
       verify(
@@ -210,20 +301,24 @@ void main() {
       );
 
       // UsersRepository.getList
+      final formattedDate = DateFormat(Formats.dateYMMdd).format(DateTime.now());
       final userGardenRecordsBackRelation = ""
         "${Collection.userGardenRecords}_via_${UserGardenRecordField.user}"
         ".${UserGardenRecordField.garden}";
-
-      final invitationsBackRelation = ""
+      final invitationsInviteeBackRelation = ""
         "${Collection.invitations}_via_${InvitationField.invitee}"
         ".${InvitationField.invitee}"
         ".${UserField.username}";
+      final invitationsExpiryDateBackRelation = ""
+        "${Collection.invitations}_via_${InvitationField.invitee}"
+        ".${InvitationField.expiryDate}";
       when(
         () => mockUsersRepository.getList(
           filter: ""
-          "${UserField.username} = '${tc.otherUser.username}' && "
-          "$userGardenRecordsBackRelation != '${tc.garden.id}' && "
-          "$invitationsBackRelation != '${tc.otherUser.username}'"
+            "${UserField.username} = '${tc.otherUser.username}' && "
+            "$userGardenRecordsBackRelation != '${tc.garden.id}' && "
+            "($invitationsInviteeBackRelation != '${tc.otherUser.username}' || "
+            "$invitationsExpiryDateBackRelation < '$formattedDate')"
         )
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(items: [])
@@ -253,9 +348,10 @@ void main() {
       verifyNever(
         () => mockUsersRepository.getList(
           filter: ""
-          "${UserField.username} = '${tc.otherUser.username}' && "
-          "$userGardenRecordsBackRelation != '${tc.garden.id}' && "
-          "$invitationsBackRelation != '${tc.otherUser.username}'"
+            "${UserField.username} = '${tc.otherUser.username}' && "
+            "$userGardenRecordsBackRelation != '${tc.garden.id}' && "
+            "($invitationsInviteeBackRelation != '${tc.otherUser.username}' || "
+            "$invitationsExpiryDateBackRelation < '$formattedDate')"
         )
       );
       verifyNever(
@@ -283,9 +379,10 @@ void main() {
       verify(
         () => mockUsersRepository.getList(
           filter: ""
-          "${UserField.username} = '${tc.otherUser.username}' && "
-          "$userGardenRecordsBackRelation != '${tc.garden.id}' && "
-          "$invitationsBackRelation != '${tc.otherUser.username}'"
+            "${UserField.username} = '${tc.otherUser.username}' && "
+            "$userGardenRecordsBackRelation != '${tc.garden.id}' && "
+            "($invitationsInviteeBackRelation != '${tc.otherUser.username}' || "
+            "$invitationsExpiryDateBackRelation < '$formattedDate')"
         )
       ).called(1);
 
@@ -432,68 +529,25 @@ void main() {
 
     tearDown(() => GetIt.instance.reset());
 
-    ft.testWidgets("expireInvitation", (tester) async {
+    ft.testWidgets("deleteInvitation", (tester) async {
+      final list = [1, 2, 3];
+      void testFunc() => list.clear();
+
       final tc = TestContext();
-
-      final expirationDate = DateTime.now();
-      final expiryDateThresholdString =
-        DateFormat(Formats.dateYMMddHHms).format(expirationDate);
-
-      final appState = AppState.skipSubscribe() // use real AppState due to AppDialogViewRouter reroute
-        ..currentGarden = tc.garden
-        ..currentUser = tc.user;
 
       final getIt = GetIt.instance;
       final mockInvitationsRepository = MockInvitationsRepository();
-      final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
 
-      getIt.registerLazySingleton<AppDialogViewRouter>(() => AppDialogViewRouter());
-      getIt.registerLazySingleton<AppState>(() => appState);
       getIt.registerLazySingleton<InvitationsRepository>(
         () => mockInvitationsRepository);
-      getIt.registerLazySingleton<UserGardenRecordsRepository>(
-        () => mockUserGardenRecordsRepository
-      );
 
-      // getUserGardenRecordRole() through AppState.verify()
-      final items = ResultList<RecordModel>(items: [
-        tc.getUserGardenRecordRecordModel(role: AppUserGardenRole.administrator)
-      ]);
-      getUserGardenRecordRoleStub(
-        mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
-        userID: tc.user.id,
-        gardenID: tc.garden.id,
-        returnValue: items
-      );
-
-      // InvitationsRepository.update()
+      // InvitationsRepository.delete()
       when(
-        () => mockInvitationsRepository.update(
+        () => mockInvitationsRepository.delete(
           id: tc.openInvitation.id,
-          body: {
-            InvitationField.expiryDate:
-              DateFormat(Formats.dateYMMdd).format(expirationDate)
-          }
         )
       ).thenAnswer(
-        (_) async => (tc.getOpenInvitationRecordModel(), {})
-      );
-
-      // InvitationsRepository.getList()
-      when(
-        () => mockInvitationsRepository.getList(
-          expand: "${InvitationField.creator}, ${InvitationField.invitee}",
-          filter: ""
-            "${InvitationField.garden} = '${tc.garden.id}' "
-            "&& ${InvitationField.expiryDate} > '$expiryDateThresholdString'",
-          sort: GenericField.created
-        )
-      ).thenAnswer(
-        (_) async => ResultList<RecordModel>(items: [
-          tc.getOpenInvitationRecordModel(
-            expand: [InvitationField.creator, InvitationField.invitee]
-          ),
-        ])
+        (_) async => {}
       );
 
       await tester.pumpWidget(
@@ -502,10 +556,9 @@ void main() {
             body: Builder(
               builder: (BuildContext context) {
                 return ElevatedButton(
-                  onPressed: () => expireInvitation(
-                    context,
+                  onPressed: () => deleteInvitation(
                     tc.openInvitation.id,
-                    expirationDate: expirationDate
+                    callback: testFunc
                   ),
                   child: Text("The ElevatedButton")
                 );
@@ -515,23 +568,10 @@ void main() {
         )
       );
 
-      // Check no snackBar; no function calls
-      expect(ft.find.byType(SnackBar), ft.findsNothing);
+      expect(list.isEmpty, false);
       verifyNever(
-        () => mockUserGardenRecordsRepository.getList(
-          filter: ""
-            "${UserGardenRecordField.user} = '${tc.user.id}' && "
-            "${UserGardenRecordField.garden} = '${tc.garden.id}'",
-          sort: "-updated"
-        )
-      );
-      verifyNever(
-        () => mockInvitationsRepository.update(
+        () => mockInvitationsRepository.delete(
           id: tc.openInvitation.id,
-          body: {
-            InvitationField.expiryDate:
-              DateFormat(Formats.dateYMMdd).format(expirationDate)
-          }
         )
       );
 
@@ -539,152 +579,14 @@ void main() {
       await tester.tap(ft.find.byType(ElevatedButton));
       await tester.pumpAndSettle();
 
-      // Check snackBar appears; functions called
-      expect(ft.find.byType(SnackBar), ft.findsOneWidget);
+      // Check callback() is called
+      expect(list.isEmpty, true);
+
       verify(
-        () => mockUserGardenRecordsRepository.getList(
-          filter: ""
-            "${UserGardenRecordField.user} = '${tc.user.id}' && "
-            "${UserGardenRecordField.garden} = '${tc.garden.id}'",
-          sort: "-updated"
-        )
-      ).called(2); // verify() called twice. One for expireInvitation and one for getCurrentGardenInvitations after reroute
-      verify(
-        () => mockInvitationsRepository.update(
+        () => mockInvitationsRepository.delete(
           id: tc.openInvitation.id,
-          body: {
-            InvitationField.expiryDate:
-              DateFormat(Formats.dateYMMdd).format(expirationDate)
-          }
         )
       ).called(1);
-    });
-
-    tearDown(() => GetIt.instance.reset());
-
-    ft.testWidgets("expireInvitation PermissionException", (tester) async {
-      final tc = TestContext();
-
-      final expirationDate = DateTime.now();
-      final expiryDateThresholdString =
-        DateFormat(Formats.dateYMMddHHms).format(expirationDate);
-
-      final getIt = GetIt.instance;
-      final mockAppState = MockAppState();
-      final mockInvitationsRepository = MockInvitationsRepository();
-      final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
-
-      getIt.registerLazySingleton<AppDialogViewRouter>(() => AppDialogViewRouter());
-      getIt.registerLazySingleton<AppState>(() => mockAppState);
-      getIt.registerLazySingleton<InvitationsRepository>(
-        () => mockInvitationsRepository);
-      getIt.registerLazySingleton<UserGardenRecordsRepository>(
-        () => mockUserGardenRecordsRepository
-      );
-
-      // AppState.verify()
-      when(
-        () => mockAppState.verify([AppUserGardenPermission.expireInvitations])
-      ).thenThrow(
-        PermissionException()
-      );
-
-      // InvitationsRepository.update()
-      when(
-        () => mockInvitationsRepository.update(
-          id: tc.openInvitation.id,
-          body: {
-            InvitationField.expiryDate:
-              DateFormat(Formats.dateYMMdd).format(expirationDate)
-          }
-        )
-      ).thenAnswer(
-        (_) async => (tc.getOpenInvitationRecordModel(), {})
-      );
-
-      // InvitationsRepository.getList()
-      when(
-        () => mockInvitationsRepository.getList(
-          expand: "${InvitationField.creator}, ${InvitationField.invitee}",
-          filter: ""
-            "${InvitationField.garden} = '${tc.garden.id}' "
-            "&& ${InvitationField.expiryDate} > '$expiryDateThresholdString'",
-          sort: GenericField.created
-        )
-      ).thenAnswer(
-        (_) async => ResultList<RecordModel>(items: [
-          tc.getOpenInvitationRecordModel(
-            expand: [InvitationField.creator, InvitationField.invitee]
-          ),
-        ])
-      );
-
-      final testRouter = GoRouter(
-        initialLocation: "/test",
-        routes: [
-          GoRoute(
-            path: "/test",
-            builder: (_, __) => Scaffold(
-              body: Builder(
-                builder: (BuildContext context) {
-                  return ElevatedButton(
-                    onPressed: () => expireInvitation(context, tc.openInvitation.id),
-                    child: Text("The ElevatedButton")
-                  );
-                }
-              )
-            )
-          ),
-          GoRoute(
-            path: Routes.unauthorized,
-            builder: (_, state) => UnauthorizedPage(
-            previousRoute: state.uri.queryParameters[QueryParameters.previousRoute],
-          )
-          )
-        ]
-      );
-
-      await tester.pumpWidget(
-        MaterialApp.router(
-          routerConfig: testRouter,
-        )
-      );
-
-      // Check no snackBar; no function calls
-      expect(ft.find.byType(SnackBar), ft.findsNothing);
-      verifyNever(
-        () => mockAppState.verify([AppUserGardenPermission.expireInvitations])
-      );
-      verifyNever(
-        () => mockInvitationsRepository.update(
-          id: tc.openInvitation.id,
-          body: {
-            InvitationField.expiryDate:
-              DateFormat(Formats.dateYMMdd).format(expirationDate)
-          }
-        )
-      );
-
-      // Tap ElevatedButton (to call expireInvitation)
-      await tester.tap(ft.find.byType(ElevatedButton));
-      await tester.pumpAndSettle();
-
-      // Check verify still called
-      verify(
-        () => mockAppState.verify([AppUserGardenPermission.expireInvitations])
-      ).called(1);
-
-      // Check no snackBar and no update() call
-      expect(ft.find.byType(SnackBar), ft.findsNothing);
-      verifyNever(
-        () => mockInvitationsRepository.update(
-          id: tc.openInvitation.id,
-          body: {
-            InvitationField.expiryDate:
-              DateFormat(Formats.dateYMMdd).format(expirationDate)
-          }
-        )
-      );
     });
 
     tearDown(() => GetIt.instance.reset());
@@ -917,5 +819,193 @@ void main() {
 
       expect(getInvitationTypeFromString("invalidValue"), null);
     });
+
+    test("getInvitationsByInvitee", () async {
+      final tc = TestContext();
+
+      final expiryDateThreshold = DateTime.now();
+      final expiryDateThresholdString =
+        DateFormat(Formats.dateYMMddHHms).format(expiryDateThreshold);
+
+      final getIt = GetIt.instance;
+      final mockInvitationsRepository = MockInvitationsRepository();
+      final mockUsersRepository = MockUsersRepository();
+
+      getIt.registerLazySingleton<InvitationsRepository>(
+        () => mockInvitationsRepository
+      );
+      getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
+
+      // mockInvitationsRepository.getList
+      when(
+        () => mockInvitationsRepository.getList(
+          expand: ""
+            "${InvitationField.creator}, ${InvitationField.invitee}, ${InvitationField.garden}",
+          filter: ""
+            "${InvitationField.invitee} = '${tc.user.id}' "
+            "&& ${InvitationField.expiryDate} > '$expiryDateThresholdString'",
+          sort: "${GenericField.created}, ${InvitationField.expiryDate}",
+        )
+      ).thenAnswer(
+        (_) async => ResultList<RecordModel>(items: [
+          tc.getPrivateInvitationRecordModel(
+            expand: [
+              InvitationField.creator, InvitationField.invitee, InvitationField.garden
+            ]
+          ),
+          tc.getPrivateInvitationRecordModel(
+            expand: [
+              InvitationField.creator, InvitationField.invitee, InvitationField.garden
+            ]
+          ),
+        ])
+      );
+
+      // UsersRepository.getFirstListItem()
+      usersRepositoryGetFirstListItemStub(
+        mockUsersRepository: mockUsersRepository,
+        userID: tc.user.id,
+        returnValue: tc.getUserRecordModel()
+      );
+
+      final invitationsList = await getInvitationsByInvitee(
+        tc.user.id,
+        expiryDateThreshold: expiryDateThreshold,
+      );
+
+      expect(invitationsList.length, 2);
+    });
+
+    tearDown(() => GetIt.instance.reset());
+
+    test("validateInvitationUUIDAndCreateUserGardenRecord", () async {
+      final list = [""];
+      void testSuccess(String string) => list[0] = string;
+      void testError(String string) => list[0] = string;
+
+      final tc = TestContext();
+
+      final expiryDateThreshold = DateTime.now();
+      final expiryDateThresholdString =
+        DateFormat(Formats.dateYMMddHHms).format(expiryDateThreshold);
+
+      final appState = AppState.skipSubscribe()
+        ..currentUser = tc.user;
+
+      final getIt = GetIt.instance;
+      final mockInvitationsRepository = MockInvitationsRepository();
+      final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
+
+      getIt.registerLazySingleton<AppState>(() => appState);
+      getIt.registerLazySingleton<InvitationsRepository>(
+        () => mockInvitationsRepository
+      );
+      getIt.registerLazySingleton<UserGardenRecordsRepository>(
+        () => mockUserGardenRecordsRepository
+      );
+
+      // mockInvitationsRepository.getList
+      when(
+        () => mockInvitationsRepository.getList(
+          expand: InvitationField.garden,
+          filter: ""
+            "${InvitationField.uuid} = '${tc.openInvitation.uuid}' "
+            "&& ${InvitationField.expiryDate} > '$expiryDateThresholdString'",
+        )
+      ).thenAnswer(
+        (_) async => ResultList<RecordModel>(items: [
+          tc.getPrivateInvitationRecordModel(
+            expand: [
+              InvitationField.creator, InvitationField.invitee, InvitationField.garden
+            ]
+          ),
+        ])
+      );
+
+      // UserGardenRecordsRepository.create
+      when(
+        () => mockUserGardenRecordsRepository.create(
+          body: {
+            UserGardenRecordField.garden: tc.openInvitation.garden.id,
+            UserGardenRecordField.role: AppUserGardenRole.member.name,
+            UserGardenRecordField.user: tc.user.id,
+          }
+        )
+      ).thenAnswer(
+        (_) async => (tc.getUserGardenRecordRecordModel(), {})
+      );
+
+      // Check no methods called and list has "" as first
+      expect(list.first, "");
+      verifyNever(
+        () => mockInvitationsRepository.getList(
+          expand: InvitationField.garden,
+          filter: ""
+            "${InvitationField.uuid} = '${tc.openInvitation.uuid}' "
+            "&& ${InvitationField.expiryDate} > '$expiryDateThresholdString'",
+        )
+      );
+      verifyNever(
+        () => mockUserGardenRecordsRepository.create(
+          body: {
+            UserGardenRecordField.garden: tc.openInvitation.garden.id,
+            UserGardenRecordField.role: AppUserGardenRole.member.name,
+            UserGardenRecordField.user: tc.user.id,
+          }
+        )
+      );
+
+      await validateInvitationUUIDAndCreateUserGardenRecord(
+        tc.openInvitation.uuid!,
+        successCallback: testSuccess,
+        errorCallback: testError,
+      );
+
+      // Check methods called and list now has tc.garden.name as first
+      expect(list.first, tc.garden.name);
+      verify(
+        () => mockInvitationsRepository.getList(
+          expand: InvitationField.garden,
+          filter: ""
+            "${InvitationField.uuid} = '${tc.openInvitation.uuid}' "
+            "&& ${InvitationField.expiryDate} > '$expiryDateThresholdString'",
+        )
+      ).called(1);
+      verify(
+        () => mockUserGardenRecordsRepository.create(
+          body: {
+            UserGardenRecordField.garden: tc.openInvitation.garden.id,
+            UserGardenRecordField.role: AppUserGardenRole.member.name,
+            UserGardenRecordField.user: tc.user.id,
+          }
+        )
+      ).called(1);
+
+      // UserGardenRecordsRepository.create. Returns non-empty errorsMap
+      when(
+        () => mockUserGardenRecordsRepository.create(
+          body: {
+            UserGardenRecordField.garden: tc.openInvitation.garden.id,
+            UserGardenRecordField.role: AppUserGardenRole.member.name,
+            UserGardenRecordField.user: tc.user.id,
+          }
+        )
+      ).thenAnswer(
+        (_) async => (tc.getUserGardenRecordRecordModel(), {"error": "error"})
+      );
+
+      await validateInvitationUUIDAndCreateUserGardenRecord(
+        tc.openInvitation.uuid!,
+        successCallback: testSuccess,
+        errorCallback: testError,
+      );
+
+      // Check list now has error message as first
+      // (because a non-empty errorsMap was returned during create)
+      expect(list.first, InvitationsText.createUserGardenRecordError);
+
+    });
+
+     tearDown(() => GetIt.instance.reset());
   });
 }

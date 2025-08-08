@@ -69,7 +69,7 @@ class _AppCurrencyPickerFormFieldState extends State<AppCurrencyPickerFormField>
 
   @override
   Widget build(BuildContext context) {
-    var showDialogButton = IconButton(
+    final showDialogButton = IconButton(
       onPressed: () => showCurrencyPicker(
         context,
         _setControllerText,

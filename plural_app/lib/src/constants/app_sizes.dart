@@ -19,7 +19,6 @@ class AppConstraints {
   static const c100 = 100.0;
   static const c150 = 150.0;
   static const c180 = 180.0;
-  static const c215 = 215.0;
   static const c250 = 250.0;
   static const c300 = 300.0;
   static const c350 = 350.0;

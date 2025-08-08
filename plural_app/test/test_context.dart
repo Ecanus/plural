@@ -320,7 +320,10 @@ class TestContext {
       };
     }
 
-    if (expandFields.contains(UserGardenRecordField.garden)) {
+    if (
+        expandFields.contains(UserGardenRecordField.garden) ||
+        expandFields.contains(InvitationField.garden)
+      ) {
       map[UserGardenRecordField.garden] = {
         GenericField.id: garden.id,
         GenericField.created: "1993-11-11",

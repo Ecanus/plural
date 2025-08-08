@@ -10,9 +10,7 @@ import 'package:plural_app/src/common_widgets/log_out_button.dart';
 
 // Auth
 import 'package:plural_app/src/features/authentication/presentation/delete_account_button.dart';
-
-// Gardens
-import 'package:plural_app/src/features/gardens/presentation/landing_page_settings_tab.dart';
+import 'package:plural_app/src/features/authentication/presentation/landing_page_settings_tab.dart';
 
 // Utils
 import 'package:plural_app/src/utils/app_state.dart';
@@ -21,7 +19,7 @@ import 'package:plural_app/src/utils/app_state.dart';
 import '../../../test_context.dart';
 
 void main() {
-  group("LandingPageSettingsTab test", () {
+  group("LandingPageSettingsTab", () {
     testWidgets("widgets", (tester) async {
       final tc = TestContext();
       final appState = AppState()
@@ -36,7 +34,8 @@ void main() {
           home: Scaffold(
             body: LandingPageSettingsTab(),
           ),
-        ));
+        )
+      );
 
       // Check widgets are rendered
       expect(find.byType(AppCurrencyPickerFormField), findsOneWidget);
@@ -45,5 +44,7 @@ void main() {
       expect(find.byType(DeleteAccountButton), findsOneWidget);
       expect(find.byType(LogOutButton), findsOneWidget);
     });
+
+    tearDown(() => GetIt.instance.reset());
   });
 }

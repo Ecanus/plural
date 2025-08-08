@@ -55,6 +55,44 @@ void main() {
       expect(errorsMap2.isEmpty, false);
     });
 
+    test("delete", () async {
+      final tc = TestContext();
+
+      final pb = MockPocketBase();
+      final recordService = MockRecordService();
+      final invitationsRepository = InvitationsRepository(pb: pb);
+
+      // pb.collection()
+      when(
+        () => pb.collection(Collection.invitations)
+      ).thenAnswer(
+        (_) => recordService as RecordService
+      );
+
+      // RecordService.delete()
+      when(
+        () => recordService.delete(any())
+      ).thenAnswer(
+        (_) async => {}
+      );
+
+      verifyNever(() => recordService.delete(any()));
+      await invitationsRepository.delete(id: tc.openInvitation.id);
+      verify(() => recordService.delete(any())).called(1);
+
+      // RecordService.delete(), Now throws exception
+      when(
+        () => recordService.delete(any())
+      ).thenThrow(
+        tc.clientException
+      );
+      // Check a ClientException is thrown
+      expect(
+        () async => await invitationsRepository.delete(id: tc.openInvitation.id),
+        throwsA(predicate((e) => e is ClientException))
+      );
+    });
+
     test("getList", () async {
       final tc = TestContext();
 

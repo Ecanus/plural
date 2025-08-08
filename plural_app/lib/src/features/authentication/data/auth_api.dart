@@ -199,7 +199,7 @@ Future<Map<AppUserGardenRole, List<AppUserGardenRecord>>> getCurrentGardenUserGa
       sort: "${UserGardenRecordField.user}.${UserField.username}"
     );
 
-    for (var record in resultList.items) {
+    for (final record in resultList.items) {
       final recordJson = record.toJson();
 
       final userRecord = recordJson[QueryKey.expand][UserGardenRecordField.user];
@@ -292,7 +292,6 @@ List<AppUserGardenPermission> getUserGardenPermissionGroup(AppUserGardenRole rol
       AppUserGardenPermission.createInvitations,
       AppUserGardenPermission.deleteMemberAsks,
       AppUserGardenPermission.expelMembers,
-      AppUserGardenPermission.expireInvitations,
       AppUserGardenPermission.viewActiveInvitations,
       AppUserGardenPermission.viewAdminGardenTimeline,
       AppUserGardenPermission.viewAllUsers,

@@ -14,15 +14,16 @@ import 'package:plural_app/src/features/asks/data/asks_repository.dart';
 import 'package:plural_app/src/features/authentication/data/user_garden_records_repository.dart';
 import 'package:plural_app/src/features/authentication/data/user_settings_repository.dart';
 import 'package:plural_app/src/features/authentication/data/users_repository.dart';
+import 'package:plural_app/src/features/authentication/presentation/landing_page_settings_tab.dart';
 
 // Gardens
 import 'package:plural_app/src/features/gardens/data/gardens_repository.dart';
 import 'package:plural_app/src/features/gardens/presentation/landing_page.dart';
 import 'package:plural_app/src/features/gardens/presentation/landing_page_gardens_tab.dart';
-import 'package:plural_app/src/features/gardens/presentation/landing_page_settings_tab.dart';
 
-// Localization
-import 'package:plural_app/src/localization/lang_en.dart';
+// Invitations
+import 'package:plural_app/src/features/invitations/data/invitations_repository.dart';
+import 'package:plural_app/src/features/invitations/presentation/landing_page_invitations_tab.dart';
 
 // Utils
 import 'package:plural_app/src/utils/app_state.dart';
@@ -44,12 +45,16 @@ void main() {
 
       final getIt = GetIt.instance;
       final mockGardensRepository = MockGardensRepository();
+      final mockInvitationsRepository = MockInvitationsRepository();
       final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
       final mockUserSettingsRepository = MockUserSettingsRepository();
       final mockUsersRepository = MockUsersRepository();
 
       getIt.registerLazySingleton<AppState>(() => appState);
       getIt.registerLazySingleton<GardensRepository>(() => mockGardensRepository);
+      getIt.registerLazySingleton<InvitationsRepository>(
+        () => mockInvitationsRepository
+      );
       getIt.registerLazySingleton<PocketBase>(() => pb);
       getIt.registerLazySingleton<UserSettingsRepository>(() => mockUserSettingsRepository);
       getIt.registerLazySingleton<UserGardenRecordsRepository>(
@@ -104,6 +109,29 @@ void main() {
         (_) async => tc.getUserRecordModel()
       );
 
+      // mockInvitationsRepository.getList
+      when(
+        () => mockInvitationsRepository.getList(
+          expand: ""
+            "${InvitationField.creator}, ${InvitationField.invitee}, ${InvitationField.garden}",
+          filter: any(named: "filter"), // use filter because of internal DateTime.now() call
+          sort: "${GenericField.created}, ${InvitationField.expiryDate}",
+        )
+      ).thenAnswer(
+        (_) async => ResultList<RecordModel>(items: [
+          tc.getPrivateInvitationRecordModel(
+            expand: [
+              InvitationField.creator, InvitationField.invitee, InvitationField.garden
+            ]
+          ),
+          tc.getPrivateInvitationRecordModel(
+            expand: [
+              InvitationField.creator, InvitationField.invitee, InvitationField.garden
+            ]
+          ),
+        ])
+      );
+
       await tester.pumpWidget(
         MaterialApp(
           home: LandingPage(exitedGardenID: null,),
@@ -111,21 +139,34 @@ void main() {
       );
 
       // Check tabs are rendered
-      final gardensTab = find.text(LandingPageText.gardens);
-      final settingsTab = find.text(LandingPageText.settings);
+      final gardensTab = find.byIcon(Icons.local_florist);
+      final invitationsTab = find.byIcon(Icons.mail);
+      final settingsTab = find.byIcon(Icons.settings);
       expect(gardensTab, findsOneWidget);
+      expect(invitationsTab, findsOneWidget);
       expect(settingsTab, findsOneWidget);
 
-      // Check only Gardens tab rendered fully; Settings tab not rendered
+      // Check only Gardens tab rendered fully; Settings & Invitations tab not rendered
       expect(find.byType(LandingPageGardensTab), findsOneWidget);
+      expect(find.byType(LandingPageSettingsTab), findsNothing);
+      expect(find.byType(LandingPageInvitationsTab), findsNothing);
+
+      // Tap on Invitations tab
+      await tester.tap(invitationsTab);
+      await tester.pumpAndSettle();
+
+      // Check only Invitaions tab rendered fully; Gardens & Settings tab not rendered
+      expect(find.byType(LandingPageGardensTab), findsNothing);
+      expect(find.byType(LandingPageInvitationsTab), findsOneWidget);
       expect(find.byType(LandingPageSettingsTab), findsNothing);
 
       // Tap on Settings tab
       await tester.tap(settingsTab);
       await tester.pumpAndSettle();
 
-      // Check only Settings tab rendered fully; Gardens tab not rendered
+      // Check only Settings tab rendered fully; Gardens & Invitations tab not rendered
       expect(find.byType(LandingPageGardensTab), findsNothing);
+      expect(find.byType(LandingPageInvitationsTab), findsNothing);
       expect(find.byType(LandingPageSettingsTab), findsOneWidget);
     });
 
