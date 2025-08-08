@@ -92,7 +92,7 @@ void main() {
 
       // Check expected values are found
       expect(find.byType(ListedAsksView), findsOneWidget);
-      expect(find.byType(EmptyListedAskTilesMessage), findsOneWidget);
+      expect(find.byType(EmptyListedAsksViewMessage), findsOneWidget);
       expect(find.byType(ListedAskTile), findsNothing);
       expect(find.byType(AppDialogFooterBuffer), findsOneWidget);
       expect(find.byType(AppDialogNavFooter), findsOneWidget);

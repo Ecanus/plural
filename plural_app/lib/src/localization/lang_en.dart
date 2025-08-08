@@ -9,8 +9,14 @@ class AdminInvitationViewText {
     "2) The user is not already a member of this Garden\n"
     "3) An Invitation to this user is not already active";
 
-  static const expires = "expires:";
   static const deleteInvitation = "Delete Invitation";
+
+  static const emptyAdminListedInvitationsViewOpen = ""
+    "No active open Invitations found";
+  static const emptyAdminListedInvitationsViewPrivate = ""
+    "No active private Invitations found";
+
+  static const expires = "expires:";
   static const expiryDate = "Expiry date";
 
   static const goToActiveInvitations = "Go to Active Invitations";
@@ -127,8 +133,8 @@ class AskViewText {
   static const deleteAsk = "Delete Ask";
   static const description = "Description";
 
-  static const emptyListedAskTilesMessage = "No Asks found";
-  static const emptyListedAskTilesSubtitle = ""
+  static const emptyListedAsksView = "No Asks found";
+  static const emptyListedAsksViewSubtitle = ""
     "Click the '$createAsk' button below to get started.";
 
   static const goToListedAsks = "Go to My Asks";

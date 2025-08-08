@@ -41,7 +41,7 @@ Future<void> submitCreate(
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
 
       // Route to Listed Asks View
-      GetIt.instance<AppDialogViewRouter>().routeToAdminOptionsView();
+      GetIt.instance<AppDialogViewRouter>().routeToAdminListedInvitationsView(context);
     } else {
       // Add errors to corresponding fields
       appForm.setErrors(errorsMap: errorsMap!);

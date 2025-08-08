@@ -3,12 +3,14 @@ import 'package:flutter_test/flutter_test.dart' as ft;
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:pocketbase/pocketbase.dart';
 import 'package:test/test.dart';
 
 // Constants
 import 'package:plural_app/src/constants/fields.dart';
 
 // Auth
+import 'package:plural_app/src/features/authentication/data/user_garden_records_repository.dart';
 import 'package:plural_app/src/features/authentication/data/users_repository.dart';
 import 'package:plural_app/src/features/authentication/domain/app_user_garden_record.dart';
 
@@ -25,6 +27,7 @@ import 'package:plural_app/src/utils/app_state.dart';
 // Tests
 import '../../../test_context.dart';
 import '../../../test_mocks.dart';
+import '../../../test_stubs.dart';
 
 void main() {
   group("submitCreate", () {
@@ -35,6 +38,10 @@ void main() {
       final tc = TestContext();
       final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
+      final appState = AppState.skipSubscribe()
+        ..currentGarden = tc.garden
+        ..currentUser = tc.user;
+
       final appForm = AppForm.fromMap(Invitation.emptyMap())
         ..setValue(
           fieldName: InvitationField.type,
@@ -42,22 +49,28 @@ void main() {
         ..setValue(fieldName: AppFormFields.rebuild, value: func, isAux: true);
 
       final getIt = GetIt.instance;
-      final mockAppDialogViewRouter = MockAppDialogViewRouter();
-      final mockAppState = MockAppState();
       final mockInvitationsRepository = MockInvitationsRepository();
+      final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
       final mockUsersRepository = MockUsersRepository();
 
-      getIt.registerLazySingleton<AppDialogViewRouter>(() => mockAppDialogViewRouter);
-      getIt.registerLazySingleton<AppState>(() => mockAppState);
+      getIt.registerLazySingleton<AppDialogViewRouter>(() => AppDialogViewRouter());
+      getIt.registerLazySingleton<AppState>(() => appState);
       getIt.registerLazySingleton<InvitationsRepository>(
         () => mockInvitationsRepository);
       getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
+      getIt.registerLazySingleton<UserGardenRecordsRepository>(
+        () => mockUserGardenRecordsRepository
+      );
 
-      // AppState.verify()
-      when(
-        () => mockAppState.verify([AppUserGardenPermission.createInvitations])
-      ).thenAnswer(
-        (_) async => {}
+      // getUserGardenRecordRole() through AppState.verify()
+      final items = ResultList<RecordModel>(items: [
+        tc.getUserGardenRecordRecordModel(role: AppUserGardenRole.administrator)
+      ]);
+      getUserGardenRecordRoleStub(
+        mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
+        userID: tc.user.id,
+        gardenID: tc.garden.id,
+        returnValue: items
       );
 
       // InvitationsRepository.create (Open Invitation)
@@ -69,11 +82,22 @@ void main() {
         (_) async => (tc.getOpenInvitationRecordModel(), {})
       );
 
-      // AppDialogViewRouter.routeToAdminOptionsView()
+      // InvitationsRepository.getList() via getCurrentGardenInvitations (due to reroute)
       when(
-        () => mockAppDialogViewRouter.routeToAdminOptionsView()
+        () => mockInvitationsRepository.getList(
+          expand: "${InvitationField.creator}, ${InvitationField.invitee}",
+          filter: any(named: "filter"), // use any because of internal DateTime.now() call
+          sort: GenericField.created
+        )
       ).thenAnswer(
-        (_) async => {}
+        (_) async => ResultList<RecordModel>(items: [
+          tc.getOpenInvitationRecordModel(
+            expand: [InvitationField.creator, InvitationField.invitee]
+          ),
+          tc.getPrivateInvitationRecordModel(
+            expand: [InvitationField.creator, InvitationField.invitee]
+          ),
+        ])
       );
 
       await tester.pumpWidget(
@@ -101,13 +125,15 @@ void main() {
       // Check no function calls yet; no snackBar
       expect(testList.isEmpty, false);
       verifyNever(
-        () => mockAppState.verify([AppUserGardenPermission.createInvitations])
+        () => mockUserGardenRecordsRepository.getList(
+          filter: ""
+            "${UserGardenRecordField.user} = '${tc.user.id}' && "
+            "${UserGardenRecordField.garden} = '${tc.garden.id}'",
+          sort: "-updated"
+        )
       );
       verifyNever(
         () => mockInvitationsRepository.create(body: appForm.fields)
-      );
-      verifyNever(
-        () => mockAppDialogViewRouter.routeToAdminOptionsView()
       );
       expect(ft.find.byType(SnackBar), ft.findsNothing);
 
@@ -118,13 +144,15 @@ void main() {
       // Check function calls; snackBar shows; testList still not empty (i.e. no error)
       expect(testList.isEmpty, false);
       verify(
-        () => mockAppState.verify([AppUserGardenPermission.createInvitations])
-      ).called(1);
+        () => mockUserGardenRecordsRepository.getList(
+          filter: ""
+            "${UserGardenRecordField.user} = '${tc.user.id}' && "
+            "${UserGardenRecordField.garden} = '${tc.garden.id}'",
+          sort: "-updated"
+        )
+      ).called(2); // verify called for both createInvitation() and getCurrentGardenInvitations() (after reroute)
       verify(
         () => mockInvitationsRepository.create(body: appForm.fields)
-      ).called(1);
-      verify(
-        () => mockAppDialogViewRouter.routeToAdminOptionsView()
       ).called(1);
       expect(formKey.currentState!.validate(), true);
       expect(ft.find.byType(SnackBar), ft.findsOneWidget);
@@ -145,12 +173,10 @@ void main() {
         ..setValue(fieldName: AppFormFields.rebuild, value: func, isAux: true);
 
       final getIt = GetIt.instance;
-      final mockAppDialogViewRouter = MockAppDialogViewRouter();
       final mockAppState = MockAppState();
       final mockInvitationsRepository = MockInvitationsRepository();
       final mockUsersRepository = MockUsersRepository();
 
-      getIt.registerLazySingleton<AppDialogViewRouter>(() => mockAppDialogViewRouter);
       getIt.registerLazySingleton<AppState>(() => mockAppState);
       getIt.registerLazySingleton<InvitationsRepository>(
         () => mockInvitationsRepository);
@@ -170,13 +196,6 @@ void main() {
         )
       ).thenAnswer(
         (_) async => (null, {InvitationField.type: "Error for type"})
-      );
-
-      // AppDialogViewRouter.routeToAdminOptionsView()
-      when(
-        () => mockAppDialogViewRouter.routeToAdminOptionsView()
-      ).thenAnswer(
-        (_) async => {}
       );
 
       await tester.pumpWidget(
@@ -209,9 +228,6 @@ void main() {
       verifyNever(
         () => mockInvitationsRepository.create(body: appForm.fields)
       );
-      verifyNever(
-        () => mockAppDialogViewRouter.routeToAdminOptionsView()
-      );
       expect(ft.find.byType(SnackBar), ft.findsNothing);
 
       // Tap ElevatedButton (to call submitCreate)
@@ -228,11 +244,6 @@ void main() {
       ).called(1);
       expect(formKey.currentState!.validate(), true);
       expect(ft.find.byType(SnackBar), ft.findsNothing);
-
-      // No reroute
-      verifyNever(
-        () => mockAppDialogViewRouter.routeToAdminOptionsView()
-      );
     });
 
     tearDown(() => GetIt.instance.reset());
@@ -250,12 +261,10 @@ void main() {
         ..setValue(fieldName: AppFormFields.rebuild, value: func, isAux: true);
 
       final getIt = GetIt.instance;
-      final mockAppDialogViewRouter = MockAppDialogViewRouter();
       final mockAppState = MockAppState();
       final mockInvitationsRepository = MockInvitationsRepository();
       final mockUsersRepository = MockUsersRepository();
 
-      getIt.registerLazySingleton<AppDialogViewRouter>(() => mockAppDialogViewRouter);
       getIt.registerLazySingleton<AppState>(() => mockAppState);
       getIt.registerLazySingleton<InvitationsRepository>(
         () => mockInvitationsRepository);
@@ -275,13 +284,6 @@ void main() {
         )
       ).thenAnswer(
         (_) async => (null, {InvitationField.type: "Error for type"})
-      );
-
-      // AppDialogViewRouter.routeToAdminOptionsView()
-      when(
-        () => mockAppDialogViewRouter.routeToAdminOptionsView()
-      ).thenAnswer(
-        (_) async => {}
       );
 
       await tester.pumpWidget(
@@ -317,9 +319,6 @@ void main() {
       verifyNever(
         () => mockInvitationsRepository.create(body: appForm.fields)
       );
-      verifyNever(
-        () => mockAppDialogViewRouter.routeToAdminOptionsView()
-      );
       expect(ft.find.byType(SnackBar), ft.findsNothing);
 
       // Tap ElevatedButton (to call submitCreate)
@@ -336,11 +335,6 @@ void main() {
       );
       expect(formKey.currentState!.validate(), false);
       expect(ft.find.byType(SnackBar), ft.findsNothing);
-
-      // No reroute
-      verifyNever(
-        () => mockAppDialogViewRouter.routeToAdminOptionsView()
-      );
     });
 
     tearDown(() => GetIt.instance.reset());

@@ -45,14 +45,18 @@ class AdminListedInvitationsView extends StatelessWidget {
               gapH10,
               SizedBox(
                 height: AppHeights.h250,
-                child: ListView.builder(
-                  itemCount: invitationsMap[InvitationType.private]!.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return AdminListedInvitationTile(
-                      invitation: invitationsMap[InvitationType.private]![index]
-                    );
-                  },
-                ),
+                child: invitationsMap[InvitationType.private]!.isEmpty ?
+                  EmptyListedInvitationsViewMessage(
+                    text: AdminInvitationViewText.emptyAdminListedInvitationsViewPrivate
+                  ) :
+                  ListView.builder(
+                    itemCount: invitationsMap[InvitationType.private]!.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return AdminListedInvitationTile(
+                        invitation: invitationsMap[InvitationType.private]![index]
+                      );
+                    },
+                  ),
               ),
               gapH40,
               AppDialogCategoryHeader(
@@ -64,14 +68,18 @@ class AdminListedInvitationsView extends StatelessWidget {
               gapH10,
               SizedBox(
                 height: AppHeights.h250,
-                child: ListView.builder(
-                  itemCount: invitationsMap[InvitationType.open]!.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return AdminListedInvitationTile(
-                      invitation: invitationsMap[InvitationType.open]![index]
-                    );
-                  },
-                ),
+                child: invitationsMap[InvitationType.open]!.isEmpty ?
+                  EmptyListedInvitationsViewMessage(
+                    text: AdminInvitationViewText.emptyAdminListedInvitationsViewOpen
+                  ) :
+                  ListView.builder(
+                    itemCount: invitationsMap[InvitationType.open]!.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return AdminListedInvitationTile(
+                        invitation: invitationsMap[InvitationType.open]![index]
+                      );
+                    },
+                  ),
               ),
             ],
           ),
@@ -92,6 +100,32 @@ class AdminListedInvitationsView extends StatelessWidget {
         ),
         AppDialogFooter(title: AppDialogFooterText.adminListedInvitations)
       ],
+    );
+  }
+}
+
+class EmptyListedInvitationsViewMessage extends StatelessWidget {
+  const EmptyListedInvitationsViewMessage({
+    required this.text,
+  });
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            text,
+            style: TextStyle(
+              fontSize: AppFontSizes.s13,
+              fontStyle: FontStyle.italic
+            )
+          ),
+        ],
+      ),
     );
   }
 }
