@@ -10,8 +10,6 @@ import 'package:plural_app/src/common_widgets/log_out_button.dart';
 
 // Auth
 import 'package:plural_app/src/features/authentication/presentation/delete_account_button.dart';
-
-// Gardens
 import 'package:plural_app/src/features/authentication/presentation/landing_page_settings_tab.dart';
 
 // Utils
