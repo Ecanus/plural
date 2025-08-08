@@ -102,7 +102,7 @@ class ConfirmExpireInvitationDialog extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(AppBorderRadii.r15),
         ),
-        child: Column( // ListView instead of Column because test keeps getting overflow error with Column
+        child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Row(
@@ -150,7 +150,7 @@ class ConfirmExpireInvitationDialog extends StatelessWidget {
                       deleteInvitation(invitationID, callback: () {
                         if (context.mounted) {
                           final snackBar = AppSnackBars.getSnackBar(
-                            SnackBarText.invitationDeleted,
+                            SnackBarText.deletedInvitation,
                             showCloseIcon: false,
                             snackbarType: SnackbarType.success
                           );

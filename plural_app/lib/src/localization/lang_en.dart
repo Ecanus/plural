@@ -281,13 +281,12 @@ class SnackBarText {
 
   static const declinedInvitation = "Invitation declined";
   static const deleteAskSuccess = "Ask successfully deleted";
+  static const deletedInvitation = "Invitation deleted";
   static const deletedUserAccount = "Your account has been deleted";
   static const deletedUserAccountFailed = ""
     "An error occurred while trying to delete your account";
 
   static const expelUserSuccess = "Successfully expelled user:";
-
-  static const invitationDeleted = "Invitation deleted";
 
   static const sentPasswordResetEmail = "Password reset instructions have been sent to";
   static const sentUserVerificationEmail = "A verification email has been sent to";

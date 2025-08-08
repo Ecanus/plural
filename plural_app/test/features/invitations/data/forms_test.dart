@@ -150,7 +150,7 @@ void main() {
             "${UserGardenRecordField.garden} = '${tc.garden.id}'",
           sort: "-updated"
         )
-      ).called(2); // verify called for both createInvitation() and getCurrentGardenInvitations() (after reroute)
+      ).called(2); // verify() called for both createInvitation() and getCurrentGardenInvitations() (after reroute)
       verify(
         () => mockInvitationsRepository.create(body: appForm.fields)
       ).called(1);

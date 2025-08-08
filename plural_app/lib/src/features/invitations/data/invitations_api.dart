@@ -57,7 +57,7 @@ Future<void> acceptInvitationAndCreateUserGardenRecord(
   callback();
 }
 
-/// An action. Attemps to create a new [Invitation] record with the values passed in
+/// An action. Attempts to create a new [Invitation] record with the values passed in
 /// [map].
 ///
 /// Returns the created [RecordModel] and an empty map if created successfully,
@@ -226,7 +226,7 @@ Future<Map<InvitationType, List<Invitation>>> getCurrentGardenInvitations(
   }
 }
 
-/// Queries on the [Invitation] collection to retrieve the record with a matching
+/// Queries on the [Invitation] collection to retrieve the records with a matching
 /// invitee value, and expiryDate greater than [expiryDateThreshold].
 Future<List<Invitation>> getInvitationsByInvitee(
   String inviteeID, {
@@ -280,7 +280,7 @@ InvitationType? getInvitationTypeFromString(String typeString) {
 }
 
 /// Checks that there exists an [Invitation] with [uuid] and, if valid, creates a
-/// [UserGardenRecord] to that Invitation's corresponding [Garden].
+/// [UserGardenRecord] for that Invitation's corresponding [Garden].
 Future<void> validateInvitationUUIDAndCreateUserGardenRecord(
   String uuid, {
   required void Function(String) successCallback,
