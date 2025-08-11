@@ -37,6 +37,7 @@ class AdminInvitationViewText {
 class AdminCurrentGardenSettingsViewText {
   static const returnToGardenPage = "Return to Garden";
 
+  static const doDocument = "Do Document";
   static const name = "Garden Name";
 }
 
@@ -292,7 +293,7 @@ class SnackBarText {
   static const sentUserVerificationEmail = "A verification email has been sent to";
 
   static const updateAskSuccess = "Ask successfully updated!";
-  static const updateGardenNameSuccess = "Garden name successfully changed";
+  static const updateGardenSuccess = "Garden successfully updated";
   static const updateUserGardenRoleSuccess = "User role successfully changed";
   static const updateUserSettingsSuccess = "Settings updated";
 

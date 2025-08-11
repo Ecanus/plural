@@ -23,6 +23,7 @@ class AppTextFormField extends StatefulWidget {
     this.label = "",
     this.maxLength = AppMaxLengths.max20,
     this.maxLines = AppMaxLines.max1,
+    this.minLines,
     this.paddingBottom = AppPaddings.p20,
     this.paddingTop = AppPaddings.p20,
     this.suffixIcon,
@@ -39,6 +40,7 @@ class AppTextFormField extends StatefulWidget {
   final String label;
   final int maxLength;
   final int? maxLines;
+  final int? minLines;
   final double paddingBottom;
   final double paddingTop;
   final Widget? suffixIcon;
@@ -106,6 +108,7 @@ class _AppTextFormFieldState extends State<AppTextFormField> {
           widget.maxLength
         ),
         maxLines: widget.maxLines,
+        minLines: widget.minLines,
         onSaved: (value) => widget.appForm.save(
           fieldName: widget.fieldName,
           value: value,

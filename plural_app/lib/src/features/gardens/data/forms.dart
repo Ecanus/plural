@@ -28,11 +28,11 @@ Future<void> submitUpdate(
     formKey.currentState!.save();
 
     // Update DB (should also rebuild Garden Timeline via SubscribeTo)
-    final (record, errorsMap) = await updateGardenName(context, appForm.fields);
+    final (record, errorsMap) = await updateGarden(context, appForm.fields);
 
     if (record != null && context.mounted) {
       snackBar = AppSnackBars.getSnackBar(
-        SnackBarText.updateGardenNameSuccess,
+        SnackBarText.updateGardenSuccess,
         snackbarType: SnackbarType.success
       );
 

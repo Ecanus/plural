@@ -27,6 +27,7 @@ void main() {
 
       final record = {
         GardenField.doDocument: "Do Document!",
+        GardenField.doDocumentEditDate: "2000-01-31",
         GenericField.id: "TESTGARDENFROMJSON",
         GardenField.name: "Daisies"
       };
@@ -44,6 +45,7 @@ void main() {
       final garden = Garden(
         creator: tc.user,
         doDocument: "Test the Do Document",
+        doDocumentEditDate: DateTime(2000, 1, 31),
         id: "TESTGARDEN2",
         name: "Rosemaries",
       );
@@ -51,6 +53,7 @@ void main() {
       final map = {
         GardenField.creator: "TESTUSER1",
         GardenField.doDocument: "Test the Do Document",
+        GardenField.doDocumentEditDate: DateTime(2000, 1, 31),
         GenericField.id: "TESTGARDEN2",
         GardenField.name: "Rosemaries"
       };
@@ -62,6 +65,7 @@ void main() {
       final emptyMap = {
         GardenField.creator: null,
         GardenField.doDocument: null,
+        GardenField.doDocumentEditDate: null,
         GenericField.id: null,
         GardenField.name: null
       };
@@ -87,6 +91,7 @@ void main() {
       final sameIDgarden = Garden(
         creator: differentUser,
         doDocument: tc.garden.doDocument,
+        doDocumentEditDate: DateTime.now(),
         id: garden.id,
         name: "sameIDGarden"
       );
@@ -97,6 +102,7 @@ void main() {
       final differentIDGarden = Garden(
         creator: tc.user,
         doDocument: tc.garden.doDocument,
+        doDocumentEditDate: DateTime.now(),
         id: "differentIDGarden",
         name: tc.garden.name,
       );

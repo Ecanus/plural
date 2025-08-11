@@ -21,6 +21,7 @@ class AskField {
 class GardenField {
   static const creator = "creator";
   static const doDocument = "doDocument";
+  static const doDocumentEditDate = "doDocumentEditDate";
   static const name = "name";
 }
 
@@ -56,7 +57,7 @@ class UserField {
 
 class UserGardenRecordField {
   static const garden = "garden";
-  static const hasReadDoDocument = "hasReadDoDocument";
+  static const doDocumentReadDate = "doDocumentReadDate";
   static const role = "role";
   static const user = "user";
 }

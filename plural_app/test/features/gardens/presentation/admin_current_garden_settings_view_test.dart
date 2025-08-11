@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 
 // Common Widgets
 import 'package:plural_app/src/common_widgets/app_dialog_footer.dart';
+import 'package:plural_app/src/common_widgets/app_text_form_field.dart';
 
 // Constants
 import 'package:plural_app/src/constants/routes.dart';
@@ -49,6 +50,7 @@ void main() {
 
       // Check AdminCurrentGardenDialogList not yet displayed
       expect(find.byType(AdminCurrentGardenSettingsView), findsNothing);
+      expect(find.byType(AppTextFormField), findsNothing);
       expect(find.byType(AppDialogFooterBuffer), findsNothing);
       expect(find.byType(AppDialogNavFooter), findsNothing);
 
@@ -58,6 +60,7 @@ void main() {
 
       // Check expected values are found
       expect(find.byType(AdminCurrentGardenSettingsView), findsOneWidget);
+      expect(find.byType(AppTextFormField), findsNWidgets(2));
       expect(find.byType(AppDialogFooterBuffer), findsOneWidget);
       expect(find.byType(AppDialogNavFooter), findsOneWidget);
     });

@@ -21,10 +21,15 @@ class AppMaxLengths {
   static const max64 = 64;
   static const max200 = 200;
   static const max400 = 400;
+  static const max4000 = 4000;
 }
 
 class AppMaxLines {
   static const max1 = 1;
+}
+
+class AppMinLines {
+  static const min4 = 4;
 }
 
 class AppOpacities {
