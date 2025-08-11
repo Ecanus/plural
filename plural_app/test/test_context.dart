@@ -51,6 +51,7 @@ class TestContext {
     garden = Garden(
       creator: user,
       doDocument: "Test Do Document in TestContext",
+      doDocumentEditDate: DateTime(2000, 1, 31),
       id: "TESTGARDEN1",
       name: "Petunia"
     );
@@ -79,7 +80,7 @@ class TestContext {
 
     userGardenRecord = AppUserGardenRecord(
       garden: garden,
-      hasReadDoDocument: true,
+      doDocumentReadDate: DateTime(2000, 1, 31),
       id: "TESTGARDENRECORD1",
       role: AppUserGardenRole.member,
       user: user,
@@ -180,6 +181,7 @@ class TestContext {
   RecordModel getGardenRecordModel({
     String? creatorID,
     String? doDocument,
+    String? doDocumentEditDate,
     String? id,
     String? name,
   }) {
@@ -189,6 +191,7 @@ class TestContext {
       "collectionName": Collection.gardens,
       GardenField.creator: creatorID ?? user.id,
       GardenField.doDocument: doDocument ?? "Do Document",
+      GardenField.doDocumentEditDate: doDocumentEditDate ?? "2020-11-29",
       GardenField.name: name ?? garden.name,
     });
   }
@@ -259,7 +262,7 @@ class TestContext {
       GenericField.created: "1999-10-08",
       UserGardenRecordField.user: user.id,
       UserGardenRecordField.garden: garden.id,
-      UserGardenRecordField.hasReadDoDocument: true,
+      UserGardenRecordField.doDocumentReadDate: "2000-01-31",
       UserGardenRecordField.role: role.name,
       "expand": map
     });
@@ -320,6 +323,7 @@ class TestContext {
         GenericField.created: "1993-11-11",
         GardenField.creator: user.id,
         GardenField.doDocument: "Expaned Do Document",
+        GardenField.doDocumentEditDate: "2000-10-28",
         GardenField.name: garden.name,
       };
     }

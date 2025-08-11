@@ -45,6 +45,7 @@ void main() {
       expect(label.data, "");
       expect(decoration.suffixIcon, null);
       expect(textField.maxLines, 1);
+      expect(textField.minLines, null);
 
       // Check inputFormatter has maxLength == 20
       expect(textField.inputFormatters!.isEmpty, false);
@@ -72,6 +73,7 @@ void main() {
               label: "The Value of Time",
               maxLength: 15,
               maxLines: 2,
+              minLines: 1,
               paddingBottom: 11.0,
               paddingTop: 33.0,
               suffixIcon: suffixIcon,
@@ -93,6 +95,7 @@ void main() {
       expect(label.data, "The Value of Time");
       expect(decoration.suffixIcon, suffixIcon);
       expect(textField.maxLines, 2);
+      expect(textField.minLines, 1);
 
       // Check inputFormatter has correct maxLength
       expect(textField.inputFormatters!.isEmpty, false);

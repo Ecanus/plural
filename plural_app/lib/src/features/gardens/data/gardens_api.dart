@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:pocketbase/pocketbase.dart';
 
 // Constants
 import 'package:plural_app/src/constants/fields.dart';
+import 'package:plural_app/src/constants/formats.dart';
 import 'package:plural_app/src/constants/query_parameters.dart';
 import 'package:plural_app/src/constants/routes.dart';
 
@@ -103,21 +105,27 @@ Future<Function> subscribeTo(String gardenID) async {
   return GetIt.instance<GardensRepository>().subscribe(gardenID);
 }
 
-/// An action. Updates the name of the [Garden] record corresponding to the values in
+/// An action. Updates the [Garden] record corresponding to the values in
 /// [map].
-Future<(RecordModel?, Map?)> updateGardenName(
+Future<(RecordModel?, Map?)> updateGarden(
   BuildContext context,
-  Map map,
-) async {
+  Map map, {
+  DateTime? doDocumentEditDate, // primarily for testing
+}) async {
   try {
     // Check permissions first
-    await GetIt.instance<AppState>().verify(
-      [AppUserGardenPermission.changeGardenName]);
+    await GetIt.instance<AppState>().verify([
+      AppUserGardenPermission.changeGardenName,
+      AppUserGardenPermission.editDoDocument,
+    ]);
 
+    final doDocumentEditDate = DateFormat(Formats.dateYMMddHHm).format(DateTime.now());
     final (record, errorsMap) = await GetIt.instance<GardensRepository>().update(
       id: map[GenericField.id],
       body: {
-        GardenField.name: map[GardenField.name]
+        GardenField.doDocument: map[GardenField.doDocument],
+        GardenField.doDocumentEditDate: doDocumentEditDate,
+        GardenField.name: map[GardenField.name],
       }
     );
 

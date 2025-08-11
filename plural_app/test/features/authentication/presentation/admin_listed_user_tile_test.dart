@@ -56,7 +56,7 @@ void main() {
       );
       final newUserGardenRecord = AppUserGardenRecord(
         garden: tc.garden,
-        hasReadDoDocument: true,
+        doDocumentReadDate: DateTime(2000, 1, 31),
         id: "garden",
         role: AppUserGardenRole.member,
         user: newUser
@@ -102,7 +102,7 @@ void main() {
       );
       final newUserGardenRecord = AppUserGardenRecord(
         garden: tc.garden,
-        hasReadDoDocument: true,
+        doDocumentReadDate: DateTime(2000, 1, 31),
         id: "garden",
         role: AppUserGardenRole.owner,
         user: newUser

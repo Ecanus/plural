@@ -3,12 +3,14 @@ import 'package:flutter_test/flutter_test.dart' as ft;
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:pocketbase/pocketbase.dart';
 import 'package:test/test.dart';
 
 // Constants
 import 'package:plural_app/src/constants/fields.dart';
+import 'package:plural_app/src/constants/formats.dart';
 import 'package:plural_app/src/constants/query_parameters.dart';
 import 'package:plural_app/src/constants/routes.dart';
 
@@ -16,6 +18,7 @@ import 'package:plural_app/src/constants/routes.dart';
 import 'package:plural_app/src/features/asks/data/asks_repository.dart';
 
 // Auth
+import 'package:plural_app/src/features/authentication/domain/app_user_garden_record.dart';
 import 'package:plural_app/src/features/authentication/data/user_garden_records_repository.dart';
 import 'package:plural_app/src/features/authentication/data/users_repository.dart';
 import 'package:plural_app/src/features/authentication/presentation/unauthorized_page.dart';
@@ -235,10 +238,11 @@ void main() {
 
     tearDown(() => GetIt.instance.reset());
 
-    ft.testWidgets("updateGardenName", (tester) async {
+    ft.testWidgets("updateGarden", (tester) async {
       final tc = TestContext();
 
       final Map<String, String> map = {
+        GardenField.doDocument: "test Do Document",
         GenericField.id: "testGardenID",
         GardenField.name: "newGardenName",
       };
@@ -252,7 +256,10 @@ void main() {
 
       // AppState.verify()
       when(
-        () => mockAppState.verify(any())
+        () => mockAppState.verify([
+          AppUserGardenPermission.changeGardenName,
+          AppUserGardenPermission.editDoDocument,
+        ])
       ).thenAnswer(
         (_) async => {}
       );
@@ -262,6 +269,8 @@ void main() {
         mockGardensRepository: mockGardensRepository,
         gardenID: map[GenericField.id]!,
         gardenName: map[GardenField.name]!,
+        gardenDoDocument: map[GardenField.doDocument]!,
+        gardenDoDocumentEditDate: DateTime.now(), // has to be DateTime.now()
         returnValue: (tc.getGardenRecordModel(), {})
       );
 
@@ -271,7 +280,7 @@ void main() {
             body: Builder(
               builder: (BuildContext context) {
                 return ElevatedButton(
-                  onPressed: () => updateGardenName(context, map),
+                  onPressed: () => updateGarden(context, map),
                   child: Text("The ElevatedButton")
                 );
               }
@@ -285,6 +294,9 @@ void main() {
       verifyNever(() => mockGardensRepository.update(
         id: map[GenericField.id]!,
         body: {
+          GardenField.doDocument: map[GardenField.doDocument],
+          GardenField.doDocumentEditDate:
+            DateFormat(Formats.dateYMMddHHm).format(DateTime.now()),
           GardenField.name: map[GardenField.name]
         }
       ));
@@ -298,6 +310,9 @@ void main() {
       verify(() => mockGardensRepository.update(
         id: map[GenericField.id]!,
         body: {
+          GardenField.doDocument: map[GardenField.doDocument],
+          GardenField.doDocumentEditDate:
+            DateFormat(Formats.dateYMMddHHm).format(DateTime.now()),
           GardenField.name: map[GardenField.name]
         }
       )).called(1);
@@ -310,6 +325,7 @@ void main() {
       final tc = TestContext();
 
       final Map<String, String> map = {
+        GardenField.doDocument: "test Do Document",
         GenericField.id: "testGardenID",
         GardenField.name: "newGardenName",
       };
@@ -323,7 +339,10 @@ void main() {
 
       // AppState.verify()
       when(
-        () => mockAppState.verify(any())
+        () => mockAppState.verify([
+          AppUserGardenPermission.changeGardenName,
+          AppUserGardenPermission.editDoDocument,
+        ])
       ).thenThrow(
         PermissionException()
       );
@@ -332,6 +351,8 @@ void main() {
       gardensRepositoryUpdateStub(
         mockGardensRepository: mockGardensRepository,
         gardenID: map[GenericField.id]!,
+        gardenDoDocument: map[GardenField.doDocument]!,
+        gardenDoDocumentEditDate: DateTime.now(), // must be DateTime.now()
         gardenName: map[GardenField.name]!,
         returnValue: (tc.getGardenRecordModel(), {})
       );
@@ -345,7 +366,7 @@ void main() {
               body: Builder(
                 builder: (BuildContext context) {
                   return ElevatedButton(
-                    onPressed: () => updateGardenName(context, map),
+                    onPressed: () => updateGarden(context, map),
                     child: Text("The ElevatedButton")
                   );
                 }
@@ -372,6 +393,9 @@ void main() {
       verifyNever(() => mockGardensRepository.update(
         id: map[GenericField.id]!,
         body: {
+          GardenField.doDocument: map[GardenField.doDocument],
+          GardenField.doDocumentEditDate:
+            DateFormat(Formats.dateYMMddHHm).format(DateTime.now()),
           GardenField.name: map[GardenField.name]
         }
       ));
