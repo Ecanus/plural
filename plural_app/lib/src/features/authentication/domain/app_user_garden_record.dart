@@ -31,6 +31,7 @@ enum AppUserGardenPermission {
   createInvitations,
   deleteGarden,
   deleteMemberAsks,
+  editDoDocument,
   expelMembers,
   viewActiveInvitations,
   viewAdminGardenTimeline,
@@ -42,12 +43,14 @@ enum AppUserGardenPermission {
 class AppUserGardenRecord {
   AppUserGardenRecord({
     required this.garden,
+    required this.hasReadDoDocument,
     required this.id,
     required this.role,
     required this.user,
   });
 
   final Garden garden;
+  final bool hasReadDoDocument;
   final String id;
   final AppUserGardenRole role;
   final AppUser user;
@@ -55,6 +58,7 @@ class AppUserGardenRecord {
   AppUserGardenRecord.fromJson(
     Map<String, dynamic> json, AppUser recordUser, Garden recordGarden) :
       garden = recordGarden,
+      hasReadDoDocument = json[UserGardenRecordField.hasReadDoDocument],
       id = json[GenericField.id] as String,
       role = getUserGardenRoleFromString(json[UserGardenRecordField.role])!,
       user = recordUser;
@@ -63,6 +67,7 @@ class AppUserGardenRecord {
     return {
       GenericField.id: id,
       UserGardenRecordField.garden: garden.id,
+      UserGardenRecordField.hasReadDoDocument: hasReadDoDocument,
       UserGardenRecordField.role: role.name,
       UserGardenRecordField.user: user.id
     };

@@ -322,9 +322,13 @@ void main() {
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(
           items: [
-            tc.getExpandUserGardenRecordRecordModel([
-              UserGardenRecordField.user, UserGardenRecordField.garden
-            ], role: AppUserGardenRole.member),
+            tc.getUserGardenRecordRecordModel(
+              expand: [
+                UserGardenRecordField.user,
+                UserGardenRecordField.garden
+              ],
+              role: AppUserGardenRole.member
+            ),
           ]
         )
       );

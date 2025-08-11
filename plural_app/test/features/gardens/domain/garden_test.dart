@@ -26,12 +26,14 @@ void main() {
       final tc = TestContext();
 
       final record = {
+        GardenField.doDocument: "Do Document!",
         GenericField.id: "TESTGARDENFROMJSON",
         GardenField.name: "Daisies"
       };
       final newGarden = Garden.fromJson(record, tc.user);
 
       expect(newGarden.creator == tc.user, true);
+      expect(newGarden.doDocument, "Do Document!");
       expect(newGarden.id == "TESTGARDENFROMJSON", true);
       expect(newGarden.name == "Daisies", true);
     });
@@ -41,12 +43,14 @@ void main() {
 
       final garden = Garden(
         creator: tc.user,
+        doDocument: "Test the Do Document",
         id: "TESTGARDEN2",
         name: "Rosemaries",
       );
 
       final map = {
         GardenField.creator: "TESTUSER1",
+        GardenField.doDocument: "Test the Do Document",
         GenericField.id: "TESTGARDEN2",
         GardenField.name: "Rosemaries"
       };
@@ -57,6 +61,7 @@ void main() {
     test("emptyMap", () {
       final emptyMap = {
         GardenField.creator: null,
+        GardenField.doDocument: null,
         GenericField.id: null,
         GardenField.name: null
       };
@@ -81,6 +86,7 @@ void main() {
       // Same ID
       final sameIDgarden = Garden(
         creator: differentUser,
+        doDocument: tc.garden.doDocument,
         id: garden.id,
         name: "sameIDGarden"
       );
@@ -90,6 +96,7 @@ void main() {
       // Different ID
       final differentIDGarden = Garden(
         creator: tc.user,
+        doDocument: tc.garden.doDocument,
         id: "differentIDGarden",
         name: tc.garden.name,
       );

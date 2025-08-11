@@ -62,18 +62,32 @@ void main() {
       // user -> auth_api.getCurrentGardenUserGardenRecords()
       final currentGardenUserGardenRecordsItems = ResultList<RecordModel>(
         items: [
-          tc.getExpandUserGardenRecordRecordModel([
-            UserGardenRecordField.user, UserGardenRecordField.garden
-          ], role: AppUserGardenRole.owner),
-          tc.getExpandUserGardenRecordRecordModel([
-            UserGardenRecordField.user, UserGardenRecordField.garden
-          ], role: AppUserGardenRole.administrator),
-          tc.getExpandUserGardenRecordRecordModel([
-            UserGardenRecordField.user, UserGardenRecordField.garden
-          ]),
-          tc.getExpandUserGardenRecordRecordModel([
-            UserGardenRecordField.user, UserGardenRecordField.garden
-          ]),
+          tc.getUserGardenRecordRecordModel(
+            expand: [
+              UserGardenRecordField.user,
+              UserGardenRecordField.garden
+            ],
+            role: AppUserGardenRole.owner
+          ),
+          tc.getUserGardenRecordRecordModel(
+            expand: [
+              UserGardenRecordField.user,
+              UserGardenRecordField.garden
+            ],
+            role: AppUserGardenRole.administrator
+          ),
+          tc.getUserGardenRecordRecordModel(
+            expand: [
+              UserGardenRecordField.user,
+              UserGardenRecordField.garden
+            ]
+          ),
+          tc.getUserGardenRecordRecordModel(
+            expand: [
+              UserGardenRecordField.user,
+              UserGardenRecordField.garden
+            ]
+          ),
         ]
       );
       getCurrentGardenUserGardenRecordsStub(
@@ -150,9 +164,13 @@ void main() {
       // user -> auth_api.getCurrentGardenUserGardenRecords()
       final currentGarenUserGardenRecordsItems = ResultList<RecordModel>(
         items: [
-          tc.getExpandUserGardenRecordRecordModel([
-            UserGardenRecordField.user, UserGardenRecordField.garden
-          ], role: AppUserGardenRole.owner),
+          tc.getUserGardenRecordRecordModel(
+            expand: [
+              UserGardenRecordField.user,
+              UserGardenRecordField.garden
+            ],
+            role: AppUserGardenRole.owner
+          ),
         ]
       );
       getCurrentGardenUserGardenRecordsStub(

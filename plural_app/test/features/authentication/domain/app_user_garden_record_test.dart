@@ -27,6 +27,7 @@ void main() {
       final tc = TestContext();
 
       final record = {
+        UserGardenRecordField.hasReadDoDocument: true,
         GenericField.id: "TESTUSERGARDENRECORD",
         UserGardenRecordField.role: "member"
       };
@@ -34,6 +35,7 @@ void main() {
         record, tc.user, tc.garden);
 
       expect(newUserGardenRecord.garden == tc.garden, true);
+      expect(newUserGardenRecord.hasReadDoDocument, true);
       expect(newUserGardenRecord.id == "TESTUSERGARDENRECORD", true);
       expect(newUserGardenRecord.role == AppUserGardenRole.member, true);
       expect(newUserGardenRecord.user == tc.user, true);
@@ -45,6 +47,7 @@ void main() {
 
       final userGardenRecordMap = {
         UserGardenRecordField.garden: tc.garden.id,
+        UserGardenRecordField.hasReadDoDocument: tc.userGardenRecord.hasReadDoDocument,
         GenericField.id: "TESTGARDENRECORD1",
         UserGardenRecordField.role: "member",
         UserGardenRecordField.user: tc.user.id,
@@ -66,6 +69,7 @@ void main() {
 
       final differentGarden = Garden(
         creator: differentUser,
+        doDocument: "Do Document Test. No alarm.",
         id: "testDifferentGardenID",
         name: "testDifferentGardenName"
       );
@@ -77,6 +81,7 @@ void main() {
       final differentIDSameGardenSameUser = AppUserGardenRecord(
         id: "testDifferentID",
         garden: tc.garden,
+        hasReadDoDocument: true,
         user: tc.user,
         role: AppUserGardenRole.member
       );
@@ -87,6 +92,7 @@ void main() {
       final differentIDDifferentGardenSameUser = AppUserGardenRecord(
         id: "testDifferentID",
         garden: differentGarden,
+        hasReadDoDocument: true,
         user: tc.user,
         role: AppUserGardenRole.member
       );
@@ -97,6 +103,7 @@ void main() {
       final differentIDDifferentGardenDifferentUser = AppUserGardenRecord(
         id: "testDifferentID",
         garden: differentGarden,
+        hasReadDoDocument: true,
         user: differentUser,
         role: AppUserGardenRole.member
       );
@@ -107,6 +114,7 @@ void main() {
       final sameIDDifferentGardenDifferentUser = AppUserGardenRecord(
         id: tc.userGardenRecord.id,
         garden: differentGarden,
+        hasReadDoDocument: true,
         user: differentUser,
         role: AppUserGardenRole.member
       );
@@ -117,6 +125,7 @@ void main() {
       final sameIDSameGardenDifferentUser = AppUserGardenRecord(
         id: tc.userGardenRecord.id,
         garden: tc.garden,
+        hasReadDoDocument: true,
         user: differentUser,
         role: AppUserGardenRole.member
       );
@@ -127,6 +136,7 @@ void main() {
       final sameIDDifferentGardenSameUser = AppUserGardenRecord(
         id: tc.userGardenRecord.id,
         garden: differentGarden,
+        hasReadDoDocument: true,
         user: tc.user,
         role: AppUserGardenRole.member
       );

@@ -291,6 +291,7 @@ List<AppUserGardenPermission> getUserGardenPermissionGroup(AppUserGardenRole rol
       AppUserGardenPermission.changeMemberRoles,
       AppUserGardenPermission.createInvitations,
       AppUserGardenPermission.deleteMemberAsks,
+      AppUserGardenPermission.editDoDocument,
       AppUserGardenPermission.expelMembers,
       AppUserGardenPermission.viewActiveInvitations,
       AppUserGardenPermission.viewAdminGardenTimeline,
