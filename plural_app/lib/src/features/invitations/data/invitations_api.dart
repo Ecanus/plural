@@ -168,7 +168,7 @@ Future<Map<InvitationType, List<Invitation>>> getCurrentGardenInvitations(
     final currentGarden = GetIt.instance<AppState>().currentGarden!;
 
     final expiryDateThresholdString =
-      DateFormat(Formats.dateYMMddHHms).format(expiryDateThreshold ?? DateTime.now());
+      DateFormat(Formats.dateYMMdd).format(expiryDateThreshold ?? DateTime.now());
 
     final resultList = await GetIt.instance<InvitationsRepository>().getList(
       expand: "${InvitationField.creator}, ${InvitationField.invitee}",
@@ -235,7 +235,7 @@ Future<List<Invitation>> getInvitationsByInvitee(
   final List<Invitation> invitationsList = [];
 
   final expiryDateThresholdString =
-      DateFormat(Formats.dateYMMddHHms).format(expiryDateThreshold ?? DateTime.now());
+      DateFormat(Formats.dateYMMdd).format(expiryDateThreshold ?? DateTime.now());
 
   // Get Invitation records
   final resultList = await GetIt.instance<InvitationsRepository>().getList(
@@ -291,7 +291,7 @@ Future<void> validateInvitationUUIDAndCreateUserGardenRecord(
   String errorMessage = InvitationsText.invalidInvitationError;
 
   final expiryDateThresholdString =
-      DateFormat(Formats.dateYMMddHHms).format(expiryDateThreshold ?? DateTime.now());
+      DateFormat(Formats.dateYMMdd).format(expiryDateThreshold ?? DateTime.now());
 
   // Get Invitation
   final resultList = await GetIt.instance<InvitationsRepository>().getList(

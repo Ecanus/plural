@@ -52,6 +52,7 @@ void main() {
       ).thenAnswer(
         (_) async => tc.getGardenRecordModel(
           creatorID: tc.user.id,
+          doDocument: "Do Documenttt",
           id: tc.garden.id,
           name: "TestGarden"
         )
@@ -67,6 +68,7 @@ void main() {
       final garden = await getGardenByID(tc.garden.id);
       expect(garden, isA<Garden>());
       expect(garden.creator, tc.user);
+      expect(garden.doDocument, "Do Documenttt");
       expect(garden.id, tc.garden.id);
       expect(garden.name, "TestGarden");
 

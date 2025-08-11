@@ -154,8 +154,10 @@ void main() {
         )
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(
-          items: [tc.getExpandUserGardenRecordRecordModel([
-            UserGardenRecordField.user, UserGardenRecordField.garden
+          items: [tc.getUserGardenRecordRecordModel(
+            expand: [
+              UserGardenRecordField.user,
+              UserGardenRecordField.garden
           ])]
         )
       );
@@ -171,9 +173,13 @@ void main() {
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(
           items: [
-            tc.getExpandUserGardenRecordRecordModel([
-              UserGardenRecordField.user, UserGardenRecordField.garden],
-              role: AppUserGardenRole.owner),
+            tc.getUserGardenRecordRecordModel(
+              expand: [
+                UserGardenRecordField.user,
+                UserGardenRecordField.garden
+              ],
+              role: AppUserGardenRole.owner
+            ),
           ]
         )
       );
@@ -186,7 +192,9 @@ void main() {
         )
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(
-          items: [tc.getExpandUserGardenRecordRecordModel([UserGardenRecordField.garden])]
+          items: [tc.getUserGardenRecordRecordModel(
+            expand: [UserGardenRecordField.garden]
+          )]
         )
       );
       // RecordService.getList() - getAsksByGardenID

@@ -7,21 +7,25 @@ import 'package:plural_app/src/features/authentication/domain/app_user.dart';
 class Garden {
   Garden({
     required this.creator,
+    required this.doDocument,
     required this.id,
     required this.name,
   });
 
   final AppUser creator;
+  final String doDocument;
   final String id;
   final String name;
 
   Garden.fromJson(Map<String, dynamic> json, this.creator) :
+    doDocument = json[GardenField.doDocument] as String,
     id = json[GenericField.id] as String,
     name = json[GardenField.name] as String;
 
   Map<String, dynamic> toMap() {
     return {
       GardenField.creator: creator.id,
+      GardenField.doDocument: doDocument,
       GenericField.id: id,
       GardenField.name: name,
     };
@@ -30,6 +34,7 @@ class Garden {
   static Map<String, dynamic> emptyMap() {
     return {
       GardenField.creator: null,
+      GardenField.doDocument: null,
       GenericField.id: null,
       GardenField.name: null,
     };

@@ -59,8 +59,11 @@ void main() {
 
       // user -> auth_api.getCurrentGardenUserGardenRecords()
       final currentGardenUserGardenRecordsItems = ResultList<RecordModel>(items: [
-        tc.getExpandUserGardenRecordRecordModel(
-          [UserGardenRecordField.user, UserGardenRecordField.garden],
+        tc.getUserGardenRecordRecordModel(
+          expand: [
+            UserGardenRecordField.user,
+            UserGardenRecordField.garden
+          ],
           role: AppUserGardenRole.owner,
         )
       ]);

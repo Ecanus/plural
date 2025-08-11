@@ -523,18 +523,32 @@ void main() {
       // getCurrentGardenUserGardenRecords()
       final currentGardenUserGardenRecordsItems = ResultList<RecordModel>(
         items: [
-          tc.getExpandUserGardenRecordRecordModel([
-            UserGardenRecordField.user, UserGardenRecordField.garden
-          ], role: AppUserGardenRole.owner),
-          tc.getExpandUserGardenRecordRecordModel([
-            UserGardenRecordField.user, UserGardenRecordField.garden
-          ], role: AppUserGardenRole.administrator),
-          tc.getExpandUserGardenRecordRecordModel([
-            UserGardenRecordField.user, UserGardenRecordField.garden
-          ]),
-          tc.getExpandUserGardenRecordRecordModel([
-            UserGardenRecordField.user, UserGardenRecordField.garden
-          ]),
+          tc.getUserGardenRecordRecordModel(
+            expand: [
+              UserGardenRecordField.user,
+              UserGardenRecordField.garden
+            ],
+            role: AppUserGardenRole.owner
+          ),
+          tc.getUserGardenRecordRecordModel(
+            expand: [
+              UserGardenRecordField.user,
+              UserGardenRecordField.garden
+            ],
+            role: AppUserGardenRole.administrator
+          ),
+          tc.getUserGardenRecordRecordModel(
+            expand: [
+              UserGardenRecordField.user,
+              UserGardenRecordField.garden
+            ]
+          ),
+          tc.getUserGardenRecordRecordModel(
+            expand: [
+              UserGardenRecordField.user,
+              UserGardenRecordField.garden
+            ]
+          ),
         ]
       );
       getCurrentGardenUserGardenRecordsStub(
@@ -591,18 +605,32 @@ void main() {
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(
           items: [
-            tc.getExpandUserGardenRecordRecordModel([
-              UserGardenRecordField.user, UserGardenRecordField.garden
-            ], role: AppUserGardenRole.owner),
-            tc.getExpandUserGardenRecordRecordModel([
-              UserGardenRecordField.user, UserGardenRecordField.garden
-            ], role: AppUserGardenRole.administrator),
-            tc.getExpandUserGardenRecordRecordModel([
-              UserGardenRecordField.user, UserGardenRecordField.garden
-            ]),
-            tc.getExpandUserGardenRecordRecordModel([
-              UserGardenRecordField.user, UserGardenRecordField.garden
-            ]),
+            tc.getUserGardenRecordRecordModel(
+              expand: [
+                UserGardenRecordField.user,
+                UserGardenRecordField.garden
+              ],
+              role: AppUserGardenRole.owner
+            ),
+            tc.getUserGardenRecordRecordModel(
+              expand: [
+                UserGardenRecordField.user,
+                UserGardenRecordField.garden
+              ],
+              role: AppUserGardenRole.administrator
+            ),
+            tc.getUserGardenRecordRecordModel(
+              expand: [
+                UserGardenRecordField.user,
+                UserGardenRecordField.garden
+              ]
+            ),
+            tc.getUserGardenRecordRecordModel(
+              expand: [
+                UserGardenRecordField.user,
+                UserGardenRecordField.garden
+              ]
+            ),
           ]
         )
       );
@@ -758,6 +786,7 @@ void main() {
           AppUserGardenPermission.changeMemberRoles,
           AppUserGardenPermission.createInvitations,
           AppUserGardenPermission.deleteMemberAsks,
+          AppUserGardenPermission.editDoDocument,
           AppUserGardenPermission.expelMembers,
           AppUserGardenPermission.viewActiveInvitations,
           AppUserGardenPermission.viewAdminGardenTimeline,
@@ -776,6 +805,7 @@ void main() {
           AppUserGardenPermission.changeMemberRoles,
           AppUserGardenPermission.createInvitations,
           AppUserGardenPermission.deleteMemberAsks,
+          AppUserGardenPermission.editDoDocument,
           AppUserGardenPermission.expelMembers,
           AppUserGardenPermission.viewActiveInvitations,
           AppUserGardenPermission.viewAdminGardenTimeline,
@@ -821,8 +851,10 @@ void main() {
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(
           items: [
-            tc.getExpandUserGardenRecordRecordModel(
-              [UserGardenRecordField.user, UserGardenRecordField.garden],
+            tc.getUserGardenRecordRecordModel(
+              expand: [
+                UserGardenRecordField.user, UserGardenRecordField.garden
+              ],
               recordID: "TestGardenRecordID",
               role: AppUserGardenRole.member),
           ]
@@ -955,18 +987,31 @@ void main() {
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(
           items: [
-            tc.getExpandUserGardenRecordRecordModel([
-              UserGardenRecordField.user, UserGardenRecordField.garden
-            ], role: AppUserGardenRole.owner),
-            tc.getExpandUserGardenRecordRecordModel([
-              UserGardenRecordField.user, UserGardenRecordField.garden
-            ], role: AppUserGardenRole.administrator),
-            tc.getExpandUserGardenRecordRecordModel([
-              UserGardenRecordField.user, UserGardenRecordField.garden
-            ]),
-            tc.getExpandUserGardenRecordRecordModel([
-              UserGardenRecordField.user, UserGardenRecordField.garden
-            ]),
+            tc.getUserGardenRecordRecordModel(
+              expand: [
+                UserGardenRecordField.user, UserGardenRecordField.garden
+              ],
+              role: AppUserGardenRole.owner
+            ),
+            tc.getUserGardenRecordRecordModel(
+              expand: [
+                UserGardenRecordField.user,
+                UserGardenRecordField.garden
+              ],
+              role: AppUserGardenRole.administrator
+            ),
+            tc.getUserGardenRecordRecordModel(
+              expand: [
+                UserGardenRecordField.user,
+                UserGardenRecordField.garden
+              ]
+            ),
+            tc.getUserGardenRecordRecordModel(
+              expand: [
+                UserGardenRecordField.user,
+                UserGardenRecordField.garden
+              ]
+            ),
           ]
         )
       );
@@ -1538,8 +1583,11 @@ void main() {
 
       // currentUser -> getUserGardenRecord()
       final currentUserGardenRecordItems = ResultList<RecordModel>(items: [
-        tc.getExpandUserGardenRecordRecordModel(
-          [UserGardenRecordField.user, UserGardenRecordField.garden],
+        tc.getUserGardenRecordRecordModel(
+          expand: [
+            UserGardenRecordField.user,
+            UserGardenRecordField.garden
+          ],
           recordID: "testRecordID",
           role: AppUserGardenRole.owner
         )

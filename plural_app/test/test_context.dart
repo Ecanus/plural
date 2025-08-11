@@ -50,6 +50,7 @@ class TestContext {
 
     garden = Garden(
       creator: user,
+      doDocument: "Test Do Document in TestContext",
       id: "TESTGARDEN1",
       name: "Petunia"
     );
@@ -78,6 +79,7 @@ class TestContext {
 
     userGardenRecord = AppUserGardenRecord(
       garden: garden,
+      hasReadDoDocument: true,
       id: "TESTGARDENRECORD1",
       role: AppUserGardenRole.member,
       user: user,
@@ -177,6 +179,7 @@ class TestContext {
 
   RecordModel getGardenRecordModel({
     String? creatorID,
+    String? doDocument,
     String? id,
     String? name,
   }) {
@@ -185,6 +188,7 @@ class TestContext {
       "created": "1990-10-16",
       "collectionName": Collection.gardens,
       GardenField.creator: creatorID ?? user.id,
+      GardenField.doDocument: doDocument ?? "Do Document",
       GardenField.name: name ?? garden.name,
     });
   }
@@ -242,23 +246,9 @@ class TestContext {
 
 
   RecordModel getUserGardenRecordRecordModel({
-    String? id,
-    AppUserGardenRole? role,
-  }) {
-    return RecordModel({
-      "id": id ?? userGardenRecord.id,
-      "created": "1999-10-08",
-      "collectionName": Collection.userGardenRecords,
-      UserGardenRecordField.user: user.id,
-      UserGardenRecordField.garden: garden.id,
-      UserGardenRecordField.role: role?.name ?? AppUserGardenRole.member.name,
-    });
-  }
-
-  RecordModel getExpandUserGardenRecordRecordModel(
-    List<String> expand, {
     String? recordID,
     AppUserGardenRole role = AppUserGardenRole.member,
+    List<String> expand = const []
 }) {
     Map<String, dynamic> map = {};
 
@@ -269,6 +259,7 @@ class TestContext {
       GenericField.created: "1999-10-08",
       UserGardenRecordField.user: user.id,
       UserGardenRecordField.garden: garden.id,
+      UserGardenRecordField.hasReadDoDocument: true,
       UserGardenRecordField.role: role.name,
       "expand": map
     });
@@ -328,6 +319,7 @@ class TestContext {
         GenericField.id: garden.id,
         GenericField.created: "1993-11-11",
         GardenField.creator: user.id,
+        GardenField.doDocument: "Expaned Do Document",
         GardenField.name: garden.name,
       };
     }

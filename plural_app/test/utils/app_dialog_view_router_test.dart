@@ -199,18 +199,32 @@ void main() {
       // getCurrentGardenUserGardenRecords() through AppState.verify()
       final items = ResultList<RecordModel>(
         items: [
-          tc.getExpandUserGardenRecordRecordModel([
-            UserGardenRecordField.user, UserGardenRecordField.garden
-          ], role: AppUserGardenRole.owner),
-          tc.getExpandUserGardenRecordRecordModel([
-            UserGardenRecordField.user, UserGardenRecordField.garden
-          ], role: AppUserGardenRole.administrator),
-          tc.getExpandUserGardenRecordRecordModel([
-            UserGardenRecordField.user, UserGardenRecordField.garden
-          ]),
-          tc.getExpandUserGardenRecordRecordModel([
-            UserGardenRecordField.user, UserGardenRecordField.garden
-          ]),
+          tc.getUserGardenRecordRecordModel(
+            expand: [
+              UserGardenRecordField.user,
+              UserGardenRecordField.garden
+            ],
+            role: AppUserGardenRole.owner
+          ),
+          tc.getUserGardenRecordRecordModel(
+            expand: [
+              UserGardenRecordField.user,
+              UserGardenRecordField.garden
+            ],
+            role: AppUserGardenRole.administrator
+          ),
+          tc.getUserGardenRecordRecordModel(
+            expand: [
+              UserGardenRecordField.user,
+              UserGardenRecordField.garden
+            ]
+          ),
+          tc.getUserGardenRecordRecordModel(
+            expand: [
+              UserGardenRecordField.user,
+              UserGardenRecordField.garden
+            ]
+          ),
         ]
       );
       getCurrentGardenUserGardenRecordsStub(
@@ -289,7 +303,7 @@ void main() {
 
       final expiryDateThreshold = DateTime.now();
       final expiryDateThresholdString =
-        DateFormat(Formats.dateYMMddHHms).format(expiryDateThreshold);
+        DateFormat(Formats.dateYMMdd).format(expiryDateThreshold);
 
       final appState = AppState.skipSubscribe()
         ..currentGarden = tc.garden
