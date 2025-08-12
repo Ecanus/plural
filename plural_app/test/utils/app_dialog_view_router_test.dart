@@ -29,6 +29,7 @@ import 'package:plural_app/src/features/authentication/presentation/user_setting
 import 'package:plural_app/src/features/gardens/presentation/admin_current_garden_settings_view.dart';
 import 'package:plural_app/src/features/gardens/presentation/admin_options_view.dart';
 import 'package:plural_app/src/features/gardens/presentation/current_garden_settings_view.dart';
+import 'package:plural_app/src/features/gardens/presentation/examine_do_document_view.dart';
 
 // Invitations
 import 'package:plural_app/src/features/invitations/data/invitations_repository.dart';
@@ -155,6 +156,8 @@ void main() {
       expect(appDialogViewRouter.viewNotifier.value, isA<SponsoredAsksView>());
     });
 
+    tearDown(() => GetIt.instance.reset());
+
     test("routeToAdminEditUserView", () async {
       final tc = TestContext();
       final appDialogViewRouter = AppDialogViewRouter();
@@ -245,6 +248,8 @@ void main() {
       expect(appDialogViewRouter.viewNotifier.value, isA<AdminListedUsersView>());
     });
 
+    tearDown(() => GetIt.instance.reset());
+
     test("routeToUserSettingsView", () async {
       final tc = TestContext();
 
@@ -287,6 +292,68 @@ void main() {
       appDialogViewRouter.routeToCurrentGardenSettingsView();
       expect(appDialogViewRouter.viewNotifier.value, isA<CurrentGardenSettingsView>());
     });
+
+    test("routeToExamineDoDocumentView", () async {
+      final appDialogViewRouter = AppDialogViewRouter();
+
+      final user = TestAppUserFactory();
+      final garden = TestGardenFactory();
+      final userGardenRecord = TestAppUserGardenRecordFactory(
+        garden: garden,
+        user: user,
+      );
+
+      final appState = AppState.skipSubscribe()
+        ..currentGarden = garden
+        ..currentUser = user;
+
+      final getIt = GetIt.instance;
+      final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
+      final mockUsersRepository = MockUsersRepository();
+
+      getIt.registerLazySingleton<AppState>(() => appState);
+      getIt.registerLazySingleton<UserGardenRecordsRepository>(
+        () => mockUserGardenRecordsRepository
+      );
+      getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
+
+      // UserGardenRecordsRepository.getList()
+      when(
+        () => mockUserGardenRecordsRepository.getList(
+          expand: "${UserGardenRecordField.user}, ${UserGardenRecordField.garden}",
+          filter: ""
+            "${UserGardenRecordField.user} = '${user.id}' && "
+            "${UserGardenRecordField.garden} = '${garden.id}'",
+          sort: "-updated"
+        )
+      ).thenAnswer(
+        (_) async => ResultList<RecordModel>(
+          items: [
+            getUserGardenRecordRecordModel(
+              userGardenRecord: userGardenRecord,
+              expandFields: [
+                UserGardenRecordField.user, UserGardenRecordField.garden
+              ],
+            ),
+          ]
+        )
+      );
+
+      // UsersRepository.getFirstListItem()
+      when(
+        () => mockUsersRepository.getFirstListItem(
+          filter: "${GenericField.id} = '${user.id}'",
+        )
+      ).thenAnswer(
+        (_) async => getUserRecordModel(user: garden.creator)
+      );
+
+      expect(appDialogViewRouter.viewNotifier.value, isA<SizedBox>());
+      await appDialogViewRouter.routeToExamineDoDocumentView();
+      expect(appDialogViewRouter.viewNotifier.value, isA<ExamineDoDocumentView>());
+    });
+
+    tearDown(() => GetIt.instance.reset());
 
     test("routeToAdminCreateInvitationView", () async {
       final appDialogViewRouter = AppDialogViewRouter();

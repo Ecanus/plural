@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 
 // Common Widgets
 import 'package:plural_app/src/common_widgets/app_dialog_footer.dart';
+import 'package:plural_app/src/common_widgets/app_hyperlinkable_text.dart';
 import 'package:plural_app/src/common_widgets/app_text_form_field.dart';
 
 // Constants
@@ -108,6 +109,37 @@ void main() {
 
       // Check successful reroute (text should now appear)
       expect(find.text("Test routing to Garden Page was successful."), findsOneWidget);
+    });
+
+    testWidgets("ShowAdminExamineDoDocumentDialogButton", (tester) async {
+      final controller = TextEditingController();
+      controller.text = "Testing the text displays!";
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (BuildContext context) {
+                return ShowAdminExamineDoDocumentDialogButton(
+                  textEditingController: controller,);
+              }
+            ),
+          ),
+        )
+      );
+
+      expect(find.byType(ListView), findsNothing);
+      expect(find.byType(AppHyperlinkableText), findsNothing);
+      expect(find.text("Testing the text displays!"), findsNothing);
+
+      // Tap ShowAdminExamineDoDocumentDialogButton (to open dialog)
+      await tester.tap(find.byType(ShowAdminExamineDoDocumentDialogButton));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(ListView), findsOneWidget);
+      expect(find.byType(AppHyperlinkableText), findsOneWidget);
+      expect(find.text("Testing the text displays!"), findsOneWidget);
+
     });
   });
 }

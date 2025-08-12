@@ -16,6 +16,7 @@ class AppTextFormField extends StatefulWidget {
   const AppTextFormField({
     required this.appForm,
     this.autofocus = false,
+    this.controller,
     required this.fieldName,
     this.formFieldType = FormFieldType.text,
     this.hintText = "",
@@ -33,6 +34,7 @@ class AppTextFormField extends StatefulWidget {
 
   final AppForm appForm;
   final bool autofocus;
+  final TextEditingController? controller;
   final String fieldName;
   final FormFieldType formFieldType;
   final String hintText;
@@ -52,7 +54,7 @@ class AppTextFormField extends StatefulWidget {
 }
 
 class _AppTextFormFieldState extends State<AppTextFormField> {
-  final _controller = TextEditingController();
+  late TextEditingController _controller;
   late String? Function(String?) _validator;
 
   @override
@@ -65,7 +67,9 @@ class _AppTextFormFieldState extends State<AppTextFormField> {
   void initState() {
     super.initState();
 
+    _controller = widget.controller ?? TextEditingController();
     _controller.text = widget.initialValue;
+
     _validator = widget.validator ?? getValidator();
   }
 

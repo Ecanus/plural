@@ -109,9 +109,8 @@ Future<Function> subscribeTo(String gardenID) async {
 /// [map].
 Future<(RecordModel?, Map?)> updateGarden(
   BuildContext context,
-  Map map, {
-  DateTime? doDocumentEditDate, // primarily for testing
-}) async {
+  Map map,
+) async {
   try {
     // Check permissions first
     await GetIt.instance<AppState>().verify([

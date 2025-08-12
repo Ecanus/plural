@@ -3,12 +3,14 @@ import 'package:flutter_test/flutter_test.dart' as ft;
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:pocketbase/pocketbase.dart';
 import 'package:test/test.dart';
 
 // Constants
 import 'package:plural_app/src/constants/fields.dart';
+import 'package:plural_app/src/constants/formats.dart';
 import 'package:plural_app/src/constants/pocketbase.dart';
 import 'package:plural_app/src/constants/query_parameters.dart';
 import 'package:plural_app/src/constants/routes.dart';
@@ -837,7 +839,6 @@ void main() {
         () => mockUserGardenRecordsRepository
       );
       getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
-
 
       // UserGardenRecordsRepository.getList()
       when(
@@ -1845,6 +1846,53 @@ void main() {
       final (record2, errors2) = await updateUser(map);
       expect(record2, null);
       expect(errors2.isEmpty, false);
+    });
+
+    tearDown(() => GetIt.instance.reset());
+
+    test("updateCurrentUserGardenRecordDoDocumentReadDate", () async {
+      final userGardenRecord = TestAppUserGardenRecordFactory();
+      final now = DateTime.now();
+
+      final getIt = GetIt.instance;
+      final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
+
+      getIt.registerLazySingleton<UserGardenRecordsRepository>(
+        () => mockUserGardenRecordsRepository);
+
+      // UserGardenRecordsRepository.update()
+      when(
+        () => mockUserGardenRecordsRepository.update(
+          id: userGardenRecord.id,
+          body: {
+            UserGardenRecordField.doDocumentReadDate:
+              DateFormat(Formats.dateYMMddHHm).format(now)
+          }
+        )
+      ).thenAnswer(
+        (_) async => (
+          getUserGardenRecordRecordModel(userGardenRecord: userGardenRecord), {})
+      );
+
+      verifyNever(() => mockUserGardenRecordsRepository.update(
+          id: userGardenRecord.id,
+          body: {
+            UserGardenRecordField.doDocumentReadDate:
+              DateFormat(Formats.dateYMMddHHm).format(now)
+          }
+        )
+      );
+
+      await updateCurrentUserGardenRecordDoDocumentReadDate(userGardenRecord.id);
+
+      verify(() => mockUserGardenRecordsRepository.update(
+          id: userGardenRecord.id,
+          body: {
+            UserGardenRecordField.doDocumentReadDate:
+              DateFormat(Formats.dateYMMddHHm).format(now)
+          }
+        )
+      ).called(1);
     });
 
     tearDown(() => GetIt.instance.reset());

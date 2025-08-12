@@ -1,4 +1,5 @@
 // Constants
+import 'package:get_it/get_it.dart';
 import 'package:plural_app/src/constants/fields.dart';
 
 // Auth
@@ -8,6 +9,9 @@ import 'package:plural_app/src/features/authentication/domain/app_user.dart';
 
 // Gardens
 import 'package:plural_app/src/features/gardens/domain/garden.dart';
+
+// Utils
+import 'package:plural_app/src/utils/app_state.dart';
 
 enum AppUserGardenRole {
   owner(displayName: "Owner", priority: 2),
@@ -62,6 +66,11 @@ class AppUserGardenRecord {
       id = json[GenericField.id] as String,
       role = getUserGardenRoleFromString(json[UserGardenRecordField.role])!,
       user = recordUser;
+
+  bool get hasReadDoDocument {
+    return doDocumentReadDate.isAfter(
+      GetIt.instance<AppState>().currentGarden!.doDocumentEditDate);
+  }
 
   Map<String, dynamic> toMap() {
     return {
