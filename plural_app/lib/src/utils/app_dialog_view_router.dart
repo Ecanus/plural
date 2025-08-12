@@ -27,6 +27,7 @@ import 'package:plural_app/src/features/authentication/presentation/user_setting
 import 'package:plural_app/src/features/gardens/presentation/admin_current_garden_settings_view.dart';
 import 'package:plural_app/src/features/gardens/presentation/admin_options_view.dart';
 import 'package:plural_app/src/features/gardens/presentation/current_garden_settings_view.dart';
+import 'package:plural_app/src/features/gardens/presentation/examine_do_document_view.dart';
 
 // Invitations
 import 'package:plural_app/src/features/invitations/data/invitations_api.dart';
@@ -115,6 +116,15 @@ class AppDialogViewRouter {
 
   void routeToCurrentGardenSettingsView() {
     viewNotifier.value = CurrentGardenSettingsView();
+  }
+
+  Future<void> routeToExamineDoDocumentView() async {
+    final userGardenRecord = await getUserGardenRecord(
+      userID: GetIt.instance<AppState>().currentUser!.id,
+      gardenID: GetIt.instance<AppState>().currentGarden!.id,
+    );
+
+    viewNotifier.value = ExamineDoDocumentView(userGardenRecord: userGardenRecord!);
   }
 
   // Invitations

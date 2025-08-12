@@ -32,59 +32,51 @@ class AppCheckboxListTileFormField extends StatefulWidget {
 }
 
 class _AppCheckboxListTileFormFieldState extends State<AppCheckboxListTileFormField> {
-  final ValueNotifier<bool> _checkboxNotifier = ValueNotifier<bool>(false);
+  late bool _checkboxValue;
 
   @override
   void initState() {
     super.initState();
-    _checkboxNotifier.value = widget.value;
-  }
-
-  void _onChanged(bool value) {
-    _checkboxNotifier.value = value;
+    _checkboxValue = widget.value;
   }
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: _checkboxNotifier,
-      builder: (BuildContext context, bool checkboxValue, Widget? child) {
-        return Container(
-          constraints: BoxConstraints(maxWidth: AppWidths.w200),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(AppBorderRadii.r5),
-            color: Theme.of(context).colorScheme.primaryContainer
-          ),
-          child: Card(
-            elevation: AppElevations.e0,
-            color: Theme.of(context).colorScheme.primaryContainer,
-            child: FormField<bool>(
-              builder: (_) {
-                return CheckboxListTile(
-                  activeColor: Theme.of(context).colorScheme.onPrimaryContainer,
-                  checkColor: Theme.of(context).colorScheme.primaryContainer,
-                  controlAffinity: ListTileControlAffinity.leading,
-                  title: Text(
-                    widget.text,
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.onPrimaryContainer,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                  value: checkboxValue,
-                  onChanged: (bool? value) => _onChanged(value!),
-                );
-              },
-              onSaved: (_) => widget.appForm.save(
-                fieldName: widget.fieldName,
-                value: _checkboxNotifier.value,
-                formFieldType: widget.formFieldType,
+    return Container(
+      constraints: BoxConstraints(maxWidth: AppWidths.w200),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(AppBorderRadii.r5),
+        color: Theme.of(context).colorScheme.primaryContainer
+      ),
+      child: Card(
+        color: Theme.of(context).colorScheme.primaryContainer,
+        child: FormField<bool>(
+          builder: (_) {
+            return CheckboxListTile(
+              activeColor: Theme.of(context).colorScheme.onPrimaryContainer,
+              checkColor: Theme.of(context).colorScheme.primaryContainer,
+              controlAffinity: ListTileControlAffinity.leading,
+              title: Text(
+                widget.text,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onPrimaryContainer,
+                  fontWeight: FontWeight.w400,
+                ),
               ),
-              validator: (_) => validateCheckboxFormField(_checkboxNotifier.value),
-            ),
+              value: _checkboxValue,
+              onChanged: (bool? value) => setState(() {
+                _checkboxValue = value!;
+              }),
+            );
+          },
+          onSaved: (_) => widget.appForm.save(
+            fieldName: widget.fieldName,
+            value: _checkboxValue,
+            formFieldType: widget.formFieldType,
           ),
-        );
-      }
+          validator: (_) => validateCheckboxFormField(_checkboxValue),
+        ),
+      ),
     );
   }
 }

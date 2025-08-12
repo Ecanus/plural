@@ -66,6 +66,7 @@ void main() {
           home: Scaffold(
             body: AppTextFormField(
               appForm: appForm,
+              controller: TextEditingController(),
               fieldName: "Dos",
               formFieldType: FormFieldType.digitsOnly,
               hintText: "Boa me",

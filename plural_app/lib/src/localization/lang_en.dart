@@ -38,7 +38,10 @@ class AdminCurrentGardenSettingsViewText {
   static const returnToGardenPage = "Return to Garden";
 
   static const doDocument = "Do Document";
+
   static const name = "Garden Name";
+
+  static const previewDoDocument = "Preview Do Document";
 }
 
 class AdminListedUsersViewText {
@@ -90,6 +93,8 @@ class AppDialogFooterText {
   static const adminOptionsView = "Options";
 
   static const createAsk = "Create Ask";
+
+  static const doDocument = "Do Document";
 
   static const editAsk = "Edit Ask";
 
@@ -175,6 +180,12 @@ class AppFormText {
   static const invalidPassword = "Password does not meet all requirements";
 }
 
+class DoDocumentText {
+  static const markAsRead = "Mark as read";
+
+  static const read = "Read";
+}
+
 class ForgotPasswordDialogText {
   static const enterEmail = "Enter email address";
   static const enterEmailToSendInstructions = (
@@ -193,6 +204,9 @@ class GardenSettingsViewText {
 
   static const goToLandingPageLabel = "Go to Landing page";
   static const goToAdminPageLabel = "Go to Administrator page";
+
+  static const returnToGardenSettings = "Return to Garden settings";
+  static const routeToExamineDoDocumentView = "Do Document";
 }
 
 class GardenPageBottomBarText {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mocktail/mocktail.dart';
 
 // Common Widgets
 import 'package:plural_app/src/common_widgets/app_dialog_footer.dart';
@@ -21,6 +22,7 @@ import 'package:plural_app/src/utils/app_state.dart';
 
 // Tests
 import '../../../test_context.dart';
+import '../../../test_mocks.dart';
 
 void main() {
   group("CurrentGardenSettingsView", () {
@@ -121,5 +123,64 @@ void main() {
       // Check successful reroute (text should now appear)
       expect(find.text("Test routing to Landing Page was successful."), findsOneWidget);
     });
+
+    testWidgets("GoToAdminPageTile", (tester) async {
+      final getIt = GetIt.instance;
+      final mockAppState = MockAppState();
+
+      getIt.registerLazySingleton<AppState>(() => mockAppState);
+
+      // AppState.verify()
+      when(
+        () => mockAppState.isAdministrator()
+      ).thenAnswer(
+        (_) async => true
+      );
+
+      final testRouter = GoRouter(
+        initialLocation: "/test_go_to_admin_page_tile",
+        routes: [
+          GoRoute(
+            path: Routes.admin,
+            builder: (_, __) => SizedBox(
+              child: Text("Test routing to Admin Page was successful."),
+            )
+          ),
+          GoRoute(
+            path: "/test_go_to_admin_page_tile",
+            builder: (_, __) => Scaffold(
+            body: Builder(
+                builder: (BuildContext context) {
+                  return GoToAdminPageTile();
+                }
+              ),
+            ),
+          )
+        ]
+      );
+
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routerConfig: testRouter,
+        )
+      );
+
+      await tester.pumpAndSettle(); // allow FutureBuilder to finish
+
+      // Check routed text not rendered, widget is present, and tile label is rendered
+      expect(find.text("Test routing to Admin Page was successful."), findsNothing);
+      expect(find.text(GardenSettingsViewText.goToAdminPageLabel), findsOneWidget);
+      expect(find.byType(GoToAdminPageTile), findsOneWidget);
+
+      // Tap on the ListTile
+      await tester.tap(find.byType(GoToAdminPageTile));
+      await tester.pumpAndSettle();
+
+      // Check successful reroute (text should now appear)
+      expect(find.text("Test routing to Admin Page was successful."), findsOneWidget);
+
+    });
+
+    tearDown(() => GetIt.instance.reset());
   });
 }
