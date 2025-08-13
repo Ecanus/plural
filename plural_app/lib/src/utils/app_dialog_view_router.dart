@@ -45,8 +45,15 @@ class AppDialogViewRouter {
   }
 
   // Asks
-  void routeToCreateAskView() {
-    viewNotifier.value = CreateAskView();
+  Future<void> routeToCreateAskView() async {
+    final userGardenRecord = await getUserGardenRecord(
+      userID: GetIt.instance<AppState>().currentUser!.id,
+      gardenID: GetIt.instance<AppState>().currentGarden!.id,
+    );
+
+    viewNotifier.value = CreateAskView(
+      hasReadDoDocument: userGardenRecord!.hasReadDoDocument,
+    );
   }
 
   void routeToEditAskView(Ask ask) {

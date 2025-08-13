@@ -17,6 +17,7 @@ class AppTextFormField extends StatefulWidget {
     required this.appForm,
     this.autofocus = false,
     this.controller,
+    this.enabled = true,
     required this.fieldName,
     this.formFieldType = FormFieldType.text,
     this.hintText = "",
@@ -35,6 +36,7 @@ class AppTextFormField extends StatefulWidget {
   final AppForm appForm;
   final bool autofocus;
   final TextEditingController? controller;
+  final bool enabled;
   final String fieldName;
   final FormFieldType formFieldType;
   final String hintText;
@@ -107,6 +109,7 @@ class _AppTextFormFieldState extends State<AppTextFormField> {
           label: Text(widget.label),
           suffixIcon: widget.suffixIcon,
         ),
+        enabled: widget.enabled,
         inputFormatters: getInputFormatters(
           widget.textFieldType,
           widget.maxLength

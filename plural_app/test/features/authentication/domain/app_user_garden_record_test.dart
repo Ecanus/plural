@@ -1,4 +1,3 @@
-import 'package:get_it/get_it.dart';
 import 'package:test/test.dart';
 
 // Constants
@@ -10,9 +9,6 @@ import 'package:plural_app/src/features/authentication/domain/app_user_garden_re
 
 // Garden
 import 'package:plural_app/src/features/gardens/domain/garden.dart';
-
-// Utils
-import 'package:plural_app/src/utils/app_state.dart';
 
 // Tests
 import '../../../test_context.dart';
@@ -48,23 +44,17 @@ void main() {
     test("hasReadDoDocument", () {
       final now = DateTime.now();
 
-      final garden1 = TestGardenFactory(doDocumentEditDate: now);
-      final userGardenRecord1 = TestAppUserGardenRecordFactory(
+      final garden1 = GardenFactory(doDocumentEditDate: now);
+      final userGardenRecord1 = AppUserGardenRecordFactory(
         doDocumentReadDate: now.add(Duration(days: -1)),
         garden: garden1,
       );
-
-      final appState = AppState.skipSubscribe()
-        ..currentGarden = userGardenRecord1.garden;
-
-      final getIt = GetIt.instance;
-      getIt.registerLazySingleton<AppState>(() => appState);
 
       // check hasReadDoDocument is false because doDocumentReadDate is earlier
       // than garden.doDocumentEditDate
       expect(userGardenRecord1.hasReadDoDocument, false);
 
-      final userGardenRecord2 = TestAppUserGardenRecordFactory(
+      final userGardenRecord2 = AppUserGardenRecordFactory(
         id: "userGardenRecord2",
         doDocumentReadDate: now.add(Duration(days: 2)),
         garden: garden1,
@@ -74,8 +64,6 @@ void main() {
       // than garden.doDocumentEditDate
       expect(userGardenRecord2.hasReadDoDocument, true);
     });
-
-    tearDown(() => GetIt.instance.reset());
 
     test("toMap", () {
       final tc = TestContext();

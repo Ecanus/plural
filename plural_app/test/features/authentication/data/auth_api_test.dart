@@ -1851,7 +1851,7 @@ void main() {
     tearDown(() => GetIt.instance.reset());
 
     test("updateCurrentUserGardenRecordDoDocumentReadDate", () async {
-      final userGardenRecord = TestAppUserGardenRecordFactory();
+      final userGardenRecord = AppUserGardenRecordFactory();
       final now = DateTime.now();
 
       final getIt = GetIt.instance;

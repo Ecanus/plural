@@ -367,21 +367,26 @@ class TestContext {
   }
 }
 
-class TestAppUserFactory extends AppUser {
-  static final Map<String, TestAppUserFactory> _cache = <String, TestAppUserFactory>{};
+class AppUserFactory extends AppUser {
+  static final Map<String, AppUserFactory> _cache = <String, AppUserFactory>{};
 
-  factory TestAppUserFactory() {
+  factory AppUserFactory({
+    String? id,
+  }) {
+
+    id = id ?? "user-${_cache.length}";
+
     return _cache.putIfAbsent(
-      "test-user-factory-${_cache.length}", () => TestAppUserFactory._internal(
+      id, () => AppUserFactory._internal(
         firstName: "Yaa",
-        id: "test-user-factory-${_cache.length}",
+        id: id!,
         lastName: "Asantewaa",
         username: "queenMother",
       )
     );
   }
 
-  TestAppUserFactory._internal({
+  AppUserFactory._internal({
     required super.firstName,
     required super.id,
     required super.lastName,
@@ -389,24 +394,25 @@ class TestAppUserFactory extends AppUser {
   });
 }
 
-class TestGardenFactory extends Garden {
-  static final Map<String, TestGardenFactory> _cache = <String, TestGardenFactory>{};
+class GardenFactory extends Garden {
+  static final Map<String, GardenFactory> _cache = <String, GardenFactory>{};
 
-  factory TestGardenFactory({
+  factory GardenFactory({
+    AppUser? creator,
     DateTime? doDocumentEditDate,
   }) {
     return _cache.putIfAbsent(
-      "test-garden-factory-${_cache.length}", () => TestGardenFactory._internal(
-        creator: TestAppUserFactory(),
+      "test-garden-factory-${_cache.length}", () => GardenFactory._internal(
+        creator: creator ?? AppUserFactory(),
         doDocument: "Do Document Test Value",
         doDocumentEditDate: doDocumentEditDate ?? DateTime(2020, 08, 08),
-        id: "test-garden-factory-${_cache.length}",
+        id: "garden-${_cache.length}",
         name: "Garden #${_cache.length}"
       )
     );
   }
 
-  TestGardenFactory._internal({
+  GardenFactory._internal({
     required super.creator,
     required super.doDocument,
     required super.doDocumentEditDate,
@@ -415,32 +421,32 @@ class TestGardenFactory extends Garden {
   });
 }
 
-class TestAppUserGardenRecordFactory extends AppUserGardenRecord {
-  static final Map<String, TestAppUserGardenRecordFactory> _cache =
-    <String, TestAppUserGardenRecordFactory>{};
+class AppUserGardenRecordFactory extends AppUserGardenRecord {
+  static final Map<String, AppUserGardenRecordFactory> _cache =
+    <String, AppUserGardenRecordFactory>{};
 
-  factory TestAppUserGardenRecordFactory({
+  factory AppUserGardenRecordFactory({
     DateTime? doDocumentReadDate,
     Garden? garden,
     String? id,
     AppUser? user,
   }) {
 
-    id = id ?? "test-user-garden-record-factory-${_cache.length}";
+    id = id ?? "user-garden-record-${_cache.length}";
 
     return _cache.putIfAbsent(
       id,
-      () => TestAppUserGardenRecordFactory._internal(
+      () => AppUserGardenRecordFactory._internal(
         doDocumentReadDate: doDocumentReadDate ?? DateTime(2021, 08, 08),
-        garden: garden ?? TestGardenFactory(),
-        user: user ?? TestAppUserFactory(),
+        garden: garden ?? GardenFactory(),
+        user: user ?? AppUserFactory(),
         id: id!,
         role: AppUserGardenRole.member
       )
     );
   }
 
-  TestAppUserGardenRecordFactory._internal({
+  AppUserGardenRecordFactory._internal({
     required super.doDocumentReadDate,
     required super.garden,
     required super.id,
@@ -449,10 +455,87 @@ class TestAppUserGardenRecordFactory extends AppUserGardenRecord {
   });
 }
 
+class AppUserSettingsFactory extends AppUserSettings {
+  static final Map<String, AppUserSettingsFactory> _cache =
+    <String, AppUserSettingsFactory>{};
+
+  factory AppUserSettingsFactory({
+    String? id,
+    AppUser? user,
+  }) {
+
+    id = id ?? "user-settings-${_cache.length}";
+
+    return _cache.putIfAbsent(
+      id,
+      () => AppUserSettingsFactory._internal(
+        defaultCurrency: "GHS",
+        defaultInstructions: "Test default instructions",
+        gardenTimelineDisplayCount: 3,
+        id: id!,
+        user: user ?? AppUserFactory(),
+      )
+    );
+  }
+
+  AppUserSettingsFactory._internal({
+    required super.defaultCurrency,
+    required super.defaultInstructions,
+    required super.gardenTimelineDisplayCount,
+    required super.id,
+    required super.user
+  });
+}
+
+class AskFactory extends Ask {
+  static final Map<String, AskFactory> _cache =
+    <String, AskFactory>{};
+
+  factory AskFactory({
+    AppUser? creator,
+    String? id,
+    DateTime? targetMetDate,
+  }) {
+
+    id = id ?? "ask-${_cache.length}";
+
+    return _cache.putIfAbsent(
+      id,
+      () => AskFactory._internal(
+        boon: 5,
+        creator: creator ?? AppUserFactory(),
+        creationDate: DateTime.now().add(Duration(days: -1)), // yesterday
+        currency: "GHS",
+        deadlineDate: DateTime.now().add(Duration(days: 7)), // in a week
+        description: "Test description for $id",
+        id: id!,
+        instructions: "Test instructions for $id",
+        targetMetDate: targetMetDate,
+        targetSum: 50,
+        type: AskType.monetary
+      )
+    );
+  }
+
+  AskFactory._internal({
+    required super.boon,
+    required super.creator,
+    required super.creationDate,
+    required super.currency,
+    required super.deadlineDate,
+    required super.description,
+    required super.id,
+    required super.instructions,
+    super.targetMetDate,
+    required super.targetSum,
+    required super.type
+  });
+}
+
 RecordModel getUserRecordModel({
   AppUser? user,
 }) {
-  user = user ?? TestAppUserFactory();
+  user = user ?? AppUserFactory();
 
   return RecordModel({
     "id": user.id,
@@ -470,7 +553,7 @@ RecordModel getUserGardenRecordRecordModel({
 }) {
   Map<String, dynamic> map = {};
 
-  userGardenRecord = userGardenRecord ?? TestAppUserGardenRecordFactory();
+  userGardenRecord = userGardenRecord ?? AppUserGardenRecordFactory();
   addExpandFields(
     expandFields, map,
     user: userGardenRecord.user
@@ -497,7 +580,7 @@ void addExpandFields(
   Garden? garden,
 }) {
   if (expandFields.contains(UserGardenRecordField.user)) {
-    user = user ?? TestAppUserFactory();
+    user = user ?? AppUserFactory();
 
     map[UserGardenRecordField.user] = {
       GenericField.id: user.id,
@@ -512,8 +595,8 @@ void addExpandFields(
       expandFields.contains(UserGardenRecordField.garden) ||
       expandFields.contains(InvitationField.garden)
     ) {
-      user = user ?? TestAppUserFactory();
-      garden = garden ?? TestGardenFactory();
+      user = user ?? AppUserFactory();
+      garden = garden ?? GardenFactory();
 
       map[UserGardenRecordField.garden] = {
         GenericField.id: garden.id,
@@ -526,7 +609,7 @@ void addExpandFields(
   }
 
   if (expandFields.contains(InvitationField.creator)) {
-    creator = creator ?? TestAppUserFactory();
+    creator = creator ?? AppUserFactory();
 
     map[InvitationField.creator] = {
       GenericField.id: creator.id,
@@ -538,7 +621,7 @@ void addExpandFields(
   }
 
   if (expandFields.contains(InvitationField.invitee)) {
-    invitee = invitee ?? TestAppUserFactory();
+    invitee = invitee ?? AppUserFactory();
 
     map[InvitationField.invitee] = {
       GenericField.id: invitee.id,
