@@ -31,6 +31,7 @@ enum AppUserGardenPermission {
   createInvitations,
   deleteGarden,
   deleteMemberAsks,
+  editDoDocument,
   expelMembers,
   viewActiveInvitations,
   viewAdminGardenTimeline,
@@ -42,12 +43,14 @@ enum AppUserGardenPermission {
 class AppUserGardenRecord {
   AppUserGardenRecord({
     required this.garden,
+    required this.doDocumentReadDate,
     required this.id,
     required this.role,
     required this.user,
   });
 
   final Garden garden;
+  final DateTime doDocumentReadDate;
   final String id;
   final AppUserGardenRole role;
   final AppUser user;
@@ -55,14 +58,20 @@ class AppUserGardenRecord {
   AppUserGardenRecord.fromJson(
     Map<String, dynamic> json, AppUser recordUser, Garden recordGarden) :
       garden = recordGarden,
+      doDocumentReadDate = DateTime.parse(json[UserGardenRecordField.doDocumentReadDate]),
       id = json[GenericField.id] as String,
       role = getUserGardenRoleFromString(json[UserGardenRecordField.role])!,
       user = recordUser;
+
+  bool get hasReadDoDocument {
+    return doDocumentReadDate.isAfter(garden.doDocumentEditDate); // Note: using cached Garden and not AppState.currentGarden
+  }
 
   Map<String, dynamic> toMap() {
     return {
       GenericField.id: id,
       UserGardenRecordField.garden: garden.id,
+      UserGardenRecordField.doDocumentReadDate: doDocumentReadDate,
       UserGardenRecordField.role: role.name,
       UserGardenRecordField.user: user.id
     };

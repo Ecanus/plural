@@ -41,6 +41,8 @@ void main() {
             fieldName: GardenField.creator, value: tc.user.id)
         ..setValue(
             fieldName: GardenField.name, value: "NewGardenName")
+          ..setValue(
+            fieldName: GardenField.doDocument, value: "New Do Document")
         ..setValue(
             fieldName: AppFormFields.rebuild, value: testFunc, isAux: true);
 
@@ -71,6 +73,8 @@ void main() {
         mockGardensRepository: mockGardensRepository,
         gardenID: tc.garden.id,
         gardenName: appForm.getValue(fieldName: GardenField.name),
+        gardenDoDocument: appForm.getValue(fieldName: GardenField.doDocument),
+        gardenDoDocumentEditDate: DateTime.now(), // have to use DateTime.now()
         returnValue: (tc.getGardenRecordModel(), {})
       );
 
@@ -132,6 +136,8 @@ void main() {
             fieldName: GardenField.creator, value: tc.user.id)
         ..setValue(
             fieldName: GardenField.name, value: "NewGardenName")
+          ..setValue(
+            fieldName: GardenField.doDocument, value: "New Do Document")
         ..setValue(
             fieldName: AppFormFields.rebuild, value: testFunc, isAux: true);
 
@@ -162,6 +168,8 @@ void main() {
         mockGardensRepository: mockGardensRepository,
         gardenID: tc.garden.id,
         gardenName: appForm.getValue(fieldName: GardenField.name),
+        gardenDoDocument: appForm.getValue(fieldName: GardenField.doDocument),
+        gardenDoDocumentEditDate: DateTime.now(), // have to use DateTime.now()
         returnValue: (null, {})
       );
 

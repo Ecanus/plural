@@ -50,6 +50,8 @@ class TestContext {
 
     garden = Garden(
       creator: user,
+      doDocument: "Test Do Document in TestContext",
+      doDocumentEditDate: DateTime(2000, 1, 31),
       id: "TESTGARDEN1",
       name: "Petunia"
     );
@@ -78,6 +80,7 @@ class TestContext {
 
     userGardenRecord = AppUserGardenRecord(
       garden: garden,
+      doDocumentReadDate: DateTime(2000, 1, 31),
       id: "TESTGARDENRECORD1",
       role: AppUserGardenRole.member,
       user: user,
@@ -177,6 +180,8 @@ class TestContext {
 
   RecordModel getGardenRecordModel({
     String? creatorID,
+    String? doDocument,
+    String? doDocumentEditDate,
     String? id,
     String? name,
   }) {
@@ -185,6 +190,8 @@ class TestContext {
       "created": "1990-10-16",
       "collectionName": Collection.gardens,
       GardenField.creator: creatorID ?? user.id,
+      GardenField.doDocument: doDocument ?? "Do Document",
+      GardenField.doDocumentEditDate: doDocumentEditDate ?? "2020-11-29",
       GardenField.name: name ?? garden.name,
     });
   }
@@ -242,24 +249,10 @@ class TestContext {
 
 
   RecordModel getUserGardenRecordRecordModel({
-    String? id,
-    AppUserGardenRole? role,
-  }) {
-    return RecordModel({
-      "id": id ?? userGardenRecord.id,
-      "created": "1999-10-08",
-      "collectionName": Collection.userGardenRecords,
-      UserGardenRecordField.user: user.id,
-      UserGardenRecordField.garden: garden.id,
-      UserGardenRecordField.role: role?.name ?? AppUserGardenRole.member.name,
-    });
-  }
-
-  RecordModel getExpandUserGardenRecordRecordModel(
-    List<String> expand, {
     String? recordID,
     AppUserGardenRole role = AppUserGardenRole.member,
-}) {
+    List<String> expand = const []
+  }) {
     Map<String, dynamic> map = {};
 
     addExpandFields(expand, map);
@@ -269,6 +262,7 @@ class TestContext {
       GenericField.created: "1999-10-08",
       UserGardenRecordField.user: user.id,
       UserGardenRecordField.garden: garden.id,
+      UserGardenRecordField.doDocumentReadDate: "2000-01-31",
       UserGardenRecordField.role: role.name,
       "expand": map
     });
@@ -328,6 +322,8 @@ class TestContext {
         GenericField.id: garden.id,
         GenericField.created: "1993-11-11",
         GardenField.creator: user.id,
+        GardenField.doDocument: "Expaned Do Document",
+        GardenField.doDocumentEditDate: "2000-10-28",
         GardenField.name: garden.name,
       };
     }
@@ -368,5 +364,271 @@ class TestContext {
         }
       },
     );
+  }
+}
+
+class AppUserFactory extends AppUser {
+  static final Map<String, AppUserFactory> _cache = <String, AppUserFactory>{};
+
+  factory AppUserFactory({
+    String? id,
+  }) {
+
+    id = id ?? "user-${_cache.length}";
+
+    return _cache.putIfAbsent(
+      id, () => AppUserFactory._internal(
+        firstName: "Yaa",
+        id: id!,
+        lastName: "Asantewaa",
+        username: "queenMother",
+      )
+    );
+  }
+
+  AppUserFactory._internal({
+    required super.firstName,
+    required super.id,
+    required super.lastName,
+    required super.username,
+  });
+}
+
+class GardenFactory extends Garden {
+  static final Map<String, GardenFactory> _cache = <String, GardenFactory>{};
+
+  factory GardenFactory({
+    AppUser? creator,
+    DateTime? doDocumentEditDate,
+  }) {
+    return _cache.putIfAbsent(
+      "test-garden-factory-${_cache.length}", () => GardenFactory._internal(
+        creator: creator ?? AppUserFactory(),
+        doDocument: "Do Document Test Value",
+        doDocumentEditDate: doDocumentEditDate ?? DateTime(2020, 08, 08),
+        id: "garden-${_cache.length}",
+        name: "Garden #${_cache.length}"
+      )
+    );
+  }
+
+  GardenFactory._internal({
+    required super.creator,
+    required super.doDocument,
+    required super.doDocumentEditDate,
+    required super.id,
+    required super.name
+  });
+}
+
+class AppUserGardenRecordFactory extends AppUserGardenRecord {
+  static final Map<String, AppUserGardenRecordFactory> _cache =
+    <String, AppUserGardenRecordFactory>{};
+
+  factory AppUserGardenRecordFactory({
+    DateTime? doDocumentReadDate,
+    Garden? garden,
+    String? id,
+    AppUser? user,
+  }) {
+
+    id = id ?? "user-garden-record-${_cache.length}";
+
+    return _cache.putIfAbsent(
+      id,
+      () => AppUserGardenRecordFactory._internal(
+        doDocumentReadDate: doDocumentReadDate ?? DateTime(2021, 08, 08),
+        garden: garden ?? GardenFactory(),
+        user: user ?? AppUserFactory(),
+        id: id!,
+        role: AppUserGardenRole.member
+      )
+    );
+  }
+
+  AppUserGardenRecordFactory._internal({
+    required super.doDocumentReadDate,
+    required super.garden,
+    required super.id,
+    required super.role,
+    required super.user
+  });
+}
+
+class AppUserSettingsFactory extends AppUserSettings {
+  static final Map<String, AppUserSettingsFactory> _cache =
+    <String, AppUserSettingsFactory>{};
+
+  factory AppUserSettingsFactory({
+    String? id,
+    AppUser? user,
+  }) {
+
+    id = id ?? "user-settings-${_cache.length}";
+
+    return _cache.putIfAbsent(
+      id,
+      () => AppUserSettingsFactory._internal(
+        defaultCurrency: "GHS",
+        defaultInstructions: "Test default instructions",
+        gardenTimelineDisplayCount: 3,
+        id: id!,
+        user: user ?? AppUserFactory(),
+      )
+    );
+  }
+
+  AppUserSettingsFactory._internal({
+    required super.defaultCurrency,
+    required super.defaultInstructions,
+    required super.gardenTimelineDisplayCount,
+    required super.id,
+    required super.user
+  });
+}
+
+class AskFactory extends Ask {
+  static final Map<String, AskFactory> _cache =
+    <String, AskFactory>{};
+
+  factory AskFactory({
+    AppUser? creator,
+    String? id,
+    DateTime? targetMetDate,
+  }) {
+
+    id = id ?? "ask-${_cache.length}";
+
+    return _cache.putIfAbsent(
+      id,
+      () => AskFactory._internal(
+        boon: 5,
+        creator: creator ?? AppUserFactory(),
+        creationDate: DateTime.now().add(Duration(days: -1)), // yesterday
+        currency: "GHS",
+        deadlineDate: DateTime.now().add(Duration(days: 7)), // in a week
+        description: "Test description for $id",
+        id: id!,
+        instructions: "Test instructions for $id",
+        targetMetDate: targetMetDate,
+        targetSum: 50,
+        type: AskType.monetary
+      )
+    );
+  }
+
+  AskFactory._internal({
+    required super.boon,
+    required super.creator,
+    required super.creationDate,
+    required super.currency,
+    required super.deadlineDate,
+    required super.description,
+    required super.id,
+    required super.instructions,
+    super.targetMetDate,
+    required super.targetSum,
+    required super.type
+  });
+}
+
+RecordModel getUserRecordModel({
+  AppUser? user,
+}) {
+  user = user ?? AppUserFactory();
+
+  return RecordModel({
+    "id": user.id,
+    "created": "1992-12-23",
+    "collectionName": Collection.users,
+    UserField.firstName: user.firstName,
+    UserField.lastName: user.lastName,
+    UserField.username: user.username,
+  });
+}
+
+RecordModel getUserGardenRecordRecordModel({
+  AppUserGardenRecord? userGardenRecord,
+  List<String> expandFields = const [],
+}) {
+  Map<String, dynamic> map = {};
+
+  userGardenRecord = userGardenRecord ?? AppUserGardenRecordFactory();
+  addExpandFields(
+    expandFields, map,
+    user: userGardenRecord.user
+  );
+
+  return RecordModel.fromJson({
+    GenericField.id: userGardenRecord.id,
+    GenericField.created: "1999-10-08",
+    UserGardenRecordField.user: userGardenRecord.user.id,
+    UserGardenRecordField.garden: userGardenRecord.garden.id,
+    UserGardenRecordField.doDocumentReadDate:
+      DateFormat(Formats.dateYMMdd).format(userGardenRecord.doDocumentReadDate),
+    UserGardenRecordField.role: userGardenRecord.role.name,
+    "expand": map
+  });
+}
+
+void addExpandFields(
+  List<String> expandFields,
+  Map<String, dynamic> map, {
+  AppUser? user,
+  AppUser? creator,
+  AppUser? invitee,
+  Garden? garden,
+}) {
+  if (expandFields.contains(UserGardenRecordField.user)) {
+    user = user ?? AppUserFactory();
+
+    map[UserGardenRecordField.user] = {
+      GenericField.id: user.id,
+      GenericField.created: "1992-12-23",
+      UserField.firstName: user.firstName,
+      UserField.lastName: user.lastName,
+      UserField.username: user.username
+    };
+  }
+
+  if (
+      expandFields.contains(UserGardenRecordField.garden) ||
+      expandFields.contains(InvitationField.garden)
+    ) {
+      user = user ?? AppUserFactory();
+      garden = garden ?? GardenFactory();
+
+      map[UserGardenRecordField.garden] = {
+        GenericField.id: garden.id,
+        GenericField.created: "1993-11-11",
+        GardenField.creator: user.id,
+        GardenField.doDocument: "Expaned Do Document",
+        GardenField.doDocumentEditDate: "2000-10-28",
+        GardenField.name: garden.name,
+      };
+  }
+
+  if (expandFields.contains(InvitationField.creator)) {
+    creator = creator ?? AppUserFactory();
+
+    map[InvitationField.creator] = {
+      GenericField.id: creator.id,
+      GenericField.created: "1992-12-23",
+      UserField.firstName: creator.firstName,
+      UserField.lastName: creator.lastName,
+      UserField.username: creator.username
+    };
+  }
+
+  if (expandFields.contains(InvitationField.invitee)) {
+    invitee = invitee ?? AppUserFactory();
+
+    map[InvitationField.invitee] = {
+      GenericField.id: invitee.id,
+      GenericField.created: "1992-12-23",
+      UserField.firstName: invitee.firstName,
+      UserField.lastName: invitee.lastName,
+      UserField.username: invitee.username
+    };
   }
 }

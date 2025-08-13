@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 
 // Common Widgets
 import 'package:plural_app/src/common_widgets/app_dialog_footer.dart';
+import 'package:plural_app/src/common_widgets/app_hyperlinkable_text.dart';
+import 'package:plural_app/src/common_widgets/app_text_form_field.dart';
 
 // Constants
 import 'package:plural_app/src/constants/routes.dart';
@@ -49,6 +51,7 @@ void main() {
 
       // Check AdminCurrentGardenDialogList not yet displayed
       expect(find.byType(AdminCurrentGardenSettingsView), findsNothing);
+      expect(find.byType(AppTextFormField), findsNothing);
       expect(find.byType(AppDialogFooterBuffer), findsNothing);
       expect(find.byType(AppDialogNavFooter), findsNothing);
 
@@ -58,6 +61,7 @@ void main() {
 
       // Check expected values are found
       expect(find.byType(AdminCurrentGardenSettingsView), findsOneWidget);
+      expect(find.byType(AppTextFormField), findsNWidgets(2));
       expect(find.byType(AppDialogFooterBuffer), findsOneWidget);
       expect(find.byType(AppDialogNavFooter), findsOneWidget);
     });
@@ -105,6 +109,37 @@ void main() {
 
       // Check successful reroute (text should now appear)
       expect(find.text("Test routing to Garden Page was successful."), findsOneWidget);
+    });
+
+    testWidgets("ShowAdminExamineDoDocumentDialogButton", (tester) async {
+      final controller = TextEditingController();
+      controller.text = "Testing the text displays!";
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (BuildContext context) {
+                return ShowAdminExamineDoDocumentDialogButton(
+                  textEditingController: controller,);
+              }
+            ),
+          ),
+        )
+      );
+
+      expect(find.byType(ListView), findsNothing);
+      expect(find.byType(AppHyperlinkableText), findsNothing);
+      expect(find.text("Testing the text displays!"), findsNothing);
+
+      // Tap ShowAdminExamineDoDocumentDialogButton (to open dialog)
+      await tester.tap(find.byType(ShowAdminExamineDoDocumentDialogButton));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(ListView), findsOneWidget);
+      expect(find.byType(AppHyperlinkableText), findsOneWidget);
+      expect(find.text("Testing the text displays!"), findsOneWidget);
+
     });
   });
 }

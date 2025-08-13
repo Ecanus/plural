@@ -6,10 +6,12 @@ import 'package:go_router/go_router.dart';
 import 'package:plural_app/src/common_widgets/app_dialog.dart';
 import 'package:plural_app/src/common_widgets/app_dialog_footer.dart';
 import 'package:plural_app/src/common_widgets/app_dialog_footer_buffer_submit_button.dart';
+import 'package:plural_app/src/common_widgets/app_hyperlinkable_text.dart';
 import 'package:plural_app/src/common_widgets/app_text_form_field.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
+import 'package:plural_app/src/constants/app_values.dart';
 import 'package:plural_app/src/constants/fields.dart';
 import 'package:plural_app/src/constants/routes.dart';
 
@@ -45,6 +47,7 @@ class _AdminCurrentGardenSettingsViewState extends State<AdminCurrentGardenSetti
   late Garden _currentGarden;
   late GlobalKey<FormState> _formKey;
 
+  final _doDocumentTextController = TextEditingController();
   AppDialogViewRouter _appDialogViewRouter = GetIt.instance<AppDialogViewRouter>();
 
   @override
@@ -80,6 +83,13 @@ class _AdminCurrentGardenSettingsViewState extends State<AdminCurrentGardenSetti
             ],
           ),
         ),
+        gapH10,
+        Divider(
+          color: Theme.of(context).colorScheme.onSecondary,
+          indent: AppIndents.i200,
+          endIndent: AppIndents.i200,
+          thickness: AppDividerThicknesses.dpt2,
+        ),
         Expanded(
           child: ListView(
             padding: const EdgeInsets.all(AppPaddings.p35),
@@ -93,6 +103,21 @@ class _AdminCurrentGardenSettingsViewState extends State<AdminCurrentGardenSetti
                       fieldName: GardenField.name,
                       initialValue: _currentGarden.name,
                       label: AdminCurrentGardenSettingsViewText.name,
+                      paddingTop: AppPaddings.p0,
+                    ),
+                    AppTextFormField(
+                      appForm: _appForm,
+                      controller: _doDocumentTextController,
+                      fieldName: GardenField.doDocument,
+                      initialValue: _currentGarden.doDocument,
+                      label: AdminCurrentGardenSettingsViewText.doDocument,
+                      maxLength: AppMaxLengths.max4000,
+                      maxLines: null,
+                      minLines: AppMinLines.min4,
+                      paddingTop: AppPaddings.p0,
+                      suffixIcon: ShowAdminExamineDoDocumentDialogButton(
+                        textEditingController: _doDocumentTextController,
+                      )
                     ),
                   ],
                 )
@@ -137,6 +162,75 @@ class GoToCurrentGardenPageTile extends StatelessWidget {
         leading: Icon(Icons.local_florist),
         onTap: () => GoRouter.of(context).go(Routes.garden)
       ),
+    );
+  }
+}
+
+class ShowAdminExamineDoDocumentDialogButton extends StatelessWidget {
+  const ShowAdminExamineDoDocumentDialogButton({
+    required this.textEditingController,
+  });
+
+  final TextEditingController textEditingController;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: AppPaddings.p5,
+      ),
+      child: IconButton(
+        tooltip: AdminCurrentGardenSettingsViewText.previewDoDocument,
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AdminExamineDoDocumentDialog(
+                text: textEditingController.text,
+              );
+            }
+          );
+        },
+        icon: Icon(
+          Icons.preview,
+          color: Theme.of(context).colorScheme.onTertiary,
+        )
+      ),
+    );
+  }
+}
+
+class AdminExamineDoDocumentDialog extends StatelessWidget {
+  const AdminExamineDoDocumentDialog({
+    required this.text
+  });
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      shape: RoundedRectangleBorder(),
+      child: Container(
+        constraints: BoxConstraints(
+          maxWidth: AppConstraints.c500,
+          maxHeight: AppConstraints.c600
+        ),
+        child: ListView(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(AppPaddings.p35),
+              child: AppHyperlinkableText(
+                text: text,
+                linkStyle: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  color: Theme.of(context).primaryColor,
+                ),
+              ),
+            )
+          ],
+        ),
+      )
     );
   }
 }

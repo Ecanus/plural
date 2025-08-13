@@ -16,6 +16,8 @@ class AppTextFormField extends StatefulWidget {
   const AppTextFormField({
     required this.appForm,
     this.autofocus = false,
+    this.controller,
+    this.enabled = true,
     required this.fieldName,
     this.formFieldType = FormFieldType.text,
     this.hintText = "",
@@ -23,6 +25,7 @@ class AppTextFormField extends StatefulWidget {
     this.label = "",
     this.maxLength = AppMaxLengths.max20,
     this.maxLines = AppMaxLines.max1,
+    this.minLines,
     this.paddingBottom = AppPaddings.p20,
     this.paddingTop = AppPaddings.p20,
     this.suffixIcon,
@@ -32,6 +35,8 @@ class AppTextFormField extends StatefulWidget {
 
   final AppForm appForm;
   final bool autofocus;
+  final TextEditingController? controller;
+  final bool enabled;
   final String fieldName;
   final FormFieldType formFieldType;
   final String hintText;
@@ -39,6 +44,7 @@ class AppTextFormField extends StatefulWidget {
   final String label;
   final int maxLength;
   final int? maxLines;
+  final int? minLines;
   final double paddingBottom;
   final double paddingTop;
   final Widget? suffixIcon;
@@ -50,7 +56,7 @@ class AppTextFormField extends StatefulWidget {
 }
 
 class _AppTextFormFieldState extends State<AppTextFormField> {
-  final _controller = TextEditingController();
+  late TextEditingController _controller;
   late String? Function(String?) _validator;
 
   @override
@@ -63,7 +69,9 @@ class _AppTextFormFieldState extends State<AppTextFormField> {
   void initState() {
     super.initState();
 
+    _controller = widget.controller ?? TextEditingController();
     _controller.text = widget.initialValue;
+
     _validator = widget.validator ?? getValidator();
   }
 
@@ -101,11 +109,13 @@ class _AppTextFormFieldState extends State<AppTextFormField> {
           label: Text(widget.label),
           suffixIcon: widget.suffixIcon,
         ),
+        enabled: widget.enabled,
         inputFormatters: getInputFormatters(
           widget.textFieldType,
           widget.maxLength
         ),
         maxLines: widget.maxLines,
+        minLines: widget.minLines,
         onSaved: (value) => widget.appForm.save(
           fieldName: widget.fieldName,
           value: value,

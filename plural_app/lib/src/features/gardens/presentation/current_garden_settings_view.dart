@@ -54,10 +54,21 @@ class CurrentGardenSettingsView extends StatelessWidget {
             ],
           )
         ),
+        gapH10,
+        Divider(
+          color: Theme.of(context).colorScheme.onSecondary,
+          indent: AppIndents.i200,
+          endIndent: AppIndents.i200,
+          thickness: AppDividerThicknesses.dpt2,
+        ),
         Expanded(
           child: ListView(
             padding: const EdgeInsets.all(AppPaddings.p35),
             children: [
+              RouteToExamineDoDocumentViewTile(
+                callback: appDialogViewRouter.routeToExamineDoDocumentView,
+              ),
+              gapH30,
               ExitGardenButton(),
             ],
           ),
@@ -123,6 +134,31 @@ class GoToAdminPageTile extends StatelessWidget {
           return SizedBox();
         }
       }
+    );
+  }
+}
+
+class RouteToExamineDoDocumentViewTile extends StatelessWidget {
+  const RouteToExamineDoDocumentViewTile({
+    required this.callback
+  });
+
+  final void Function() callback;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: AppElevations.e7,
+      child: ListTile(
+        tileColor: Theme.of(context).colorScheme.secondary,
+        title: Text(
+          GardenSettingsViewText.routeToExamineDoDocumentView,
+          style: TextStyle(
+            fontWeight: FontWeight.w500)
+        ),
+        leading: Icon(Icons.auto_stories),
+        onTap: () => callback()
+      ),
     );
   }
 }

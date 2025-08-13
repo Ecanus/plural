@@ -3,6 +3,7 @@ import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:get_it/get_it.dart';
+import 'package:intl/intl.dart';
 import 'package:pocketbase/pocketbase.dart';
 
 // Common Widgets
@@ -12,6 +13,7 @@ import 'package:plural_app/src/common_widgets/app_snackbars.dart';
 import 'package:plural_app/src/constants/app_values.dart';
 import 'package:plural_app/src/constants/environments.dart';
 import 'package:plural_app/src/constants/fields.dart';
+import 'package:plural_app/src/constants/formats.dart';
 import 'package:plural_app/src/constants/pocketbase.dart';
 import 'package:plural_app/src/constants/query_parameters.dart';
 import 'package:plural_app/src/constants/routes.dart';
@@ -291,6 +293,7 @@ List<AppUserGardenPermission> getUserGardenPermissionGroup(AppUserGardenRole rol
       AppUserGardenPermission.changeMemberRoles,
       AppUserGardenPermission.createInvitations,
       AppUserGardenPermission.deleteMemberAsks,
+      AppUserGardenPermission.editDoDocument,
       AppUserGardenPermission.expelMembers,
       AppUserGardenPermission.viewActiveInvitations,
       AppUserGardenPermission.viewAdminGardenTimeline,
@@ -579,6 +582,19 @@ Future<(RecordModel?, Map)> updateUser(Map map) async {
   return (record, errorsMap);
 }
 
+/// Updates the doDocumentReadDate of [UserGardenRecord] record with
+/// the given [userGardenRecordID] to DateTime.now().
+Future<void> updateCurrentUserGardenRecordDoDocumentReadDate(
+  String userGardenRecordID
+) async {
+  await GetIt.instance<UserGardenRecordsRepository>().update(
+    id: userGardenRecordID,
+    body: {
+      UserGardenRecordField.doDocumentReadDate:
+        DateFormat(Formats.dateYMMddHHm).format(DateTime.now())
+    }
+  );
+}
 /// An action. Attempts to update the [UserGardenRecord] record that matches the values
 /// passed in the given [map] parameter.
 ///

@@ -247,7 +247,7 @@ void main() {
 
       final expiryDateThreshold = DateTime.now();
       final expiryDateThresholdString =
-        DateFormat(Formats.dateYMMddHHms).format(expiryDateThreshold);
+        DateFormat(Formats.dateYMMdd).format(expiryDateThreshold);
 
       final appState = AppState.skipSubscribe()
         ..currentUser = tc.user;
@@ -300,7 +300,7 @@ void main() {
 
       final expiryDateThreshold = DateTime.now();
       final expiryDateThresholdString =
-        DateFormat(Formats.dateYMMddHHms).format(expiryDateThreshold);
+        DateFormat(Formats.dateYMMdd).format(expiryDateThreshold);
 
       final appState = AppState.skipSubscribe()
         ..currentUser = tc.user;

@@ -22,6 +22,9 @@ import 'package:plural_app/src/constants/fields.dart';
 import 'package:plural_app/src/features/asks/data/forms.dart';
 import 'package:plural_app/src/features/asks/domain/ask.dart';
 
+// Auth
+import 'package:plural_app/src/features/authentication/data/auth_api.dart';
+
 // Localization
 import 'package:plural_app/src/localization/lang_en.dart';
 
@@ -32,12 +35,17 @@ import 'package:plural_app/src/utils/app_state.dart';
 import 'package:plural_app/src/utils/route_to_view_button.dart';
 
 Future createCreateAskDialog(BuildContext context) async {
+  final userGardenRecord = await getUserGardenRecord(
+    userID: GetIt.instance<AppState>().currentUser!.id,
+    gardenID: GetIt.instance<AppState>().currentGarden!.id,
+  );
+
   if (context.mounted) {
     return showDialog(
       context: context,
       builder: (BuildContext context) {
         return AppDialog(
-          view: CreateAskView(),
+          view: CreateAskView(hasReadDoDocument: userGardenRecord!.hasReadDoDocument,),
         );
       }
     );
@@ -45,6 +53,12 @@ Future createCreateAskDialog(BuildContext context) async {
 }
 
 class CreateAskView extends StatefulWidget {
+  const CreateAskView({
+    required this.hasReadDoDocument,
+  });
+
+  final bool hasReadDoDocument;
+
   @override
   State<CreateAskView> createState() => _CreateAskViewState();
 }
@@ -77,6 +91,11 @@ class _CreateAskViewState extends State<CreateAskView> {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        CreateAskHeader(
+          hasReadDoDocument: widget.hasReadDoDocument,
+          routeToExamineDoDocumentViewCallback:
+            _appDialogViewRouter.routeToExamineDoDocumentView,
+        ),
         Expanded(
           child: ListView(
             padding: const EdgeInsets.all(AppPaddings.p35),
@@ -87,6 +106,7 @@ class _CreateAskViewState extends State<CreateAskView> {
                   children: [
                     AppDatePickerFormField(
                       appForm: _appForm,
+                      enabled: widget.hasReadDoDocument,
                       fieldName: AskField.deadlineDate,
                       label: AskViewText.deadlineDate,
                     ),
@@ -95,6 +115,7 @@ class _CreateAskViewState extends State<CreateAskView> {
                         Expanded(
                           child: AppTextFormField(
                             appForm: _appForm,
+                            enabled: widget.hasReadDoDocument,
                             fieldName: AskField.targetSum,
                             formFieldType: FormFieldType.digitsOnly,
                             label: AskViewText.targetSum,
@@ -106,6 +127,7 @@ class _CreateAskViewState extends State<CreateAskView> {
                         Expanded(
                           child: AppTextFormField(
                             appForm: _appForm,
+                            enabled: widget.hasReadDoDocument,
                             fieldName: AskField.boon,
                             formFieldType: FormFieldType.digitsOnly,
                             label: AskViewText.boon,
@@ -122,6 +144,7 @@ class _CreateAskViewState extends State<CreateAskView> {
                           flex: AppFlexes.f2,
                           child: AppCurrencyPickerFormField(
                             appForm: _appForm,
+                            enabled: widget.hasReadDoDocument,
                             fieldName: AskField.currency,
                             initialValue: _appState.currentUserSettings!.defaultCurrency,
                             label: AskViewText.currency,
@@ -131,6 +154,7 @@ class _CreateAskViewState extends State<CreateAskView> {
                     ),
                     AppTextFormField(
                       appForm: _appForm,
+                      enabled: widget.hasReadDoDocument,
                       fieldName: AskField.description,
                       label: AskViewText.description,
                       maxLength: AppMaxLengths.max400,
@@ -142,6 +166,7 @@ class _CreateAskViewState extends State<CreateAskView> {
                     ),
                     AppTextFormField(
                       appForm: _appForm,
+                      enabled: widget.hasReadDoDocument,
                       fieldName: AskField.instructions,
                       initialValue: _appState.currentUserSettings!.defaultInstructions,
                       label: AskViewText.instructions,
@@ -156,6 +181,7 @@ class _CreateAskViewState extends State<CreateAskView> {
                       visible: false,
                       child: AppTextFormField(
                         appForm: _appForm,
+                        enabled: widget.hasReadDoDocument,
                         fieldName: AskField.type,
                         initialValue: AskType.monetary.name, // Hardcoded value for now
                         label: AskViewText.type,
@@ -176,6 +202,7 @@ class _CreateAskViewState extends State<CreateAskView> {
             ),
             AppDialogFooterBufferSubmitButton(
               callback: submitCreate,
+              enabled: widget.hasReadDoDocument,
               positionalArguments: [context, _formKey, _appForm],
             ),
             RouteToViewButton(
@@ -196,5 +223,47 @@ class _CreateAskViewState extends State<CreateAskView> {
         )
       ],
     );
+  }
+}
+
+class CreateAskHeader extends StatelessWidget {
+  const CreateAskHeader({
+    required this.hasReadDoDocument,
+    required this.routeToExamineDoDocumentViewCallback,
+  });
+
+  final bool hasReadDoDocument;
+  final void Function() routeToExamineDoDocumentViewCallback;
+
+  @override
+  Widget build(BuildContext context) {
+    return hasReadDoDocument ?
+      SizedBox() :
+      Padding(
+        padding: const EdgeInsets.only(
+          top: AppPaddings.p50,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Flexible(
+              child: Text(
+                AskViewText.readDoDocumentStart,
+                style: TextStyle(fontWeight: FontWeight.w500),
+              ),
+            ),
+            TextButton(
+              onPressed: () => routeToExamineDoDocumentViewCallback(),
+              child: Text(AskViewText.doDocument),
+            ),
+            Flexible(
+              child: Text(
+                AskViewText.readDoDocumentEnd,
+                style: TextStyle(fontWeight: FontWeight.w500),
+              ),
+            ),
+          ],
+        ),
+      );
   }
 }

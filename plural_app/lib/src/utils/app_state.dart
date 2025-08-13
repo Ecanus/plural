@@ -37,7 +37,7 @@ class AppState with ChangeNotifier {
   // primarily for testing
   bool _skipsSubscriptions = false;
 
-  Garden? _currentGarden;
+  Garden? _currentGarden; // use Garden and not UserGardenRecord because caching the latter would prevent permission changes from being instantly applied
 
   AppUser? _currentUser;
   AppUserSettings? _currentUserSettings;

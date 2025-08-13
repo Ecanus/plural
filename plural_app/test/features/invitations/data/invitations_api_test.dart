@@ -595,7 +595,7 @@ void main() {
 
       final expiryDateThreshold = DateTime.now();
       final expiryDateThresholdString =
-        DateFormat(Formats.dateYMMddHHms).format(expiryDateThreshold);
+        DateFormat(Formats.dateYMMdd).format(expiryDateThreshold);
 
       final appState = AppState.skipSubscribe()
         ..currentGarden = tc.garden
@@ -702,7 +702,7 @@ void main() {
 
       final expiryDateThreshold = DateTime.now();
       final expiryDateThresholdString =
-        DateFormat(Formats.dateYMMddHHms).format(expiryDateThreshold);
+        DateFormat(Formats.dateYMMdd).format(expiryDateThreshold);
 
       final getIt = GetIt.instance;
       final mockAppState = MockAppState();
@@ -824,7 +824,7 @@ void main() {
 
       final expiryDateThreshold = DateTime.now();
       final expiryDateThresholdString =
-        DateFormat(Formats.dateYMMddHHms).format(expiryDateThreshold);
+        DateFormat(Formats.dateYMMdd).format(expiryDateThreshold);
 
       final getIt = GetIt.instance;
       final mockInvitationsRepository = MockInvitationsRepository();
@@ -886,7 +886,7 @@ void main() {
 
       final expiryDateThreshold = DateTime.now();
       final expiryDateThresholdString =
-        DateFormat(Formats.dateYMMddHHms).format(expiryDateThreshold);
+        DateFormat(Formats.dateYMMdd).format(expiryDateThreshold);
 
       final appState = AppState.skipSubscribe()
         ..currentUser = tc.user;
