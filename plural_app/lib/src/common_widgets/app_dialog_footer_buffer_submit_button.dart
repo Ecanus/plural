@@ -9,11 +9,13 @@ import 'package:plural_app/src/localization/lang_en.dart';
 class AppDialogFooterBufferSubmitButton extends StatelessWidget {
   AppDialogFooterBufferSubmitButton({
     required this.callback,
+    this.enabled = true,
     this.namedArguments,
     this.positionalArguments,
   });
 
   final Function callback;
+  final bool enabled;
   final Map<Symbol, dynamic>? namedArguments;
   final List<dynamic>? positionalArguments;
 
@@ -28,7 +30,9 @@ class AppDialogFooterBufferSubmitButton extends StatelessWidget {
           iconColor: Theme.of(context).colorScheme.surface,
           shape: CircleBorder(),
         ),
-        onPressed: () => Function.apply(callback, positionalArguments, namedArguments),
+        onPressed: enabled ?
+          () => Function.apply(callback, positionalArguments, namedArguments)
+          : null,
         child: const Icon(Icons.save_alt)
       ),
     );

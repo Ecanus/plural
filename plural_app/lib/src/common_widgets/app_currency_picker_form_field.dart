@@ -15,6 +15,7 @@ import 'package:plural_app/src/utils/app_form.dart';
 class AppCurrencyPickerFormField extends StatefulWidget {
   AppCurrencyPickerFormField({
     required this.appForm,
+    this.enabled = true,
     required this.fieldName,
     this.initialValue,
     this.label = "",
@@ -22,6 +23,7 @@ class AppCurrencyPickerFormField extends StatefulWidget {
   });
 
   final AppForm appForm;
+  final bool enabled;
   final String fieldName;
   final String? initialValue;
   final String label;
@@ -90,6 +92,7 @@ class _AppCurrencyPickerFormFieldState extends State<AppCurrencyPickerFormField>
         label: Text(widget.label),
         suffixIcon: showDialogButton,
       ),
+      enabled: widget.enabled,
       onSaved: (value) => widget.appForm.save(
         fieldName: widget.fieldName,
         value: value,

@@ -16,6 +16,7 @@ import 'package:plural_app/src/utils/app_form.dart';
 class AppDatePickerFormField extends StatefulWidget {
   AppDatePickerFormField({
     required this.appForm,
+    this.enabled = true,
     required this.fieldName,
     this.initialValue,
     this.label = "",
@@ -24,6 +25,7 @@ class AppDatePickerFormField extends StatefulWidget {
   });
 
   final AppForm appForm;
+  final bool enabled;
   final String fieldName;
   final DateTime? initialValue;
   final String label;
@@ -77,9 +79,9 @@ class _AppDatePickerFormFieldState extends State<AppDatePickerFormField> {
           CircleAvatar(
             backgroundColor: Theme.of(context).colorScheme.primaryContainer,
             child: IconButton(
-              onPressed: () => showDatePickerDialog(
+              onPressed: widget.enabled ? () => showDatePickerDialog(
                 context, _controller.text, _setControllerText
-              ),
+              ) : null,
               icon: const Icon(Icons.mode_edit_outlined)
             ),
           ),

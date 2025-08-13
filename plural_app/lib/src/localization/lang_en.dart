@@ -138,6 +138,7 @@ class AskViewText {
   static const deadlinePassed = "Deadline passed";
   static const deleteAsk = "Delete Ask";
   static const description = "Description";
+  static const doDocument = "Do Document";
 
   static const emptyListedAsksView = "No Asks found";
   static const emptyListedAsksViewSubtitle = ""
@@ -153,6 +154,9 @@ class AskViewText {
   static const markAsSponsored = "Click to mark as sponsored";
 
   static const notVisibleOnTimeline = "Not visible on timeline";
+
+  static const readDoDocumentStart = "Please read and agree to the";
+  static const readDoDocumentEnd = "before continuing.";
 
   static const selectDateLabel = "Select date";
 
