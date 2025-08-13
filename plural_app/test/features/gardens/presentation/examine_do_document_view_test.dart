@@ -33,10 +33,10 @@ void main() {
     testWidgets("uncheck-check", (tester) async {
       final now = DateTime.now();
 
-      final garden = TestGardenFactory(
+      final garden = GardenFactory(
         doDocumentEditDate: now,
       );
-      final userGardenRecord = TestAppUserGardenRecordFactory(
+      final userGardenRecord = AppUserGardenRecordFactory(
         doDocumentReadDate: now.add(Duration(days: -1)),
         garden: garden,
       );
@@ -88,5 +88,7 @@ void main() {
       expect(find.text(DoDocumentText.markAsRead), findsNothing);
       expect(find.text(DoDocumentText.read), findsOneWidget);
     });
+
+    tearDown(() => GetIt.instance.reset());
   });
 }

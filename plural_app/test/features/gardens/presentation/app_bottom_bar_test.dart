@@ -37,15 +37,48 @@ import '../../../test_stubs.dart';
 void main() {
   group("AppBottomBar", () {
     testWidgets("createCreateAskDialog", (tester) async {
-      final tc = TestContext();
-      final appState = AppState.skipSubscribe()
-                        ..currentGarden = tc.garden
-                        ..currentUser = tc.user
-                        ..currentUserSettings = tc.userSettings;
+      final user = AppUserFactory(id: "test_user_1");
+      final garden = GardenFactory(creator: user);
+      final userSettings = AppUserSettingsFactory(user: user);
 
+      final appState = AppState.skipSubscribe()
+        ..currentGarden = garden
+        ..currentUser = user
+        ..currentUserSettings = userSettings;
+
+      // GetIt
       final getIt = GetIt.instance;
+      final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
+      final mockUsersRepository = MockUsersRepository();
+
       getIt.registerLazySingleton<AppState>(() => appState);
       getIt.registerLazySingleton<AppDialogViewRouter>(() => AppDialogViewRouter());
+      getIt.registerLazySingleton<UserGardenRecordsRepository>(
+        () => mockUserGardenRecordsRepository);
+      getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
+
+      // UserGardenRecordsRepository.getList()
+      final userGardenRecordReturnValue = ResultList<RecordModel>(
+        items: [
+          getUserGardenRecordRecordModel(
+            userGardenRecord: AppUserGardenRecordFactory(
+              user: user,
+              garden: garden
+            ),
+            expandFields: [
+              UserGardenRecordField.user, UserGardenRecordField.garden
+            ]),
+        ]
+      );
+      getUserGardenRecordStub(
+        mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
+        userID: user.id,
+        gardenID: garden.id,
+        userGardenRecordReturnValue: userGardenRecordReturnValue,
+        mockUsersRepository: mockUsersRepository,
+        gardenCreatorID: user.id,
+        gardenCreatorReturnValue: getUserRecordModel(user: user)
+      );
 
       await tester.pumpWidget(
         MaterialApp(

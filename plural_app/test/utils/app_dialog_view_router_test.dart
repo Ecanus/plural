@@ -56,12 +56,58 @@ void main() {
     });
 
     test("routeToCreateAskView", () async {
+      final user = AppUserFactory(id: "test_user_1");
+      final garden = GardenFactory(creator: user);
+      final userSettings = AppUserSettingsFactory(user: user);
+
+      final appState = AppState.skipSubscribe()
+        ..currentGarden = garden
+        ..currentUser = user
+        ..currentUserSettings = userSettings;
+
+      // GetIt
+      final getIt = GetIt.instance;
+      final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
+      final mockUsersRepository = MockUsersRepository();
+
+      getIt.registerLazySingleton<AppState>(() => appState);
+      getIt.registerLazySingleton<AppDialogViewRouter>(() => AppDialogViewRouter());
+      getIt.registerLazySingleton<UserGardenRecordsRepository>(
+        () => mockUserGardenRecordsRepository);
+      getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
+
+
+      // UserGardenRecordsRepository.getList()
+      final userGardenRecordReturnValue = ResultList<RecordModel>(
+        items: [
+          getUserGardenRecordRecordModel(
+            userGardenRecord: AppUserGardenRecordFactory(
+              user: user,
+              garden: garden
+            ),
+            expandFields: [
+              UserGardenRecordField.user, UserGardenRecordField.garden
+            ]),
+        ]
+      );
+      getUserGardenRecordStub(
+        mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
+        userID: user.id,
+        gardenID: garden.id,
+        userGardenRecordReturnValue: userGardenRecordReturnValue,
+        mockUsersRepository: mockUsersRepository,
+        gardenCreatorID: user.id,
+        gardenCreatorReturnValue: getUserRecordModel(user: user)
+      );
+
       final appDialogViewRouter = AppDialogViewRouter();
 
       expect(appDialogViewRouter.viewNotifier.value, isA<SizedBox>());
-      appDialogViewRouter.routeToCreateAskView();
+      await appDialogViewRouter.routeToCreateAskView();
       expect(appDialogViewRouter.viewNotifier.value, isA<CreateAskView>());
     });
+
+    tearDown(() => GetIt.instance.reset());
 
     test("routeToEditAskView", () async {
       final tc = TestContext();
@@ -296,9 +342,9 @@ void main() {
     test("routeToExamineDoDocumentView", () async {
       final appDialogViewRouter = AppDialogViewRouter();
 
-      final user = TestAppUserFactory();
-      final garden = TestGardenFactory();
-      final userGardenRecord = TestAppUserGardenRecordFactory(
+      final user = AppUserFactory();
+      final garden = GardenFactory();
+      final userGardenRecord = AppUserGardenRecordFactory(
         garden: garden,
         user: user,
       );
