@@ -13,6 +13,7 @@ import 'package:plural_app/src/features/authentication/domain/app_user_garden_re
 
 // Invitations
 import 'package:plural_app/src/features/invitations/data/invitations_repository.dart';
+import 'package:plural_app/src/features/invitations/domain/invitation.dart';
 import 'package:plural_app/src/features/invitations/presentation/admin_listed_invitation_tile.dart';
 
 // Utils
@@ -20,18 +21,22 @@ import 'package:plural_app/src/utils/app_dialog_view_router.dart';
 import 'package:plural_app/src/utils/app_state.dart';
 
 // Tests
-import '../../../test_context.dart';
+import '../../../test_factories.dart';
 import '../../../test_mocks.dart';
 import '../../../test_stubs.dart';
 
 void main() {
   group("AdminListedInvitationTile", () {
     testWidgets("widgets", (tester) async {
-      final tc = TestContext();
+      final user = AppUserFactory();
+      final garden = GardenFactory();
+
+      final openInvitation = InvitationFactory(type: InvitationType.open);
+      final privateInvitation = InvitationFactory(type: InvitationType.private);
 
       final appState = AppState.skipSubscribe()
-        ..currentGarden = tc.garden
-        ..currentUser = tc.user;
+        ..currentGarden = garden
+        ..currentUser = user;
 
       final getIt = GetIt.instance;
       final mockInvitationsRepository = MockInvitationsRepository();
@@ -51,7 +56,7 @@ void main() {
       // InvitationsRepository.delete()
       when(
         () => mockInvitationsRepository.delete(
-          id: tc.privateInvitation.id,
+          id: privateInvitation.id,
         )
       ).thenAnswer(
         (_) async => {}
@@ -66,23 +71,31 @@ void main() {
         )
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(items: [
-          tc.getOpenInvitationRecordModel(
-            expand: [InvitationField.creator, InvitationField.invitee]
+          getOpenInvitationRecordModel(
+            invitation: openInvitation,
+            expandFields: [InvitationField.creator, InvitationField.invitee]
           ),
-          tc.getPrivateInvitationRecordModel(
-            expand: [InvitationField.creator, InvitationField.invitee]
+          getPrivateInvitationRecordModel(
+            invitation: privateInvitation,
+            expandFields: [InvitationField.creator, InvitationField.invitee]
           ),
         ])
       );
 
       // getUserGardenRecordRole() through AppState.verify()
       final items = ResultList<RecordModel>(items: [
-        tc.getUserGardenRecordRecordModel(role: AppUserGardenRole.administrator)
+        getUserGardenRecordRecordModel(
+          userGardenRecord: AppUserGardenRecordFactory(
+            garden: garden,
+            role: AppUserGardenRole.administrator,
+            user: user,
+          ),
+        )
       ]);
       getUserGardenRecordRoleStub(
         mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
-        userID: tc.user.id,
-        gardenID: tc.garden.id,
+        userID: user.id,
+        gardenID: garden.id,
         returnValue: items
       );
 
@@ -91,16 +104,16 @@ void main() {
           home: Scaffold(
             body: ListView(
               children: [
-                AdminListedInvitationTile(invitation: tc.openInvitation),
-                AdminListedInvitationTile(invitation: tc.privateInvitation),
+                AdminListedInvitationTile(invitation: openInvitation),
+                AdminListedInvitationTile(invitation: privateInvitation),
               ],
             )
           ),
         )
       );
 
-      expect(find.text(tc.openInvitation.uuid!), findsOneWidget);
-      expect(find.text(tc.privateInvitation.invitee!.username), findsOneWidget);
+      expect(find.text(openInvitation.uuid!), findsOneWidget);
+      expect(find.text(privateInvitation.invitee!.username), findsOneWidget);
       expect(find.byType(IconButton), findsNWidgets(3)); // two expire Invitation buttons, one copy to clipboard button
 
       // Tap Icons.delete (to open dialog)

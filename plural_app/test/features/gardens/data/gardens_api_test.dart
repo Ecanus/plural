@@ -33,15 +33,23 @@ import 'package:plural_app/src/utils/app_state.dart';
 import 'package:plural_app/src/utils/exceptions.dart';
 
 // Tests
-import '../../../test_context.dart';
+import '../../../test_factories.dart';
 import '../../../test_mocks.dart';
 import '../../../test_stubs.dart';
+import '../../../test_stubs/users_repository_stubs.dart';
 import '../../../test_widgets.dart';
 
 void main() {
   group("gardens_api", () {
     test("getGardenByID", () async {
-      final tc = TestContext();
+      final creator = AppUserFactory();
+      final garden = GardenFactory(
+        creator: creator,
+        doDocument: "Test Do Document",
+        doDocumentEditDate: DateTime(2001, 1, 3),
+        id: "testGarden",
+        name:"A Garden By Any Other Name"
+      );
 
       final getIt = GetIt.instance;
       final mockGardensRepository = MockGardensRepository();
@@ -53,38 +61,32 @@ void main() {
       when(
         () => mockGardensRepository.getFirstListItem(filter: any(named: "filter"))
       ).thenAnswer(
-        (_) async => tc.getGardenRecordModel(
-          creatorID: tc.user.id,
-          doDocument: "Do Documenttt",
-          id: tc.garden.id,
-          name: "TestGarden"
-        )
+        (_) async => getGardenRecordModel(garden: garden)
       );
 
       // UsersRepository.getFirstListItem()
-      when(
-        () => mockUsersRepository.getFirstListItem(filter: any(named: "filter"))
-      ).thenAnswer(
-        (_) async => tc.getUserRecordModel()
+      getFirstListItemStub(
+        mockUsersRepository: mockUsersRepository,
+        userID: garden.creator.id,
+        returnValue: getUserRecordModel(user: garden.creator)
       );
 
-      final garden = await getGardenByID(tc.garden.id);
-      expect(garden, isA<Garden>());
-      expect(garden.creator, tc.user);
-      expect(garden.doDocument, "Do Documenttt");
-      expect(garden.id, tc.garden.id);
-      expect(garden.name, "TestGarden");
+      final gardenByID = await getGardenByID(garden.id);
+      expect(gardenByID, isA<Garden>());
+      expect(gardenByID.creator, creator);
+      expect(gardenByID.doDocument, "Test Do Document");
+      expect(gardenByID.doDocumentEditDate, DateTime.parse("2001-01-03 00:00:00"));
+      expect(gardenByID.id, garden.id);
+      expect(gardenByID.name, "A Garden By Any Other Name");
 
     });
 
     test("removeUserFromGarden", () async {
+      final user = AppUserFactory();
+      final garden = GardenFactory();
+
       final testList = ["a", "b"];
-
-      void testFunc() {
-        testList.clear();
-      }
-
-      final tc = TestContext();
+      void testFunc() => testList.clear();
 
       final getIt = GetIt.instance;
       final pb = MockPocketBase();
@@ -109,13 +111,22 @@ void main() {
           sort: any(named: "sort")
         )
       ).thenAnswer(
-        (_) async => ResultList<RecordModel>(items: [tc.getAskRecordModel()])
+        (_) async => ResultList<RecordModel>(
+          items: [
+            getAskRecordModel(ask: AskFactory(creator: user))
+          ]
+        )
       );
       // RecordService.getFirstListItem() - UserGardenRecordsRepository
       when(
         () => recordService.getFirstListItem(any())
       ).thenAnswer(
-        (_) async => tc.getUserGardenRecordRecordModel()
+        (_) async => getUserGardenRecordRecordModel(
+          userGardenRecord: AppUserGardenRecordFactory(
+            garden: garden,
+            user: user
+          )
+        )
       );
       // RecordService.delete() - AsksRepository & UserGardenRecordsRepository
       when(
@@ -137,7 +148,7 @@ void main() {
       verifyNever(() => recordService.getFirstListItem(any()));
       verifyNever(() => recordService.delete(any()));
 
-      await removeUserFromGarden(tc.user.id, tc.garden.id, testFunc);
+      await removeUserFromGarden(user.id, garden.id, testFunc);
 
       // Check testList no longer has values (function called)
       expect(testList.isEmpty, true);
@@ -157,9 +168,10 @@ void main() {
 
 
     ft.testWidgets("rerouteToLandingPageWithExitedGardenID", (tester) async {
-      final tc = TestContext();
+      final garden = GardenFactory();
+
       final appState = AppState.skipSubscribe()
-                        ..currentGarden = tc.garden;
+        ..currentGarden = garden;
 
       final getIt = GetIt.instance;
       getIt.registerLazySingleton<AppState>(() => appState);
@@ -190,20 +202,20 @@ void main() {
       );
 
       // Check not yet redirected (Text does not render)
-      expect(ft.find.text("exitedGardenID is: ${tc.garden.id}"), ft.findsNothing);
+      expect(ft.find.text("exitedGardenID is: ${garden.id}"), ft.findsNothing);
 
       // Tap ElevatedButton (to call rerouteToLandingAndPrepareGardenExit)
       await tester.tap(ft.find.byType(ElevatedButton));
       await tester.pumpAndSettle();
 
       // Check redirected (Text should now appear)
-      expect(ft.find.text("exitedGardenID is: ${tc.garden.id}"), ft.findsOneWidget);
+      expect(ft.find.text("exitedGardenID is: ${garden.id}"), ft.findsOneWidget);
     });
 
     tearDown(() => GetIt.instance.reset());
 
     test("subscribeTo", () async {
-      final tc = TestContext();
+      final garden = GardenFactory();
 
       final getIt = GetIt.instance;
       final mockGardensRepository = MockGardensRepository();
@@ -221,26 +233,24 @@ void main() {
 
       // UsersRepository.subscribe()
       when(
-        () => mockGardensRepository.subscribe(tc.garden.id)
+        () => mockGardensRepository.subscribe(garden.id)
       ).thenAnswer(
         (_) async => () {}
       );
 
       verifyNever(() => mockGardensRepository.unsubscribe());
-      verifyNever(() => mockGardensRepository.subscribe(tc.garden.id)
+      verifyNever(() => mockGardensRepository.subscribe(garden.id)
       );
 
-      await subscribeTo(tc.garden.id);
+      await subscribeTo(garden.id);
 
       verify(() => mockGardensRepository.unsubscribe()).called(1);
-      verify(() => mockGardensRepository.subscribe(tc.garden.id)).called(1);
+      verify(() => mockGardensRepository.subscribe(garden.id)).called(1);
     });
 
     tearDown(() => GetIt.instance.reset());
 
     ft.testWidgets("updateGarden", (tester) async {
-      final tc = TestContext();
-
       final Map<String, String> map = {
         GardenField.doDocument: "test Do Document",
         GenericField.id: "testGardenID",
@@ -271,7 +281,7 @@ void main() {
         gardenName: map[GardenField.name]!,
         gardenDoDocument: map[GardenField.doDocument]!,
         gardenDoDocumentEditDate: DateTime.now(), // has to be DateTime.now()
-        returnValue: (tc.getGardenRecordModel(), {})
+        returnValue: (getGardenRecordModel(), {})
       );
 
       await tester.pumpWidget(
@@ -322,8 +332,6 @@ void main() {
     tearDown(() => GetIt.instance.reset());
 
     ft.testWidgets("updateGardenName PermissionException", (tester) async {
-      final tc = TestContext();
-
       final Map<String, String> map = {
         GardenField.doDocument: "test Do Document",
         GenericField.id: "testGardenID",
@@ -354,7 +362,7 @@ void main() {
         gardenDoDocument: map[GardenField.doDocument]!,
         gardenDoDocumentEditDate: DateTime.now(), // must be DateTime.now()
         gardenName: map[GardenField.name]!,
-        returnValue: (tc.getGardenRecordModel(), {})
+        returnValue: (getGardenRecordModel(), {})
       );
 
       final testRouter = GoRouter(

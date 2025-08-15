@@ -16,15 +16,17 @@ import 'package:plural_app/src/features/authentication/presentation/landing_page
 import 'package:plural_app/src/utils/app_state.dart';
 
 // Tests
-import '../../../test_context.dart';
+import '../../../test_factories.dart';
 
 void main() {
   group("LandingPageSettingsTab", () {
     testWidgets("widgets", (tester) async {
-      final tc = TestContext();
+      final user = AppUserFactory();
+      final userSettings = AppUserSettingsFactory(user: user);
+
       final appState = AppState()
-                        ..currentUser = tc.user
-                        ..currentUserSettings = tc.userSettings;
+        ..currentUser = user
+        ..currentUserSettings = userSettings;
 
       final getIt = GetIt.instance;
       getIt.registerLazySingleton<AppState>(() => appState);

@@ -19,12 +19,13 @@ import 'package:plural_app/src/localization/lang_en.dart';
 import 'package:plural_app/src/utils/app_dialog_view_router.dart';
 
 // Tests
-import '../../../test_context.dart';
+import '../../../test_factories.dart';
 
 void main() {
   group("AdminListedInvitationsView", () {
     testWidgets("widgets", (tester) async {
-      final tc = TestContext();
+      final openInvitation = InvitationFactory(type: InvitationType.open);
+      final privateInvitation = InvitationFactory(type: InvitationType.private);
 
       // GetIt
       final getIt = GetIt.instance;
@@ -36,8 +37,8 @@ void main() {
             body: AppDialog(
               view: AdminListedInvitationsView(
                 invitationsMap: {
-                  InvitationType.open: [tc.openInvitation],
-                  InvitationType.private: [tc.privateInvitation],
+                  InvitationType.open: [openInvitation],
+                  InvitationType.private: [privateInvitation],
                 }
               )
             )

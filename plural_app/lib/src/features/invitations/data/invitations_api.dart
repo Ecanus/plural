@@ -50,7 +50,7 @@ Future<void> acceptInvitationAndCreateUserGardenRecord(
     body: {
       UserGardenRecordField.garden: invitation.garden.id,
       UserGardenRecordField.role: AppUserGardenRole.member.name,
-      UserGardenRecordField.user: GetIt.instance<AppState>().currentUser!.id,
+      UserGardenRecordField.user: GetIt.instance<AppState>().currentUserID!,
     }
   );
 
@@ -310,7 +310,7 @@ Future<void> validateInvitationUUIDAndCreateUserGardenRecord(
         body: {
           UserGardenRecordField.garden: recordJson[InvitationField.garden],
           UserGardenRecordField.role: AppUserGardenRole.member.name,
-          UserGardenRecordField.user: GetIt.instance<AppState>().currentUser!.id,
+          UserGardenRecordField.user: GetIt.instance<AppState>().currentUserID!,
         }
       );
 

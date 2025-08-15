@@ -35,9 +35,10 @@ import 'package:plural_app/src/utils/exceptions.dart';
 import 'package:plural_app/src/localization/lang_en.dart';
 
 // Tests
-import '../../../test_context.dart';
+import '../../../test_factories.dart';
 import '../../../test_mocks.dart';
 import '../../../test_stubs.dart';
+import '../../../test_stubs/users_repository_stubs.dart';
 
 void main() {
   group("invitations_api", () {
@@ -45,10 +46,16 @@ void main() {
       final list = [1, 2, 3];
       void testFunc() => list.clear();
 
-      final tc = TestContext();
+      final user = AppUserFactory();
+      final garden = GardenFactory();
+
+      final openInvitation = InvitationFactory(
+        garden: garden,
+        type: InvitationType.open
+      );
 
       final appState = AppState.skipSubscribe()
-        ..currentUser = tc.user;
+        ..currentUser = user;
 
       final getIt = GetIt.instance;
       final mockInvitationsRepository = MockInvitationsRepository();
@@ -64,7 +71,7 @@ void main() {
 
       // InvitationsRepository.delete
       when(
-        () => mockInvitationsRepository.delete(id: tc.openInvitation.id)
+        () => mockInvitationsRepository.delete(id: openInvitation.id)
       ).thenAnswer(
         (_) async => {}
       );
@@ -73,13 +80,19 @@ void main() {
       when(
         () => mockUserGardenRecordsRepository.create(
           body: {
-            UserGardenRecordField.garden: tc.openInvitation.garden.id,
+            UserGardenRecordField.garden: openInvitation.garden.id,
             UserGardenRecordField.role: AppUserGardenRole.member.name,
-            UserGardenRecordField.user: GetIt.instance<AppState>().currentUser!.id,
+            UserGardenRecordField.user: GetIt.instance<AppState>().currentUserID!,
           }
         )
       ).thenAnswer(
-        (_) async => (tc.getUserGardenRecordRecordModel(), {})
+        (_) async => (getUserGardenRecordRecordModel(
+          userGardenRecord: AppUserGardenRecordFactory(
+            garden: garden,
+            role: AppUserGardenRole.member,
+            user: user,
+          )
+        ), {})
       );
 
       // Check list still has contents (i.e. callback not called)
@@ -87,20 +100,20 @@ void main() {
 
       // Check methods not called
       verifyNever(
-        () => mockInvitationsRepository.delete(id: tc.openInvitation.id)
+        () => mockInvitationsRepository.delete(id: openInvitation.id)
       );
       verifyNever(
         () => mockUserGardenRecordsRepository.create(
           body: {
-            UserGardenRecordField.garden: tc.openInvitation.garden.id,
+            UserGardenRecordField.garden: openInvitation.garden.id,
             UserGardenRecordField.role: AppUserGardenRole.member.name,
-            UserGardenRecordField.user: GetIt.instance<AppState>().currentUser!.id,
+            UserGardenRecordField.user: GetIt.instance<AppState>().currentUserID!,
           }
         )
       );
 
       await acceptInvitationAndCreateUserGardenRecord(
-        tc.openInvitation,
+        openInvitation,
         callback: testFunc
       );
 
@@ -109,14 +122,14 @@ void main() {
 
       // Check methods called
       verify(
-        () => mockInvitationsRepository.delete(id: tc.openInvitation.id)
+        () => mockInvitationsRepository.delete(id: openInvitation.id)
       ).called(1);
       verify(
         () => mockUserGardenRecordsRepository.create(
           body: {
-            UserGardenRecordField.garden: tc.openInvitation.garden.id,
+            UserGardenRecordField.garden: openInvitation.garden.id,
             UserGardenRecordField.role: AppUserGardenRole.member.name,
-            UserGardenRecordField.user: GetIt.instance<AppState>().currentUser!.id,
+            UserGardenRecordField.user: GetIt.instance<AppState>().currentUserID!,
           }
         )
       ).called(1);
@@ -125,7 +138,9 @@ void main() {
     tearDown(() => GetIt.instance.reset());
 
     test("createInvitation", () async {
-      final tc = TestContext();
+      final invitationCreator = AppUserFactory();
+      final user = AppUserFactory();
+      final garden = GardenFactory();
 
       final getIt = GetIt.instance;
       final mockAppState = MockAppState();
@@ -160,20 +175,22 @@ void main() {
       when(
         () => mockUsersRepository.getList(
           filter: ""
-            "${UserField.username} = '${tc.otherUser.username}' && "
-            "$userGardenRecordsBackRelation != '${tc.garden.id}' && "
-            "($invitationsInviteeBackRelation != '${tc.otherUser.username}' || "
+            "${UserField.username} = '${user.username}' && "
+            "$userGardenRecordsBackRelation != '${garden.id}' && "
+            "($invitationsInviteeBackRelation != '${user.username}' || "
             "$invitationsExpiryDateBackRelation < '$formattedDate')"
         )
       ).thenAnswer(
-        (_) async => ResultList<RecordModel>(items: [tc.getUserRecordModel()])
+        (_) async => ResultList<RecordModel>(items: [
+          getUserRecordModel(user: user)
+        ])
       );
 
       // InvitationsRepository.create (Open Invitation)
       final Map<String, dynamic> map = {
-        InvitationField.creator: tc.user.id,
+        InvitationField.creator: invitationCreator.id,
         InvitationField.expiryDate: DateTime(2010, 10, 20),
-        InvitationField.garden: tc.garden.id,
+        InvitationField.garden: garden.id,
         InvitationField.type: InvitationType.open.name,
         InvitationField.invitee: null,
         InvitationField.uuid: "uuuu-iiii-dd-iid-d",
@@ -183,7 +200,18 @@ void main() {
           body: map
         )
       ).thenAnswer(
-        (_) async => (tc.getOpenInvitationRecordModel(), {})
+        (_) async => (
+          getOpenInvitationRecordModel(
+            invitation: InvitationFactory(
+              creator: invitationCreator,
+              expiryDate: DateTime(2010, 10, 20),
+              garden: garden,
+              type: InvitationType.open,
+              uuid: "uuuu-iiii-dd-iid-d",
+            )
+          ),
+          {}
+        )
       );
 
       // Check no function calls yet
@@ -193,9 +221,9 @@ void main() {
       verifyNever(
         () => mockUsersRepository.getList(
           filter: ""
-            "${UserField.username} = '${tc.otherUser.username}' && "
-            "$userGardenRecordsBackRelation != '${tc.garden.id}' && "
-            "($invitationsInviteeBackRelation != '${tc.otherUser.username}' || "
+            "${UserField.username} = '${user.username}' && "
+            "$userGardenRecordsBackRelation != '${garden.id}' && "
+            "($invitationsInviteeBackRelation != '${user.username}' || "
             "$invitationsExpiryDateBackRelation < '$formattedDate')"
         )
       );
@@ -222,9 +250,9 @@ void main() {
       verifyNever(
         () => mockUsersRepository.getList(
           filter: ""
-            "${UserField.username} = '${tc.otherUser.username}' && "
-            "$userGardenRecordsBackRelation != '${tc.garden.id}' && "
-            "($invitationsInviteeBackRelation != '${tc.otherUser.username}' || "
+            "${UserField.username} = '${user.username}' && "
+            "$userGardenRecordsBackRelation != '${garden.id}' && "
+            "($invitationsInviteeBackRelation != '${user.username}' || "
             "$invitationsExpiryDateBackRelation < '$formattedDate')"
         )
       );
@@ -232,7 +260,7 @@ void main() {
       // Test InvitationType.private
       map[InvitationField.type] = InvitationType.private.name;
       map[InvitationField.uuid] = null;
-      map[InvitationField.invitee] = tc.otherUser.username;
+      map[InvitationField.invitee] = user.username;
 
       // Check no function calls yet
       verifyNever(() => mockAppState.verify(
@@ -241,9 +269,9 @@ void main() {
       verifyNever(
         () => mockUsersRepository.getList(
           filter: ""
-            "${UserField.username} = '${tc.otherUser.username}' && "
-            "$userGardenRecordsBackRelation != '${tc.garden.id}' && "
-            "($invitationsInviteeBackRelation != '${tc.otherUser.username}' || "
+            "${UserField.username} = '${user.username}' && "
+            "$userGardenRecordsBackRelation != '${garden.id}' && "
+            "($invitationsInviteeBackRelation != '${user.username}' || "
             "$invitationsExpiryDateBackRelation < '$formattedDate')"
         )
       );
@@ -263,9 +291,9 @@ void main() {
       verify(
         () => mockUsersRepository.getList(
           filter: ""
-            "${UserField.username} = '${tc.otherUser.username}' && "
-            "$userGardenRecordsBackRelation != '${tc.garden.id}' && "
-            "($invitationsInviteeBackRelation != '${tc.otherUser.username}' || "
+            "${UserField.username} = '${user.username}' && "
+            "$userGardenRecordsBackRelation != '${garden.id}' && "
+            "($invitationsInviteeBackRelation != '${user.username}' || "
             "$invitationsExpiryDateBackRelation < '$formattedDate')"
         )
       ).called(1);
@@ -279,7 +307,9 @@ void main() {
     tearDown(() => GetIt.instance.reset());
 
     test("createInvitation noUser", () async {
-      final tc = TestContext();
+      final invitationCreator = AppUserFactory();
+      final user = AppUserFactory();
+      final garden = GardenFactory();
 
       final getIt = GetIt.instance;
       final mockAppState = MockAppState();
@@ -314,9 +344,9 @@ void main() {
       when(
         () => mockUsersRepository.getList(
           filter: ""
-            "${UserField.username} = '${tc.otherUser.username}' && "
-            "$userGardenRecordsBackRelation != '${tc.garden.id}' && "
-            "($invitationsInviteeBackRelation != '${tc.otherUser.username}' || "
+            "${UserField.username} = '${user.username}' && "
+            "$userGardenRecordsBackRelation != '${garden.id}' && "
+            "($invitationsInviteeBackRelation != '${user.username}' || "
             "$invitationsExpiryDateBackRelation < '$formattedDate')"
         )
       ).thenAnswer(
@@ -325,11 +355,11 @@ void main() {
 
       // InvitationsRepository.create (Private Invitation)
       final Map<String, dynamic> map = {
-        InvitationField.creator: tc.user.id,
+        InvitationField.creator: invitationCreator.id,
         InvitationField.expiryDate: DateTime(2010, 10, 20),
-        InvitationField.garden: tc.garden.id,
+        InvitationField.garden: garden.id,
+        InvitationField.invitee: user.username, // Note: pass username, but create() will be with id
         InvitationField.type: InvitationType.private.name,
-        InvitationField.invitee: tc.otherUser.username, // note pass username, but create with id
         InvitationField.uuid: null,
       };
       when(
@@ -337,7 +367,15 @@ void main() {
           body: map
         )
       ).thenAnswer(
-        (_) async => (tc.getPrivateInvitationRecordModel(), {})
+        (_) async => (getPrivateInvitationRecordModel(
+          invitation: InvitationFactory(
+            creator: invitationCreator,
+            expiryDate: DateTime(2010, 10, 20),
+            garden: garden,
+            invitee: user,
+            type: InvitationType.private,
+          )
+        ), {})
       );
 
       // Check no function calls yet
@@ -347,9 +385,9 @@ void main() {
       verifyNever(
         () => mockUsersRepository.getList(
           filter: ""
-            "${UserField.username} = '${tc.otherUser.username}' && "
-            "$userGardenRecordsBackRelation != '${tc.garden.id}' && "
-            "($invitationsInviteeBackRelation != '${tc.otherUser.username}' || "
+            "${UserField.username} = '${user.username}' && "
+            "$userGardenRecordsBackRelation != '${garden.id}' && "
+            "($invitationsInviteeBackRelation != '${user.username}' || "
             "$invitationsExpiryDateBackRelation < '$formattedDate')"
         )
       );
@@ -378,9 +416,9 @@ void main() {
       verify(
         () => mockUsersRepository.getList(
           filter: ""
-            "${UserField.username} = '${tc.otherUser.username}' && "
-            "$userGardenRecordsBackRelation != '${tc.garden.id}' && "
-            "($invitationsInviteeBackRelation != '${tc.otherUser.username}' || "
+            "${UserField.username} = '${user.username}' && "
+            "$userGardenRecordsBackRelation != '${garden.id}' && "
+            "($invitationsInviteeBackRelation != '${user.username}' || "
             "$invitationsExpiryDateBackRelation < '$formattedDate')"
         )
       ).called(1);
@@ -396,7 +434,9 @@ void main() {
     tearDown(() => GetIt.instance.reset());
 
     ft.testWidgets("createInvitation PermissionException", (tester) async {
-      final tc = TestContext();
+      final invitationCreator = AppUserFactory();
+      final user = AppUserFactory();
+      final garden = GardenFactory();
 
       final getIt = GetIt.instance;
       final mockAppState = MockAppState();
@@ -427,9 +467,9 @@ void main() {
       when(
         () => mockUsersRepository.getList(
           filter: ""
-          "${UserField.username} = '${tc.otherUser.username}' && "
-          "$userGardenRecordsBackRelation != '${tc.garden.id}' && "
-          "$invitationsBackRelation != '${tc.otherUser.username}'"
+          "${UserField.username} = '${user.username}' && "
+          "$userGardenRecordsBackRelation != '${garden.id}' && "
+          "$invitationsBackRelation != '${user.username}'"
         )
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(items: [])
@@ -437,11 +477,11 @@ void main() {
 
       // InvitationsRepository.create (Private Invitation)
       final Map<String, dynamic> map = {
-        InvitationField.creator: tc.user.id,
+        InvitationField.creator: invitationCreator.id,
         InvitationField.expiryDate: DateTime(2010, 10, 20),
-        InvitationField.garden: tc.garden.id,
+        InvitationField.garden: garden.id,
+        InvitationField.invitee: user.username, // Note: pass username, but create() will be with id
         InvitationField.type: InvitationType.private.name,
-        InvitationField.invitee: tc.otherUser.username, // note pass username, but create with id
         InvitationField.uuid: null,
       };
       when(
@@ -449,7 +489,15 @@ void main() {
           body: map
         )
       ).thenAnswer(
-        (_) async => (tc.getPrivateInvitationRecordModel(), {})
+        (_) async => (getPrivateInvitationRecordModel(
+          invitation: InvitationFactory(
+            creator: invitationCreator,
+            expiryDate: DateTime(2010, 10, 20),
+            garden: garden,
+            invitee: user,
+            type: InvitationType.private,
+          )
+        ), {})
       );
 
       final testRouter = GoRouter(
@@ -490,9 +538,9 @@ void main() {
       verifyNever(
         () => mockUsersRepository.getList(
           filter: ""
-          "${UserField.username} = '${tc.otherUser.username}' && "
-          "$userGardenRecordsBackRelation != '${tc.garden.id}' && "
-          "$invitationsBackRelation != '${tc.otherUser.username}'"
+          "${UserField.username} = '${user.username}' && "
+          "$userGardenRecordsBackRelation != '${garden.id}' && "
+          "$invitationsBackRelation != '${user.username}'"
         )
       );
       verifyNever(
@@ -512,9 +560,9 @@ void main() {
       verifyNever(
         () => mockUsersRepository.getList(
           filter: ""
-          "${UserField.username} = '${tc.otherUser.username}' && "
-          "$userGardenRecordsBackRelation != '${tc.garden.id}' && "
-          "$invitationsBackRelation != '${tc.otherUser.username}'"
+          "${UserField.username} = '${user.username}' && "
+          "$userGardenRecordsBackRelation != '${garden.id}' && "
+          "$invitationsBackRelation != '${user.username}'"
         )
       );
       verifyNever(
@@ -532,7 +580,7 @@ void main() {
       final list = [1, 2, 3];
       void testFunc() => list.clear();
 
-      final tc = TestContext();
+      final openInvitation = InvitationFactory(type: InvitationType.open);
 
       final getIt = GetIt.instance;
       final mockInvitationsRepository = MockInvitationsRepository();
@@ -543,7 +591,7 @@ void main() {
       // InvitationsRepository.delete()
       when(
         () => mockInvitationsRepository.delete(
-          id: tc.openInvitation.id,
+          id: openInvitation.id,
         )
       ).thenAnswer(
         (_) async => {}
@@ -556,7 +604,7 @@ void main() {
               builder: (BuildContext context) {
                 return ElevatedButton(
                   onPressed: () => deleteInvitation(
-                    tc.openInvitation.id,
+                    openInvitation.id,
                     callback: testFunc
                   ),
                   child: Text("The ElevatedButton")
@@ -570,7 +618,7 @@ void main() {
       expect(list.isEmpty, false);
       verifyNever(
         () => mockInvitationsRepository.delete(
-          id: tc.openInvitation.id,
+          id: openInvitation.id,
         )
       );
 
@@ -583,7 +631,7 @@ void main() {
 
       verify(
         () => mockInvitationsRepository.delete(
-          id: tc.openInvitation.id,
+          id: openInvitation.id,
         )
       ).called(1);
     });
@@ -591,15 +639,16 @@ void main() {
     tearDown(() => GetIt.instance.reset());
 
     test("getCurrentGardenInvitations", () async {
-      final tc = TestContext();
+      final user = AppUserFactory();
+      final garden = GardenFactory();
 
       final expiryDateThreshold = DateTime.now();
       final expiryDateThresholdString =
         DateFormat(Formats.dateYMMdd).format(expiryDateThreshold);
 
       final appState = AppState.skipSubscribe()
-        ..currentGarden = tc.garden
-        ..currentUser = tc.user;
+        ..currentGarden = garden
+        ..currentUser = user;
 
       final getIt = GetIt.instance;
       final mockBuildContext = MockBuildContext();
@@ -614,14 +663,21 @@ void main() {
         () => mockUserGardenRecordsRepository
       );
 
+      // TODO: check for all instances of this check. Make sure the comment looks like the one below
       // getUserGardenRecordRole() through AppState.verify()
       final items = ResultList<RecordModel>(items: [
-        tc.getUserGardenRecordRecordModel(role: AppUserGardenRole.administrator)
+        getUserGardenRecordRecordModel(
+          userGardenRecord: AppUserGardenRecordFactory(
+            garden: garden,
+            role: AppUserGardenRole.administrator,
+            user: user,
+          ),
+        )
       ]);
       getUserGardenRecordRoleStub(
         mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
-        userID: tc.user.id,
-        gardenID: tc.garden.id,
+        userID: user.id,
+        gardenID: garden.id,
         returnValue: items
       );
 
@@ -630,20 +686,32 @@ void main() {
         () => mockInvitationsRepository.getList(
           expand: "${InvitationField.creator}, ${InvitationField.invitee}",
           filter: ""
-            "${InvitationField.garden} = '${tc.garden.id}' "
+            "${InvitationField.garden} = '${garden.id}' "
             "&& ${InvitationField.expiryDate} > '$expiryDateThresholdString'",
           sort: GenericField.created
         )
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(items: [
-          tc.getOpenInvitationRecordModel(
-            expand: [InvitationField.creator, InvitationField.invitee]
+          getOpenInvitationRecordModel(
+            invitation: InvitationFactory(
+              garden: garden,
+              type: InvitationType.open,
+            ),
+            expandFields: [InvitationField.creator, InvitationField.invitee]
           ),
-          tc.getPrivateInvitationRecordModel(
-            expand: [InvitationField.creator, InvitationField.invitee]
+          getPrivateInvitationRecordModel(
+            invitation: InvitationFactory(
+              garden: garden,
+              type: InvitationType.private,
+            ),
+            expandFields: [InvitationField.creator, InvitationField.invitee]
           ),
-          tc.getPrivateInvitationRecordModel(
-            expand: [InvitationField.creator, InvitationField.invitee]
+          getPrivateInvitationRecordModel(
+            invitation: InvitationFactory(
+              garden: garden,
+              type: InvitationType.private,
+            ),
+            expandFields: [InvitationField.creator, InvitationField.invitee]
           ),
         ])
       );
@@ -652,8 +720,8 @@ void main() {
       verifyNever(
         () => mockUserGardenRecordsRepository.getList(
           filter: ""
-            "${UserGardenRecordField.user} = '${tc.user.id}' && "
-            "${UserGardenRecordField.garden} = '${tc.garden.id}'",
+            "${UserGardenRecordField.user} = '${user.id}' && "
+            "${UserGardenRecordField.garden} = '${garden.id}'",
           sort: "-updated"
         )
       );
@@ -661,7 +729,7 @@ void main() {
         () => mockInvitationsRepository.getList(
           expand: "${InvitationField.creator}, ${InvitationField.invitee}",
           filter: ""
-            "${InvitationField.garden} = '${tc.garden.id}' "
+            "${InvitationField.garden} = '${garden.id}' "
             "&& ${InvitationField.expiryDate} > '$expiryDateThresholdString'",
           sort: GenericField.created
         )
@@ -679,8 +747,8 @@ void main() {
       verify(
         () => mockUserGardenRecordsRepository.getList(
           filter: ""
-            "${UserGardenRecordField.user} = '${tc.user.id}' && "
-            "${UserGardenRecordField.garden} = '${tc.garden.id}'",
+            "${UserGardenRecordField.user} = '${user.id}' && "
+            "${UserGardenRecordField.garden} = '${garden.id}'",
           sort: "-updated"
         )
       ).called(1);
@@ -688,7 +756,7 @@ void main() {
         () => mockInvitationsRepository.getList(
           expand: "${InvitationField.creator}, ${InvitationField.invitee}",
           filter: ""
-            "${InvitationField.garden} = '${tc.garden.id}' "
+            "${InvitationField.garden} = '${garden.id}' "
             "&& ${InvitationField.expiryDate} > '$expiryDateThresholdString'",
           sort: GenericField.created
         )
@@ -698,7 +766,7 @@ void main() {
     tearDown(() => GetIt.instance.reset());
 
     ft.testWidgets("getCurrentGardenInvitations PermissionException", (tester) async {
-      final tc = TestContext();
+      final garden = GardenFactory();
 
       final expiryDateThreshold = DateTime.now();
       final expiryDateThresholdString =
@@ -729,14 +797,18 @@ void main() {
         () => mockInvitationsRepository.getList(
           expand: "${InvitationField.creator}, ${InvitationField.invitee}",
           filter: ""
-            "${InvitationField.garden} = '${tc.garden.id}' "
+            "${InvitationField.garden} = '${garden.id}' "
             "&& ${InvitationField.expiryDate} > '$expiryDateThresholdString'",
           sort: GenericField.created
         )
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(items: [
-          tc.getOpenInvitationRecordModel(
-            expand: [InvitationField.creator, InvitationField.invitee]
+          getOpenInvitationRecordModel(
+            invitation: InvitationFactory(
+              garden: garden,
+              type: InvitationType.open,
+            ),
+            expandFields: [InvitationField.creator, InvitationField.invitee]
           ),
         ])
       );
@@ -780,7 +852,7 @@ void main() {
         () => mockInvitationsRepository.getList(
           expand: "${InvitationField.creator}, ${InvitationField.invitee}",
           filter: ""
-            "${InvitationField.garden} = '${tc.garden.id}' "
+            "${InvitationField.garden} = '${garden.id}' "
             "&& ${InvitationField.expiryDate} > '$expiryDateThresholdString'",
           sort: GenericField.created
         )
@@ -800,7 +872,7 @@ void main() {
         () => mockInvitationsRepository.getList(
           expand: "${InvitationField.creator}, ${InvitationField.invitee}",
           filter: ""
-            "${InvitationField.garden} = '${tc.garden.id}' "
+            "${InvitationField.garden} = '${garden.id}' "
             "&& ${InvitationField.expiryDate} > '$expiryDateThresholdString'",
           sort: GenericField.created
         )
@@ -820,7 +892,9 @@ void main() {
     });
 
     test("getInvitationsByInvitee", () async {
-      final tc = TestContext();
+      final user = AppUserFactory();
+      final garden1 = GardenFactory();
+      final garden2 = GardenFactory();
 
       final expiryDateThreshold = DateTime.now();
       final expiryDateThresholdString =
@@ -841,19 +915,29 @@ void main() {
           expand: ""
             "${InvitationField.creator}, ${InvitationField.invitee}, ${InvitationField.garden}",
           filter: ""
-            "${InvitationField.invitee} = '${tc.user.id}' "
+            "${InvitationField.invitee} = '${user.id}' "
             "&& ${InvitationField.expiryDate} > '$expiryDateThresholdString'",
           sort: "${GenericField.created}, ${InvitationField.expiryDate}",
         )
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(items: [
-          tc.getPrivateInvitationRecordModel(
-            expand: [
+          getPrivateInvitationRecordModel(
+            invitation: InvitationFactory(
+              garden: garden1,
+              invitee: user,
+              type: InvitationType.private,
+            ),
+            expandFields: [
               InvitationField.creator, InvitationField.invitee, InvitationField.garden
             ]
           ),
-          tc.getPrivateInvitationRecordModel(
-            expand: [
+          getPrivateInvitationRecordModel(
+            invitation: InvitationFactory(
+              garden: garden2,
+              invitee: user,
+              type: InvitationType.private,
+            ),
+            expandFields: [
               InvitationField.creator, InvitationField.invitee, InvitationField.garden
             ]
           ),
@@ -861,14 +945,19 @@ void main() {
       );
 
       // UsersRepository.getFirstListItem()
-      usersRepositoryGetFirstListItemStub(
+      getFirstListItemStub(
         mockUsersRepository: mockUsersRepository,
-        userID: tc.user.id,
-        returnValue: tc.getUserRecordModel()
+        userID: garden1.creator.id,
+        returnValue: getUserRecordModel(user: garden1.creator)
+      );
+      getFirstListItemStub(
+        mockUsersRepository: mockUsersRepository,
+        userID: garden2.creator.id,
+        returnValue: getUserRecordModel(user: garden2.creator)
       );
 
       final invitationsList = await getInvitationsByInvitee(
-        tc.user.id,
+        user.id,
         expiryDateThreshold: expiryDateThreshold,
       );
 
@@ -879,17 +968,21 @@ void main() {
 
     test("validateInvitationUUIDAndCreateUserGardenRecord", () async {
       final list = [""];
-      void testSuccess(String string) => list[0] = string;
-      void testError(String string) => list[0] = string;
+      void testSuccess(String value) => list[0] = value;
+      void testError(String value) => list[0] = value;
 
-      final tc = TestContext();
+      final user = AppUserFactory();
+
+      final openInvitation = InvitationFactory(
+        type: InvitationType.open
+      );
 
       final expiryDateThreshold = DateTime.now();
       final expiryDateThresholdString =
         DateFormat(Formats.dateYMMdd).format(expiryDateThreshold);
 
       final appState = AppState.skipSubscribe()
-        ..currentUser = tc.user;
+        ..currentUser = user;
 
       final getIt = GetIt.instance;
       final mockInvitationsRepository = MockInvitationsRepository();
@@ -908,14 +1001,15 @@ void main() {
         () => mockInvitationsRepository.getList(
           expand: InvitationField.garden,
           filter: ""
-            "${InvitationField.uuid} = '${tc.openInvitation.uuid}' "
+            "${InvitationField.uuid} = '${openInvitation.uuid}' "
             "&& ${InvitationField.expiryDate} > '$expiryDateThresholdString'",
         )
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(items: [
-          tc.getPrivateInvitationRecordModel(
-            expand: [
-              InvitationField.creator, InvitationField.invitee, InvitationField.garden
+          getOpenInvitationRecordModel(
+            invitation: openInvitation,
+            expandFields: [
+              InvitationField.creator, InvitationField.garden
             ]
           ),
         ])
@@ -925,13 +1019,19 @@ void main() {
       when(
         () => mockUserGardenRecordsRepository.create(
           body: {
-            UserGardenRecordField.garden: tc.openInvitation.garden.id,
+            UserGardenRecordField.garden: openInvitation.garden.id,
             UserGardenRecordField.role: AppUserGardenRole.member.name,
-            UserGardenRecordField.user: tc.user.id,
+            UserGardenRecordField.user: user.id,
           }
         )
       ).thenAnswer(
-        (_) async => (tc.getUserGardenRecordRecordModel(), {})
+        (_) async => (getUserGardenRecordRecordModel(
+          userGardenRecord: AppUserGardenRecordFactory(
+            garden: openInvitation.garden,
+            role: AppUserGardenRole.member,
+            user: user,
+          )
+        ), {})
       );
 
       // Check no methods called and list has "" as first
@@ -940,42 +1040,42 @@ void main() {
         () => mockInvitationsRepository.getList(
           expand: InvitationField.garden,
           filter: ""
-            "${InvitationField.uuid} = '${tc.openInvitation.uuid}' "
+            "${InvitationField.uuid} = '${openInvitation.uuid}' "
             "&& ${InvitationField.expiryDate} > '$expiryDateThresholdString'",
         )
       );
       verifyNever(
         () => mockUserGardenRecordsRepository.create(
           body: {
-            UserGardenRecordField.garden: tc.openInvitation.garden.id,
+            UserGardenRecordField.garden: openInvitation.garden.id,
             UserGardenRecordField.role: AppUserGardenRole.member.name,
-            UserGardenRecordField.user: tc.user.id,
+            UserGardenRecordField.user: user.id,
           }
         )
       );
 
       await validateInvitationUUIDAndCreateUserGardenRecord(
-        tc.openInvitation.uuid!,
+        openInvitation.uuid!,
         successCallback: testSuccess,
         errorCallback: testError,
       );
 
       // Check methods called and list now has tc.garden.name as first
-      expect(list.first, tc.garden.name);
+      expect(list.first, openInvitation.garden.name);
       verify(
         () => mockInvitationsRepository.getList(
           expand: InvitationField.garden,
           filter: ""
-            "${InvitationField.uuid} = '${tc.openInvitation.uuid}' "
+            "${InvitationField.uuid} = '${openInvitation.uuid}' "
             "&& ${InvitationField.expiryDate} > '$expiryDateThresholdString'",
         )
       ).called(1);
       verify(
         () => mockUserGardenRecordsRepository.create(
           body: {
-            UserGardenRecordField.garden: tc.openInvitation.garden.id,
+            UserGardenRecordField.garden: openInvitation.garden.id,
             UserGardenRecordField.role: AppUserGardenRole.member.name,
-            UserGardenRecordField.user: tc.user.id,
+            UserGardenRecordField.user: user.id,
           }
         )
       ).called(1);
@@ -984,17 +1084,25 @@ void main() {
       when(
         () => mockUserGardenRecordsRepository.create(
           body: {
-            UserGardenRecordField.garden: tc.openInvitation.garden.id,
+            UserGardenRecordField.garden: openInvitation.garden.id,
             UserGardenRecordField.role: AppUserGardenRole.member.name,
-            UserGardenRecordField.user: tc.user.id,
+            UserGardenRecordField.user: user.id,
           }
         )
       ).thenAnswer(
-        (_) async => (tc.getUserGardenRecordRecordModel(), {"error": "error"})
+        (_) async => (
+          getUserGardenRecordRecordModel(
+            userGardenRecord: AppUserGardenRecordFactory(
+              garden: openInvitation.garden,
+              role: AppUserGardenRole.member,
+              user: user,
+            )
+          ), {"error": "error"}
+        )
       );
 
       await validateInvitationUUIDAndCreateUserGardenRecord(
-        tc.openInvitation.uuid!,
+        openInvitation.uuid!,
         successCallback: testSuccess,
         errorCallback: testError,
       );

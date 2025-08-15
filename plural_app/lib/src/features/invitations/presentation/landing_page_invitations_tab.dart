@@ -55,7 +55,7 @@ class _PrivateInvitationsListViewState extends State<PrivateInvitationsListView>
   Widget build(BuildContext context) {
     return FutureBuilder(
       future: getInvitationsByInvitee(
-        GetIt.instance<AppState>().currentUser!.id),
+        GetIt.instance<AppState>().currentUserID!),
       builder: (BuildContext context, AsyncSnapshot<List<Invitation>> snapshot) {
         if (snapshot.hasData && snapshot.data!.isEmpty) {
           return SizedBox();

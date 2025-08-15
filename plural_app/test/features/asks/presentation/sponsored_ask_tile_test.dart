@@ -12,12 +12,12 @@ import 'package:plural_app/src/features/asks/presentation/sponsored_ask_tile.dar
 import 'package:plural_app/src/utils/app_dialog_view_router.dart';
 
 // Localization
-import '../../../test_context.dart';
+import '../../../test_factories.dart';
 
 void main() {
   group("SponsoredAskTile", () {
     testWidgets("widgets", (tester) async {
-      final tc = TestContext();
+      final ask = AskFactory();
 
       final getIt = GetIt.instance;
       getIt.registerLazySingleton<AppDialogViewRouter>(() => AppDialogViewRouter());
@@ -28,7 +28,7 @@ void main() {
           home: Scaffold(
             body: ListView(
               children: [
-                SponsoredAskTile(ask: tc.ask,),
+                SponsoredAskTile(ask: ask,),
               ],
             ),
           ),
@@ -37,8 +37,8 @@ void main() {
 
       expect(find.byType(Card), findsOneWidget);
       expect(find.byType(ListTile), findsOneWidget);
-      expect(find.text(tc.ask.listTileDescription), findsOneWidget);
-      expect(find.text(tc.ask.timeRemainingString), findsOneWidget);
+      expect(find.text(ask.listTileDescription), findsOneWidget);
+      expect(find.text(ask.timeRemainingString), findsOneWidget);
       expect(find.byIcon(Icons.arrow_forward_ios), findsOneWidget);
     });
   });

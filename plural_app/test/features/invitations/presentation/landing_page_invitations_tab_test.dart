@@ -19,6 +19,7 @@ import 'package:plural_app/src/features/authentication/domain/app_user_garden_re
 
 // Invitations
 import 'package:plural_app/src/features/invitations/data/invitations_repository.dart';
+import 'package:plural_app/src/features/invitations/domain/invitation.dart';
 import 'package:plural_app/src/features/invitations/presentation/landing_page_invitation_tile.dart';
 import 'package:plural_app/src/features/invitations/presentation/landing_page_invitations_tab.dart';
 
@@ -29,17 +30,19 @@ import 'package:plural_app/src/localization/lang_en.dart';
 import 'package:plural_app/src/utils/app_state.dart';
 
 // Tests
-import '../../../test_context.dart';
+import '../../../test_factories.dart';
 import '../../../test_mocks.dart';
-import '../../../test_stubs.dart';
+import '../../../test_stubs/users_repository_stubs.dart';
 
 void main() {
   group("LandingPageInvitationsTab", () {
     testWidgets("widgets", (tester) async {
-      final tc = TestContext();
+      final user = AppUserFactory();
+      final garden1 = GardenFactory();
+      final garden2 = GardenFactory();
 
       final appState = AppState.skipSubscribe()
-        ..currentUser = tc.user;
+        ..currentUser = user;
 
       final getIt = GetIt.instance;
       final mockInvitationsRepository = MockInvitationsRepository();
@@ -61,13 +64,23 @@ void main() {
         )
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(items: [
-          tc.getPrivateInvitationRecordModel(
-            expand: [
+          getPrivateInvitationRecordModel(
+            invitation: InvitationFactory(
+              garden: garden1,
+              invitee: user,
+              type: InvitationType.private
+            ),
+            expandFields: [
               InvitationField.creator, InvitationField.invitee, InvitationField.garden
             ]
           ),
-          tc.getPrivateInvitationRecordModel(
-            expand: [
+          getPrivateInvitationRecordModel(
+            invitation: InvitationFactory(
+              garden: garden2,
+              invitee: user,
+              type: InvitationType.private
+            ),
+            expandFields: [
               InvitationField.creator, InvitationField.invitee, InvitationField.garden
             ]
           ),
@@ -75,10 +88,15 @@ void main() {
       );
 
       // UsersRepository.getFirstListItem()
-      usersRepositoryGetFirstListItemStub(
+      getFirstListItemStub(
         mockUsersRepository: mockUsersRepository,
-        userID: tc.user.id,
-        returnValue: tc.getUserRecordModel()
+        userID: garden1.creator.id,
+        returnValue: getUserRecordModel(user: garden1.creator)
+      );
+      getFirstListItemStub(
+        mockUsersRepository: mockUsersRepository,
+        userID: garden2.creator.id,
+        returnValue: getUserRecordModel(user: garden2.creator)
       );
 
       await tester.pumpWidget(
@@ -106,10 +124,14 @@ void main() {
     tearDown(() => GetIt.instance.reset());
 
     testWidgets("callbacks", (tester) async {
-      final tc = TestContext();
+      final user = AppUserFactory();
+      final garden1 = GardenFactory();
+      final garden2 = GardenFactory();
+
+      final openInvitation = InvitationFactory(type: InvitationType.open);
 
       final appState = AppState.skipSubscribe()
-        ..currentUser = tc.user;
+        ..currentUser = user;
 
       final getIt = GetIt.instance;
       final mockInvitationsRepository = MockInvitationsRepository();
@@ -133,8 +155,9 @@ void main() {
         )
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(items: [
-          tc.getPrivateInvitationRecordModel(
-            expand: [
+          getOpenInvitationRecordModel(
+            invitation: openInvitation,
+            expandFields: [
               InvitationField.creator, InvitationField.invitee, InvitationField.garden
             ]
           ),
@@ -145,13 +168,19 @@ void main() {
       when(
         () => mockUserGardenRecordsRepository.create(
           body: {
-            UserGardenRecordField.garden: tc.openInvitation.garden.id,
+            UserGardenRecordField.garden: openInvitation.garden.id,
             UserGardenRecordField.role: AppUserGardenRole.member.name,
-            UserGardenRecordField.user: tc.user.id,
+            UserGardenRecordField.user: user.id,
           }
         )
       ).thenAnswer(
-        (_) async => (tc.getUserGardenRecordRecordModel(), {})
+        (_) async => (getUserGardenRecordRecordModel(
+          userGardenRecord: AppUserGardenRecordFactory(
+            garden: openInvitation.garden,
+            role: AppUserGardenRole.member,
+            user: user
+          )
+        ), {})
       );
 
       // mockInvitationsRepository.getList () (for getInvitationsByInvitee())
@@ -164,13 +193,23 @@ void main() {
         )
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(items: [
-          tc.getPrivateInvitationRecordModel(
-            expand: [
+          getPrivateInvitationRecordModel(
+            invitation: InvitationFactory(
+              garden: garden1,
+              type: InvitationType.private,
+              invitee: user,
+            ),
+            expandFields: [
               InvitationField.creator, InvitationField.invitee, InvitationField.garden
             ]
           ),
-          tc.getPrivateInvitationRecordModel(
-            expand: [
+          getPrivateInvitationRecordModel(
+            invitation: InvitationFactory(
+              garden: garden2,
+              type: InvitationType.private,
+              invitee: user,
+            ),
+            expandFields: [
               InvitationField.creator, InvitationField.invitee, InvitationField.garden
             ]
           ),
@@ -178,10 +217,15 @@ void main() {
       );
 
       // UsersRepository.getFirstListItem()
-      usersRepositoryGetFirstListItemStub(
+      getFirstListItemStub(
         mockUsersRepository: mockUsersRepository,
-        userID: tc.user.id,
-        returnValue: tc.getUserRecordModel()
+        userID: garden1.id,
+        returnValue: getUserRecordModel(user: garden1.creator)
+      );
+      getFirstListItemStub(
+        mockUsersRepository: mockUsersRepository,
+        userID: garden2.id,
+        returnValue: getUserRecordModel(user: garden2.creator)
       );
 
       await tester.pumpWidget(
@@ -198,7 +242,7 @@ void main() {
 
       // Enter the uuid of tc.openInvitation (pumpAndSettle to allow setState())
       await tester.enterText(
-        find.byType(TextField), tc.openInvitation.uuid!,
+        find.byType(TextField), openInvitation.uuid!,
       );
       await tester.pumpAndSettle();
 
@@ -212,13 +256,19 @@ void main() {
       when(
         () => mockUserGardenRecordsRepository.create(
           body: {
-            UserGardenRecordField.garden: tc.openInvitation.garden.id,
+            UserGardenRecordField.garden: openInvitation.garden.id,
             UserGardenRecordField.role: AppUserGardenRole.member.name,
-            UserGardenRecordField.user: tc.user.id,
+            UserGardenRecordField.user: user.id,
           }
         )
       ).thenAnswer(
-        (_) async => (tc.getUserGardenRecordRecordModel(), {"error": "error"})
+        (_) async => (getUserGardenRecordRecordModel(
+          userGardenRecord: AppUserGardenRecordFactory(
+            garden: openInvitation.garden,
+            role: AppUserGardenRole.member,
+            user: user,
+          )
+        ), {"error": "error"})
       );
 
       // Check error message not yet displayed
@@ -226,7 +276,7 @@ void main() {
 
       // Enter the uuid of tc.openInvitation (pumpAndSettle to allow setState())
       await tester.enterText(
-        find.byType(TextField), tc.openInvitation.uuid!,
+        find.byType(TextField), openInvitation.uuid!,
       );
       await tester.pumpAndSettle();
 
@@ -243,14 +293,14 @@ void main() {
     tearDown(() => GetIt.instance.reset());
 
     testWidgets("snapshot.data.isEmpty", (tester) async {
-      final tc = TestContext();
+      final user = AppUserFactory();
 
       final expiryDateThreshold = DateTime.now();
       final expiryDateThresholdString =
         DateFormat(Formats.dateYMMdd).format(expiryDateThreshold);
 
       final appState = AppState.skipSubscribe()
-        ..currentUser = tc.user;
+        ..currentUser = user;
 
       final getIt = GetIt.instance;
       final mockInvitationsRepository = MockInvitationsRepository();
@@ -266,7 +316,7 @@ void main() {
           expand: ""
             "${InvitationField.creator}, ${InvitationField.invitee}, ${InvitationField.garden}",
           filter: ""
-            "${InvitationField.invitee} = '${tc.user.id}' "
+            "${InvitationField.invitee} = '${user.id}' "
             "&& ${InvitationField.expiryDate} > '$expiryDateThresholdString'",
           sort: "${GenericField.created}, ${InvitationField.expiryDate}",
         )
@@ -296,14 +346,14 @@ void main() {
     testWidgets("snapshot.hasError", (tester) async {
       final errorMessage = "an error is thrown!";
 
-      final tc = TestContext();
+      final user = AppUserFactory();
 
       final expiryDateThreshold = DateTime.now();
       final expiryDateThresholdString =
         DateFormat(Formats.dateYMMdd).format(expiryDateThreshold);
 
       final appState = AppState.skipSubscribe()
-        ..currentUser = tc.user;
+        ..currentUser = user;
 
       final getIt = GetIt.instance;
       final mockInvitationsRepository = MockInvitationsRepository();
@@ -319,7 +369,7 @@ void main() {
           expand: ""
             "${InvitationField.creator}, ${InvitationField.invitee}, ${InvitationField.garden}",
           filter: ""
-            "${InvitationField.invitee} = '${tc.user.id}' "
+            "${InvitationField.invitee} = '${user.id}' "
             "&& ${InvitationField.expiryDate} > '$expiryDateThresholdString'",
           sort: "${GenericField.created}, ${InvitationField.expiryDate}",
         )

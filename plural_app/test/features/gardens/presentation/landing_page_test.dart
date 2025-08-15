@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:plural_app/src/features/invitations/domain/invitation.dart';
 import 'package:pocketbase/pocketbase.dart';
 
 // Constants
@@ -29,16 +30,19 @@ import 'package:plural_app/src/features/invitations/presentation/landing_page_in
 import 'package:plural_app/src/utils/app_state.dart';
 
 // Tests
-import '../../../test_context.dart';
+import '../../../test_factories.dart';
 import '../../../test_mocks.dart';
+import '../../../test_stubs/users_repository_stubs.dart';
 
 void main() {
   group("LandingPage test", () {
     testWidgets("widgets", (tester) async {
-      final tc = TestContext();
+      final user = AppUserFactory();
+      final userSettings = AppUserSettingsFactory(user: user);
+
       final appState = AppState()
-                        ..currentUser = tc.user
-                        ..currentUserSettings = tc.userSettings;
+        ..currentUser = user
+        ..currentUserSettings = userSettings;
 
       final pb = MockPocketBase();
       final recordService = MockRecordService();
@@ -96,7 +100,10 @@ void main() {
         )
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(items: [
-          tc.getUserGardenRecordRecordModel(expand: [UserGardenRecordField.user])
+          getUserGardenRecordRecordModel(
+            userGardenRecord: AppUserGardenRecordFactory(user: user),
+            expandFields: [UserGardenRecordField.user]
+          )
         ])
       );
 
@@ -106,7 +113,7 @@ void main() {
           filter: any(named: "filter")
         )
       ).thenAnswer(
-        (_) async => tc.getUserRecordModel()
+        (_) async => getUserRecordModel(user: user)
       );
 
       // mockInvitationsRepository.getList
@@ -119,13 +126,21 @@ void main() {
         )
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(items: [
-          tc.getPrivateInvitationRecordModel(
-            expand: [
+          getPrivateInvitationRecordModel(
+            invitation: InvitationFactory(
+              invitee: user,
+              type: InvitationType.private,
+            ),
+            expandFields: [
               InvitationField.creator, InvitationField.invitee, InvitationField.garden
             ]
           ),
-          tc.getPrivateInvitationRecordModel(
-            expand: [
+          getPrivateInvitationRecordModel(
+            invitation: InvitationFactory(
+              invitee: user,
+              type: InvitationType.private,
+            ),
+            expandFields: [
               InvitationField.creator, InvitationField.invitee, InvitationField.garden
             ]
           ),
@@ -173,10 +188,13 @@ void main() {
     tearDown(() => GetIt.instance.reset());
 
     testWidgets("exitedGardenID != null", (tester) async {
-      final tc = TestContext();
+      final user = AppUserFactory();
+      final garden = GardenFactory();
+      final userSettings = AppUserSettingsFactory(user: user);
+
       final appState = AppState()
-                        ..currentUser = tc.user
-                        ..currentUserSettings = tc.userSettings;
+        ..currentUser = user
+        ..currentUserSettings = userSettings;
 
       final pb = MockPocketBase();
       final recordService = MockRecordService();
@@ -211,7 +229,11 @@ void main() {
       );
 
       // AsksRepository.getList()
-      final asksResultList = ResultList<RecordModel>(items: [tc.getAskRecordModel()]);
+      final asksResultList = ResultList<RecordModel>(
+        items: [
+          getAskRecordModel(ask: AskFactory(creator: user))
+        ]
+      );
       when(
         () => mockAsksRepository.getList(
           filter: any(named: "filter"),
@@ -247,7 +269,12 @@ void main() {
           filter: any(named: "filter"),
         )
       ).thenAnswer(
-        (_) async => tc.getUserGardenRecordRecordModel()
+        (_) async => getUserGardenRecordRecordModel(
+          userGardenRecord: AppUserGardenRecordFactory(
+            garden: garden,
+            user: user,
+          )
+        )
       );
       // UserGardenRecordsRepository.delete()
       when(
@@ -265,18 +292,23 @@ void main() {
           sort: any(named: "sort")
         )
       ).thenAnswer(
-        (_) async => ResultList<RecordModel>(items: [
-          tc.getUserGardenRecordRecordModel(expand: [UserGardenRecordField.user])
+        (_) async => ResultList<RecordModel>(
+          items: [
+            getUserGardenRecordRecordModel(
+              userGardenRecord: AppUserGardenRecordFactory(
+                garden: garden,
+                user: user,
+              ),
+              expandFields: [UserGardenRecordField.user]
+          )
         ])
       );
 
       // UsersRepository.getFirstListItem()
-      when(
-        () => mockUsersRepository.getFirstListItem(
-          filter: any(named: "filter")
-        )
-      ).thenAnswer(
-        (_) async => tc.getUserRecordModel()
+      getFirstListItemStub(
+        mockUsersRepository: mockUsersRepository,
+        userID: user.id,
+        returnValue: getUserRecordModel(user: user)
       );
 
       // Check database methods not yet called
@@ -290,7 +322,7 @@ void main() {
       // Render Landing Page
       await tester.pumpWidget(
         MaterialApp(
-          home: LandingPage(exitedGardenID: tc.garden.id,),
+          home: LandingPage(exitedGardenID: garden.id,),
         )
       );
 

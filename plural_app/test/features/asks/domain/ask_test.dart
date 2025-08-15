@@ -7,27 +7,33 @@ import 'package:plural_app/src/features/asks/domain/ask.dart';
 import 'package:plural_app/src/utils/app_state.dart';
 
 // Tests
-import '../../../test_context.dart';
+import '../../../test_factories.dart';
 
 void main() {
   group("Ask", () {
     test("constructor", () {
-      final tc = TestContext();
-      final ask = tc.ask;
+      final user = AppUserFactory();
+      final ask = AskFactory(
+        boon: 5,
+        creator: user,
+        creationDate: DateTime(1995, 06, 13),
+        currency: "GHS",
+        deadlineDate: DateTime(1995, 07, 24),
+        description: "Test description of test-ask-constructor",
+        id: "test-ask-constructor",
+        instructions: "Test instructions of test-ask-constructor",
+        targetMetDate: null,
+        targetSum: 160,
+      );
 
-      // GetIt
-      final getIt = GetIt.instance;
-      getIt.registerLazySingleton<AppState>(() => AppState());
-      GetIt.instance<AppState>().currentUser = tc.user;
-
-      expect(ask.id == "TESTASK1", true);
-      expect(ask.boon == 15, true);
-      expect(ask.creator == tc.user, true);
+      expect(ask.boon == 5, true);
+      expect(ask.creator == user, true);
       expect(ask.creationDate == DateTime(1995, 06, 13), true);
       expect(ask.currency == "GHS", true);
-      expect(ask.description == "Test description of TESTASK1", true);
       expect(ask.deadlineDate == DateTime(1995, 07, 24), true);
-      expect(ask.instructions == "Test instructions of TESTASK1", true);
+      expect(ask.description == "Test description of test-ask-constructor", true);
+      expect(ask.id == "test-ask-constructor", true);
+      expect(ask.instructions == "Test instructions of test-ask-constructor", true);
       expect(ask.targetMetDate == null, true);
       expect(ask.targetSum == 160, true);
       expect(ask.type == AskType.monetary, true);
@@ -36,15 +42,14 @@ void main() {
     tearDown(() => GetIt.instance.reset());
 
     test("formattedDeadlineDate", () {
-      final tc = TestContext();
+      final ask = AskFactory();
 
-      tc.ask.deadlineDate = DateTime(1996, 12, 25);
-      expect(tc.ask.formattedDeadlineDate, "1996-12-25");
+      ask.deadlineDate = DateTime(1996, 12, 25);
+      expect(ask.formattedDeadlineDate, "1996-12-25");
     });
 
     test("formattedTargetMetDate", () {
-      final tc = TestContext();
-      final ask = tc.ask;
+      final ask = AskFactory();
 
       ask.targetMetDate = null;
       expect(ask.formattedTargetMetDate, "");
@@ -54,21 +59,21 @@ void main() {
     });
 
     test("isCreatedByCurrentUser", () {
-      final tc = TestContext();
+      final user = AppUserFactory();
+      final ask = AskFactory(creator: user);
 
       // GetIt
       final getIt = GetIt.instance;
       getIt.registerLazySingleton<AppState>(() => AppState());
-      GetIt.instance<AppState>().currentUser = tc.user;
+      GetIt.instance<AppState>().currentUser = user;
 
-      expect(tc.ask.isCreatedByCurrentUser, true);
+      expect(ask.isCreatedByCurrentUser, true);
     });
 
     tearDown(() => GetIt.instance.reset());
 
     test("isDeadlinePassed", () {
-      final tc = TestContext();
-      final ask = tc.ask;
+      final ask = AskFactory();
 
       ask.deadlineDate = DateTime.now().add(const Duration(days: -5));
       expect(ask.isDeadlinePassed, true);
@@ -78,53 +83,51 @@ void main() {
     });
 
     test("isOnTimeline", () async {
-      final tc = TestContext();
+      final ask = AskFactory();
 
       // false. Both deadlineDate and targetMetDate have passed
-      tc.ask.deadlineDate = DateTime.now().add(const Duration(days: -5));
-      tc.ask.targetMetDate = DateTime.now().add(const Duration(days: -7));
-      expect(tc.ask.isOnTimeline, false);
+      ask.deadlineDate = DateTime.now().add(const Duration(days: -5));
+      ask.targetMetDate = DateTime.now().add(const Duration(days: -7));
+      expect(ask.isOnTimeline, false);
 
       // false. deadlineDate has passed
-      tc.ask.deadlineDate = DateTime.now().add(const Duration(days: -5));
-      tc.ask.targetMetDate = null;
-      expect(tc.ask.isOnTimeline, false);
+      ask.deadlineDate = DateTime.now().add(const Duration(days: -5));
+      ask.targetMetDate = null;
+      expect(ask.isOnTimeline, false);
 
       // false. targetMetDate has passed
-      tc.ask.deadlineDate = DateTime.now().add(const Duration(days: 5));
-      tc.ask.targetMetDate = DateTime.now().add(const Duration(days: -7));
-      expect(tc.ask.isOnTimeline, false);
+      ask.deadlineDate = DateTime.now().add(const Duration(days: 5));
+      ask.targetMetDate = DateTime.now().add(const Duration(days: -7));
+      expect(ask.isOnTimeline, false);
 
       // true. deadlineDate has not passed. targetMetDate is null
-      tc.ask.deadlineDate = DateTime.now().add(const Duration(days: 5));
-      tc.ask.targetMetDate = null;
-      expect(tc.ask.isOnTimeline, true);
+      ask.deadlineDate = DateTime.now().add(const Duration(days: 5));
+      ask.targetMetDate = null;
+      expect(ask.isOnTimeline, true);
     });
 
     test("isSponsoredByCurrentUser", () {
-      final tc = TestContext();
-      final ask = tc.ask;
+      final user = AppUserFactory();
+      final ask = AskFactory();
 
       // GetIt
       final getIt = GetIt.instance;
-      final appState =
-              AppState()
-              ..currentUser = tc.user;
+      final appState = AppState()
+        ..currentUser = user;
 
       getIt.registerLazySingleton<AppState>(() => appState);
 
       ask.sponsorIDS.clear();
       expect(ask.isSponsoredByCurrentUser, false);
 
-      ask.sponsorIDS.add(tc.user.id);
+      ask.sponsorIDS.add(user.id);
       expect(ask.isSponsoredByCurrentUser, true);
     });
 
     tearDown(() => GetIt.instance.reset());
 
     test("isTargetMet", () {
-      final tc = TestContext();
-      final ask = tc.ask;
+      final ask = AskFactory();
 
       ask.targetMetDate = null;
       expect(ask.isTargetMet, false);
@@ -134,18 +137,17 @@ void main() {
     });
 
     test("listTileDescription", () {
-      final tc = TestContext();
+      final ask = AskFactory();
 
-      tc.ask.description = "A really really really really long description";
-      expect(tc.ask.listTileDescription, "A really really really really...");
+      ask.description = "A really really really really long description";
+      expect(ask.listTileDescription, "A really really really really...");
 
-      tc.ask.description = "A short description";
-      expect(tc.ask.listTileDescription, "A short description");
+      ask.description = "A short description";
+      expect(ask.listTileDescription, "A short description");
     });
 
     test("timeRemainingString", () {
-      final tc = TestContext();
-      final ask = tc.ask;
+      final ask = AskFactory();
 
       ask.deadlineDate = DateTime.now().add(const Duration(days: 12));
       expect(ask.timeRemainingString.contains("days"), true);
@@ -158,8 +160,7 @@ void main() {
     });
 
     test("truncatedDescription", () {
-      final tc = TestContext();
-      final ask = tc.ask;
+      final ask = AskFactory();
 
       ask.description = "A short description";
       expect(ask.truncatedDescription, "A short description");
@@ -171,8 +172,7 @@ void main() {
     });
 
     test("isSponsoredByUser", () {
-      final tc = TestContext();
-      final ask = tc.ask;
+      final ask = AskFactory();
 
       ask.sponsorIDS.add("TESTUSER2");
       expect(ask.isSponsoredByUser("TESTUSER2"), true);
@@ -182,25 +182,26 @@ void main() {
     });
 
     test("toMap", () {
-      final tc = TestContext();
-      final ask = tc.ask;
-
-      ask.boon = 5;
-      ask.currency = "CAD";
-      ask.description = "Ask description";
-      ask.deadlineDate = DateTime(1996, 12, 25);
-      ask.instructions = "Ask instructions";
-      ask.targetMetDate = null;
-      ask.targetSum = 70;
-      ask.type = AskType.monetary;
+      final user = AppUserFactory();
+      final ask = AskFactory(
+        boon: 5,
+        creator: user,
+        currency: "CAD",
+        deadlineDate: DateTime(1996, 12, 25),
+        description: "Ask description",
+        id: "test-ask-toMap",
+        instructions: "Ask instructions",
+        targetMetDate: null,
+        targetSum: 70,
+      );
 
       var askMap = {
-        "id": "TESTASK1",
         "boon": 5,
-        "creator": tc.user.id,
+        "creator": user.id,
         "currency": "CAD",
-        "description": "Ask description",
         "deadlineDate": DateTime(1996, 12, 25),
+        "description": "Ask description",
+        "id": "test-ask-toMap",
         "instructions": "Ask instructions",
         "targetMetDate": null,
         "targetSum": 70,
@@ -227,8 +228,8 @@ void main() {
     });
 
     test("==", () {
-      final tc = TestContext();
-      final ask = tc.ask;
+      final user = AppUserFactory();
+      final ask = AskFactory();
 
       // Identity
       expect(ask == ask, true);
@@ -236,7 +237,7 @@ void main() {
       Ask otherAskSameID = Ask(
         id: ask.id,
         boon: 250,
-        creator: tc.user,
+        creator: user,
         creationDate: DateTime(2001, 1, 3),
         currency: "GHS",
         description: "The description for the OTHER test Ask.",
@@ -252,7 +253,7 @@ void main() {
       Ask otherAskDifferentID = Ask(
         id: "OTHERASKID",
         boon: 250,
-        creator: tc.user,
+        creator: user,
         creationDate: DateTime(2001, 1, 3),
         currency: "GHS",
         description: "The description for the OTHER test Ask.",

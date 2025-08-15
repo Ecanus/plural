@@ -25,22 +25,24 @@ import 'package:plural_app/src/utils/app_form.dart';
 import 'package:plural_app/src/utils/app_state.dart';
 
 // Tests
-import '../../../test_context.dart';
+import '../../../test_factories.dart';
 import '../../../test_mocks.dart';
 import '../../../test_stubs.dart';
 
 void main() {
   group("submitCreate", () {
     ft.testWidgets("valid create", (tester) async {
+      final user = AppUserFactory();
+      final garden = GardenFactory();
+
       final testList = [1, 2, 3];
       void func() => testList.clear();
 
-      final tc = TestContext();
       final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
       final appState = AppState.skipSubscribe()
-        ..currentGarden = tc.garden
-        ..currentUser = tc.user;
+        ..currentGarden = garden
+        ..currentUser = user;
 
       final appForm = AppForm.fromMap(Invitation.emptyMap())
         ..setValue(
@@ -64,12 +66,18 @@ void main() {
 
       // getUserGardenRecordRole() through AppState.verify()
       final items = ResultList<RecordModel>(items: [
-        tc.getUserGardenRecordRecordModel(role: AppUserGardenRole.administrator)
+        getUserGardenRecordRecordModel(
+          userGardenRecord: AppUserGardenRecordFactory(
+            garden: garden,
+            role: AppUserGardenRole.administrator,
+            user: user,
+          ),
+        )
       ]);
       getUserGardenRecordRoleStub(
         mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
-        userID: tc.user.id,
-        gardenID: tc.garden.id,
+        userID: user.id,
+        gardenID: garden.id,
         returnValue: items
       );
 
@@ -79,7 +87,15 @@ void main() {
           body: appForm.fields
         )
       ).thenAnswer(
-        (_) async => (tc.getOpenInvitationRecordModel(), {})
+        (_) async => (
+          getOpenInvitationRecordModel(
+            invitation: InvitationFactory(
+              creator: user,
+              garden: garden,
+              type: InvitationType.open
+            )
+          ), {}
+        )
       );
 
       // InvitationsRepository.getList() via getCurrentGardenInvitations (due to reroute)
@@ -91,11 +107,19 @@ void main() {
         )
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(items: [
-          tc.getOpenInvitationRecordModel(
-            expand: [InvitationField.creator, InvitationField.invitee]
+          getOpenInvitationRecordModel(
+            invitation: InvitationFactory(
+              garden: garden,
+              type: InvitationType.open
+            ),
+            expandFields: [InvitationField.creator, InvitationField.invitee]
           ),
-          tc.getPrivateInvitationRecordModel(
-            expand: [InvitationField.creator, InvitationField.invitee]
+          getPrivateInvitationRecordModel(
+            invitation: InvitationFactory(
+              garden: garden,
+              type: InvitationType.private
+            ),
+            expandFields: [InvitationField.creator, InvitationField.invitee]
           ),
         ])
       );
@@ -127,8 +151,8 @@ void main() {
       verifyNever(
         () => mockUserGardenRecordsRepository.getList(
           filter: ""
-            "${UserGardenRecordField.user} = '${tc.user.id}' && "
-            "${UserGardenRecordField.garden} = '${tc.garden.id}'",
+            "${UserGardenRecordField.user} = '${user.id}' && "
+            "${UserGardenRecordField.garden} = '${garden.id}'",
           sort: "-updated"
         )
       );
@@ -146,8 +170,8 @@ void main() {
       verify(
         () => mockUserGardenRecordsRepository.getList(
           filter: ""
-            "${UserGardenRecordField.user} = '${tc.user.id}' && "
-            "${UserGardenRecordField.garden} = '${tc.garden.id}'",
+            "${UserGardenRecordField.user} = '${user.id}' && "
+            "${UserGardenRecordField.garden} = '${garden.id}'",
           sort: "-updated"
         )
       ).called(2); // verify() called for both createInvitation() and getCurrentGardenInvitations() (after reroute)

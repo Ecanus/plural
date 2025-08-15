@@ -22,7 +22,7 @@ import 'package:plural_app/src/utils/app_dialog_view_router.dart';
 import 'package:plural_app/src/utils/app_state.dart';
 
 // Tests
-import '../../../test_context.dart';
+import '../../../test_factories.dart';
 import '../../../test_mocks.dart';
 
 void main() {
@@ -34,10 +34,11 @@ void main() {
         return gesture.removePointer();
       });
 
-      final tc = TestContext();
-      final ask = tc.ask;
+      final user = AppUserFactory();
+      final ask = AskFactory(creator: user);
+
       final appState = AppState.skipSubscribe()
-                        ..currentUser = tc.user; // for ask.isSponsoredByCurrentUser
+        ..currentUser = user; // for ask.isSponsoredByCurrentUser
 
       // GetIt
       final getIt = GetIt.instance;
@@ -101,9 +102,11 @@ void main() {
         return gesture.removePointer();
       });
 
-      final tc = TestContext();
+      final user = AppUserFactory();
+      final ask = AskFactory();
+
       final appState = AppState.skipSubscribe()
-                        ..currentUser = tc.user;
+        ..currentUser = user;
 
       // GetIt
       final getIt = GetIt.instance;
@@ -111,11 +114,11 @@ void main() {
       getIt.registerLazySingleton<AppState>(() => appState);
       getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
 
-      // AsksRepository.addSponsor()
+      // AsksRepository.getList via asks_api.addSponsor()
       when(
         () => mockAsksRepository.getList(filter: any(named: "filter"))
       ).thenAnswer(
-        (_) async =>  ResultList<RecordModel>(items: [tc.getAskRecordModel()])
+        (_) async =>  ResultList<RecordModel>(items: [getAskRecordModel(ask: ask)])
       );
 
       // AsksRepository.update()
@@ -123,13 +126,13 @@ void main() {
         () => mockAsksRepository.update(
           id: any(named: "id"), body: any(named: "body"))
       ).thenAnswer(
-        (_) async => (tc.getAskRecordModel(), {})
+        (_) async => (getAskRecordModel(ask: ask), {})
       );
 
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: ExamineAskViewHeader(ask: tc.ask)
+            body: ExamineAskViewHeader(ask: ask)
           ),
         )
       );
@@ -158,8 +161,7 @@ void main() {
 
   group("BoonColumn test", () {
     testWidgets("boon", (tester) async {
-      final tc = TestContext();
-      final ask = tc.ask;
+      final ask = AskFactory();
 
       ask.boon = 0;
 
@@ -177,7 +179,7 @@ void main() {
       expect(find.text("${ask.boon.toString()} ${ask.currency}"), findsNothing);
 
       // Set boon > 0
-      tc.ask.boon = 10;
+      ask.boon = 10;
 
       await tester.pumpWidget(
         MaterialApp(

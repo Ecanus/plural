@@ -24,13 +24,14 @@ import 'package:plural_app/src/utils/app_state.dart';
 import 'package:plural_app/src/utils/service_locator.dart';
 
 // Tests
-import '../test_context.dart';
+import '../test_factories.dart';
 import '../test_mocks.dart';
 
 void main() {
   group("Service locator test", () {
     test("registerGetItInstances", () async {
-      final tc = TestContext();
+      final user = AppUserFactory();
+      final userSettings = AppUserSettingsFactory(user: user);
 
       final pb = MockPocketBase();
       final recordService = MockRecordService();
@@ -39,7 +40,7 @@ void main() {
 
       // pb.authStore
       final authStore = AuthStore();
-      authStore.save("newToken", tc.getUserRecordModel());
+      authStore.save("newToken", getUserRecordModel(user: user));
       when(
         () => pb.authStore
       ).thenReturn(
@@ -60,15 +61,17 @@ void main() {
 
       // RecordService.getFirstListItem()
       when(
-        () => recordService.getFirstListItem("${GenericField.id} = '${tc.user.id}'")
+        () => recordService.getFirstListItem("${GenericField.id} = '${user.id}'")
       ).thenAnswer(
-        (_) async => tc.getUserRecordModel()
+        (_) async => getUserRecordModel(user: user)
       );
       when(
         () => recordService.getFirstListItem(
-          "${UserSettingsField.user} = '${tc.user.id}'")
+          "${UserSettingsField.user} = '${user.id}'")
       ).thenAnswer(
-        (_) async => tc.getUserSettingsRecordModel()
+        (_) async => getUserSettingsRecordModel(
+          userSettings: userSettings
+        )
       );
 
       // Check values not yet registered
@@ -93,8 +96,8 @@ void main() {
       expect(getIt.isRegistered<GardensRepository>(), true);
 
       expect(getIt.isRegistered<AppState>(), true);
-      expect(getIt<AppState>().currentUser, tc.user);
-      expect(getIt<AppState>().currentUserSettings, tc.userSettings);
+      expect(getIt<AppState>().currentUser,user);
+      expect(getIt<AppState>().currentUserSettings, userSettings);
     });
 
     tearDown(() => GetIt.instance.reset());

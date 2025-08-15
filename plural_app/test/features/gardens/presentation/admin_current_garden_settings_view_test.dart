@@ -21,14 +21,14 @@ import 'package:plural_app/src/localization/lang_en.dart';
 import 'package:plural_app/src/utils/app_dialog_view_router.dart';
 import 'package:plural_app/src/utils/app_state.dart';
 
-import '../../../test_context.dart';
+import '../../../test_factories.dart';
 
 void main() {
   group("AdminCurrentGardenSettingsView", () {
     testWidgets("widgets", (tester) async {
-      final tc = TestContext();
+      final garden = GardenFactory();
       final appState = AppState.skipSubscribe()
-                        ..currentGarden = tc.garden;
+        ..currentGarden = garden;
 
       final getIt = GetIt.instance;
       getIt.registerLazySingleton<AppState>(() => appState);

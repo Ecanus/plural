@@ -56,5 +56,5 @@ class Garden {
   int get hashCode => id.hashCode;
 
   @override
-  String toString() => "Garden(id: $id, name: $name, creator: $creator)";
+  String toString() => "Garden(id: '$id', name: '$name', creator: '${creator.username}')";
 }

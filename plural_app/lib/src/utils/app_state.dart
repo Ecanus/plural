@@ -112,10 +112,10 @@ class AppState with ChangeNotifier {
       var filterString = ""
         "&& ${AskField.targetMetDate} = null"
         "&& ${AskField.deadlineDate} > '$nowString'"
-        "&& ${AskField.creator} != '${currentUser!.id}'";
+        "&& ${AskField.creator} != '${currentUserID!}'";
 
       // (in Garden page only) sponsored Asks are filtered out.
-      if (!isAdminPage) filterString += "&& ${AskField.sponsors} !~ '${currentUser!.id}'";
+      if (!isAdminPage) filterString += "&& ${AskField.sponsors} !~ '${currentUserID!}'";
 
       List<Ask> asks = await asks_api.getAsksByGardenID(
         gardenID: currentGarden!.id,
@@ -225,7 +225,7 @@ class AppState with ChangeNotifier {
   /// Throws a [PermissionException] if no match is found.
   Future<void> verify(List<AppUserGardenPermission> permissions) async {
     final userRole = await getUserGardenRecordRole(
-      userID: currentUser!.id,
+      userID: currentUserID!,
       gardenID: currentGarden!.id
     );
 

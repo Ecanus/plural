@@ -25,7 +25,7 @@ import 'package:plural_app/src/localization/lang_en.dart';
 import 'package:plural_app/src/utils/app_state.dart';
 
 // Tests
-import '../../../test_context.dart';
+import '../../../test_factories.dart';
 import '../../../test_mocks.dart';
 import '../../../test_widgets.dart';
 
@@ -63,11 +63,12 @@ void main() {
     });
 
     testWidgets("submitDeleteAccount", (tester) async {
-      final tc = TestContext();
+      final user = AppUserFactory();
+      final userSettings = AppUserSettingsFactory(user: user);
 
       final appState = AppState.skipSubscribe()
-                        ..currentUser = tc.user // for deleteCurrentUserAsks()
-                        ..currentUserSettings = tc.userSettings;
+        ..currentUser = user // for deleteCurrentUserAsks()
+        ..currentUserSettings = userSettings;
 
       final mockAsksRepository = MockAsksRepository();
       final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
@@ -85,7 +86,11 @@ void main() {
         () => mockUsersRepository);
 
       // AsksRepository.getList()
-      final asksResultList = ResultList<RecordModel>(items: [tc.getAskRecordModel()]);
+      final asksResultList = ResultList<RecordModel>(
+        items: [
+          getAskRecordModel(ask: AskFactory(creator: user))
+        ]
+      );
       when(
         () => mockAsksRepository.getList(filter: any(named: "filter"))
       ).thenAnswer(
@@ -100,11 +105,22 @@ void main() {
 
       // UserGardenRecordsRepository.getList()
       final userGardenRecordsResultList = ResultList<RecordModel>(
-        items: [tc.getUserGardenRecordRecordModel(), tc.getUserGardenRecordRecordModel()]
+        items: [
+          getUserGardenRecordRecordModel(
+            userGardenRecord: AppUserGardenRecordFactory(
+              user: user,
+            )
+          ),
+          getUserGardenRecordRecordModel(
+            userGardenRecord: AppUserGardenRecordFactory(
+              user: user,
+            )
+          )
+        ]
       );
       when(
         () => mockUserGardenRecordsRepository.getList(
-          filter: "${UserGardenRecordField.user} = '${tc.user.id}'")
+          filter: "${UserGardenRecordField.user} = '${user.id}'")
       ).thenAnswer(
         (_) async => userGardenRecordsResultList
       );
@@ -118,14 +134,14 @@ void main() {
 
       // UserSettingsRepository.delete()
       when(
-        () => mockUserSettingsRepository.delete(id: tc.userSettings.id)
+        () => mockUserSettingsRepository.delete(id: userSettings.id)
       ).thenAnswer(
         (_) async => {}
       );
 
       // UsersRepository.delete()
       when(
-        () => mockUsersRepository.delete(id: tc.user.id)
+        () => mockUsersRepository.delete(id: user.id)
       ).thenAnswer(
         (_) async => {}
       );

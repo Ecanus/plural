@@ -373,7 +373,7 @@ Future<List<AppUserGardenRecord>> getUserGardenRecordsByUserID(String userID) as
   final resultList = await GetIt.instance<UserGardenRecordsRepository>().getList(
     expand: "${UserGardenRecordField.user}, ${UserGardenRecordField.garden}",
     filter: "${UserGardenRecordField.user} = '$userID'",
-    sort: "garden.name",
+    sort: "${UserGardenRecordField.garden}.${GardenField.name}",
   );
 
   for (final record in resultList.items) {
@@ -636,7 +636,7 @@ Future<(RecordModel?, Map?)> updateUserGardenRole(
     // if isChangingOwner, change currentUser from owner to administrator
     if (isChangingOwner) {
       final currentUserGardenRecord = await getUserGardenRecord(
-        userID: GetIt.instance<AppState>().currentUser!.id,
+        userID: GetIt.instance<AppState>().currentUserID!,
         gardenID: GetIt.instance<AppState>().currentGarden!.id
       );
       await GetIt.instance<UserGardenRecordsRepository>().update(

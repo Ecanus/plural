@@ -10,15 +10,15 @@ import 'package:plural_app/src/constants/pocketbase.dart';
 
 // Invitations
 import 'package:plural_app/src/features/invitations/data/invitations_repository.dart';
+import 'package:plural_app/src/features/invitations/domain/invitation.dart';
 
 // Tests
-import '../../../test_context.dart';
+import '../../../test_factories.dart';
 import '../../../test_mocks.dart';
 
 void main() {
   group("InvitationsRepository", () {
     test("create", () async {
-      final tc = TestContext();
       final pb = MockPocketBase();
       final recordService = MockRecordService();
       final invitationsRepository = InvitationsRepository(pb: pb);
@@ -34,7 +34,7 @@ void main() {
       when(
         () => recordService.create(body: any(named: "body"))
       ).thenAnswer(
-        (_) async => tc.getOpenInvitationRecordModel()
+        (_) async => getOpenInvitationRecordModel()
       );
 
       // Check record is not null, and errorsMap is empty
@@ -46,7 +46,7 @@ void main() {
       when(
         () => recordService.create(body: any(named: "body"))
       ).thenThrow(
-        tc.clientException
+        ClientExceptionFactory(fieldName: InvitationField.creator)
       );
 
       // Check record is null, errorsMap is not empty
@@ -56,7 +56,7 @@ void main() {
     });
 
     test("delete", () async {
-      final tc = TestContext();
+      final openInvitation = InvitationFactory(type: InvitationType.open);
 
       final pb = MockPocketBase();
       final recordService = MockRecordService();
@@ -71,31 +71,29 @@ void main() {
 
       // RecordService.delete()
       when(
-        () => recordService.delete(any())
+        () => recordService.delete(openInvitation.id)
       ).thenAnswer(
         (_) async => {}
       );
 
       verifyNever(() => recordService.delete(any()));
-      await invitationsRepository.delete(id: tc.openInvitation.id);
+      await invitationsRepository.delete(id: openInvitation.id);
       verify(() => recordService.delete(any())).called(1);
 
       // RecordService.delete(), Now throws exception
       when(
         () => recordService.delete(any())
       ).thenThrow(
-        tc.clientException
+        ClientExceptionFactory(fieldName: InvitationField.creator)
       );
       // Check a ClientException is thrown
       expect(
-        () async => await invitationsRepository.delete(id: tc.openInvitation.id),
+        () async => await invitationsRepository.delete(id: openInvitation.id),
         throwsA(predicate((e) => e is ClientException))
       );
     });
 
     test("getList", () async {
-      final tc = TestContext();
-
       final pb = MockPocketBase();
       final recordService = MockRecordService();
       final invitationsRepository = InvitationsRepository(pb: pb);
@@ -117,9 +115,9 @@ void main() {
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(
           items: [
-            tc.getOpenInvitationRecordModel(),
-            tc.getPrivateInvitationRecordModel(),
-            tc.getOpenInvitationRecordModel(),
+            getOpenInvitationRecordModel(),
+            getPrivateInvitationRecordModel(),
+            getOpenInvitationRecordModel(),
           ]
         )
       );
@@ -147,7 +145,7 @@ void main() {
           sort: any(named: "sort"),
         )
       ).thenThrow(
-        tc.clientException
+        ClientExceptionFactory(fieldName: InvitationField.creator)
       );
       // Check a ClientException is thrown
       expect(
@@ -157,7 +155,7 @@ void main() {
     });
 
     test("update", () async {
-      final tc = TestContext();
+      final openInvitation = InvitationFactory(type: InvitationType.open);
 
       final body = {
         InvitationField.expiryDate: DateFormat(Formats.dateYMMdd).format(DateTime.now()),
@@ -177,16 +175,16 @@ void main() {
       // RecordService.update()
       when(
         () => recordService.update(
-          tc.openInvitation.id,
+          openInvitation.id,
           body: body
         )
       ).thenAnswer(
-        (_) async => tc.getOpenInvitationRecordModel()
+        (_) async => getOpenInvitationRecordModel()
       );
 
       // Check record is not null, and errorsMap is empty
       final (record, errorsMap) = await invitationsRepository.update(
-        id: tc.openInvitation.id,
+        id: openInvitation.id,
         body: body
       );
       expect(record, isNotNull);
@@ -195,16 +193,16 @@ void main() {
       // RecordService.update(), Now throws exception
       when(
         () => recordService.update(
-          tc.openInvitation.id,
+          openInvitation.id,
           body: body
         )
       ).thenThrow(
-        tc.clientException
+        ClientExceptionFactory(fieldName: InvitationField.creator)
       );
 
       // Check record is null, errorsMap is not empty
       final (record2, errorsMap2) = await invitationsRepository.update(
-        id: tc.openInvitation.id, body: body);
+        id: openInvitation.id, body: body);
 
       expect(record2, null);
       expect(errorsMap2.isEmpty, false);

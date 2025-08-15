@@ -17,20 +17,20 @@ import 'package:plural_app/src/utils/app_dialog_view_router.dart';
 import 'package:plural_app/src/utils/app_state.dart';
 
 // Tests
-import '../../../test_context.dart';
+import '../../../test_factories.dart';
 import '../../../tester_functions.dart';
 
 void main() {
   group("GardenTimelineTile", () {
     testWidgets("widgets", (tester) async {
-      final tc = TestContext();
+      final ask = AskFactory();
 
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
             body: ListView(
               children: [
-                GardenTimelineTile(ask: tc.ask, index: 0, isAdminPage: true,)
+                GardenTimelineTile(ask: ask, index: 0, isAdminPage: true,)
               ],
             ),
           )
@@ -47,7 +47,7 @@ void main() {
           home: Scaffold(
             body: ListView(
               children: [
-                GardenTimelineTile(ask: tc.ask, index: 1, isAdminPage: false,)
+                GardenTimelineTile(ask: ask, index: 1, isAdminPage: false,)
               ],
             ),
           )
@@ -61,8 +61,7 @@ void main() {
     });
 
     testWidgets("TileContents", (tester) async {
-      final tc = TestContext();
-      final ask = tc.ask;
+      final ask = AskFactory();
 
       await tester.pumpWidget(
         MaterialApp(
@@ -107,7 +106,7 @@ void main() {
     });
 
     testWidgets("isAdminPage", (tester) async {
-      final tc = TestContext();
+      final ask = AskFactory();
 
       final getIt = GetIt.instance;
       getIt.registerLazySingleton<AppDialogViewRouter>(() => AppDialogViewRouter());
@@ -117,7 +116,7 @@ void main() {
           home: Scaffold(
             body: ListView(
               children: [
-                GardenTimelineTile(ask: tc.ask, index: 0, isAdminPage: true,)
+                GardenTimelineTile(ask: ask, index: 0, isAdminPage: true,)
               ],
             ),
           )
@@ -139,10 +138,11 @@ void main() {
     tearDown(() => GetIt.instance.reset());
 
     testWidgets("isAdminPage false", (tester) async {
-      final tc = TestContext();
+      final user = AppUserFactory();
+      final ask = AskFactory();
 
       final appState = AppState.skipSubscribe()
-                        ..currentUser = tc.user; // for ask.isSponsoredByCurrentUser
+        ..currentUser = user; // for ask.isSponsoredByCurrentUser check
 
       final getIt = GetIt.instance;
       getIt.registerLazySingleton<AppState>(() => appState);
@@ -153,7 +153,7 @@ void main() {
           home: Scaffold(
             body: ListView(
               children: [
-                GardenTimelineTile(ask: tc.ask, index: 0, isAdminPage: false,)
+                GardenTimelineTile(ask: ask, index: 0, isAdminPage: false,)
               ],
             ),
           )

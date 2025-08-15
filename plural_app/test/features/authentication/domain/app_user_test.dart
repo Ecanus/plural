@@ -7,18 +7,17 @@ import 'package:test/test.dart';
 import 'package:plural_app/src/constants/fields.dart';
 
 // Auth
-import 'package:plural_app/src/features/authentication/domain/app_user.dart';
 import 'package:plural_app/src/features/authentication/domain/app_user_garden_record.dart';
 import 'package:plural_app/src/features/authentication/data/user_garden_records_repository.dart';
 
 // Test
-import '../../../test_context.dart';
+import '../../../test_factories.dart';
 import '../../../test_mocks.dart';
 
 void main() {
   group("AppUser test", () {
     test("constructor", () {
-      final user = AppUser(
+      final user = AppUserFactory(
         firstName: "FirstName2",
         id: "TESTUSER2",
         lastName: "LastName2",
@@ -30,7 +29,8 @@ void main() {
     });
 
     test("hasRole", () async {
-      final tc = TestContext();
+      final user = AppUserFactory();
+      final garden = GardenFactory();
 
       final getIt = GetIt.instance;
       final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
@@ -39,71 +39,93 @@ void main() {
         () => mockUserGardenRecordsRepository
       );
 
-      // UserGardenRecordsRepository.getList()
+      // UserGardenRecordsRepository.getList(). Role of member
       when(
         () => mockUserGardenRecordsRepository.getList(
           filter: ""
-            "${UserGardenRecordField.user} = '${tc.user.id}' && "
-            "${UserGardenRecordField.garden} = '${tc.garden.id}'",
-          sort: "-updated"
-        )
-      ).thenAnswer(
-        (_) async => ResultList<RecordModel>(
-          items: [tc.getUserGardenRecordRecordModel()]
-        )
-      );
-
-      // Check user is member and no higher
-      expect(await tc.user.hasRole(tc.garden.id, AppUserGardenRole.member), true);
-      expect(await tc.user.hasRole(tc.garden.id, AppUserGardenRole.administrator), false);
-      expect(await tc.user.hasRole(tc.garden.id, AppUserGardenRole.owner), false);
-
-      // UserGardenRecordsRepository.getList(). Role of administrator
-      when(
-        () => mockUserGardenRecordsRepository.getList(
-          filter: ""
-            "${UserGardenRecordField.user} = '${tc.user.id}' && "
-            "${UserGardenRecordField.garden} = '${tc.garden.id}'",
+            "${UserGardenRecordField.user} = '${user.id}' && "
+            "${UserGardenRecordField.garden} = '${garden.id}'",
           sort: "-updated"
         )
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(
           items: [
-            tc.getUserGardenRecordRecordModel(role: AppUserGardenRole.administrator)
+            getUserGardenRecordRecordModel(
+              userGardenRecord: AppUserGardenRecordFactory(
+                garden: garden,
+                role: AppUserGardenRole.member,
+                user: user,
+              )
+            )
+          ]
+        )
+      );
+
+      // Check user is member and no higher
+      expect(await user.hasRole(garden.id, AppUserGardenRole.member), true);
+      expect(await user.hasRole(garden.id, AppUserGardenRole.administrator), false);
+      expect(await user.hasRole(garden.id, AppUserGardenRole.owner), false);
+
+      // UserGardenRecordsRepository.getList(). Role of administrator
+      when(
+        () => mockUserGardenRecordsRepository.getList(
+          filter: ""
+            "${UserGardenRecordField.user} = '${user.id}' && "
+            "${UserGardenRecordField.garden} = '${garden.id}'",
+          sort: "-updated"
+        )
+      ).thenAnswer(
+        (_) async => ResultList<RecordModel>(
+          items: [
+            getUserGardenRecordRecordModel(
+              userGardenRecord: AppUserGardenRecordFactory(
+                garden: garden,
+                role: AppUserGardenRole.administrator,
+                user: user,
+              )
+            )
           ]
         )
       );
 
       // Check user is administrator and no higher
-      expect(await tc.user.hasRole(tc.garden.id, AppUserGardenRole.member), true);
-      expect(await tc.user.hasRole(tc.garden.id, AppUserGardenRole.administrator), true);
-      expect(await tc.user.hasRole(tc.garden.id, AppUserGardenRole.owner), false);
+      expect(await user.hasRole(garden.id, AppUserGardenRole.member), true);
+      expect(await user.hasRole(garden.id, AppUserGardenRole.administrator), true);
+      expect(await user.hasRole(garden.id, AppUserGardenRole.owner), false);
 
       // UserGardenRecordsRepository.getList(). Role of owner
       when(
         () => mockUserGardenRecordsRepository.getList(
           filter: ""
-            "${UserGardenRecordField.user} = '${tc.user.id}' && "
-            "${UserGardenRecordField.garden} = '${tc.garden.id}'",
+            "${UserGardenRecordField.user} = '${user.id}' && "
+            "${UserGardenRecordField.garden} = '${garden.id}'",
           sort: "-updated"
         )
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(
-          items: [tc.getUserGardenRecordRecordModel(role: AppUserGardenRole.owner)]
+          items: [
+            getUserGardenRecordRecordModel(
+              userGardenRecord: AppUserGardenRecordFactory(
+                garden: garden,
+                role: AppUserGardenRole.owner,
+                user: user,
+              )
+            )
+          ]
         )
       );
 
       // Check user is owner
-      expect(await tc.user.hasRole(tc.garden.id, AppUserGardenRole.member), true);
-      expect(await tc.user.hasRole(tc.garden.id, AppUserGardenRole.administrator), true);
-      expect(await tc.user.hasRole(tc.garden.id, AppUserGardenRole.owner), true);
+      expect(await user.hasRole(garden.id, AppUserGardenRole.member), true);
+      expect(await user.hasRole(garden.id, AppUserGardenRole.administrator), true);
+      expect(await user.hasRole(garden.id, AppUserGardenRole.owner), true);
 
       // UserGardenRecordsRepository.getList(). No record (or role) found
       when(
         () => mockUserGardenRecordsRepository.getList(
           filter: ""
-            "${UserGardenRecordField.user} = '${tc.user.id}' && "
-            "${UserGardenRecordField.garden} = '${tc.garden.id}'",
+            "${UserGardenRecordField.user} = '${user.id}' && "
+            "${UserGardenRecordField.garden} = '${garden.id}'",
           sort: "-updated"
         )
       ).thenAnswer(
@@ -113,21 +135,20 @@ void main() {
       );
 
       // Check user is not a member
-      expect(await tc.user.hasRole(tc.garden.id, AppUserGardenRole.member), false);
-      expect(await tc.user.hasRole(tc.garden.id, AppUserGardenRole.administrator), false);
-      expect(await tc.user.hasRole(tc.garden.id, AppUserGardenRole.owner), false);
+      expect(await user.hasRole(garden.id, AppUserGardenRole.member), false);
+      expect(await user.hasRole(garden.id, AppUserGardenRole.administrator), false);
+      expect(await user.hasRole(garden.id, AppUserGardenRole.owner), false);
     });
 
     tearDown(() => GetIt.instance.reset());
 
     test("==", () {
-      final tc = TestContext();
-      final user = tc.user;
+      final user = AppUserFactory();
 
       // Identity
       expect(user == user, true);
 
-      final otherUserSameIDAndUsername = AppUser(
+      final otherUserSameIDAndUsername = AppUserFactory.uncached(
         firstName: "OtherSameIDAndEmailFirst",
         id: user.id,
         lastName: "OtherSameIDAndEmailLast",
@@ -136,7 +157,7 @@ void main() {
 
       expect(user == otherUserSameIDAndUsername, true);
 
-      final otherUserDifferentIDAndUsername = AppUser(
+      final otherUserDifferentIDAndUsername = AppUserFactory.uncached(
         firstName: "OtherFirst",
         id: "TESTUSER2",
         lastName: "OtherLast",
@@ -145,7 +166,7 @@ void main() {
 
       expect(user == otherUserDifferentIDAndUsername, false);
 
-      final otherUserSameIDAndDifferentUsername = AppUser(
+      final otherUserSameIDAndDifferentUsername = AppUserFactory.uncached(
         firstName: "OtherSameIDEmailDiffFirst",
         lastName: "OtherSameIDEmailDiffLast",
         id: user.id,
@@ -154,7 +175,7 @@ void main() {
 
       expect(user == otherUserSameIDAndDifferentUsername, false);
 
-      final otherUserDifferentIDAndSameUsername = AppUser(
+      final otherUserDifferentIDAndSameUsername = AppUserFactory.uncached(
         firstName: "OtherDiffIDSameEmailFirst",
         lastName: "OtherDiffIDSameEmailLast",
         id: "TESTUSER2",
@@ -165,10 +186,13 @@ void main() {
     });
 
     test("toString", () {
-      final tc = TestContext();
-      var string = "AppUser(id: TESTUSER1, username: testuser)";
+      final user = AppUserFactory(
+        id: "testUser",
+        username: "theTestestOfUsers"
+      );
+      var string = "AppUser(id: testUser, username: theTestestOfUsers)";
 
-      expect(tc.user.toString(), string);
+      expect(user.toString(), string);
     });
   });
 }

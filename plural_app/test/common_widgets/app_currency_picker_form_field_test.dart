@@ -15,7 +15,7 @@ import 'package:plural_app/src/localization/lang_en.dart';
 import 'package:plural_app/src/utils/app_form.dart';
 
 // Tests
-import '../test_context.dart';
+import '../test_factories.dart';
 import '../tester_functions.dart';
 
 void main() {
@@ -43,12 +43,11 @@ void main() {
     });
 
     testWidgets("initial values", (tester) async {
-      final tc = TestContext();
+      final ask = AskFactory(currency: "GHS");
       final AppForm appForm = AppForm();
 
       const fieldName = AskField.currency;
       const label = AskViewText.currency;
-      final value = tc.ask.currency;
 
       await tester.pumpWidget(
         MaterialApp(
@@ -56,14 +55,14 @@ void main() {
             body: AppCurrencyPickerFormField(
               appForm: appForm,
               fieldName: fieldName,
-              initialValue: value,
+              initialValue: ask.currency,
               label: label,
             ),
           ),
         ));
 
       // Check text is the currency
-      expect(textFieldController(tester).value.text, value);
+      expect(textFieldController(tester).value.text, ask.currency);
     });
 
     testWidgets("onSaved", (tester) async {

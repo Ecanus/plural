@@ -2,18 +2,19 @@ import 'package:mocktail/mocktail.dart';
 import 'package:pocketbase/pocketbase.dart';
 import 'package:test/test.dart';
 
+// Constants
+import 'package:plural_app/src/constants/fields.dart';
+
 // Gardens
 import 'package:plural_app/src/features/gardens/data/gardens_repository.dart';
 
 // Tests
-import '../../../test_context.dart';
+import '../../../test_factories.dart';
 import '../../../test_mocks.dart';
 
 void main() {
   group("GardensRepository", () {
     test("bulkDelete", () async {
-      final tc = TestContext();
-
       final pb = MockPocketBase();
       final recordService = MockRecordService();
       final gardensRepository = GardensRepository(pb: pb);
@@ -34,10 +35,10 @@ void main() {
 
       final resultList = ResultList<RecordModel>(
         items: [
-          tc.getGardenRecordModel(),
-          tc.getGardenRecordModel(),
-          tc.getGardenRecordModel(),
-          tc.getGardenRecordModel(),
+          getGardenRecordModel(),
+          getGardenRecordModel(),
+          getGardenRecordModel(),
+          getGardenRecordModel(),
         ]
       );
 
@@ -50,7 +51,7 @@ void main() {
       when(
         () => recordService.delete(any())
       ).thenThrow(
-        tc.clientException
+        ClientExceptionFactory(fieldName: GardenField.creator)
       );
 
       // Check a ClientException is thrown
@@ -61,7 +62,7 @@ void main() {
     });
 
     test("delete", () async {
-      final tc = TestContext();
+      final garden = GardenFactory();
 
       final pb = MockPocketBase();
       final recordService = MockRecordService();
@@ -76,33 +77,31 @@ void main() {
 
       // RecordService.delete()
       when(
-        () => recordService.delete(any())
+        () => recordService.delete(garden.id)
       ).thenAnswer(
         (_) async => {}
       );
 
-      await gardensRepository.delete(id: tc.user.id);
+      await gardensRepository.delete(id: garden.id);
 
       // Check delete called once
-      verify(() => recordService.delete(any())).called(1);
+      verify(() => recordService.delete(garden.id)).called(1);
 
       // RecordService.delete(). Now throws exception
       when(
-        () => recordService.delete(any())
+        () => recordService.delete(garden.id)
       ).thenThrow(
-        tc.clientException
+        ClientExceptionFactory(fieldName: GardenField.creator)
       );
 
       // Check a ClientException is thrown
       expect(
-        () async => await gardensRepository.delete(id: tc.user.id),
+        () async => await gardensRepository.delete(id: garden.id),
         throwsA(predicate((e) => e is ClientException))
       );
     });
 
     test("getFirstListItem", () async {
-      final tc = TestContext();
-
       final pb = MockPocketBase();
       final recordService = MockRecordService();
       final gardensRepository = GardensRepository(pb: pb);
@@ -118,7 +117,7 @@ void main() {
       when(
         () => recordService.getFirstListItem(any())
       ).thenAnswer(
-        (_) async => tc.getGardenRecordModel()
+        (_) async => getGardenRecordModel()
       );
 
       await gardensRepository.getFirstListItem(filter: "");
@@ -130,7 +129,7 @@ void main() {
       when(
         () => recordService.getFirstListItem(any())
       ).thenThrow(
-        tc.clientException
+        ClientExceptionFactory(fieldName: GardenField.creator)
       );
 
       // Check a ClientException is thrown
@@ -141,8 +140,6 @@ void main() {
     });
 
     test("getList", () async {
-      final tc = TestContext();
-
       final pb = MockPocketBase();
       final recordService = MockRecordService();
       final gardensRepository = GardensRepository(pb: pb);
@@ -164,9 +161,9 @@ void main() {
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(
           items: [
-            tc.getGardenRecordModel(),
-            tc.getGardenRecordModel(),
-            tc.getGardenRecordModel(),
+            getGardenRecordModel(),
+            getGardenRecordModel(),
+            getGardenRecordModel(),
           ]
         )
       );
@@ -188,7 +185,7 @@ void main() {
           sort: any(named: "sort"),
         )
       ).thenThrow(
-        tc.clientException
+        ClientExceptionFactory(fieldName: GardenField.creator)
       );
 
       // Check a ClientException is thrown
@@ -267,7 +264,7 @@ void main() {
     });
 
     test("update", () async {
-      final tc = TestContext();
+      final garden = GardenFactory();
 
       final pb = MockPocketBase();
       final recordService = MockRecordService();
@@ -282,24 +279,24 @@ void main() {
 
       // RecordService.update()
       when(
-        () => recordService.update(any())
+        () => recordService.update(garden.id)
       ).thenAnswer(
-        (_) async => tc.getGardenRecordModel()
+        (_) async => getGardenRecordModel()
       );
 
-      await gardensRepository.update(id: tc.garden.id);
+      await gardensRepository.update(id: garden.id);
 
-      verify(() => recordService.update(any())).called(1);
+      verify(() => recordService.update(garden.id)).called(1);
 
       // RecordService.update(). Throws exception
       when(
-        () => recordService.update(any())
+        () => recordService.update(garden.id)
       ).thenThrow(
-        tc.clientException
+        ClientExceptionFactory(fieldName: GardenField.creator)
       );
 
       // Check record is null, errorsMap is not empty
-      final (record, errorsMap) = await gardensRepository.update(id: tc.garden.id);
+      final (record, errorsMap) = await gardensRepository.update(id: garden.id);
       expect(record, null);
       expect(errorsMap.isEmpty, false);
     });

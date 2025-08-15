@@ -4,41 +4,43 @@ import 'package:test/test.dart';
 import 'package:plural_app/src/constants/fields.dart';
 
 // Auth
-import 'package:plural_app/src/features/authentication/domain/app_user.dart';
 import 'package:plural_app/src/features/authentication/domain/app_user_garden_record.dart';
 
-// Garden
-import 'package:plural_app/src/features/gardens/domain/garden.dart';
-
 // Tests
-import '../../../test_context.dart';
+import '../../../test_factories.dart';
 
 void main() {
   group("AppUserGardenRecord", () {
     test("constructor", () {
-      final tc = TestContext();
+      final user = AppUserFactory();
+      final garden = GardenFactory();
+      final userGardenRecord = AppUserGardenRecordFactory(
+        garden: garden,
+        id: "TestUserGardenRecord",
+        user: user,
+      );
 
-      expect(tc.userGardenRecord.id == "TESTGARDENRECORD1", true);
-      expect(tc.userGardenRecord.user == tc.user, true);
-      expect(tc.userGardenRecord.garden == tc.garden, true);
+      expect(userGardenRecord.id == "TestUserGardenRecord", true);
+      expect(userGardenRecord.user == user, true);
+      expect(userGardenRecord.garden == garden, true);
     });
 
     test("fromJson", () {
-      final tc = TestContext();
+      final user = AppUserFactory();
+      final garden = GardenFactory();
 
       final record = {
         UserGardenRecordField.doDocumentReadDate: "2000-01-31",
         GenericField.id: "TESTUSERGARDENRECORD",
         UserGardenRecordField.role: "member"
       };
-      final newUserGardenRecord = AppUserGardenRecord.fromJson(
-        record, tc.user, tc.garden);
+      final newUserGardenRecord = AppUserGardenRecord.fromJson(record, user, garden);
 
-      expect(newUserGardenRecord.garden == tc.garden, true);
+      expect(newUserGardenRecord.garden == garden, true);
       expect(newUserGardenRecord.doDocumentReadDate, DateTime(2000, 1, 31));
       expect(newUserGardenRecord.id == "TESTUSERGARDENRECORD", true);
       expect(newUserGardenRecord.role == AppUserGardenRole.member, true);
-      expect(newUserGardenRecord.user == tc.user, true);
+      expect(newUserGardenRecord.user == user, true);
     });
 
     test("hasReadDoDocument", () {
@@ -66,32 +68,35 @@ void main() {
     });
 
     test("toMap", () {
-      final tc = TestContext();
-      final userGardenRecord = tc.userGardenRecord;
+      final user = AppUserFactory();
+      final garden = GardenFactory();
+      final userGardenRecord = AppUserGardenRecordFactory(
+        garden: garden,
+        id: "TESTGARDENRECORD1",
+        user: user,
+      );
 
       final userGardenRecordMap = {
-        UserGardenRecordField.garden: tc.garden.id,
-        UserGardenRecordField.doDocumentReadDate: tc.userGardenRecord.doDocumentReadDate,
+        UserGardenRecordField.garden: garden.id,
+        UserGardenRecordField.doDocumentReadDate: userGardenRecord.doDocumentReadDate,
         GenericField.id: "TESTGARDENRECORD1",
         UserGardenRecordField.role: "member",
-        UserGardenRecordField.user: tc.user.id,
+        UserGardenRecordField.user: user.id,
       };
 
       expect(userGardenRecord.toMap(), userGardenRecordMap);
     });
 
     test("==", () {
-      final tc = TestContext();
-      final userGardenRecord = tc.userGardenRecord;
-
-      final differentUser = AppUser(
-        firstName: "testFirstName",
-        id: "testID",
-        lastName: "testLastName",
-        username: "testUsername",
+      final user = AppUserFactory();
+      final garden = GardenFactory();
+      final userGardenRecord = AppUserGardenRecordFactory(
+        garden: garden,
+        user: user
       );
 
-      final differentGarden = Garden(
+      final differentUser = AppUserFactory();
+      final differentGarden = GardenFactory(
         creator: differentUser,
         doDocument: "Do Document Test. No alarm.",
         doDocumentEditDate: DateTime.now(),
@@ -103,30 +108,30 @@ void main() {
       expect(userGardenRecord == userGardenRecord, true);
 
       // Different ID, Same Garden, Same User
-      final differentIDSameGardenSameUser = AppUserGardenRecord(
-        id: "testDifferentID",
-        garden: tc.garden,
+      final differentIDSameGardenSameUser = AppUserGardenRecordFactory(
+        id: "testDifferentID1",
+        garden: garden,
         doDocumentReadDate: DateTime.now(),
-        user: tc.user,
+        user: user,
         role: AppUserGardenRole.member
       );
 
       expect(userGardenRecord == differentIDSameGardenSameUser, false);
 
       // Different ID, Different Garden, Same User
-      final differentIDDifferentGardenSameUser = AppUserGardenRecord(
-        id: "testDifferentID",
+      final differentIDDifferentGardenSameUser = AppUserGardenRecordFactory(
+        id: "testDifferentID2",
         garden: differentGarden,
         doDocumentReadDate: DateTime(2000, 1, 31),
-        user: tc.user,
+        user: user,
         role: AppUserGardenRole.member
       );
 
       expect(userGardenRecord == differentIDDifferentGardenSameUser, false);
 
       // Different ID, Different Garden, Different User
-      final differentIDDifferentGardenDifferentUser = AppUserGardenRecord(
-        id: "testDifferentID",
+      final differentIDDifferentGardenDifferentUser = AppUserGardenRecordFactory(
+        id: "testDifferentID3",
         garden: differentGarden,
         doDocumentReadDate: DateTime(2000, 1, 31),
         user: differentUser,
@@ -136,8 +141,8 @@ void main() {
       expect(userGardenRecord == differentIDDifferentGardenDifferentUser, false);
 
       // Same ID, Different Garden, Different User
-      final sameIDDifferentGardenDifferentUser = AppUserGardenRecord(
-        id: tc.userGardenRecord.id,
+      final sameIDDifferentGardenDifferentUser = AppUserGardenRecordFactory.uncached(
+        id: userGardenRecord.id,
         garden: differentGarden,
         doDocumentReadDate: DateTime(2000, 1, 31),
         user: differentUser,
@@ -147,9 +152,9 @@ void main() {
       expect(userGardenRecord == sameIDDifferentGardenDifferentUser, false);
 
       // Same ID, Same Garden, Different User
-      final sameIDSameGardenDifferentUser = AppUserGardenRecord(
-        id: tc.userGardenRecord.id,
-        garden: tc.garden,
+      final sameIDSameGardenDifferentUser = AppUserGardenRecordFactory.uncached(
+        id: userGardenRecord.id,
+        garden: garden,
         doDocumentReadDate: DateTime(2000, 1, 31),
         user: differentUser,
         role: AppUserGardenRole.member
@@ -158,11 +163,11 @@ void main() {
       expect(userGardenRecord == sameIDSameGardenDifferentUser, false);
 
       // Same ID, Different Garden, Same User
-      final sameIDDifferentGardenSameUser = AppUserGardenRecord(
-        id: tc.userGardenRecord.id,
+      final sameIDDifferentGardenSameUser = AppUserGardenRecordFactory.uncached(
+        id: userGardenRecord.id,
         garden: differentGarden,
         doDocumentReadDate: DateTime(2000, 1, 31),
-        user: tc.user,
+        user: user,
         role: AppUserGardenRole.member
       );
 
@@ -170,8 +175,7 @@ void main() {
     });
 
     test("toString", () {
-      final tc = TestContext();
-      final userGardenRecord = tc.userGardenRecord;
+      final userGardenRecord = AppUserGardenRecordFactory();
 
       expect(
         userGardenRecord.toString(),

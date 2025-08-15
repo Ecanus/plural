@@ -80,11 +80,11 @@ Future<void> setInitialAppStateValues(String userID) async {
   var appState = GetIt.instance<AppState>();
 
   // User
-  var user = await getUserByID(userID);
+  final user = await getUserByID(userID);
   appState.currentUser = user;
 
   // User Settings
-  var userSettings = await getCurrentUserSettings();
+  final userSettings = await getCurrentUserSettings();
   appState.currentUserSettings = userSettings;
 }
 

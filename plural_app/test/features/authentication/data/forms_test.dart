@@ -27,15 +27,15 @@ import 'package:plural_app/src/utils/app_dialog_view_router.dart';
 import 'package:plural_app/src/utils/app_form.dart';
 
 // Tests
-import '../../../test_context.dart';
+import '../../../test_factories.dart';
 import '../../../test_mocks.dart';
 import '../../../test_stubs.dart';
+import '../../../test_stubs/users_repository_stubs.dart';
 import '../../../test_widgets.dart';
 
 void main() {
   group("auth forms submitUpdateSettings", () {
     ft.testWidgets("valid update garden page", (tester) async {
-      final tc = TestContext();
       final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
       final oldFirstNameValue = "oldFirstName";
@@ -85,7 +85,7 @@ void main() {
           body: any(named: "body")
         )
       ).thenAnswer(
-        (_) async => (tc.getUserRecordModel(), {})
+        (_) async => (getUserRecordModel(), {})
       );
 
       // UserSettingsRepository.update()
@@ -95,7 +95,7 @@ void main() {
           body: any(named: "body")
         )
       ).thenAnswer(
-        (_) async => (tc.getUserSettingsRecordModel(), {})
+        (_) async => (getUserSettingsRecordModel(), {})
       );
 
       // AppDialogViewRouter.routeToUserSettingsDialogView()
@@ -185,7 +185,13 @@ void main() {
     tearDown(() => GetIt.instance.reset());
 
     ft.testWidgets("valid update landing page", (tester) async {
-      final tc = TestContext();
+      final user = AppUserFactory();
+      final userSettings = AppUserSettingsFactory(user: user);
+
+      // AppState
+      final AppState appState = AppState.skipSubscribe()
+        ..currentUser = user;
+
       final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
       final oldFirstNameValue = "oldFirstName";
@@ -199,7 +205,7 @@ void main() {
         AppForm()
           ..setValue(
               fieldName: GenericField.id,
-              value: "userAppFormID")
+              value: user.id)
           ..setValue(
               fieldName: UserField.firstName,
               value: oldFirstNameValue)
@@ -210,17 +216,13 @@ void main() {
         AppForm()
           ..setValue(
               fieldName: GenericField.id,
-              value: "userSettingsAppFormID")
+              value: userSettings.id)
           ..setValue(
               fieldName: UserSettingsField.defaultCurrency,
               value: oldCurrencyValue)
           ..setValue(
               fieldName: UserSettingsField.defaultInstructions,
               value: "testInstructions");
-
-      // AppState
-      final AppState appState = AppState.skipSubscribe()
-                                ..currentUser = tc.user;
 
       // GetIt
       final getIt = GetIt.instance;
@@ -240,7 +242,7 @@ void main() {
           body: any(named: "body")
         )
       ).thenAnswer(
-        (_) async => (tc.getUserRecordModel(), {})
+        (_) async => (getUserRecordModel(user: user), {})
       );
 
       // UserSettingsRepository.update()
@@ -250,7 +252,7 @@ void main() {
           body: any(named: "body")
         )
       ).thenAnswer(
-        (_) async => (tc.getUserSettingsRecordModel(), {})
+        (_) async => (getUserSettingsRecordModel(userSettings: userSettings), {})
       );
 
       // AppDialogViewRouter.routeToUserSettingsDialogView()
@@ -261,12 +263,10 @@ void main() {
       );
 
       // UsersRepository.getFirstListItem()
-      when(
-        () => mockUsersRepository.getFirstListItem(
-          filter: any(named: "filter")
-        )
-      ).thenAnswer(
-        (_) async => tc.getUserRecordModel()
+      getFirstListItemStub(
+        mockUsersRepository: mockUsersRepository,
+        userID: user.id,
+        returnValue: getUserRecordModel(user: user)
       );
 
       await tester.pumpWidget(
@@ -355,7 +355,6 @@ void main() {
     tearDown(() => GetIt.instance.reset());
 
     ft.testWidgets("invalid update", (tester) async {
-      final tc = TestContext();
       final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
       final oldFirstNameValue = "oldFirstName";
@@ -420,7 +419,7 @@ void main() {
           body: any(named: "body")
         )
       ).thenAnswer(
-        (_) async => (tc.getUserSettingsRecordModel(), {})
+        (_) async => (getUserSettingsRecordModel(), {})
       );
 
       // AppDialogViewRouter.routeToUserSettingsDialogView()
@@ -509,7 +508,6 @@ void main() {
     tearDown(() => GetIt.instance.reset());
 
     ft.testWidgets("invalid form", (tester) async {
-      final tc = TestContext();
       final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
       final oldFirstNameValue = "oldFirstName";
@@ -559,7 +557,7 @@ void main() {
           body: any(named: "body")
         )
       ).thenAnswer(
-        (_) async => (tc.getUserRecordModel(), {})
+        (_) async => (getUserRecordModel(), {})
       );
 
       // UserSettingsRepository.update()
@@ -569,7 +567,7 @@ void main() {
           body: any(named: "body")
         )
       ).thenAnswer(
-        (_) async => (tc.getUserSettingsRecordModel(), {})
+        (_) async => (getUserSettingsRecordModel(), {})
       );
 
       // AppDialogViewRouter.routeToUserSettingsDialogView()
@@ -667,24 +665,38 @@ void main() {
       final testList = [1, 2, 3];
       void testFunc() => testList.clear();
 
-      final tc = TestContext();
+      final user = AppUserFactory();
+      final garden = GardenFactory(creator: user);
+
+      final userGardenRecordAdmin = AppUserGardenRecordFactory(
+        garden: garden,
+        user: user,
+        role: AppUserGardenRole.administrator
+      );
+
+      final userGardenRecordMember = AppUserGardenRecordFactory(
+        garden: garden,
+        user: user,
+        role: AppUserGardenRole.member
+      );
+
       final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
       final appForm = AppForm()
         ..setValue(
-            fieldName: GenericField.id, value: tc.userGardenRecord.id)
+            fieldName: GenericField.id, value: userGardenRecordMember.id)
         ..setValue(
-            fieldName: UserGardenRecordField.garden, value: tc.userGardenRecord.garden.id)
+            fieldName: UserGardenRecordField.garden, value: userGardenRecordMember.garden.id)
         ..setValue(
             fieldName: UserGardenRecordField.role, value: AppUserGardenRole.member.name)
         ..setValue(
-            fieldName: UserGardenRecordField.user, value: tc.userGardenRecord.user.id)
+            fieldName: UserGardenRecordField.user, value: userGardenRecordMember.user.id)
           ..setValue(
             fieldName: AppFormFields.rebuild, value: testFunc, isAux: true);
 
       final appState = AppState.skipSubscribe()
-                      ..currentGarden = tc.garden
-                      ..currentUser = tc.user;
+        ..currentGarden = garden
+        ..currentUser = user;
 
       final getIt = GetIt.instance;
       final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
@@ -693,21 +705,24 @@ void main() {
         () => mockUserGardenRecordsRepository
       );
 
-      // Stubs
+      // verify
       final items = ResultList<RecordModel>(items: [
-        tc.getUserGardenRecordRecordModel(role: AppUserGardenRole.administrator)
+        getUserGardenRecordRecordModel(userGardenRecord: userGardenRecordAdmin)
       ]);
       getUserGardenRecordRoleStub(
         mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
-        userID: tc.user.id,
-        gardenID: tc.garden.id,
+        userID: user.id,
+        gardenID: garden.id,
         returnValue: items
       );
-      final recordModel = tc.getUserGardenRecordRecordModel(
-        role: AppUserGardenRole.member);
+
+      // update to member
+      final recordModel = getUserGardenRecordRecordModel(
+        userGardenRecord: userGardenRecordMember
+      );
       userGardenRecordsRepositoryUpdateStub(
         mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
-        userGardenRecordID: tc.userGardenRecord.id,
+        userGardenRecordID: userGardenRecordMember.id,
         userGardenRoleName: appForm.getValue(fieldName: UserGardenRecordField.role),
         returnValue: (recordModel, {})
       );
@@ -760,24 +775,38 @@ void main() {
       final testList = [1, 2, 3];
       void testFunc() => testList.clear();
 
-      final tc = TestContext();
+      final user = AppUserFactory();
+      final garden = GardenFactory();
+
+      final userGardenRecordAdmin = AppUserGardenRecordFactory(
+        garden: garden,
+        user: user,
+        role: AppUserGardenRole.administrator
+      );
+
+      final userGardenRecordMember = AppUserGardenRecordFactory(
+        garden: garden,
+        user: user,
+        role: AppUserGardenRole.member
+      );
+
       final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
       final appForm = AppForm()
         ..setValue(
-            fieldName: GenericField.id, value: tc.userGardenRecord.id)
+            fieldName: GenericField.id, value: userGardenRecordMember.id)
         ..setValue(
-            fieldName: UserGardenRecordField.garden, value: tc.userGardenRecord.garden.id)
+            fieldName: UserGardenRecordField.garden, value: userGardenRecordMember.garden.id)
         ..setValue(
             fieldName: UserGardenRecordField.role, value: AppUserGardenRole.member.name)
         ..setValue(
-            fieldName: UserGardenRecordField.user, value: tc.userGardenRecord.user.id)
+            fieldName: UserGardenRecordField.user, value: userGardenRecordMember.user.id)
           ..setValue(
             fieldName: AppFormFields.rebuild, value: testFunc, isAux: true);
 
       final appState = AppState.skipSubscribe()
-                      ..currentGarden = tc.garden
-                      ..currentUser = tc.user;
+        ..currentGarden = garden
+        ..currentUser = user;
 
       final getIt = GetIt.instance;
       final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
@@ -786,19 +815,21 @@ void main() {
         () => mockUserGardenRecordsRepository
       );
 
-      // Stubs
+      // verify
       final items = ResultList<RecordModel>(items: [
-        tc.getUserGardenRecordRecordModel(role: AppUserGardenRole.administrator)
+        getUserGardenRecordRecordModel(userGardenRecord: userGardenRecordAdmin)
       ]);
       getUserGardenRecordRoleStub(
         mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
-        userID: tc.user.id,
-        gardenID: tc.garden.id,
+        userID: user.id,
+        gardenID: garden.id,
         returnValue: items
       );
+
+      // update (with error)
       userGardenRecordsRepositoryUpdateStub(
         mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
-        userGardenRecordID: tc.userGardenRecord.id,
+        userGardenRecordID: userGardenRecordMember.id,
         userGardenRoleName: appForm.getValue(fieldName: UserGardenRecordField.role),
         returnValue: (null, {})
       );
@@ -849,7 +880,8 @@ void main() {
 
   group("Auth submitLogIn", () {
     ft.testWidgets("valid logIn", (tester) async {
-      final tc = TestContext();
+      final user = AppUserFactory();
+
       final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
       // AppForm
@@ -872,7 +904,7 @@ void main() {
 
       // pb.authStore
       var authStore = AuthStore();
-      authStore.save("newToken", tc.getUserRecordModel());
+      authStore.save("newToken", getUserRecordModel(user: user));
       when(
         () => pb.authStore
       ).thenReturn(
@@ -898,17 +930,19 @@ void main() {
         (_) async => RecordAuth()
       );
 
-      // RecordService.getFirstListItem()
+      // RecordService.getFirstListItem() via service_locator.setInitialAppStateValues()
       when(
-        () => recordService.getFirstListItem("${GenericField.id} = '${tc.user.id}'")
+        () => recordService.getFirstListItem("${GenericField.id} = '${user.id}'")
       ).thenAnswer(
-        (_) async => tc.getUserRecordModel()
+        (_) async => getUserRecordModel(user: user)
       );
       when(
         () => recordService.getFirstListItem(
-          "${UserSettingsField.user} = '${tc.user.id}'")
+          "${UserSettingsField.user} = '${user.id}'")
       ).thenAnswer(
-        (_) async => tc.getUserSettingsRecordModel()
+        (_) async => getUserSettingsRecordModel(
+          userSettings: AppUserSettingsFactory(user: user)
+        )
       );
 
       var testRouter = GoRouter(
@@ -939,10 +973,10 @@ void main() {
       // Check no method calls before submit
       verifyNever(() => recordService.authWithPassword(any(), any()));
       verifyNever(() => recordService.getFirstListItem(
-        "${GenericField.id} = '${tc.user.id}'")
+        "${GenericField.id} = '${user.id}'")
       );
       verifyNever(() => recordService.getFirstListItem(
-        "${UserSettingsField.user} = '${tc.user.id}'")
+        "${UserSettingsField.user} = '${user.id}'")
       );
 
       // Tap ElevatedButton (to call submitLogIn)
@@ -952,10 +986,10 @@ void main() {
       // Check methods were called
       verify(() => recordService.authWithPassword(any(), any())).called(1);
       verify(() => recordService.getFirstListItem(
-        "${GenericField.id} = '${tc.user.id}'")
+        "${GenericField.id} = '${user.id}'")
       ).called(1);
       verify(() => recordService.getFirstListItem(
-        "${UserSettingsField.user} = '${tc.user.id}'")
+        "${UserSettingsField.user} = '${user.id}'")
       ).called(1);
 
       // Check testList still has values (no error)
@@ -965,7 +999,8 @@ void main() {
     tearDown(() => GetIt.instance.reset());
 
     ft.testWidgets("invalid logIn", (tester) async {
-      final tc = TestContext();
+      final user = AppUserFactory();
+
       final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
       // AppForm
@@ -988,7 +1023,7 @@ void main() {
 
       // pb.authStore
       var authStore = AuthStore();
-      authStore.save("newToken", tc.getUserRecordModel());
+      authStore.save("newToken", getUserRecordModel(user: user));
       when(
         () => pb.authStore
       ).thenReturn(
@@ -1011,20 +1046,22 @@ void main() {
       when(
         () => recordService.authWithPassword(any(), any())
       ).thenThrow(
-        tc.clientException
+        ClientExceptionFactory.empty()
       );
 
       // RecordService.getFirstListItem()
       when(
-        () => recordService.getFirstListItem("${GenericField.id} = '${tc.user.id}'")
+        () => recordService.getFirstListItem("${GenericField.id} = '${user.id}'")
       ).thenAnswer(
-        (_) async => tc.getUserRecordModel()
+        (_) async => getUserRecordModel(user: user)
       );
       when(
         () => recordService.getFirstListItem(
-          "${UserSettingsField.user} = '${tc.user.id}'")
+          "${UserSettingsField.user} = '${user.id}'")
       ).thenAnswer(
-        (_) async => tc.getUserSettingsRecordModel()
+        (_) async => getUserSettingsRecordModel(
+          userSettings: AppUserSettingsFactory(user: user)
+        )
       );
 
       var testRouter = GoRouter(
@@ -1055,10 +1092,10 @@ void main() {
       // Check no method calls before submit
       verifyNever(() => recordService.authWithPassword(any(), any()));
       verifyNever(() => recordService.getFirstListItem(
-        "${GenericField.id} = '${tc.user.id}'")
+        "${GenericField.id} = '${user.id}'")
       );
       verifyNever(() => recordService.getFirstListItem(
-        "${UserSettingsField.user} = '${tc.user.id}'")
+        "${UserSettingsField.user} = '${user.id}'")
       );
 
       // Tap ElevatedButton (to call submitLogIn)
@@ -1070,10 +1107,10 @@ void main() {
 
       // Check other methods were not called
       verifyNever(() => recordService.getFirstListItem(
-        "${GenericField.id} = '${tc.user.id}'")
+        "${GenericField.id} = '${user.id}'")
       );
       verifyNever(() => recordService.getFirstListItem(
-        "${UserSettingsField.user} = '${tc.user.id}'")
+        "${UserSettingsField.user} = '${user.id}'")
       );
 
       // Check testList is empty (error); check appForm has errors
@@ -1091,7 +1128,8 @@ void main() {
     tearDown(() => GetIt.instance.reset());
 
     ft.testWidgets("invalid form", (tester) async {
-      final tc = TestContext();
+      final user = AppUserFactory();
+
       final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
       // AppForm
@@ -1114,7 +1152,7 @@ void main() {
 
       // pb.authStore
       var authStore = AuthStore();
-      authStore.save("newToken", tc.getUserRecordModel());
+      authStore.save("newToken", getUserRecordModel(user: user));
       when(
         () => pb.authStore
       ).thenReturn(
@@ -1142,15 +1180,17 @@ void main() {
 
       // RecordService.getFirstListItem()
       when(
-        () => recordService.getFirstListItem("${GenericField.id} = '${tc.user.id}'")
+        () => recordService.getFirstListItem("${GenericField.id} = '${user.id}'")
       ).thenAnswer(
-        (_) async => tc.getUserRecordModel()
+        (_) async => getUserRecordModel(user: user)
       );
       when(
         () => recordService.getFirstListItem(
-          "${UserSettingsField.user} = '${tc.user.id}'")
+          "${UserSettingsField.user} = '${user.id}'")
       ).thenAnswer(
-        (_) async => tc.getUserSettingsRecordModel()
+        (_) async => getUserSettingsRecordModel(
+          userSettings: AppUserSettingsFactory(user: user)
+        )
       );
 
       var testRouter = GoRouter(
@@ -1181,10 +1221,10 @@ void main() {
       // Check no method calls before submit
       verifyNever(() => recordService.authWithPassword(any(), any()));
       verifyNever(() => recordService.getFirstListItem(
-        "${GenericField.id} = '${tc.user.id}'")
+        "${GenericField.id} = '${user.id}'")
       );
       verifyNever(() => recordService.getFirstListItem(
-        "${UserSettingsField.user} = '${tc.user.id}'")
+        "${UserSettingsField.user} = '${user.id}'")
       );
 
       // Tap ElevatedButton (to call submitLogIn)
@@ -1197,10 +1237,10 @@ void main() {
       // Check no methods were called
       verifyNever(() => recordService.authWithPassword(any(), any()));
       verifyNever(() => recordService.getFirstListItem(
-        "${GenericField.id} = '${tc.user.id}'")
+        "${GenericField.id} = '${user.id}'")
       );
       verifyNever(() => recordService.getFirstListItem(
-        "${UserSettingsField.user} = '${tc.user.id}'")
+        "${UserSettingsField.user} = '${user.id}'")
       );
 
       // Check testList still has values (no error)
@@ -1212,7 +1252,7 @@ void main() {
 
   group ("Auth submitSignUp", () {
     ft.testWidgets("valid signUp", (tester) async {
-      final tc = TestContext();
+      final user = AppUserFactory();
       final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
       // AppForm
@@ -1259,16 +1299,18 @@ void main() {
           UserField.emailVisibility: false,
         })
       ).thenAnswer(
-        (_) async => tc.getUserRecordModel()
+        (_) async => getUserRecordModel(user: user)
       );
       when(
         () => recordService.create(body: {
           UserSettingsField.defaultCurrency: "",
           UserSettingsField.defaultInstructions: "",
-          UserSettingsField.user: tc.getUserRecordModel().id,
+          UserSettingsField.user: getUserRecordModel(user: user).id,
         })
       ).thenAnswer(
-        (_) async => tc.getUserSettingsRecordModel()
+        (_) async => getUserSettingsRecordModel(
+          userSettings: AppUserSettingsFactory(user: user)
+        )
       );
 
       // RecordService.requestVerification()
@@ -1315,7 +1357,7 @@ void main() {
       verify(() => recordService.create(body: {
         UserSettingsField.defaultCurrency: "",
         UserSettingsField.defaultInstructions: "",
-        UserSettingsField.user: tc.getUserRecordModel().id,
+        UserSettingsField.user: getUserRecordModel(user: user).id,
       })).called(1);
       verify(() => recordService.requestVerification(email)).called(1);
       expect(ft.find.byType(SnackBar), ft.findsOneWidget);
@@ -1325,7 +1367,6 @@ void main() {
     });
 
     ft.testWidgets("invalid signUp", (tester) async {
-      final tc = TestContext();
       final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
       // AppForm
@@ -1358,7 +1399,10 @@ void main() {
       when(
         () => recordService.create(body: any(named: "body"))
       ).thenThrow(
-        tc.clientException
+        ClientExceptionFactory(
+          exceptionMessage: "The inner map message of signup()",
+          fieldName: UserField.email
+        )
       );
 
       // RecordService.requestVerification()
@@ -1400,13 +1444,14 @@ void main() {
       // Check testList is now empty (error); check appForm has error assigned
       expect(testList.isEmpty, true);
       expect(
-        appForm.getError(fieldName: "FieldKey"),
+        appForm.getError(fieldName: UserField.email),
         "The inner map message of signup()"
       );
     });
 
     ft.testWidgets("invalid form", (tester) async {
-      final tc = TestContext();
+      final user = AppUserFactory();
+
       final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
       // AppForm
@@ -1439,7 +1484,7 @@ void main() {
       when(
         () => recordService.create(body: any(named: "body"))
       ).thenAnswer(
-        (_) async => tc.getUserRecordModel()
+        (_) async => getUserRecordModel(user: user)
       );
 
       // RecordService.requestVerification()
@@ -1554,7 +1599,6 @@ void main() {
 
     ft.testWidgets("invalid submitForgotPassword", (tester) async {
       final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-      final tc = TestContext();
 
       // AppForm
       const email = "testEmail";
@@ -1576,7 +1620,7 @@ void main() {
       when(
         () => recordService.requestPasswordReset(email)
       ).thenThrow(
-        tc.clientException
+        ClientExceptionFactory.empty()
       );
 
       await tester.pumpWidget(

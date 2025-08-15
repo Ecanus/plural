@@ -8,26 +8,27 @@ import 'package:plural_app/src/features/asks/presentation/ask_time_left_text.dar
 import 'package:plural_app/src/localization/lang_en.dart';
 
 // Tests
-import '../../../test_context.dart';
+import '../../../test_factories.dart';
 
 void main() {
   group("AskTimeLeftText test", () {
     testWidgets("initial values", (tester) async {
-      final tc = TestContext()
-                  ..ask.deadlineDate = DateTime.now().add(const Duration(days: 10));
+      final ask = AskFactory(
+        deadlineDate: DateTime.now().add(Duration(days: 10))
+      );
 
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
             body: AskTimeLeftText(
-              ask: tc.ask,
+              ask: ask,
               textColor: Colors.yellow,
             ),
           ),
         ));
 
       // Check text correctly rendered
-      final askString = tc.ask.timeRemainingString;
+      final askString = ask.timeRemainingString;
       expect(find.text(
         "${AskViewText.askTimeLeftBrace} $askString ${AskViewText.askTimeLeftBrace}"
       ), findsOneWidget);

@@ -45,7 +45,7 @@ class _LandingPageState extends State<LandingPage> {
       // LandingPageGardensTab() should not display until the currentUser
       // has been successfully removed from the Garden matching exitedGardenID
       removeUserFromGarden(
-        appState.currentUser!.id,
+        appState.currentUserID!,
         widget.exitedGardenID!,
         () => setState(() => _canQueryGardens = true)
       );

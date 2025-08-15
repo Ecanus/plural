@@ -3,41 +3,36 @@ import 'package:test/test.dart';
 // Constants
 import 'package:plural_app/src/constants/fields.dart';
 
-// Auth
-import 'package:plural_app/src/features/authentication/domain/app_user.dart';
-import 'package:plural_app/src/features/authentication/domain/app_user_settings.dart';
-
 // Test
-import '../../../test_context.dart';
+import '../../../test_factories.dart';
 
 void main() {
   group("AppUserSettings", () {
     test("constructor", () {
-      final tc = TestContext();
-      final userSettings = AppUserSettings(
+      final user = AppUserFactory();
+      final userSettings = AppUserSettingsFactory(
         defaultCurrency: "GHS",
         defaultInstructions: "The default instructions!!",
         gardenTimelineDisplayCount: 3,
         id: "USERSETTINGSTEST",
-        user: tc.user
+        user: user,
       );
 
       expect(userSettings.defaultCurrency == "GHS", true);
       expect(userSettings.defaultInstructions == "The default instructions!!", true);
       expect(userSettings.gardenTimelineDisplayCount == 3, true);
       expect(userSettings.id == "USERSETTINGSTEST", true);
-      expect(userSettings.user == tc.user, true);
+      expect(userSettings.user == user, true);
     });
 
     test("toMap", () {
-      final tc = TestContext();
-
-      var settingsToMap = AppUserSettings(
+      final user = AppUserFactory();
+      final userSettings = AppUserSettingsFactory(
         defaultCurrency: "KRW",
         defaultInstructions: "The default instructions to map",
         gardenTimelineDisplayCount: 3,
         id: "TESTUSERSETTINGS2",
-        user: tc.user,
+        user: user,
       );
 
       var map = {
@@ -45,17 +40,17 @@ void main() {
         UserSettingsField.defaultInstructions: "The default instructions to map",
         UserSettingsField.gardenTimelineDisplayCount: 3,
         GenericField.id: "TESTUSERSETTINGS2",
-        UserSettingsField.user: tc.user.id,
+        UserSettingsField.user: user.id,
       };
 
-      expect(settingsToMap.toMap(), map);
+      expect(userSettings.toMap(), map);
     });
 
     test("==", () {
-      final tc = TestContext();
-      final userSettings = tc.userSettings;
+      final user = AppUserFactory();
+      final userSettings = AppUserSettingsFactory(user: user);
 
-      final differentUser = AppUser(
+      final differentUser = AppUserFactory(
         firstName: "DifferentFirst",
         id: "OTHERID",
         lastName: "DifferentLast",
@@ -66,18 +61,18 @@ void main() {
       expect(userSettings == userSettings, true);
 
       // Same ID and User
-      final sameIDAndUser = AppUserSettings(
+      final sameIDAndUser = AppUserSettingsFactory.uncached(
         defaultCurrency: "KRW",
         defaultInstructions: "Instructions!!",
         gardenTimelineDisplayCount: 3,
         id: userSettings.id,
-        user: tc.user
+        user: user
       );
 
       expect(userSettings == sameIDAndUser, true);
 
       // Different ID and User
-      final differentIDAndUser = AppUserSettings(
+      final differentIDAndUser = AppUserSettingsFactory.uncached(
         defaultCurrency: "KRW",
         defaultInstructions: "Instructions!!",
         gardenTimelineDisplayCount: 3,
@@ -88,7 +83,7 @@ void main() {
       expect(userSettings == differentIDAndUser, false);
 
       // Same ID and Different User
-      final sameIDAndDifferentUser = AppUserSettings(
+      final sameIDAndDifferentUser = AppUserSettingsFactory.uncached(
         defaultCurrency: "KRW",
         defaultInstructions: "Instructions!!",
         gardenTimelineDisplayCount: 3,
@@ -99,12 +94,12 @@ void main() {
       expect(userSettings == sameIDAndDifferentUser, false);
 
       // Different ID and Same User
-      final differentIDAndSameUser = AppUserSettings(
+      final differentIDAndSameUser = AppUserSettingsFactory.uncached(
         defaultCurrency: "KRW",
         defaultInstructions: "Instructions!!",
         gardenTimelineDisplayCount: 3,
         id: "DIFFERENTID",
-        user: tc.user
+        user: user
       );
 
       expect(userSettings == differentIDAndSameUser, false);

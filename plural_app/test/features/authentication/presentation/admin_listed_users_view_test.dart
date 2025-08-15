@@ -24,18 +24,20 @@ import 'package:plural_app/src/utils/app_dialog_view_router.dart';
 import 'package:plural_app/src/utils/app_state.dart';
 
 // Test
-import '../../../test_context.dart';
+import '../../../test_factories.dart';
 import '../../../test_mocks.dart';
 import '../../../test_stubs.dart';
+import '../../../test_stubs/users_repository_stubs.dart';
 
 void main() {
   group("AdminListedUsersView", () {
     testWidgets("widgets", (tester) async {
-      final tc = TestContext();
+      final user = AppUserFactory();
+      final garden = GardenFactory();
 
       final appState = AppState.skipSubscribe()
-                        ..currentGarden = tc.garden
-                        ..currentUser = tc.user;
+        ..currentGarden = garden
+        ..currentUser = user;
 
       final getIt = GetIt.instance;
       final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
@@ -50,40 +52,60 @@ void main() {
 
       // user -> auth_api.getUserGardenRecordRole()
       final userGardenRecordRoleItems = ResultList<RecordModel>(items: [
-        tc.getUserGardenRecordRecordModel(role: AppUserGardenRole.administrator),
+        getUserGardenRecordRecordModel(
+          userGardenRecord: AppUserGardenRecordFactory(
+            garden: garden,
+            role: AppUserGardenRole.administrator,
+            user: user,
+          ),
+        ),
       ]);
       getUserGardenRecordRoleStub(
         mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
-        userID: tc.user.id,
-        gardenID: tc.garden.id,
+        userID: user.id,
+        gardenID: garden.id,
         returnValue: userGardenRecordRoleItems
       );
 
       // user -> auth_api.getCurrentGardenUserGardenRecords()
       final currentGardenUserGardenRecordsItems = ResultList<RecordModel>(
         items: [
-          tc.getUserGardenRecordRecordModel(
-            expand: [
+          getUserGardenRecordRecordModel(
+            userGardenRecord: AppUserGardenRecordFactory(
+              garden: garden,
+              role: AppUserGardenRole.owner
+            ),
+            expandFields: [
               UserGardenRecordField.user,
               UserGardenRecordField.garden
             ],
-            role: AppUserGardenRole.owner
           ),
-          tc.getUserGardenRecordRecordModel(
-            expand: [
+          getUserGardenRecordRecordModel(
+            userGardenRecord: AppUserGardenRecordFactory(
+              garden: garden,
+              role: AppUserGardenRole.administrator
+            ),
+            expandFields: [
               UserGardenRecordField.user,
               UserGardenRecordField.garden
             ],
-            role: AppUserGardenRole.administrator
           ),
-          tc.getUserGardenRecordRecordModel(
-            expand: [
+          getUserGardenRecordRecordModel(
+            userGardenRecord: AppUserGardenRecordFactory(
+              garden: garden,
+              role: AppUserGardenRole.member
+            ),
+            expandFields: [
               UserGardenRecordField.user,
               UserGardenRecordField.garden
             ]
           ),
-          tc.getUserGardenRecordRecordModel(
-            expand: [
+          getUserGardenRecordRecordModel(
+            userGardenRecord: AppUserGardenRecordFactory(
+              garden: garden,
+              role: AppUserGardenRole.member
+            ),
+            expandFields: [
               UserGardenRecordField.user,
               UserGardenRecordField.garden
             ]
@@ -92,15 +114,15 @@ void main() {
       );
       getCurrentGardenUserGardenRecordsStub(
         mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
-        gardenID: tc.garden.id,
+        gardenID: garden.id,
         returnValue: currentGardenUserGardenRecordsItems
       );
 
       // user -> UsersRepository.getFirstListItem()
-      usersRepositoryGetFirstListItemStub(
+      getFirstListItemStub(
         mockUsersRepository: mockUsersRepository,
-        userID: tc.user.id,
-        returnValue: tc.getUserRecordModel()
+        userID: garden.creator.id,
+        returnValue: getUserRecordModel(user: garden.creator)
       );
 
       await tester.pumpWidget(
@@ -131,11 +153,12 @@ void main() {
     tearDown(() => GetIt.instance.reset());
 
     testWidgets("emptyMessage", (tester) async {
-      final tc = TestContext();
+      final user = AppUserFactory();
+      final garden = GardenFactory();
 
       final appState = AppState.skipSubscribe()
-                        ..currentGarden = tc.garden
-                        ..currentUser = tc.user;
+        ..currentGarden = garden
+        ..currentUser = user;
 
       final getIt = GetIt.instance;
       final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
@@ -151,39 +174,48 @@ void main() {
       // user -> auth_api.getUserGardenRecordRole()
       final userGardenRecordRoleItems = ResultList<RecordModel>(
         items: [
-          tc.getUserGardenRecordRecordModel(role: AppUserGardenRole.administrator),
+          getUserGardenRecordRecordModel(
+            userGardenRecord: AppUserGardenRecordFactory(
+              garden: garden,
+              role: AppUserGardenRole.administrator,
+              user: user,
+            ),
+          ),
         ]
       );
       getUserGardenRecordRoleStub(
         mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
-        userID: tc.user.id,
-        gardenID: tc.garden.id,
+        userID: user.id,
+        gardenID: garden.id,
         returnValue: userGardenRecordRoleItems
       );
 
       // user -> auth_api.getCurrentGardenUserGardenRecords()
-      final currentGarenUserGardenRecordsItems = ResultList<RecordModel>(
+      final currentGardenUserGardenRecordsItems = ResultList<RecordModel>(
         items: [
-          tc.getUserGardenRecordRecordModel(
-            expand: [
+          getUserGardenRecordRecordModel(
+            userGardenRecord: AppUserGardenRecordFactory(
+              garden: garden,
+              role: AppUserGardenRole.owner,
+            ),
+            expandFields: [
               UserGardenRecordField.user,
               UserGardenRecordField.garden
             ],
-            role: AppUserGardenRole.owner
           ),
         ]
       );
       getCurrentGardenUserGardenRecordsStub(
         mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
-        gardenID: tc.garden.id,
-        returnValue: currentGarenUserGardenRecordsItems
+        gardenID: garden.id,
+        returnValue: currentGardenUserGardenRecordsItems
       );
 
       // user -> UsersRepository.getFirstListItem()
-      usersRepositoryGetFirstListItemStub(
+      getFirstListItemStub(
         mockUsersRepository: mockUsersRepository,
-        userID: tc.user.id,
-        returnValue: tc.getUserRecordModel()
+        userID: garden.creator.id,
+        returnValue: getUserRecordModel(user: garden.creator)
       );
 
       await tester.pumpWidget(
