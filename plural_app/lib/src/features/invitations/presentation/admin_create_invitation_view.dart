@@ -51,7 +51,7 @@ class _AdminCreateInvitationViewState extends State<AdminCreateInvitationView> {
     _appForm = AppForm.fromMap(Invitation.emptyMap())
       ..setValue(
           fieldName: InvitationField.creator,
-          value: _appState.currentUser!.id)
+          value: _appState.currentUserID)
       ..setValue(
           fieldName: InvitationField.garden,
           value: _appState.currentGarden!.id)

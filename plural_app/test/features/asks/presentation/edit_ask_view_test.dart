@@ -29,14 +29,14 @@ import 'package:plural_app/src/utils/app_dialog_view_router.dart';
 import 'package:plural_app/src/utils/app_state.dart';
 
 // Tests
-import '../../../test_context.dart';
+import '../../../test_factories.dart';
 import '../../../test_mocks.dart';
 import '../../../tester_functions.dart';
 
 void main() {
   group("EditAskView", () {
     testWidgets("widgets", (tester) async {
-      final tc = TestContext();
+      final ask = AskFactory();
 
       // GetIt
       final getIt = GetIt.instance;
@@ -57,12 +57,12 @@ void main() {
       when(
         () => mockAppState.timelineAsks
       ).thenAnswer(
-        (_) => [tc.ask]
+        (_) => [ask]
       );
 
       // AsksRepository.delete()
       when(
-        () => mockAsksRepository.delete(id: tc.ask.id)
+        () => mockAsksRepository.delete(id: ask.id)
       ).thenAnswer(
         (_) async => (true, {})
       );
@@ -73,7 +73,7 @@ void main() {
             body: Builder(
               builder: (BuildContext context) {
                 return ElevatedButton(
-                  onPressed: () => createEditAskDialog(context: context, ask: tc.ask),
+                  onPressed: () => createEditAskDialog(context: context, ask: ask),
                   child: Text("The ElevatedButton")
                 );
               }
@@ -111,14 +111,14 @@ void main() {
       // Check verify() and delete() not yet called
       verifyNever(() => mockAppState.verify(
         [AppUserGardenPermission.createAndEditAsks]));
-      verifyNever(() => mockAsksRepository.delete(id: tc.ask.id));
+      verifyNever(() => mockAsksRepository.delete(id: ask.id));
 
       await tester.tap(find.byType(FilledButton));
 
       // Check verify() and delete() were called
       verify(() => mockAppState.verify(
         [AppUserGardenPermission.createAndEditAsks])).called(1);
-      verify(() => mockAsksRepository.delete(id: tc.ask.id)).called(1);
+      verify(() => mockAsksRepository.delete(id: ask.id)).called(1);
     });
 
     tearDown(() => GetIt.instance.reset());

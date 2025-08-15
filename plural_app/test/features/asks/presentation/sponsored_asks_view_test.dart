@@ -15,13 +15,11 @@ import 'package:plural_app/src/utils/app_dialog_view_router.dart';
 import 'package:plural_app/src/utils/route_to_view_button.dart';
 
 // Tests
-import '../../../test_context.dart';
+import '../../../test_factories.dart';
 
 void main() {
   group("SponsoredAsksView", () {
     testWidgets("widgets", (tester) async {
-      final tc = TestContext();
-
       final getIt = GetIt.instance;
       getIt.registerLazySingleton<AppDialogViewRouter>(() => AppDialogViewRouter());
 
@@ -30,9 +28,9 @@ void main() {
           home: Scaffold(
             body: AppDialog(
               view: SponsoredAsksView(sponsoredAskTiles: [
-                SponsoredAskTile(ask: tc.ask),
-                SponsoredAskTile(ask: tc.ask),
-                SponsoredAskTile(ask: tc.ask),
+                SponsoredAskTile(ask: AskFactory()),
+                SponsoredAskTile(ask: AskFactory()),
+                SponsoredAskTile(ask: AskFactory()),
               ])
             )
           ),

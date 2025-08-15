@@ -8,19 +8,19 @@ import 'package:plural_app/src/features/authentication/presentation/expel_user_b
 import 'package:plural_app/src/localization/lang_en.dart';
 
 // Test
-import '../../../test_context.dart';
+import '../../../test_factories.dart';
 
 void main() {
   group("ExpelUserButton", () {
     testWidgets("cancelConfirmExpelUserDialog", (tester) async {
-      final tc = TestContext();
+      final userGardenRecord = AppUserGardenRecordFactory();
 
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
             body: Builder(
               builder: (BuildContext context) {
-                return ExpelUserButton(userGardenRecord: tc.userGardenRecord);
+                return ExpelUserButton(userGardenRecord: userGardenRecord);
               }
             )
           )

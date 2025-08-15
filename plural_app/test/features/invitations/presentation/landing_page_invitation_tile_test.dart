@@ -12,19 +12,20 @@ import 'package:plural_app/src/features/authentication/domain/app_user_garden_re
 
 // Invitations
 import 'package:plural_app/src/features/invitations/data/invitations_repository.dart';
+import 'package:plural_app/src/features/invitations/domain/invitation.dart';
 import 'package:plural_app/src/features/invitations/presentation/landing_page_invitation_tile.dart';
 
 // Utils
 import 'package:plural_app/src/utils/app_state.dart';
 
 // Test
-import '../../../test_context.dart';
+import '../../../test_factories.dart';
 import '../../../test_mocks.dart';
 
 void main() {
   group("LandingPageInvitationTile", () {
-    testWidgets("widgets", (tester) async {
-      final tc = TestContext();
+    testWidgets("widgets", (tester) async{
+      final openInvitation = InvitationFactory(type: InvitationType.open);
 
       await tester.pumpWidget(
         MaterialApp(
@@ -32,7 +33,7 @@ void main() {
             body: ListView(
               children: [
                 LandingPageInvitationTile(
-                  invitation: tc.openInvitation,
+                  invitation: openInvitation,
                   setStateCallback: () {},
                 ),
               ],
@@ -47,10 +48,11 @@ void main() {
     testWidgets("setStateCallback", (tester) async {
       final list = [1, 2, 3];
 
-      final tc = TestContext();
+      final user = AppUserFactory();
+      final openInvitation = InvitationFactory(type: InvitationType.open);
 
       final appState = AppState.skipSubscribe()
-        ..currentUser = tc.user;
+        ..currentUser = user;
 
       final getIt = GetIt.instance;
       final mockInvitationsRepository = MockInvitationsRepository();
@@ -66,7 +68,7 @@ void main() {
 
       // InvitationsRepository.delete
       when(
-        () => mockInvitationsRepository.delete(id: tc.openInvitation.id)
+        () => mockInvitationsRepository.delete(id: openInvitation.id)
       ).thenAnswer(
         (_) async => {}
       );
@@ -75,13 +77,19 @@ void main() {
       when(
         () => mockUserGardenRecordsRepository.create(
           body: {
-            UserGardenRecordField.garden: tc.openInvitation.garden.id,
+            UserGardenRecordField.garden: openInvitation.garden.id,
             UserGardenRecordField.role: AppUserGardenRole.member.name,
-            UserGardenRecordField.user: GetIt.instance<AppState>().currentUser!.id,
+            UserGardenRecordField.user: GetIt.instance<AppState>().currentUserID!,
           }
         )
       ).thenAnswer(
-        (_) async => (tc.getUserGardenRecordRecordModel(), {})
+        (_) async => (getUserGardenRecordRecordModel(
+          userGardenRecord: AppUserGardenRecordFactory(
+            garden: openInvitation.garden,
+            role: AppUserGardenRole.member,
+            user: user,
+          )
+        ), {})
       );
 
       await tester.pumpWidget(
@@ -90,7 +98,7 @@ void main() {
             body: ListView(
               children: [
                 LandingPageInvitationTile(
-                  invitation: tc.openInvitation,
+                  invitation: openInvitation,
                   setStateCallback: () => list.clear(),
                 ),
               ],
@@ -102,14 +110,14 @@ void main() {
       // Check list is still empty; methods not yet called
       expect(list.isEmpty, false);
       verifyNever(
-        () => mockInvitationsRepository.delete(id: tc.openInvitation.id)
+        () => mockInvitationsRepository.delete(id: openInvitation.id)
       );
       verifyNever(
         () => mockUserGardenRecordsRepository.create(
           body: {
-            UserGardenRecordField.garden: tc.openInvitation.garden.id,
+            UserGardenRecordField.garden: openInvitation.garden.id,
             UserGardenRecordField.role: AppUserGardenRole.member.name,
-            UserGardenRecordField.user: GetIt.instance<AppState>().currentUser!.id,
+            UserGardenRecordField.user: GetIt.instance<AppState>().currentUserID!,
           }
         )
       );
@@ -121,14 +129,14 @@ void main() {
       // Check list is now empty. Methods were called
       expect(list.isEmpty, true);
       verify(
-        () => mockInvitationsRepository.delete(id: tc.openInvitation.id)
+        () => mockInvitationsRepository.delete(id: openInvitation.id)
       ).called(1);
       verify(
         () => mockUserGardenRecordsRepository.create(
           body: {
-            UserGardenRecordField.garden: tc.openInvitation.garden.id,
+            UserGardenRecordField.garden: openInvitation.garden.id,
             UserGardenRecordField.role: AppUserGardenRole.member.name,
-            UserGardenRecordField.user: GetIt.instance<AppState>().currentUser!.id,
+            UserGardenRecordField.user: GetIt.instance<AppState>().currentUserID!,
           }
         )
       ).called(1);
@@ -139,7 +147,7 @@ void main() {
             body: ListView(
               children: [
                 LandingPageInvitationTile(
-                  invitation: tc.openInvitation,
+                  invitation: openInvitation,
                   setStateCallback: () => list.addAll([1, 2, 3, 4]),
                 ),
               ],

@@ -235,7 +235,7 @@ class UsersRepository implements Repository {
         switch (e.action) {
           case EventAction.update:
             // Get new values from db, if currentUser was updated
-            if (userID == GetIt.instance<AppState>().currentUser!.id) {
+            if (userID == GetIt.instance<AppState>().currentUserID!) {
               GetIt.instance<AppState>().currentUser = await getUserByID(userID);
             }
           case EventAction.create:

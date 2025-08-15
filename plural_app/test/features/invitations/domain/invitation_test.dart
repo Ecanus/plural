@@ -6,37 +6,35 @@ import 'package:uuid/uuid.dart';
 import 'package:plural_app/src/constants/fields.dart';
 import 'package:plural_app/src/constants/formats.dart';
 
-// Auth
-import 'package:plural_app/src/features/authentication/domain/app_user.dart';
-
 // Invitations
 import 'package:plural_app/src/features/invitations/domain/invitation.dart';
 
 // Tests
-import '../../../test_context.dart';
+import '../../../test_factories.dart';
 
 void main() {
   group("Invitation", () {
     test("constructor", () {
-      final tc = TestContext();
+      final user = AppUserFactory();
+      final garden = GardenFactory();
 
       final dateTime = DateTime(2025, 12, 15);
       final uuid = Uuid().v1();
 
-      final invitation = Invitation(
-        creator: tc.user,
+      final invitation = InvitationFactory(
+        creator: user,
         createdDate: dateTime,
         expiryDate: dateTime.add(Duration(days: 10)),
-        garden: tc.garden,
+        garden: garden,
         id: "TESTINVITATION",
         type: InvitationType.open,
         uuid: uuid,
       );
 
-      expect(invitation.creator, tc.user);
+      expect(invitation.creator, user);
       expect(invitation.createdDate, dateTime);
       expect(invitation.expiryDate, DateTime(2025, 12, 25));
-      expect(invitation.garden, tc.garden);
+      expect(invitation.garden, garden);
       expect(invitation.id, "TESTINVITATION");
       expect(invitation.type, InvitationType.open);
       expect(invitation.invitee, null);
@@ -44,14 +42,10 @@ void main() {
     });
 
     test("fromJson", () {
-      final tc = TestContext();
+      final user = AppUserFactory();
+      final garden = GardenFactory();
 
-      final invitee = AppUser(
-        firstName: "inviteeFirstName",
-        id: "inviteeID",
-        lastName: "inviteeLastName",
-        username: "the_invitee"
-      );
+      final invitee = AppUserFactory();
 
       final dateTime = DateTime(2025, 12, 31);
       final expiryDateTime = dateTime.add(Duration(days: 10));
@@ -64,12 +58,12 @@ void main() {
         InvitationField.type: InvitationType.private.name,
       };
 
-      final invitation = Invitation.fromJson(record, tc.user, tc.garden, invitee);
+      final invitation = Invitation.fromJson(record, user, garden, invitee);
 
-      expect(invitation.creator, tc.user);
+      expect(invitation.creator, user);
       expect(invitation.createdDate, dateTime);
       expect(invitation.expiryDate, DateTime(2026, 1, 10));
-      expect(invitation.garden, tc.garden);
+      expect(invitation.garden, garden);
       expect(invitation.id, "TESTINVITATIONFROMJSON");
       expect(invitation.type, InvitationType.private);
       expect(invitation.invitee, invitee);
@@ -77,23 +71,20 @@ void main() {
     });
 
     test("asserts", () {
-      final invitee = AppUser(
-        firstName: "inviteeFirstName",
-        id: "inviteeID",
-        lastName: "inviteeLastName",
-        username: "the_invitee"
-      );
+      final user = AppUserFactory();
+      final garden = GardenFactory();
 
-      final tc = TestContext();
+      final invitee = AppUserFactory();
+
       final dateTime = DateTime(2025, 12, 15);
 
       // AssertionError if both uuid and username are null (type == open)
       expect(
-        () => Invitation(
-          creator: tc.user,
+        () => InvitationFactory.testAssert(
+          creator: user,
           createdDate: dateTime,
           expiryDate: dateTime.add(Duration(days: 10)),
-          garden: tc.garden,
+          garden: garden,
           id: "TESTINVITATION",
           type: InvitationType.open,
           invitee: null,
@@ -104,11 +95,11 @@ void main() {
 
       // AssertionError if both uuid and username are null (type == private)
       expect(
-        () => Invitation(
-          creator: tc.user,
+        () => InvitationFactory.testAssert(
+          creator: user,
           createdDate: dateTime,
           expiryDate: dateTime.add(Duration(days: 10)),
-          garden: tc.garden,
+          garden: garden,
           id: "TESTINVITATION",
           type: InvitationType.private,
           invitee: null,
@@ -119,11 +110,11 @@ void main() {
 
       // AssertionError if both uuid and username are provided (type == open)
       expect(
-        () => Invitation(
-          creator: tc.user,
+        () => InvitationFactory.testAssert(
+          creator: user,
           createdDate: dateTime,
           expiryDate: dateTime.add(Duration(days: 10)),
-          garden: tc.garden,
+          garden: garden,
           id: "TESTINVITATION",
           type: InvitationType.open,
           invitee: invitee,
@@ -134,11 +125,11 @@ void main() {
 
       // AssertionError if both uuid and username are provided (type == private)
       expect(
-        () => Invitation(
-          creator: tc.user,
+        () => InvitationFactory.testAssert(
+          creator: user,
           createdDate: dateTime,
           expiryDate: dateTime.add(Duration(days: 10)),
-          garden: tc.garden,
+          garden: garden,
           id: "TESTINVITATION",
           type: InvitationType.private,
           invitee: invitee,
@@ -163,36 +154,39 @@ void main() {
     });
 
     test("==", () {
-      final tc = TestContext();
+      final user = AppUserFactory();
+      final garden = GardenFactory();
 
       final dateTime = DateTime(2025, 12, 15);
       final uuid = Uuid().v1();
 
-      final invitation1 = Invitation(
-        creator: tc.user,
+      final invitation1 = InvitationFactory.uncached(
+        creator: user,
         createdDate: dateTime,
         expiryDate: dateTime.add(Duration(days: 10)),
-        garden: tc.garden,
+        garden: garden,
         id: "TESTINVITATION1",
         type: InvitationType.open,
         uuid: uuid,
       );
 
-      final invitation2 = Invitation(
-        creator: tc.user,
+      // Different ID from the other two invitations
+      final invitation2 = InvitationFactory.uncached(
+        creator: user,
         createdDate: dateTime,
         expiryDate: dateTime.add(Duration(days: 10)),
-        garden: tc.garden,
+        garden: garden,
         id: "TESTINVITATION2",
         type: InvitationType.open,
         uuid: uuid,
       );
 
-      final invitation3 = Invitation(
-        creator: tc.user,
+      // Same ID as invitation1
+      final invitation3 = InvitationFactory.uncached(
+        creator: user,
         createdDate: dateTime,
         expiryDate: dateTime.add(Duration(days: 10)),
-        garden: tc.garden,
+        garden: garden,
         id: "TESTINVITATION1",
         type: InvitationType.open,
         uuid: uuid,
@@ -203,34 +197,30 @@ void main() {
       expect(invitation1 == invitation3, true);
     });
 
-    test("==", () {
-      final invitee = AppUser(
-        firstName: "inviteeFirstName",
-        id: "inviteeID",
-        lastName: "inviteeLastName",
-        username: "the_invitee"
-      );
+    test("toString", () {
+      final user = AppUserFactory(username: "testuser");
+      final garden = GardenFactory(name: "Petunia");
 
-      final tc = TestContext();
+      final invitee = AppUserFactory(username: "the_invitee");
 
       final dateTime = DateTime(2025, 12, 15);
       final uuid = Uuid().v1();
 
-      final invitation1 = Invitation(
-        creator: tc.user,
+      final invitation1 = InvitationFactory(
+        creator: user,
         createdDate: dateTime,
         expiryDate: dateTime.add(Duration(days: 10)),
-        garden: tc.garden,
+        garden: garden,
         id: "TESTINVITATION1",
         type: InvitationType.open,
         uuid: uuid,
       );
 
-      final invitation2 = Invitation(
-        creator: tc.user,
+      final invitation2 = InvitationFactory(
+        creator: user,
         createdDate: dateTime,
         expiryDate: dateTime.add(Duration(days: 10)),
-        garden: tc.garden,
+        garden: garden,
         id: "TESTINVITATION2",
         type: InvitationType.private,
         invitee: invitee,

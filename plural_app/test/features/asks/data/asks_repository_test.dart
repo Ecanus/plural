@@ -10,14 +10,12 @@ import 'package:plural_app/src/constants/pocketbase.dart';
 import 'package:plural_app/src/features/asks/data/asks_repository.dart';
 
 // Tests
-import '../../../test_context.dart';
+import '../../../test_factories.dart';
 import '../../../test_mocks.dart';
 
 void main() {
   group("AsksRepository", () {
     test("bulkDelete", () async {
-      final tc = TestContext();
-
       final pb = MockPocketBase();
       final recordService = MockRecordService();
       final asksRepository = AsksRepository(pb: pb);
@@ -38,9 +36,9 @@ void main() {
 
       final resultList = ResultList<RecordModel>(
         items: [
-          tc.getAskRecordModel(),
-          tc.getAskRecordModel(),
-          tc.getAskRecordModel(),
+          getAskRecordModel(),
+          getAskRecordModel(),
+          getAskRecordModel(),
         ]
       );
 
@@ -53,7 +51,7 @@ void main() {
       when(
         () => recordService.delete(any())
       ).thenThrow(
-        tc.clientException
+        ClientExceptionFactory.empty()
       );
 
       // Check a ClientException is thrown
@@ -74,7 +72,6 @@ void main() {
         AskField.type: "",
       };
 
-      final tc = TestContext();
       final pb = MockPocketBase();
       final recordService = MockRecordService();
       final asksRepository = AsksRepository(pb: pb);
@@ -90,7 +87,7 @@ void main() {
       when(
         () => recordService.create(body: any(named: "body"))
       ).thenAnswer(
-        (_) async => tc.getAskRecordModel()
+        (_) async => getAskRecordModel()
       );
 
       // boon < targetSum. Check errors map is empty
@@ -113,7 +110,10 @@ void main() {
       when(
         () => recordService.create(body: any(named: "body"))
       ).thenThrow(
-        tc.clientException
+        ClientExceptionFactory(
+          exceptionMessage: "Error with ${AskField.boon}",
+          fieldName: AskField.boon
+        )
       );
 
       // boon < targetSum
@@ -126,8 +126,7 @@ void main() {
     });
 
     test("delete", () async {
-      final tc = TestContext();
-
+      final ask = AskFactory();
       final pb = MockPocketBase();
       final recordService = MockRecordService();
       final asksRepository = AsksRepository(pb: pb);
@@ -141,33 +140,31 @@ void main() {
 
       // RecordService.delete()
       when(
-        () => recordService.delete(any())
+        () => recordService.delete(ask.id)
       ).thenAnswer(
         (_) async => {}
       );
 
-      await asksRepository.delete(id: tc.ask.id);
+      await asksRepository.delete(id: ask.id);
 
       // Check delete is called once
-      verify(() => recordService.delete(any())).called(1);
+      verify(() => recordService.delete(ask.id)).called(1);
 
       // RecordService.delete(). Now throws exception
       when(
-        () => recordService.delete(any())
+        () => recordService.delete(ask.id)
       ).thenThrow(
-        tc.clientException
+        ClientExceptionFactory.empty()
       );
 
       // Check a ClientException is thrown
       expect(
-        () async => await asksRepository.delete(id: tc.user.id),
+        () async => await asksRepository.delete(id: ask.id),
         throwsA(predicate((e) => e is ClientException))
       );
     });
 
     test("getFirstListItem", () async {
-      final tc = TestContext();
-
       final pb = MockPocketBase();
       final recordService = MockRecordService();
       final asksRepository = AsksRepository(pb: pb);
@@ -181,33 +178,31 @@ void main() {
 
       // RecordService.getFirstListItem()
       when(
-        () => recordService.getFirstListItem(any())
+        () => recordService.getFirstListItem("test_filter")
       ).thenAnswer(
-        (_) async => tc.getUserRecordModel()
+        (_) async => getUserRecordModel()
       );
 
-      await asksRepository.getFirstListItem(filter: "");
+      await asksRepository.getFirstListItem(filter: "test_filter");
 
       // Check getFirstListItem called once
-      verify(() => recordService.getFirstListItem(any())).called(1);
+      verify(() => recordService.getFirstListItem("test_filter")).called(1);
 
       // RecordService.getFirstListItem(). Now throws exception
       when(
-        () => recordService.getFirstListItem(any())
+        () => recordService.getFirstListItem("test_filter")
       ).thenThrow(
-        tc.clientException
+        ClientExceptionFactory.empty()
       );
 
       // Check a ClientException is thrown
       expect(
-        () async => await asksRepository.getFirstListItem(filter: ""),
+        () async => await asksRepository.getFirstListItem(filter: "test_filter"),
         throwsA(predicate((e) => e is ClientException))
       );
     });
 
     test("getList", () async {
-      final tc = TestContext();
-
       final pb = MockPocketBase();
       final recordService = MockRecordService();
       final asksRepository = AsksRepository(pb: pb);
@@ -229,9 +224,9 @@ void main() {
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(
           items: [
-            tc.getUserRecordModel(),
-            tc.getUserRecordModel(),
-            tc.getUserRecordModel(),
+            getUserRecordModel(),
+            getUserRecordModel(),
+            getUserRecordModel(),
           ]
         )
       );
@@ -253,7 +248,7 @@ void main() {
           sort: any(named: "sort"),
         )
       ).thenThrow(
-        tc.clientException
+        ClientExceptionFactory.empty()
       );
 
       // Check a ClientException is thrown
@@ -343,7 +338,7 @@ void main() {
         AskField.type: "",
       };
 
-      final tc = TestContext();
+      final ask = AskFactory();
       final pb = MockPocketBase();
       final recordService = MockRecordService();
       final asksRepository = AsksRepository(pb: pb);
@@ -357,16 +352,16 @@ void main() {
 
       // RecordService.update(), No Exception
       when(
-        () => recordService.update(any(), body: any(named: "body"))
+        () => recordService.update(ask.id, body: body)
       ).thenAnswer(
-        (_) async => tc.getAskRecordModel()
+        (_) async => getAskRecordModel()
       );
 
       // boon < targetSum. Check errors map is empty
       body[AskField.boon] = 5;
       body[AskField.targetSum] = 10;
 
-      var (record1, errorsMap1) = await asksRepository.update(id: tc.ask.id, body: body);
+      var (record1, errorsMap1) = await asksRepository.update(id: ask.id, body: body);
       expect(record1, isNotNull);
       expect(errorsMap1.isEmpty, true);
 
@@ -374,22 +369,25 @@ void main() {
       body[AskField.boon] = 5;
       body[AskField.targetSum] = 5;
 
-      var (record2, errorsMap2) = await asksRepository.update(id: tc.ask.id, body: body);
+      var (record2, errorsMap2) = await asksRepository.update(id: ask.id, body: body);
       expect(record2, null);
       expect(errorsMap2.isEmpty, false);
 
       // RecordService.update() Raise Exception
       when(
-        () => recordService.update(any(), body: any(named: "body"))
+        () => recordService.update(ask.id, body: body)
       ).thenThrow(
-        tc.clientException
+        ClientExceptionFactory(
+          exceptionMessage: "Error with ${AskField.boon}",
+          fieldName: AskField.boon
+        )
       );
 
       // boon < targetSum
       body[AskField.boon] = 5;
       body[AskField.targetSum] = 10;
 
-      var (record3, errorsMap3) = await asksRepository.update(id: tc.ask.id, body: body);
+      var (record3, errorsMap3) = await asksRepository.update(id: ask.id, body: body);
       expect(record3, null);
       expect(errorsMap3.isEmpty, false);
     });

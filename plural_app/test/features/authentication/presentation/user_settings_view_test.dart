@@ -16,15 +16,17 @@ import 'package:plural_app/src/utils/app_dialog_view_router.dart';
 import 'package:plural_app/src/utils/app_state.dart';
 
 // Tests
-import '../../../test_context.dart';
+import '../../../test_factories.dart';
 
 void main() {
   group("UserSettingsView test", () {
     testWidgets("widgets", (tester) async {
-      final tc = TestContext();
+      final user = AppUserFactory();
+      final userSettings = AppUserSettingsFactory(user: user);
+
       final appState = AppState()
-                        ..currentUser = tc.user
-                        ..currentUserSettings = tc.userSettings;
+        ..currentUser = user
+        ..currentUserSettings = userSettings;
 
       // GetIt
       final getIt = GetIt.instance;

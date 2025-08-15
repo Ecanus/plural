@@ -30,9 +30,10 @@ import 'package:plural_app/src/utils/app_dialog_view_router.dart';
 import 'package:plural_app/src/utils/app_state.dart';
 
 // Tests
-import '../../../test_context.dart';
+import '../../../test_factories.dart';
 import '../../../test_mocks.dart';
 import '../../../test_stubs.dart';
+import '../../../test_stubs/users_repository_stubs.dart';
 
 void main() {
   group("AppBottomBar", () {
@@ -109,10 +110,12 @@ void main() {
       final gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
       addTearDown(() async { return gesture.removePointer(); });
 
-      final tc = TestContext();
+      final user = AppUserFactory();
+      final userSettings = AppUserSettingsFactory(user: user);
+
       final appState = AppState()
-                        ..currentUser = tc.user
-                        ..currentUserSettings = tc.userSettings;
+        ..currentUser = user
+        ..currentUserSettings = userSettings;
 
       final getIt = GetIt.instance;
       getIt.registerLazySingleton<AppState>(() => appState);
@@ -148,15 +151,16 @@ void main() {
     tearDown(() => GetIt.instance.reset());
 
     testWidgets("createCurrentGardenDialog", (tester) async {
-      final tc = TestContext();
+      final user = AppUserFactory();
+      final userSettings = AppUserSettingsFactory(user: user);
 
       // TestGesture
       final gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
       addTearDown(() async { return gesture.removePointer(); });
 
       final appState = AppState() // for GoToAdminPageTile
-                        ..currentUser = tc.user
-                        ..currentUserSettings = tc.userSettings;
+        ..currentUser = user
+        ..currentUserSettings = userSettings;
 
       final getIt = GetIt.instance;
       getIt.registerLazySingleton<AppDialogViewRouter>(() => AppDialogViewRouter());
@@ -192,15 +196,16 @@ void main() {
     tearDown(() => GetIt.instance.reset());
 
     testWidgets("createAdminCurrentGardenSettingsDialog", (tester) async {
-      final tc = TestContext();
+      final user = AppUserFactory();
+      final garden = GardenFactory(creator: user);
 
       // TestGesture
       final gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
       addTearDown(() async { return gesture.removePointer(); });
 
       final appState = AppState.skipSubscribe()
-                        ..currentGarden = tc.garden
-                        ..currentUser = tc.user;
+        ..currentGarden = garden
+        ..currentUser = user;
 
       final getIt = GetIt.instance;
       getIt.registerLazySingleton<AppDialogViewRouter>(() => AppDialogViewRouter());
@@ -237,15 +242,16 @@ void main() {
     tearDown(() => GetIt.instance.reset());
 
     testWidgets("createAdminOptionsDialog", (tester) async {
-      final tc = TestContext();
+      final user = AppUserFactory();
+      final userSettings = AppUserSettingsFactory(user: user);
 
       // TestGesture
       final gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
       addTearDown(() async { return gesture.removePointer(); });
 
       final appState = AppState() // for GoToAdminPageTile
-                        ..currentUser = tc.user
-                        ..currentUserSettings = tc.userSettings;
+        ..currentUser = user
+        ..currentUserSettings = userSettings;
 
       final getIt = GetIt.instance;
       getIt.registerLazySingleton<AppDialogViewRouter>(() => AppDialogViewRouter());
@@ -281,7 +287,8 @@ void main() {
     tearDown(() => GetIt.instance.reset());
 
     testWidgets("createAdminListedUsersDialog", (tester) async {
-      final tc = TestContext();
+      final user = AppUserFactory();
+      final garden = GardenFactory(creator: user);
 
       // TestGesture
       final gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
@@ -309,40 +316,54 @@ void main() {
       when(
         () => mockAppState.currentGarden
       ).thenAnswer(
-        (_) => tc.garden
+        (_) => garden
       );
       // AppState.currentUser()
       when(
         () => mockAppState.currentUser
       ).thenAnswer(
-        (_) => tc.user
+        (_) => user
       );
 
       // getCurrentGardenUserGardenRecords()
       final currentGardenUserGardenRecordsItems = ResultList<RecordModel>(
         items: [
-          tc.getUserGardenRecordRecordModel(
-            expand: [
+          getUserGardenRecordRecordModel(
+            userGardenRecord: AppUserGardenRecordFactory(
+              garden: garden,
+              role: AppUserGardenRole.owner,
+            ),
+            expandFields: [
               UserGardenRecordField.user,
               UserGardenRecordField.garden
             ],
-            role: AppUserGardenRole.owner
           ),
-          tc.getUserGardenRecordRecordModel(
-            expand: [
+          getUserGardenRecordRecordModel(
+            userGardenRecord: AppUserGardenRecordFactory(
+              garden: garden,
+              role: AppUserGardenRole.administrator,
+            ),
+            expandFields: [
               UserGardenRecordField.user,
               UserGardenRecordField.garden
             ],
-            role: AppUserGardenRole.administrator
           ),
-          tc.getUserGardenRecordRecordModel(
-            expand: [
+          getUserGardenRecordRecordModel(
+            userGardenRecord: AppUserGardenRecordFactory(
+              garden: garden,
+              role: AppUserGardenRole.member,
+            ),
+            expandFields: [
               UserGardenRecordField.user,
               UserGardenRecordField.garden
             ]
           ),
-          tc.getUserGardenRecordRecordModel(
-            expand: [
+          getUserGardenRecordRecordModel(
+            userGardenRecord: AppUserGardenRecordFactory(
+              garden: garden,
+              role: AppUserGardenRole.member,
+            ),
+            expandFields: [
               UserGardenRecordField.user,
               UserGardenRecordField.garden
             ]
@@ -351,15 +372,15 @@ void main() {
       );
       getCurrentGardenUserGardenRecordsStub(
         mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
-        gardenID: tc.garden.id,
+        gardenID: garden.id,
         returnValue: currentGardenUserGardenRecordsItems
       );
 
       // UsersRepository.getFirstListItem()
-      usersRepositoryGetFirstListItemStub(
+      getFirstListItemStub(
         mockUsersRepository: mockUsersRepository,
-        userID: tc.user.id,
-        returnValue: tc.getUserRecordModel()
+        userID: garden.creator.id,
+        returnValue: getUserRecordModel(user: garden.creator)
       );
 
       await tester.pumpWidget(

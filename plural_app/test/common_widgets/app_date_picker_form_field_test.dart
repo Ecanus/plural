@@ -16,7 +16,7 @@ import 'package:plural_app/src/localization/lang_en.dart';
 import 'package:plural_app/src/utils/app_form.dart';
 
 // Tests
-import '../test_context.dart';
+import '../test_factories.dart';
 import '../tester_functions.dart';
 
 void main() {
@@ -44,12 +44,11 @@ void main() {
     });
 
     testWidgets("initial values", (tester) async {
-      final tc = TestContext();
+      final ask = AskFactory();
       final AppForm appForm = AppForm();
 
       const fieldName = AskField.deadlineDate;
       const label = AskViewText.deadlineDate;
-      final value = tc.ask.deadlineDate;
 
       await tester.pumpWidget(
         MaterialApp(
@@ -57,7 +56,7 @@ void main() {
             body: AppDatePickerFormField(
               appForm: appForm,
               fieldName: fieldName,
-              initialValue: value,
+              initialValue: ask.deadlineDate,
               label: label,
             ),
           ),
@@ -66,7 +65,7 @@ void main() {
       // Check text is the formatted string of date
       expect(
         textFieldController(tester).value.text,
-        DateFormat(Formats.dateYMMdd).format(value)
+        DateFormat(Formats.dateYMMdd).format(ask.deadlineDate)
       );
     });
 

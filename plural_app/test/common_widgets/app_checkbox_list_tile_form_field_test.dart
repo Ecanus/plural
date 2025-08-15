@@ -16,13 +16,13 @@ import 'package:plural_app/src/localization/lang_en.dart';
 import 'package:plural_app/src/utils/app_form.dart';
 
 // Tests
-import '../test_context.dart';
+import '../test_factories.dart';
 import '../tester_functions.dart';
 
 void main() {
   group("AppCheckboxListTileFormField test", () {
     testWidgets("_onChanged", (tester) async {
-      final tc = TestContext();
+      final ask = AskFactory(targetMetDate: DateTime.now());
       final AppForm appForm = AppForm();
 
       await tester.pumpWidget(
@@ -32,13 +32,13 @@ void main() {
             fieldName: AskField.targetMetDate,
             formFieldType: FormFieldType.datetimeNow,
             text: AskViewText.targetMet,
-            value: tc.ask.isTargetMet
+            value: ask.isTargetMet
           ),
       ));
 
       // Check checkbox value matches initial value
       var checkbox = get<Checkbox>(tester);
-      expect(checkbox.value, tc.ask.isTargetMet);
+      expect(checkbox.value, ask.isTargetMet);
 
       // Tap the checkbox
       await tester.tap(find.byType(Checkbox));
@@ -46,7 +46,7 @@ void main() {
 
       // Check that checkbox value has toggled
       checkbox = get<Checkbox>(tester);
-      expect(checkbox.value, !tc.ask.isTargetMet);
+      expect(checkbox.value, !ask.isTargetMet);
     });
 
     testWidgets("onSaved", (tester) async {

@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+// Asks
 import 'package:plural_app/src/features/asks/presentation/delete_ask_button.dart';
 
-import '../../../test_context.dart';
+// Tests
+import '../../../test_factories.dart';
 
 void main() {
   group("DeleteAskButton", () {
     testWidgets("dialog", (tester) async {
-      final tc = TestContext();
+      final ask = AskFactory();
 
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
             body: Builder(
               builder: (BuildContext context) {
-                return DeleteAskButton(askID: tc.ask.id);
+                return DeleteAskButton(askID: ask.id);
               }
             )
           ),

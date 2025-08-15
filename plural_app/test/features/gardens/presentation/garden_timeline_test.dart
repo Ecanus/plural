@@ -26,7 +26,7 @@ import 'package:plural_app/src/localization/lang_en.dart';
 import 'package:plural_app/src/utils/app_state.dart';
 
 // Tests
-import '../../../test_context.dart';
+import '../../../test_factories.dart';
 import '../../../test_mocks.dart';
 import '../../../test_stubs.dart';
 
@@ -48,11 +48,14 @@ void main() {
     });
 
     testWidgets("snapshot.hasData", (tester) async {
-      final tc = TestContext();
+      final user = AppUserFactory();
+      final garden = GardenFactory();
+      final userSettings = AppUserSettingsFactory(user: user);
+
       final appState = AppState.skipSubscribe()
-                        ..currentUser = tc.user // For Ask.isCreatedByCurrentUser
-                        ..currentGarden = tc.garden
-                        ..currentUserSettings = tc.userSettings;
+        ..currentUser = user // For Ask.isCreatedByCurrentUser
+        ..currentGarden = garden
+        ..currentUserSettings = userSettings;
 
       final getIt = GetIt.instance;
       final mockAsksRepository = MockAsksRepository();
@@ -69,16 +72,21 @@ void main() {
       // Stubs
       getUserGardenRecordRoleStub(
         mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
-        userID: tc.user.id,
-        gardenID: tc.garden.id,
-        returnValue: ResultList<RecordModel>(items: [tc.getUserGardenRecordRecordModel()])
+        userID: user.id,
+        gardenID: garden.id,
+        returnValue: ResultList<RecordModel>(items: [
+          getUserGardenRecordRecordModel(
+            userGardenRecord: AppUserGardenRecordFactory(user: user))
+        ])
       );
       getAsksByGardenIDStub(
         mockAsksRepository: mockAsksRepository,
-        asksReturnValue: ResultList<RecordModel>(items: [tc.getAskRecordModel()]),
+        asksReturnValue: ResultList<RecordModel>(items: [
+          getAskRecordModel(ask: AskFactory(creator: user))
+        ]),
         mockUsersRepository: mockUsersRepository,
-        userID: tc.user.id,
-        usersReturnValue: tc.getUserRecordModel(),
+        userID: user.id,
+        usersReturnValue: getUserRecordModel(user: user),
       );
 
       await tester.pumpWidget(
@@ -112,11 +120,14 @@ void main() {
     tearDown(() => GetIt.instance.reset());
 
     testWidgets("snapshot.hasData empty", (tester) async {
-      final tc = TestContext();
+      final user = AppUserFactory();
+      final garden = GardenFactory();
+      final userSettings = AppUserSettingsFactory(user: user);
+
       final appState = AppState.skipSubscribe()
-                        ..currentUser = tc.user // For Ask.isCreatedByCurrentUser
-                        ..currentGarden = tc.garden
-                        ..currentUserSettings = tc.userSettings;
+        ..currentUser = user // For Ask.isCreatedByCurrentUser
+        ..currentGarden = garden
+        ..currentUserSettings = userSettings;
 
       final getIt = GetIt.instance;
       final mockAsksRepository = MockAsksRepository();
@@ -133,16 +144,19 @@ void main() {
       // Stubs
       getUserGardenRecordRoleStub(
         mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
-        userID: tc.user.id,
-        gardenID: tc.garden.id,
-        returnValue: ResultList<RecordModel>(items: [tc.getUserGardenRecordRecordModel()])
+        userID: user.id,
+        gardenID: garden.id,
+        returnValue: ResultList<RecordModel>(items: [
+          getUserGardenRecordRecordModel(
+            userGardenRecord: AppUserGardenRecordFactory(user: user))
+        ])
       );
       getAsksByGardenIDStub(
         mockAsksRepository: mockAsksRepository,
         asksReturnValue: ResultList<RecordModel>(items: []),
         mockUsersRepository: mockUsersRepository,
-        userID: tc.user.id,
-        usersReturnValue: tc.getUserRecordModel(),
+        userID: user.id,
+        usersReturnValue: getUserRecordModel(user: user),
       );
 
       await tester.pumpWidget(
@@ -180,10 +194,12 @@ void main() {
     tearDown(() => GetIt.instance.reset());
 
     testWidgets("snapshot.hasError", (tester) async {
-      final tc = TestContext();
+      final user = AppUserFactory();
+      final garden = GardenFactory();
+
       final appState = AppState.skipSubscribe()
-                        ..currentUser = tc.user
-                        ..currentGarden = tc.garden;
+        ..currentUser = user
+        ..currentGarden = garden;
 
       final getIt = GetIt.instance;
       final mockAsksRepository = MockAsksRepository();
@@ -199,7 +215,9 @@ void main() {
           sort: any(named: "sort"),
         )
       ).thenAnswer(
-        (_) async => ResultList<RecordModel>(items: [tc.getAskRecordModel()])
+        (_) async => ResultList<RecordModel>(items: [
+          getAskRecordModel(ask: AskFactory(creator: user))
+        ])
       );
 
       // mockUsersRepository.getFirstListItem()

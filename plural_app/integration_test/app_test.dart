@@ -18,11 +18,7 @@ import 'package:plural_app/src/common_widgets/log_out_button.dart';
 import 'package:plural_app/src/constants/fields.dart';
 import 'package:plural_app/src/constants/pocketbase.dart';
 
-// Asks
-import 'package:plural_app/src/features/asks/domain/ask.dart';
-
 // Auth
-import 'package:plural_app/src/features/authentication/domain/app_user.dart';
 import 'package:plural_app/src/features/authentication/domain/app_user_garden_record.dart';
 import 'package:plural_app/src/features/authentication/presentation/log_in_password_form_field.dart';
 
@@ -34,7 +30,7 @@ import 'package:plural_app/src/features/gardens/presentation/landing_page_listed
 import 'package:plural_app/src/utils/route_to_view_button.dart';
 
 // Tests
-import '../test/test_context.dart';
+import '../test/test_factories.dart';
 import '../test/test_mocks.dart';
 
 void main() {
@@ -43,18 +39,17 @@ void main() {
   group('end-to-end test', () {
     testWidgets("login to logout", (tester) async {
       final now = DateTime.now();
-      final tc = TestContext();
 
-      tc.ask.deadlineDate = now.add(const Duration(days: 2));
-
-      final otherUser = AppUser(
-        firstName: "OtherFirst",
-        id: "OTHERUSER",
-        lastName: "OtherLast",
-        username: "theotheruser"
+      final user = AppUserFactory();
+      final garden = GardenFactory();
+      final userSettings = AppUserSettingsFactory(user: user);
+      final ask = AskFactory(
+        creator: user,
+        deadlineDate: now.add(const Duration(days: 2))
       );
 
-      final otherAsk = Ask(
+      final otherUser = AppUserFactory();
+      final otherAsk = AskFactory(
         id: "THEOTHERASK",
         boon: 45,
         creator: otherUser,
@@ -64,7 +59,6 @@ void main() {
         description: "This ask belongs to another user. Not the one logged in.",
         instructions: "Get everybody and the stuff together.",
         targetSum: 1350,
-        type: AskType.monetary
       );
 
       // pb
@@ -73,7 +67,7 @@ void main() {
 
       // pb.authStore
       var authStore = AuthStore();
-      authStore.save("newToken", tc.getUserRecordModel());
+      authStore.save("newToken", getUserRecordModel(user: user));
       when(
         () => pb.authStore
       ).thenReturn(
@@ -116,46 +110,52 @@ void main() {
 
       // RecordService.getFirstListItem() - user
       when(
-        () => recordService.getFirstListItem("${GenericField.id} = '${tc.user.id}'")
+        () => recordService.getFirstListItem("${GenericField.id} = '${user.id}'")
       ).thenAnswer(
-        (_) async => tc.getUserRecordModel()
+        (_) async => getUserRecordModel(user: user)
       );
       // RecordService.getFirstListItem() - otherUser
       when(
         () => recordService.getFirstListItem("${GenericField.id} = '${otherUser.id}'")
       ).thenAnswer(
-        (_) async => tc.getUserRecordModel(
-          id: otherUser.id,
-          username: otherUser.username,
-        )
+        (_) async => getUserRecordModel(user: otherUser)
+      );
+      // RecordService.getFirstListItem() - garden.creator
+      when(
+        () => recordService.getFirstListItem("${GenericField.id} = '${garden.creator.id}'")
+      ).thenAnswer(
+        (_) async => getUserRecordModel(user: garden.creator)
       );
       // RecordService.getFirstListItem() - userSettings
       when(
         () => recordService.getFirstListItem(
-          "${UserSettingsField.user} = '${tc.user.id}'")
+          "${UserSettingsField.user} = '${user.id}'")
       ).thenAnswer(
-        (_) async => tc.getUserSettingsRecordModel()
+        (_) async => getUserSettingsRecordModel(userSettings: userSettings)
       );
       // RecordService.getFirstListItem() - garden
       when(
         () => recordService.getFirstListItem(
-          "${GenericField.id} = '${tc.garden.id}'")
+          "${GenericField.id} = '${garden.id}'")
       ).thenAnswer(
-        (_) async => tc.getGardenRecordModel()
+        (_) async => getGardenRecordModel(garden: garden)
       );
 
       // RecordService.getList() - getUserGardenRecordsByUserID()
       when(
         () => recordService.getList(
           expand: "${UserGardenRecordField.user}, ${UserGardenRecordField.garden}",
-          filter: ""
-            "${UserGardenRecordField.user} = '${tc.user.id}'",
-          sort: "garden.name",
+          filter: "${UserGardenRecordField.user} = '${user.id}'",
+          sort: "${UserGardenRecordField.garden}.${GardenField.name}",
         )
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(
-          items: [tc.getUserGardenRecordRecordModel(
-            expand: [
+          items: [getUserGardenRecordRecordModel(
+            userGardenRecord: AppUserGardenRecordFactory(
+              garden: garden,
+              user: user,
+            ),
+            expandFields: [
               UserGardenRecordField.user,
               UserGardenRecordField.garden
           ])]
@@ -166,19 +166,23 @@ void main() {
         () => recordService.getList(
           expand: any(named: "expand"),
           filter: ""
-            "${UserGardenRecordField.user} = '${tc.user.id}' && "
-            "${UserGardenRecordField.garden} = '${tc.garden.id}'",
+            "${UserGardenRecordField.user} = '${user.id}' && "
+            "${UserGardenRecordField.garden} = '${garden.id}'",
           sort: "-updated",
         )
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(
           items: [
-            tc.getUserGardenRecordRecordModel(
-              expand: [
+            getUserGardenRecordRecordModel(
+              userGardenRecord: AppUserGardenRecordFactory(
+                garden: garden,
+                role: AppUserGardenRole.owner,
+                user: user,
+              ),
+              expandFields: [
                 UserGardenRecordField.user,
                 UserGardenRecordField.garden
               ],
-              role: AppUserGardenRole.owner
             ),
           ]
         )
@@ -187,13 +191,18 @@ void main() {
       when(
         () => recordService.getList(
           expand: UserGardenRecordField.garden,
-          filter: "${UserGardenRecordField.user} = '${tc.user.id}'",
+          filter: "${UserGardenRecordField.user} = '${user.id}'",
           sort: "garden.name",
         )
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(
-          items: [tc.getUserGardenRecordRecordModel(
-            expand: [UserGardenRecordField.garden]
+          items: [
+            getUserGardenRecordRecordModel(
+              userGardenRecord: AppUserGardenRecordFactory(
+                garden: garden,
+                user: user,
+              ),
+              expandFields: [UserGardenRecordField.garden]
           )]
         )
       );
@@ -207,16 +216,8 @@ void main() {
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(
           items: [
-            tc.getAskRecordModel(),
-            tc.getAskRecordModel(
-              id: otherAsk.id,
-              creationDate: otherAsk.creationDate,
-              creatorID: otherAsk.creator.id,
-              deadlineDate: otherAsk.deadlineDate,
-              description: otherAsk.description,
-              instructions: otherAsk.instructions,
-              targetSum: otherAsk.targetSum,
-            )
+            getAskRecordModel(ask: ask),
+            getAskRecordModel(ask: otherAsk)
           ]
         )
       );
@@ -228,7 +229,7 @@ void main() {
           sort: GenericField.created,
         )
       ).thenAnswer(
-        (_) async => ResultList<RecordModel>(items: [tc.getAskRecordModel()]
+        (_) async => ResultList<RecordModel>(items: [getAskRecordModel(ask: ask)]
         )
       );
 
@@ -249,12 +250,12 @@ void main() {
       await tester.pumpWidget(MyApp(database: pb));
 
       // Enter username and password
-      await tester.enterText(find.byType(AppTextFormField), tc.user.username);
+      await tester.enterText(find.byType(AppTextFormField), user.username);
       await tester.enterText(find.byType(LogInPasswordFormField), "testuserpassword");
 
       // Tap on Log In button
       await tester.tap(find.byType(AppElevatedButton));
-      await tester.pumpAndSettle();
+      await tester.pumpAndSettle(Duration(seconds: 10));
 
       // Tap on LandingPageListedGardenTile
       await tester.tap(find.byType(LandingPageListedGardenTile));
