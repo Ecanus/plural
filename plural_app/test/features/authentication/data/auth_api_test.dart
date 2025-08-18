@@ -1,4 +1,6 @@
 import 'package:flutter_test/flutter_test.dart' as ft;
+import '../../../test_stubs/user_garden_records_repository_stubs.dart' as user_garden_records_repository;
+import '../../../test_stubs/users_repository_stubs.dart' as users_repository;
 
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -38,8 +40,8 @@ import 'package:plural_app/src/utils/exceptions.dart';
 // Tests
 import '../../../test_factories.dart';
 import '../../../test_mocks.dart';
-import '../../../test_stubs.dart';
-import '../../../test_stubs/users_repository_stubs.dart';
+import '../../../test_record_models.dart';
+import '../../../test_stubs/auth_api_stubs.dart';
 
 void main() {
   group("auth_api", () {
@@ -617,7 +619,7 @@ void main() {
       );
 
       // UsersRepository.getFirstListItem()
-      getFirstListItemStub(
+      users_repository.getFirstListItemStub(
         mockUsersRepository: mockUsersRepository,
         userID: user.id,
         returnValue: getUserRecordModel()
@@ -710,7 +712,7 @@ void main() {
       );
 
       // UsersRepository.getFirstListItem()
-      getFirstListItemStub(
+      users_repository.getFirstListItemStub(
         mockUsersRepository: mockUsersRepository,
         userID: user.id,
         returnValue: getUserRecordModel(user: user)
@@ -946,7 +948,7 @@ void main() {
       );
 
       // UsersRepository.getFirstListItem()
-      getFirstListItemStub(
+      users_repository.getFirstListItemStub(
         mockUsersRepository: mockUsersRepository,
         userID: garden.creator.id,
         returnValue: getUserRecordModel(user: garden.creator)
@@ -1131,22 +1133,22 @@ void main() {
       );
 
       // UsersRepository.getFirstListItem()
-      getFirstListItemStub(
+      users_repository.getFirstListItemStub(
         mockUsersRepository: mockUsersRepository,
         userID: garden1.creator.id,
         returnValue: getUserRecordModel(user: garden1.creator)
       );
-      getFirstListItemStub(
+      users_repository.getFirstListItemStub(
         mockUsersRepository: mockUsersRepository,
         userID: garden2.creator.id,
         returnValue: getUserRecordModel(user: garden2.creator)
       );
-      getFirstListItemStub(
+      users_repository.getFirstListItemStub(
         mockUsersRepository: mockUsersRepository,
         userID: garden3.creator.id,
         returnValue: getUserRecordModel(user: garden3.creator)
       );
-      getFirstListItemStub(
+      users_repository.getFirstListItemStub(
         mockUsersRepository: mockUsersRepository,
         userID: garden4.creator.id,
         returnValue: getUserRecordModel(user: garden4.creator)
@@ -1591,7 +1593,7 @@ void main() {
         () => mockUserGardenRecordsRepository
       );
 
-      // Stub
+      // getUserGardenRecordRoleStub() via verify()
       final items = ResultList<RecordModel>(items: [
         getUserGardenRecordRecordModel(
           userGardenRecord: AppUserGardenRecordFactory(
@@ -1610,7 +1612,7 @@ void main() {
         userGardenRecord: AppUserGardenRecordFactory(
           role: AppUserGardenRole.administrator),
         );
-      userGardenRecordsRepositoryUpdateStub(
+      user_garden_records_repository.updateStub(
         mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
         userGardenRecordID: map[GenericField.id],
         userGardenRoleName: map[UserGardenRecordField.role],
@@ -1683,7 +1685,7 @@ void main() {
       );
       getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
 
-      // otherUser -> getUserGardenRecordRole()
+      // otherUser, getUserGardenRecordRole() via verify()
       final otherUserRecordRoleItems = ResultList<RecordModel>(items: [
         getUserGardenRecordRecordModel(
           userGardenRecord: AppUserGardenRecordFactory(
@@ -1700,7 +1702,7 @@ void main() {
         returnValue: otherUserRecordRoleItems
       );
 
-      // currentUser -> getUserGardenRecordRole()
+      // user, getUserGardenRecordRole() via verify()
       final currentUserRecordRoleItems = ResultList<RecordModel>(items: [
         getUserGardenRecordRecordModel(
           userGardenRecord: AppUserGardenRecordFactory(
@@ -1725,7 +1727,7 @@ void main() {
           user: otherUser
         ),
       );
-      userGardenRecordsRepositoryUpdateStub(
+      user_garden_records_repository.updateStub(
         mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
         userGardenRecordID: map[GenericField.id],
         userGardenRoleName: map[UserGardenRecordField.role],
@@ -1765,7 +1767,7 @@ void main() {
           user: user
         ),
       );
-      userGardenRecordsRepositoryUpdateStub(
+      user_garden_records_repository.updateStub(
         mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
         userGardenRecordID: "testRecordID",
         userGardenRoleName: AppUserGardenRole.administrator.name,

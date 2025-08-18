@@ -1,4 +1,6 @@
 import 'package:flutter_test/flutter_test.dart' as ft;
+import '../../../test_stubs/user_garden_records_repository_stubs.dart' as user_garden_records_repository;
+import '../../../test_stubs/users_repository_stubs.dart' as users_repository;
 
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -29,8 +31,8 @@ import 'package:plural_app/src/utils/app_form.dart';
 // Tests
 import '../../../test_factories.dart';
 import '../../../test_mocks.dart';
-import '../../../test_stubs.dart';
-import '../../../test_stubs/users_repository_stubs.dart';
+import '../../../test_record_models.dart';
+import '../../../test_stubs/auth_api_stubs.dart';
 import '../../../test_widgets.dart';
 
 void main() {
@@ -263,7 +265,7 @@ void main() {
       );
 
       // UsersRepository.getFirstListItem()
-      getFirstListItemStub(
+      users_repository.getFirstListItemStub(
         mockUsersRepository: mockUsersRepository,
         userID: user.id,
         returnValue: getUserRecordModel(user: user)
@@ -705,7 +707,7 @@ void main() {
         () => mockUserGardenRecordsRepository
       );
 
-      // verify
+      // getUserGardenRecordRole() via verify()
       final items = ResultList<RecordModel>(items: [
         getUserGardenRecordRecordModel(userGardenRecord: userGardenRecordAdmin)
       ]);
@@ -720,7 +722,7 @@ void main() {
       final recordModel = getUserGardenRecordRecordModel(
         userGardenRecord: userGardenRecordMember
       );
-      userGardenRecordsRepositoryUpdateStub(
+      user_garden_records_repository.updateStub(
         mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
         userGardenRecordID: userGardenRecordMember.id,
         userGardenRoleName: appForm.getValue(fieldName: UserGardenRecordField.role),
@@ -815,7 +817,7 @@ void main() {
         () => mockUserGardenRecordsRepository
       );
 
-      // verify
+      // getUserGardenRecordRole() via verify()
       final items = ResultList<RecordModel>(items: [
         getUserGardenRecordRecordModel(userGardenRecord: userGardenRecordAdmin)
       ]);
@@ -827,7 +829,7 @@ void main() {
       );
 
       // update (with error)
-      userGardenRecordsRepositoryUpdateStub(
+      user_garden_records_repository.updateStub(
         mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
         userGardenRecordID: userGardenRecordMember.id,
         userGardenRoleName: appForm.getValue(fieldName: UserGardenRecordField.role),

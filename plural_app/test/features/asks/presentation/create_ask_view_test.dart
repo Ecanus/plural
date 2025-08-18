@@ -30,7 +30,8 @@ import 'package:plural_app/src/utils/app_state.dart';
 // Tests
 import '../../../test_factories.dart';
 import '../../../test_mocks.dart';
-import '../../../test_stubs.dart';
+import '../../../test_record_models.dart';
+import '../../../test_stubs/auth_api_stubs.dart';
 
 void main() {
   group("CreateAskView", () {
@@ -55,7 +56,7 @@ void main() {
         () => mockUserGardenRecordsRepository);
       getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
 
-      // UserGardenRecordsRepository.getList()
+      // UserGardenRecordsRepository.getList() via getUserGardenRecord()
       final userGardenRecordReturnValue = ResultList<RecordModel>(
         items: [
           getUserGardenRecordRecordModel(
@@ -144,7 +145,7 @@ void main() {
         () => mockUserGardenRecordsRepository);
       getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
 
-      // UserGardenRecordsRepository.getList()
+      // UserGardenRecordsRepository.getList() via getUserGardenRecord()
       final userGardenRecordReturnValue = ResultList<RecordModel>(
         items: [
           getUserGardenRecordRecordModel(

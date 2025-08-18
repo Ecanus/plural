@@ -12,6 +12,7 @@ import 'package:plural_app/src/features/asks/data/asks_repository.dart';
 // Tests
 import '../../../test_factories.dart';
 import '../../../test_mocks.dart';
+import '../../../test_record_models.dart';
 
 void main() {
   group("AsksRepository", () {
