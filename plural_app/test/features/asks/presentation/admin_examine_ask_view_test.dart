@@ -14,13 +14,12 @@ import 'package:plural_app/src/features/asks/presentation/delete_ask_button.dart
 import 'package:plural_app/src/utils/app_dialog_view_router.dart';
 
 // Tests
-import '../../../test_context.dart';
+import '../../../test_factories.dart';
 
 void main() {
   group("AdminExamineAskView", () {
     testWidgets("widgets", (tester) async {
-      final tc = TestContext();
-      final ask = tc.ask;
+      final ask = AskFactory();
 
       final getIt = GetIt.instance;
       getIt.registerLazySingleton<AppDialogViewRouter>(() => AppDialogViewRouter());
@@ -32,7 +31,7 @@ void main() {
               builder: (BuildContext context) {
                 return ElevatedButton(
                   onPressed: () => createAdminExamineAskDialog(
-                    context: context, ask: tc.ask),
+                    context: context, ask: ask),
                   child: Text("The ElevatedButton")
                 );
               }
@@ -60,12 +59,12 @@ void main() {
     tearDown(() => GetIt.instance.reset());
 
     testWidgets("AdminExamineAskViewHeader", (tester) async {
-      final tc = TestContext();
+      final ask = AskFactory();
 
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: AdminExamineAskViewHeader(ask: tc.ask)
+            body: AdminExamineAskViewHeader(ask: ask)
           ),
         )
       );

@@ -8,6 +8,7 @@ import 'package:plural_app/src/constants/formats.dart';
 
 // Test
 import 'test_mocks.dart';
+import 'test_stubs/users_repository_stubs.dart' as users;
 
 
 void getAsksByGardenIDStub({
@@ -27,7 +28,7 @@ void getAsksByGardenIDStub({
   );
 
   // For Ask creator
-  usersRepositoryGetFirstListItemStub(
+  users.getFirstListItemStub(
     mockUsersRepository: mockUsersRepository,
     userID: userID,
     returnValue: usersReturnValue
@@ -56,7 +57,7 @@ void getAsksByUserIDStub({
   );
 
   // For Ask creator
-  usersRepositoryGetFirstListItemStub(
+  users.getFirstListItemStub(
     mockUsersRepository: mockUsersRepository,
     userID: userID,
     returnValue: usersReturnValue
@@ -73,20 +74,6 @@ void getCurrentGardenUserGardenRecordsStub({
       expand: UserGardenRecordField.user,
       filter: "${UserGardenRecordField.garden} = '$gardenID'",
       sort: "${UserGardenRecordField.user}.${UserField.username}"
-    )
-  ).thenAnswer(
-    (_) async => returnValue
-  );
-}
-
-void usersRepositoryGetFirstListItemStub({
-  required MockUsersRepository mockUsersRepository,
-  required String userID,
-  required RecordModel returnValue,
-}) {
-  when(
-    () => mockUsersRepository.getFirstListItem(
-      filter: "${GenericField.id} = '$userID'"
     )
   ).thenAnswer(
     (_) async => returnValue
@@ -134,7 +121,7 @@ void getUserGardenRecordStub({
   );
 
   // For Garden Creator
-  usersRepositoryGetFirstListItemStub(
+  users.getFirstListItemStub(
     mockUsersRepository: mockUsersRepository,
     userID: gardenCreatorID,
     returnValue: gardenCreatorReturnValue

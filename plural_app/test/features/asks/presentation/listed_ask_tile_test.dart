@@ -16,15 +16,16 @@ import 'package:plural_app/src/utils/app_dialog_view_router.dart';
 import 'package:plural_app/src/utils/app_state.dart';
 
 // Tests
-import '../../../test_context.dart';
+import '../../../test_factories.dart';
 import '../../../tester_functions.dart';
 
 void main() {
   group("ListedAskTile", () {
     testWidgets("shouldStrikethrough deadlineDate", (tester) async {
-      final tc = TestContext()
-                  ..ask.deadlineDate = DateTime.now().add(const Duration(days: -10))
-                  ..ask.targetMetDate = null;
+      final ask = AskFactory(
+        deadlineDate: DateTime.now().add(const Duration(days: -10)),
+        targetMetDate: null
+      );
 
       final getIt = GetIt.instance;
       getIt.registerLazySingleton<AppState>(() => AppState());
@@ -37,7 +38,7 @@ void main() {
             body: ListView(
               children: [
                 ListedAskTile(
-                  ask: tc.ask,
+                  ask: ask,
                 ),
               ],
             ),
@@ -45,19 +46,19 @@ void main() {
         ));
 
       // Check description correctly rendered
-      var description = get<Text>(
+      final description = get<Text>(
         tester,
         getBy: GetBy.text,
-        text: tc.ask.listTileDescription
+        text: ask.listTileDescription
       );
       expect(description.style!.color, AppThemes.colorScheme.onPrimaryFixed);
       expect(description.style!.decoration, TextDecoration.lineThrough);
 
       // Check subtitle correctly rendered
-      var subtitle = get<Text>(
+      final subtitle = get<Text>(
         tester,
         getBy: GetBy.text,
-        text: "${AskViewText.deadlineDueBy}: ${tc.ask.formattedDeadlineDate}",
+        text: "${AskViewText.deadlineDueBy}: ${ask.formattedDeadlineDate}",
       );
       expect(subtitle.style!.color, AppThemes.colorScheme.onPrimaryFixed);
       expect(subtitle.style!.decoration, TextDecoration.lineThrough);
@@ -66,9 +67,10 @@ void main() {
     tearDown(() => GetIt.instance.reset());
 
     testWidgets("shouldStrikethrough targetMetDate", (tester) async {
-      final tc = TestContext()
-                  ..ask.deadlineDate = DateTime.now().add(const Duration(days: 10))
-                  ..ask.targetMetDate = DateTime(2001, 1, 31);
+      final ask = AskFactory(
+        deadlineDate: DateTime.now().add(const Duration(days: 10)),
+        targetMetDate: DateTime(2001, 1, 31)
+      );
 
       final getIt = GetIt.instance;
       getIt.registerLazySingleton<AppState>(() => AppState());
@@ -81,7 +83,7 @@ void main() {
             body: ListView(
               children: [
                 ListedAskTile(
-                  ask: tc.ask,
+                  ask: ask,
                 ),
               ],
             ),
@@ -89,19 +91,19 @@ void main() {
         ));
 
       // Check description correctly rendered
-      var description = get<Text>(
+      final description = get<Text>(
         tester,
         getBy: GetBy.text,
-        text: tc.ask.listTileDescription
+        text: ask.listTileDescription
       );
       expect(description.style!.color, AppThemes.colorScheme.onPrimaryFixed);
       expect(description.style!.decoration, TextDecoration.lineThrough);
 
       // Check subtitle correctly rendered
-      var subtitle = get<Text>(
+      final subtitle = get<Text>(
         tester,
         getBy: GetBy.text,
-        text: "${AskViewText.deadlineDueBy}: ${tc.ask.formattedDeadlineDate}",
+        text: "${AskViewText.deadlineDueBy}: ${ask.formattedDeadlineDate}",
       );
       expect(subtitle.style!.color, AppThemes.colorScheme.onPrimaryFixed);
       expect(subtitle.style!.decoration, TextDecoration.lineThrough);
@@ -110,9 +112,10 @@ void main() {
     tearDown(() => GetIt.instance.reset());
 
     testWidgets("!shouldStrikethrough", (tester) async {
-      final tc = TestContext()
-                  ..ask.deadlineDate = DateTime.now().add(const Duration(days: 10))
-                  ..ask.targetMetDate = null;
+      final ask = AskFactory(
+        deadlineDate: DateTime.now().add(const Duration(days: 10)),
+        targetMetDate: null
+      );
 
       final getIt = GetIt.instance;
       getIt.registerLazySingleton<AppState>(() => AppState());
@@ -125,7 +128,7 @@ void main() {
             body: ListView(
               children: [
                 ListedAskTile(
-                  ask: tc.ask,
+                  ask: ask,
                 ),
               ],
             ),
@@ -136,7 +139,7 @@ void main() {
       var description = get<Text>(
         tester,
         getBy: GetBy.text,
-        text: tc.ask.listTileDescription
+        text: ask.listTileDescription
       );
       expect(description.style!.color, AppThemes.colorScheme.onPrimary);
       expect(description.style!.decoration, null);
@@ -145,7 +148,7 @@ void main() {
       var subtitle = get<Text>(
         tester,
         getBy: GetBy.text,
-        text: "${AskViewText.deadlineDueBy}: ${tc.ask.formattedDeadlineDate}",
+        text: "${AskViewText.deadlineDueBy}: ${ask.formattedDeadlineDate}",
       );
       expect(subtitle.style!.color, AppThemes.colorScheme.onPrimary);
       expect(subtitle.style!.decoration, null);

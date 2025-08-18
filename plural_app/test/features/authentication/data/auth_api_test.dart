@@ -36,17 +36,20 @@ import 'package:plural_app/src/utils/app_state.dart';
 import 'package:plural_app/src/utils/exceptions.dart';
 
 // Tests
-import '../../../test_context.dart';
+import '../../../test_factories.dart';
 import '../../../test_mocks.dart';
 import '../../../test_stubs.dart';
+import '../../../test_stubs/users_repository_stubs.dart';
 
 void main() {
   group("auth_api", () {
     ft.testWidgets("deleteCurrentUserAccount", (tester) async {
-      final tc = TestContext();
+      final user = AppUserFactory();
+      final userSettings = AppUserSettingsFactory(user: user);
+
       final appState = AppState.skipSubscribe()
-                      ..currentUser = tc.user
-                      ..currentUserSettings = tc.userSettings;
+        ..currentUser = user
+        ..currentUserSettings = userSettings;
 
       final getIt = GetIt.instance;
       final mockAsksRepository = MockAsksRepository();
@@ -63,15 +66,25 @@ void main() {
       getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
 
       final asksResultList = ResultList<RecordModel>(
-        items: [tc.getAskRecordModel(), tc.getAskRecordModel()]
+        items: [
+          getAskRecordModel(ask: AskFactory(creator: user)),
+          getAskRecordModel(ask: AskFactory(creator: user))
+        ]
       );
       final userGardenRecordsResultList = ResultList<RecordModel>(
-        items: [tc.getUserGardenRecordRecordModel(), tc.getUserGardenRecordRecordModel()]
+        items: [
+          getUserGardenRecordRecordModel(
+            userGardenRecord: AppUserGardenRecordFactory(user: user)
+          ),
+          getUserGardenRecordRecordModel(
+            userGardenRecord: AppUserGardenRecordFactory(user: user)
+          )
+        ]
       );
 
       // AsksRepository.getList()
       when(
-        () => mockAsksRepository.getList(filter: "${AskField.creator} = '${tc.user.id}'")
+        () => mockAsksRepository.getList(filter: "${AskField.creator} = '${user.id}'")
       ).thenAnswer(
         (_) async => asksResultList
       );
@@ -85,7 +98,7 @@ void main() {
       // UserGardenRecordsRepository.getList()
       when(
         () => mockUserGardenRecordsRepository.getList(
-          filter: "${UserGardenRecordField.user} = '${tc.user.id}'")
+          filter: "${UserGardenRecordField.user} = '${user.id}'")
       ).thenAnswer(
         (_) async => userGardenRecordsResultList
       );
@@ -99,14 +112,14 @@ void main() {
 
       // UserSettingsRepository.delete()
       when(
-        () => mockUserSettingsRepository.delete(id: tc.userSettings.id)
+        () => mockUserSettingsRepository.delete(id: userSettings.id)
       ).thenAnswer(
         (_) async => {}
       );
 
       // UsersRepository.delete()
       when(
-        () => mockUsersRepository.delete(id: tc.user.id)
+        () => mockUsersRepository.delete(id: user.id)
       ).thenAnswer(
         (_) async => {}
       );
@@ -116,8 +129,8 @@ void main() {
       verifyNever(() => mockUserGardenRecordsRepository.bulkDelete(
         resultList: userGardenRecordsResultList)
       );
-      verifyNever(() => mockUserSettingsRepository.delete(id: tc.userSettings.id));
-      verifyNever(() => mockUsersRepository.delete(id: tc.user.id));
+      verifyNever(() => mockUserSettingsRepository.delete(id: userSettings.id));
+      verifyNever(() => mockUsersRepository.delete(id: user.id));
 
       // Call deleteCurrentUserAccount()
       final isValid = await deleteCurrentUserAccount();
@@ -128,14 +141,14 @@ void main() {
       verify(() => mockUserGardenRecordsRepository.bulkDelete(
         resultList: userGardenRecordsResultList)
       ).called(1);
-      verify(() => mockUserSettingsRepository.delete(id: tc.userSettings.id)).called(1);
-      verify(() => mockUsersRepository.delete(id: tc.user.id)).called(1);
+      verify(() => mockUserSettingsRepository.delete(id: userSettings.id)).called(1);
+      verify(() => mockUsersRepository.delete(id: user.id)).called(1);
 
       // AsksRepository.getList(), Now throws exception
       when(
-        () => mockAsksRepository.getList(filter: "${AskField.creator} = '${tc.user.id}'")
+        () => mockAsksRepository.getList(filter: "${AskField.creator} = '${user.id}'")
       ).thenThrow(
-        tc.clientException
+        ClientExceptionFactory(fieldName: AskField.creator)
       );
 
       await tester.pumpWidget(
@@ -164,18 +177,18 @@ void main() {
       verifyNever(() => mockUserGardenRecordsRepository.bulkDelete(
         resultList: userGardenRecordsResultList)
       );
-      verifyNever(() => mockUserSettingsRepository.delete(id: tc.userSettings.id));
-      verifyNever(() => mockUsersRepository.delete(id: tc.user.id));
+      verifyNever(() => mockUserSettingsRepository.delete(id: userSettings.id));
+      verifyNever(() => mockUsersRepository.delete(id: user.id));
       expect(ft.find.byType(SnackBar), ft.findsOneWidget);
     });
 
     tearDown(() => GetIt.instance.reset());
 
     test("deleteCurrentUserGardenRecords", () async {
-      final tc = TestContext();
+      final user = AppUserFactory();
 
-      var appState = AppState.skipSubscribe()
-                      ..currentUser = tc.user;
+      final appState = AppState.skipSubscribe()
+        ..currentUser = user;
 
       final getIt = GetIt.instance;
       final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
@@ -185,13 +198,20 @@ void main() {
         () => mockUserGardenRecordsRepository);
 
       final userGardenRecordsResultList = ResultList<RecordModel>(
-        items: [tc.getUserGardenRecordRecordModel(), tc.getUserGardenRecordRecordModel()]
+        items: [
+          getUserGardenRecordRecordModel(
+            userGardenRecord: AppUserGardenRecordFactory(user: user)
+          ),
+          getUserGardenRecordRecordModel(
+            userGardenRecord: AppUserGardenRecordFactory(user: user)
+          )
+        ]
       );
 
       // UserGardenRecordsRepository.getList()
       when(
         () => mockUserGardenRecordsRepository.getList(
-          filter: "${UserGardenRecordField.user} = '${tc.user.id}'")
+          filter: "${UserGardenRecordField.user} = '${user.id}'")
       ).thenAnswer(
         (_) async => userGardenRecordsResultList
       );
@@ -205,7 +225,7 @@ void main() {
 
       // Check methods not yet called
       verifyNever(() => mockUserGardenRecordsRepository.getList(
-        filter: "${UserGardenRecordField.user} = '${tc.user.id}'")
+        filter: "${UserGardenRecordField.user} = '${user.id}'")
       );
       verifyNever(() => mockUserGardenRecordsRepository.bulkDelete(
         resultList: userGardenRecordsResultList)
@@ -215,7 +235,7 @@ void main() {
 
       // Check methods called
       verify(() => mockUserGardenRecordsRepository.getList(
-        filter: "${UserGardenRecordField.user} = '${tc.user.id}'")
+        filter: "${UserGardenRecordField.user} = '${user.id}'")
       ).called(1);
       verify(() => mockUserGardenRecordsRepository.bulkDelete(
         resultList: userGardenRecordsResultList)
@@ -225,10 +245,10 @@ void main() {
     tearDown(() => GetIt.instance.reset());
 
     test("deleteCurrentUser", () async {
-      final tc = TestContext();
+      final user = AppUserFactory();
 
-      var appState = AppState.skipSubscribe()
-                      ..currentUser = tc.user;
+      final appState = AppState.skipSubscribe()
+        ..currentUser = user;
 
       final getIt = GetIt.instance;
       final mockUsersRepository = MockUsersRepository();
@@ -237,27 +257,27 @@ void main() {
 
       // UsersRepository.delete()
       when(
-        () => mockUsersRepository.delete(id: tc.user.id)
+        () => mockUsersRepository.delete(id: user.id)
       ).thenAnswer(
         (_) async => {}
       );
 
       // Check delete method not yet called
-      verifyNever(() => mockUsersRepository.delete(id: tc.user.id));
+      verifyNever(() => mockUsersRepository.delete(id: user.id));
 
       await deleteCurrentUser();
 
       // Check delete method not yet called
-      verify(() => mockUsersRepository.delete(id: tc.user.id)).called(1);
+      verify(() => mockUsersRepository.delete(id: user.id)).called(1);
     });
 
     tearDown(() => GetIt.instance.reset());
 
     test("deleteCurrentUserSettings", () async {
-      final tc = TestContext();
+      final userSettings = AppUserSettingsFactory();
 
-      var appState = AppState.skipSubscribe()
-                      ..currentUserSettings = tc.userSettings;
+      final appState = AppState.skipSubscribe()
+        ..currentUserSettings = userSettings;
 
       final getIt = GetIt.instance;
       final mockUserSettingsRepository = MockUserSettingsRepository();
@@ -267,18 +287,18 @@ void main() {
 
       // UserSettingsRepository.delete()
       when(
-        () => mockUserSettingsRepository.delete(id: tc.userSettings.id)
+        () => mockUserSettingsRepository.delete(id: userSettings.id)
       ).thenAnswer(
         (_) async => {}
       );
 
       // Check delete method not yet called
-      verifyNever(() => mockUserSettingsRepository.delete(id: tc.userSettings.id));
+      verifyNever(() => mockUserSettingsRepository.delete(id: userSettings.id));
 
       await deleteCurrentUserSettings();
 
       // Check delete method not yet called
-      verify(() => mockUserSettingsRepository.delete(id: tc.userSettings.id)).called(1);
+      verify(() => mockUserSettingsRepository.delete(id: userSettings.id)).called(1);
     });
 
     tearDown(() => GetIt.instance.reset());
@@ -287,7 +307,12 @@ void main() {
       final list = [1, 2, 3];
       void testCallback(BuildContext context) => list.clear();
 
-      final tc = TestContext();
+      final user = AppUserFactory();
+      final garden = GardenFactory();
+      final userGardenRecord = AppUserGardenRecordFactory(
+        garden: garden,
+        user: user,
+      );
 
       final getIt = GetIt.instance;
       final mockAppState = MockAppState();
@@ -308,12 +333,16 @@ void main() {
       );
 
       // AsksRepository.getList()
-      final resultList = ResultList<RecordModel>(items: [tc.getAskRecordModel()]);
+      final resultList = ResultList<RecordModel>(
+        items: [
+          getAskRecordModel(ask: AskFactory(creator: user))
+        ]
+      );
       when(
         () => mockAsksRepository.getList(
           filter: ""
-          "${AskField.creator} = '${tc.user.id}'"
-          "&& ${AskField.garden} = '${tc.garden.id}'"
+          "${AskField.creator} = '${user.id}'"
+          "&& ${AskField.garden} = '${garden.id}'"
         )
       ).thenAnswer(
         (_) async => resultList
@@ -328,7 +357,7 @@ void main() {
 
       // UserGardenRecordsRepository.delete()
       when(
-        () => mockUserGardenRecordsRepository.delete(id: tc.userGardenRecord.id)
+        () => mockUserGardenRecordsRepository.delete(id: userGardenRecord.id)
       ).thenAnswer(
         (_) async => {}
       );
@@ -341,7 +370,7 @@ void main() {
                 return ElevatedButton(
                   onPressed: () => expelUserFromGarden(
                     context,
-                    tc.userGardenRecord,
+                    userGardenRecord,
                     callback: testCallback),
                   child: Text("The ElevatedButton")
                 );
@@ -356,7 +385,7 @@ void main() {
       expect(list.isEmpty, false);
       verifyNever(() => mockAppState.verify(any()));
       verifyNever(() => mockUserGardenRecordsRepository.delete(
-        id: tc.userGardenRecord.id)
+        id: userGardenRecord.id)
       );
 
       // Tap button (to call expelUserFromGarden)
@@ -368,7 +397,7 @@ void main() {
       expect(list.isEmpty, true);
       verify(() => mockAppState.verify(any())).called(1);
       verify(() => mockUserGardenRecordsRepository.delete(
-        id: tc.userGardenRecord.id)
+        id: userGardenRecord.id)
       ).called(1);
     });
 
@@ -378,7 +407,12 @@ void main() {
       final list = [1, 2, 3];
       void testCallback(BuildContext context) => list.clear();
 
-      final tc = TestContext();
+      final user = AppUserFactory();
+      final garden = GardenFactory();
+      final userGardenRecord = AppUserGardenRecordFactory(
+        garden: garden,
+        user: user,
+      );
 
       final getIt = GetIt.instance;
       final mockAppState = MockAppState();
@@ -399,12 +433,18 @@ void main() {
       );
 
       // AsksRepository.getList()
-      final resultList = ResultList<RecordModel>(items: [tc.getAskRecordModel()]);
+      final resultList = ResultList<RecordModel>(
+        items: [
+          getAskRecordModel(ask: AskFactory(
+            creator: user,
+          ))
+        ]
+      );
       when(
         () => mockAsksRepository.getList(
           filter: ""
-          "${AskField.creator} = '${tc.user.id}'"
-          "&& ${AskField.garden} = '${tc.garden.id}'"
+          "${AskField.creator} = '${user.id}'"
+          "&& ${AskField.garden} = '${garden.id}'"
         )
       ).thenAnswer(
         (_) async => resultList
@@ -419,7 +459,7 @@ void main() {
 
       // UserGardenRecordsRepository.delete()
       when(
-        () => mockUserGardenRecordsRepository.delete(id: tc.userGardenRecord.id)
+        () => mockUserGardenRecordsRepository.delete(id: userGardenRecord.id)
       ).thenAnswer(
         (_) async => {}
       );
@@ -435,7 +475,7 @@ void main() {
                   return ElevatedButton(
                     onPressed: () => expelUserFromGarden(
                       context,
-                      tc.userGardenRecord,
+                      userGardenRecord,
                       callback: testCallback),
                     child: Text("The ElevatedButton")
                   );
@@ -463,12 +503,12 @@ void main() {
       verifyNever(() => mockAppState.verify(any()));
       verifyNever(() => mockAsksRepository.getList(
           filter: ""
-          "${AskField.creator} = '${tc.user.id}'"
-          "&& ${AskField.garden} = '${tc.garden.id}'"
+          "${AskField.creator} = '${user.id}'"
+          "&& ${AskField.garden} = '${garden.id}'"
         ));
       verifyNever(() => mockAsksRepository.bulkDelete(resultList: resultList));
       verifyNever(() => mockUserGardenRecordsRepository.delete(
-        id: tc.userGardenRecord.id)
+        id: userGardenRecord.id)
       );
       expect(ft.find.byType(UnauthorizedPage), ft.findsNothing);
 
@@ -481,12 +521,12 @@ void main() {
       verify(() => mockAppState.verify(any())).called(1);
       verifyNever(() => mockAsksRepository.getList(
           filter: ""
-          "${AskField.creator} = '${tc.user.id}'"
-          "&& ${AskField.garden} = '${tc.garden.id}'"
+          "${AskField.creator} = '${user.id}'"
+          "&& ${AskField.garden} = '${garden.id}'"
         ));
       verifyNever(() => mockAsksRepository.bulkDelete(resultList: resultList));
       verifyNever(() => mockUserGardenRecordsRepository.delete(
-        id: tc.userGardenRecord.id)
+        id: userGardenRecord.id)
       );
       expect(ft.find.byType(UnauthorizedPage), ft.findsOneWidget);
     });
@@ -494,11 +534,12 @@ void main() {
     tearDown(() => GetIt.instance.reset());
 
     test("getCurrentGardenUserGardenRecords", () async {
-      final tc = TestContext();
+      final user = AppUserFactory();
+      final garden = GardenFactory();
 
       final appState = AppState.skipSubscribe()
-                      ..currentGarden = tc.garden
-                      ..currentUser = tc.user;
+        ..currentGarden = garden
+        ..currentUser = user;
 
       final getIt = GetIt.instance;
       final mockBuildContext = MockBuildContext();
@@ -513,40 +554,56 @@ void main() {
 
       // getUserGardenRecordRole()
       final items = ResultList<RecordModel>(items: [
-        tc.getUserGardenRecordRecordModel(role: AppUserGardenRole.administrator)
+        getUserGardenRecordRecordModel(
+          userGardenRecord: AppUserGardenRecordFactory(
+            role: AppUserGardenRole.administrator)
+        )
       ]);
       getUserGardenRecordRoleStub(
         mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
-        userID: tc.user.id,
-        gardenID: tc.garden.id,
+        userID: user.id,
+        gardenID: garden.id,
         returnValue: items
       );
 
       // getCurrentGardenUserGardenRecords()
       final currentGardenUserGardenRecordsItems = ResultList<RecordModel>(
         items: [
-          tc.getUserGardenRecordRecordModel(
-            expand: [
+          getUserGardenRecordRecordModel(
+            userGardenRecord: AppUserGardenRecordFactory(
+              garden: garden,
+              role: AppUserGardenRole.owner
+            ),
+            expandFields: [
               UserGardenRecordField.user,
               UserGardenRecordField.garden
             ],
-            role: AppUserGardenRole.owner
           ),
-          tc.getUserGardenRecordRecordModel(
-            expand: [
+          getUserGardenRecordRecordModel(
+            userGardenRecord: AppUserGardenRecordFactory(
+              garden: garden,
+              role: AppUserGardenRole.administrator),
+            expandFields: [
               UserGardenRecordField.user,
               UserGardenRecordField.garden
             ],
-            role: AppUserGardenRole.administrator
           ),
-          tc.getUserGardenRecordRecordModel(
-            expand: [
+          getUserGardenRecordRecordModel(
+            userGardenRecord: AppUserGardenRecordFactory(
+              garden: garden,
+              role: AppUserGardenRole.member
+            ),
+            expandFields: [
               UserGardenRecordField.user,
               UserGardenRecordField.garden
             ]
           ),
-          tc.getUserGardenRecordRecordModel(
-            expand: [
+          getUserGardenRecordRecordModel(
+            userGardenRecord: AppUserGardenRecordFactory(
+              garden: garden,
+              role: AppUserGardenRole.member
+            ),
+            expandFields: [
               UserGardenRecordField.user,
               UserGardenRecordField.garden
             ]
@@ -555,15 +612,15 @@ void main() {
       );
       getCurrentGardenUserGardenRecordsStub(
         mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
-        gardenID: tc.garden.id,
+        gardenID: garden.id,
         returnValue: currentGardenUserGardenRecordsItems
       );
 
       // UsersRepository.getFirstListItem()
-      usersRepositoryGetFirstListItemStub(
+      getFirstListItemStub(
         mockUsersRepository: mockUsersRepository,
-        userID: tc.user.id,
-        returnValue: tc.getUserRecordModel()
+        userID: user.id,
+        returnValue: getUserRecordModel()
       );
 
       final userGardenRecordsMap = await getCurrentGardenUserGardenRecords(
@@ -577,7 +634,8 @@ void main() {
     tearDown(() => GetIt.instance.reset());
 
     ft.testWidgets("getCurrentGardenUserGardenRecords PermissionException", (tester) async {
-      final tc = TestContext();
+      final user = AppUserFactory();
+      final garden = GardenFactory();
 
       final getIt = GetIt.instance;
       final mockAppState = MockAppState();
@@ -601,34 +659,48 @@ void main() {
       when(
         () => mockUserGardenRecordsRepository.getList(
           expand: "${UserGardenRecordField.user}, ${UserGardenRecordField.garden}",
-          filter: "${UserGardenRecordField.garden} = '${tc.garden.id}'",
+          filter: "${UserGardenRecordField.garden} = '${garden.id}'",
           sort: "${UserGardenRecordField.user}.${UserField.username}"
         )
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(
           items: [
-            tc.getUserGardenRecordRecordModel(
-              expand: [
+            getUserGardenRecordRecordModel(
+              userGardenRecord: AppUserGardenRecordFactory(
+                garden: garden,
+                role: AppUserGardenRole.owner
+              ),
+              expandFields: [
                 UserGardenRecordField.user,
                 UserGardenRecordField.garden
               ],
-              role: AppUserGardenRole.owner
             ),
-            tc.getUserGardenRecordRecordModel(
-              expand: [
+            getUserGardenRecordRecordModel(
+              userGardenRecord: AppUserGardenRecordFactory(
+                garden: garden,
+                role: AppUserGardenRole.administrator
+              ),
+              expandFields: [
                 UserGardenRecordField.user,
                 UserGardenRecordField.garden
               ],
-              role: AppUserGardenRole.administrator
             ),
-            tc.getUserGardenRecordRecordModel(
-              expand: [
+            getUserGardenRecordRecordModel(
+              userGardenRecord: AppUserGardenRecordFactory(
+                garden: garden,
+                role: AppUserGardenRole.member
+              ),
+              expandFields: [
                 UserGardenRecordField.user,
                 UserGardenRecordField.garden
               ]
             ),
-            tc.getUserGardenRecordRecordModel(
-              expand: [
+            getUserGardenRecordRecordModel(
+              userGardenRecord: AppUserGardenRecordFactory(
+                garden: garden,
+                role: AppUserGardenRole.member
+              ),
+              expandFields: [
                 UserGardenRecordField.user,
                 UserGardenRecordField.garden
               ]
@@ -638,12 +710,10 @@ void main() {
       );
 
       // UsersRepository.getFirstListItem()
-      when(
-        () => mockUsersRepository.getFirstListItem(
-          filter: "${GenericField.id} = '${tc.user.id}'",
-        )
-      ).thenThrow(
-        (_) async => tc.getUserRecordModel()
+      getFirstListItemStub(
+        mockUsersRepository: mockUsersRepository,
+        userID: user.id,
+        returnValue: getUserRecordModel(user: user)
       );
 
       final testRouter = GoRouter(
@@ -682,12 +752,12 @@ void main() {
       verifyNever(() => mockAppState.verify(any()));
       verifyNever(() => mockUserGardenRecordsRepository.getList(
           expand: "${UserGardenRecordField.user}, ${UserGardenRecordField.garden}",
-          filter: "${UserGardenRecordField.garden} = '${tc.garden.id}'",
+          filter: "${UserGardenRecordField.garden} = '${garden.id}'",
           sort: "${UserGardenRecordField.user}.${UserField.username}"
         )
       );
       verifyNever(() => mockUsersRepository.getFirstListItem(
-          filter: "${GenericField.id} = '${tc.user.id}'",
+          filter: "${GenericField.id} = '${user.id}'",
         )
       );
       expect(ft.find.byType(UnauthorizedPage), ft.findsNothing);
@@ -700,12 +770,12 @@ void main() {
       verify(() => mockAppState.verify(any())).called(1);
       verifyNever(() => mockUserGardenRecordsRepository.getList(
           expand: "${UserGardenRecordField.user}, ${UserGardenRecordField.garden}",
-          filter: "${UserGardenRecordField.garden} = '${tc.garden.id}'",
+          filter: "${UserGardenRecordField.garden} = '${garden.id}'",
           sort: "${UserGardenRecordField.user}.${UserField.username}"
         )
       );
       verifyNever(() => mockUsersRepository.getFirstListItem(
-          filter: "${GenericField.id} = '${tc.user.id}'",
+          filter: "${GenericField.id} = '${user.id}'",
         )
       );
       expect(ft.find.byType(UnauthorizedPage), ft.findsOneWidget);
@@ -715,10 +785,10 @@ void main() {
     tearDown(() => GetIt.instance.reset());
 
     test("getCurrentUserSettings", () async {
-      final tc = TestContext();
+      final user = AppUserFactory();
 
-      var appState = AppState.skipSubscribe()
-                      ..currentUser = tc.user;
+      final appState = AppState.skipSubscribe()
+        ..currentUser = user;
 
       final getIt = GetIt.instance;
       final mockUserSettingsRepository = MockUserSettingsRepository();
@@ -731,12 +801,14 @@ void main() {
       // UserSettingsRepository.getFirstListItem()
       when(
         () => mockUserSettingsRepository.getFirstListItem(
-          filter: "${UserSettingsField.user} = '${tc.user.id}'",
+          filter: "${UserSettingsField.user} = '${user.id}'",
         )
       ).thenAnswer(
-        (_) async => tc.getUserSettingsRecordModel(
-          defaultCurrency: "GHS",
-          defaultInstructions: "Test default instructions"
+        (_) async => getUserSettingsRecordModel(
+          userSettings: AppUserSettingsFactory(
+            defaultCurrency: "GHS",
+            defaultInstructions: "Test default instructions"
+          ),
         )
       );
 
@@ -745,13 +817,18 @@ void main() {
       expect(userSettings, isA<AppUserSettings>());
       expect(userSettings.defaultCurrency, "GHS");
       expect(userSettings.defaultInstructions, "Test default instructions");
-      expect(userSettings.user, tc.user);
+      expect(userSettings.user, user);
     });
 
     tearDown(() => GetIt.instance.reset());
 
     test("getUserByID", () async {
-      final tc = TestContext();
+      final user = AppUserFactory(
+        firstName: "Pickles",
+        id: "testUser",
+        lastName: "McCucumber",
+        username: "theBigDill",
+      );
 
       final getIt = GetIt.instance;
       final mockUsersRepository = MockUsersRepository();
@@ -760,19 +837,19 @@ void main() {
       // UsersRepository.getFirstListItem()
       when(
         () => mockUsersRepository.getFirstListItem(
-          filter: "${GenericField.id} = '${tc.user.id}'"
+          filter: "${GenericField.id} = '${user.id}'"
         )
       ).thenAnswer(
-        (_) async => tc.getUserRecordModel()
+        (_) async => getUserRecordModel(user: user)
       );
 
-      final appUser = await getUserByID(tc.user.id);
+      final appUser = await getUserByID(user.id);
 
       expect(appUser, isA<AppUser>());
-      expect(appUser.id, tc.user.id);
-      expect(appUser.firstName, tc.user.firstName);
-      expect(appUser.lastName, tc.user.lastName);
-      expect(appUser.username, tc.user.username);
+      expect(appUser.id, "testUser");
+      expect(appUser.firstName, "Pickles");
+      expect(appUser.lastName, "McCucumber");
+      expect(appUser.username, "theBigDill");
     });
 
     tearDown(() => GetIt.instance.reset());
@@ -829,7 +906,8 @@ void main() {
     });
 
     test("getUserGardenRecord", () async {
-      final tc = TestContext();
+      final user = AppUserFactory();
+      final garden = GardenFactory();
 
       final getIt = GetIt.instance;
       final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
@@ -845,50 +923,53 @@ void main() {
         () => mockUserGardenRecordsRepository.getList(
           expand: "${UserGardenRecordField.user}, ${UserGardenRecordField.garden}",
           filter: ""
-            "${UserGardenRecordField.user} = '${tc.user.id}' && "
-            "${UserGardenRecordField.garden} = '${tc.garden.id}'",
+            "${UserGardenRecordField.user} = '${user.id}' && "
+            "${UserGardenRecordField.garden} = '${garden.id}'",
           sort: "-updated"
         )
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(
           items: [
-            tc.getUserGardenRecordRecordModel(
-              expand: [
+            getUserGardenRecordRecordModel(
+              userGardenRecord: AppUserGardenRecordFactory(
+                garden: garden,
+                id: "TestGardenRecordID",
+                role: AppUserGardenRole.member,
+                user: user
+              ),
+              expandFields: [
                 UserGardenRecordField.user, UserGardenRecordField.garden
               ],
-              recordID: "TestGardenRecordID",
-              role: AppUserGardenRole.member),
+            )
           ]
         )
       );
 
       // UsersRepository.getFirstListItem()
-      when(
-        () => mockUsersRepository.getFirstListItem(
-          filter: "${GenericField.id} = '${tc.user.id}'",
-        )
-      ).thenAnswer(
-        (_) async => tc.getUserRecordModel()
+      getFirstListItemStub(
+        mockUsersRepository: mockUsersRepository,
+        userID: garden.creator.id,
+        returnValue: getUserRecordModel(user: garden.creator)
       );
 
       final userGardenRecord = await getUserGardenRecord(
-        userID: tc.user.id,
-        gardenID: tc.garden.id
+        userID: user.id,
+        gardenID: garden.id
       );
 
       expect(userGardenRecord!, isA<AppUserGardenRecord>());
-      expect(userGardenRecord.garden, tc.garden);
+      expect(userGardenRecord.garden, garden);
       expect(userGardenRecord.id, "TestGardenRecordID");
       expect(userGardenRecord.role, AppUserGardenRole.member);
-      expect(userGardenRecord.user, tc.user);
+      expect(userGardenRecord.user, user);
 
       // UserGardenRecordsRepository.getList(), Now returns empty list
       when(
         () => mockUserGardenRecordsRepository.getList(
           expand: "${UserGardenRecordField.user}, ${UserGardenRecordField.garden}",
           filter: ""
-            "${UserGardenRecordField.user} = '${tc.user.id}' && "
-            "${UserGardenRecordField.garden} = '${tc.garden.id}'",
+            "${UserGardenRecordField.user} = '${user.id}' && "
+            "${UserGardenRecordField.garden} = '${garden.id}'",
           sort: "-updated"
         )
       ).thenAnswer(
@@ -898,8 +979,8 @@ void main() {
       );
 
       final userGardenRecord2 = await getUserGardenRecord(
-        userID: tc.user.id,
-        gardenID: tc.garden.id
+        userID: user.id,
+        gardenID: garden.id
       );
 
       // Check null is now returned
@@ -909,7 +990,8 @@ void main() {
     tearDown(() => GetIt.instance.reset());
 
     test("getUserGardenRecordRole", () async {
-      final tc = TestContext();
+      final user = AppUserFactory();
+      final garden = GardenFactory();
 
       final getIt = GetIt.instance;
       final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
@@ -922,19 +1004,27 @@ void main() {
       when(
         () => mockUserGardenRecordsRepository.getList(
           filter: ""
-            "${UserGardenRecordField.user} = '${tc.user.id}' && "
-            "${UserGardenRecordField.garden} = '${tc.garden.id}'",
+            "${UserGardenRecordField.user} = '${user.id}' && "
+            "${UserGardenRecordField.garden} = '${garden.id}'",
           sort: "-updated"
         )
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(
-          items: [tc.getUserGardenRecordRecordModel()]
+          items: [
+            getUserGardenRecordRecordModel(
+              userGardenRecord: AppUserGardenRecordFactory(
+                user: user,
+                garden: garden,
+                role: AppUserGardenRole.member
+              )
+            )
+          ]
         )
       );
 
       final userGardenRecordRole = await getUserGardenRecordRole(
-        userID: tc.user.id,
-        gardenID: tc.garden.id
+        userID: user.id,
+        gardenID: garden.id
       );
 
       expect(userGardenRecordRole!.name, AppUserGardenRole.member.name);
@@ -945,8 +1035,8 @@ void main() {
       when(
         () => mockUserGardenRecordsRepository.getList(
           filter: ""
-            "${UserGardenRecordField.user} = '${tc.user.id}' && "
-            "${UserGardenRecordField.garden} = '${tc.garden.id}'",
+            "${UserGardenRecordField.user} = '${user.id}' && "
+            "${UserGardenRecordField.garden} = '${garden.id}'",
           sort: "-updated"
         )
       ).thenAnswer(
@@ -956,8 +1046,8 @@ void main() {
       );
 
       final userGardenRecordRole2 = await getUserGardenRecordRole(
-        userID: tc.user.id,
-        gardenID: tc.garden.id
+        userID: user.id,
+        gardenID: garden.id
       );
 
       // Check null is now returned
@@ -967,7 +1057,12 @@ void main() {
     tearDown(() => GetIt.instance.reset());
 
     test("getUserGardenRecordsByUserID", () async {
-      final tc = TestContext();
+      final user = AppUserFactory();
+
+      final garden1 = GardenFactory();
+      final garden2 = GardenFactory();
+      final garden3 = GardenFactory();
+      final garden4 = GardenFactory();
 
       final getIt = GetIt.instance;
       final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
@@ -982,33 +1077,51 @@ void main() {
       when(
         () => mockUserGardenRecordsRepository.getList(
           expand: "${UserGardenRecordField.user}, ${UserGardenRecordField.garden}",
-          filter: "${UserGardenRecordField.user} = '${tc.user.id}'",
-          sort: "${UserGardenRecordField.garden}.${GardenField.name}"
+          filter: "${UserGardenRecordField.user} = '${user.id}'",
+          sort: "${UserGardenRecordField.garden}.${GardenField.name}",
         )
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(
           items: [
-            tc.getUserGardenRecordRecordModel(
-              expand: [
+            getUserGardenRecordRecordModel(
+              userGardenRecord: AppUserGardenRecordFactory(
+                garden: garden1,
+                role: AppUserGardenRole.owner,
+                user: user,
+              ),
+              expandFields: [
                 UserGardenRecordField.user, UserGardenRecordField.garden
               ],
-              role: AppUserGardenRole.owner
             ),
-            tc.getUserGardenRecordRecordModel(
-              expand: [
+            getUserGardenRecordRecordModel(
+              userGardenRecord: AppUserGardenRecordFactory(
+                garden: garden2,
+                role: AppUserGardenRole.administrator,
+                user: user,
+              ),
+              expandFields: [
                 UserGardenRecordField.user,
                 UserGardenRecordField.garden
               ],
-              role: AppUserGardenRole.administrator
             ),
-            tc.getUserGardenRecordRecordModel(
-              expand: [
+            getUserGardenRecordRecordModel(
+              userGardenRecord: AppUserGardenRecordFactory(
+                garden: garden3,
+                role: AppUserGardenRole.member,
+                user: user,
+              ),
+              expandFields: [
                 UserGardenRecordField.user,
                 UserGardenRecordField.garden
               ]
             ),
-            tc.getUserGardenRecordRecordModel(
-              expand: [
+            getUserGardenRecordRecordModel(
+              userGardenRecord: AppUserGardenRecordFactory(
+                garden: garden4,
+                role: AppUserGardenRole.member,
+                user: user,
+              ),
+              expandFields: [
                 UserGardenRecordField.user,
                 UserGardenRecordField.garden
               ]
@@ -1018,15 +1131,28 @@ void main() {
       );
 
       // UsersRepository.getFirstListItem()
-      when(
-        () => mockUsersRepository.getFirstListItem(
-          filter: "${GenericField.id} = '${tc.user.id}'",
-        )
-      ).thenAnswer(
-        (_) async => tc.getUserRecordModel()
+      getFirstListItemStub(
+        mockUsersRepository: mockUsersRepository,
+        userID: garden1.creator.id,
+        returnValue: getUserRecordModel(user: garden1.creator)
+      );
+      getFirstListItemStub(
+        mockUsersRepository: mockUsersRepository,
+        userID: garden2.creator.id,
+        returnValue: getUserRecordModel(user: garden2.creator)
+      );
+      getFirstListItemStub(
+        mockUsersRepository: mockUsersRepository,
+        userID: garden3.creator.id,
+        returnValue: getUserRecordModel(user: garden3.creator)
+      );
+      getFirstListItemStub(
+        mockUsersRepository: mockUsersRepository,
+        userID: garden4.creator.id,
+        returnValue: getUserRecordModel(user: garden4.creator)
       );
 
-      final userGardenRecords = await getUserGardenRecordsByUserID(tc.user.id);
+      final userGardenRecords = await getUserGardenRecordsByUserID(user.id);
 
       expect (userGardenRecords.length, 4);
     });
@@ -1059,7 +1185,7 @@ void main() {
     });
 
     test("login", () async {
-      final tc = TestContext();
+      final user = AppUserFactory();
 
       final pb = MockPocketBase();
       final recordService = MockRecordService();
@@ -1083,7 +1209,7 @@ void main() {
       );
       // pb.authStore.model
       final authStore = AuthStore();
-      authStore.save("newToken", tc.getUserRecordModel());
+      authStore.save("newToken", getUserRecordModel(user: user));
       when(
         () => pb.authStore
       ).thenReturn(
@@ -1092,30 +1218,32 @@ void main() {
 
       // RecordService.getFirstListItem() (UsersRepository)
       when(
-        () => recordService.getFirstListItem("${GenericField.id} = '${tc.user.id}'")
+        () => recordService.getFirstListItem("${GenericField.id} = '${user.id}'")
       ).thenAnswer(
-        (_) async => tc.getUserRecordModel()
+        (_) async => getUserRecordModel(user: user)
       );
       // RecordService.getFirstListItem() (UsersRepository)
       when(
         () => recordService.getFirstListItem(
-          "${UserSettingsField.user} = '${tc.user.id}'"
+          "${UserSettingsField.user} = '${user.id}'"
         )
       ).thenAnswer(
-        (_) async => tc.getUserSettingsRecordModel()
+        (_) async => getUserSettingsRecordModel(
+          userSettings: AppUserSettingsFactory(user: user)
+        )
       );
 
-      var loginStatus1 = await login("username", "password", database: pb);
+      final loginStatus1 = await login("username", "password", database: pb);
       expect(loginStatus1, true);
 
       // RecordService.authWithPassword(), throw Exception
       when(
         () => recordService.authWithPassword(any(), any())
       ).thenThrow(
-        ClientException()
+        ClientExceptionFactory.empty()
       );
 
-      var loginStatus2 = await login("username", "password", database: pb);
+      final loginStatus2 = await login("username", "password", database: pb);
       expect(loginStatus2, false);
     });
 
@@ -1220,7 +1348,7 @@ void main() {
         (_) async => {}
       );
 
-      var sendPasswordStatus1 = await sendPasswordResetCode(email, database: pb);
+      final sendPasswordStatus1 = await sendPasswordResetCode(email, database: pb);
       expect(sendPasswordStatus1, true);
 
       // RecordService.requestPasswordReset(), throw exception
@@ -1230,12 +1358,12 @@ void main() {
         ClientException()
       );
 
-      var sendPasswordStatus2 = await sendPasswordResetCode(email, database: pb);
+      final sendPasswordStatus2 = await sendPasswordResetCode(email, database: pb);
       expect(sendPasswordStatus2, false);
     });
 
     test("signup", () async {
-      final tc = TestContext();
+      final user = AppUserFactory();
 
       final pb = MockPocketBase();
       final recordService = MockRecordService();
@@ -1267,16 +1395,18 @@ void main() {
       when(
         () => recordService.create(body: body)
       ).thenAnswer(
-        (_) async => tc.getUserRecordModel()
+        (_) async => getUserRecordModel(user: user)
       );
       when(
         () => recordService.create(body: {
           UserSettingsField.defaultCurrency: "",
           UserSettingsField.defaultInstructions: "",
-          UserSettingsField.user: tc.user.id,
+          UserSettingsField.user: user.id,
         })
       ).thenAnswer(
-        (_) async => tc.getUserSettingsRecordModel()
+        (_) async => getUserSettingsRecordModel(
+          userSettings: AppUserSettingsFactory(user: user)
+        )
       );
 
       // RecordService.requestVerification()
@@ -1286,7 +1416,7 @@ void main() {
         (_) async => {}
       );
 
-      var (signupStatus1, errorsMap1) = await signup(
+      final (signupStatus1, errorsMap1) = await signup(
         body,
         database: pb
       );
@@ -1297,7 +1427,7 @@ void main() {
       verify(() => recordService.create(body: {
         UserSettingsField.defaultCurrency: "",
         UserSettingsField.defaultInstructions: "",
-        UserSettingsField.user: tc.getUserRecordModel().id,
+        UserSettingsField.user: getUserRecordModel(user: user).id,
       })).called(1);
       verify(() => recordService.requestVerification(body[UserField.email])).called(1);
 
@@ -1305,10 +1435,10 @@ void main() {
       when(
         () => recordService.create(body: any(named: "body"))
       ).thenThrow(
-        tc.clientException
+        ClientExceptionFactory(fieldName: UserField.email)
       );
 
-      var (signupStatus2, errorsMap2) = await signup(
+      final (signupStatus2, errorsMap2) = await signup(
         body,
         database: pb
       );
@@ -1319,7 +1449,7 @@ void main() {
     });
 
     test("subscribeToUserGardenRecords", () async {
-      final tc = TestContext();
+      final garden = GardenFactory();
 
       final getIt = GetIt.instance;
       final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
@@ -1340,7 +1470,7 @@ void main() {
       // UserGardenRecordsRepository.subscribe()
       when(
         () => mockUserGardenRecordsRepository.subscribe(
-          tc.garden.id, testCallback
+          garden.id, testCallback
         )
       ).thenAnswer(
         (_) async => () {}
@@ -1348,21 +1478,21 @@ void main() {
 
       verifyNever(() => mockUserGardenRecordsRepository.unsubscribe());
       verifyNever(() => mockUserGardenRecordsRepository.subscribe(
-        tc.garden.id, testCallback)
+        garden.id, testCallback)
       );
 
-      await subscribeToUserGardenRecords(tc.garden.id, testCallback);
+      await subscribeToUserGardenRecords(garden.id, testCallback);
 
       verify(() => mockUserGardenRecordsRepository.unsubscribe()).called(1);
       verify(() => mockUserGardenRecordsRepository.subscribe(
-        tc.garden.id, testCallback)
+        garden.id, testCallback)
       ).called(1);
     });
 
     tearDown(() => GetIt.instance.reset());
 
     test("subscribeToUsers", () async {
-      final tc = TestContext();
+      final garden = GardenFactory();
 
       final getIt = GetIt.instance;
       final mockUsersRepository = MockUsersRepository();
@@ -1383,7 +1513,7 @@ void main() {
       // UsersRepository.subscribe()
       when(
         () => mockUsersRepository.subscribe(
-          tc.garden.id, testCallback
+          garden.id, testCallback
         )
       ).thenAnswer(
         (_) async => () {}
@@ -1391,14 +1521,14 @@ void main() {
 
       verifyNever(() => mockUsersRepository.unsubscribe());
       verifyNever(() => mockUsersRepository.subscribe(
-        tc.garden.id, testCallback)
+        garden.id, testCallback)
       );
 
-      await subscribeToUsers(tc.garden.id, testCallback);
+      await subscribeToUsers(garden.id, testCallback);
 
       verify(() => mockUsersRepository.unsubscribe()).called(1);
       verify(() => mockUsersRepository.subscribe(
-        tc.garden.id, testCallback)
+        garden.id, testCallback)
       ).called(1);
     });
 
@@ -1438,18 +1568,19 @@ void main() {
     tearDown(() => GetIt.instance.reset());
 
     test("updateUserGardenRole", () async {
-      final tc = TestContext();
+      final user = AppUserFactory();
+      final garden = GardenFactory();
 
       final Map<dynamic, dynamic> map = {
         GenericField.id: "id",
-        UserGardenRecordField.garden: tc.garden.id,
+        UserGardenRecordField.garden: garden.id,
         UserGardenRecordField.role: AppUserGardenRole.administrator.name,
-        UserGardenRecordField.user: tc.user.id
+        UserGardenRecordField.user: user.id
       };
 
       final appState = AppState.skipSubscribe()
-                      ..currentGarden = tc.garden
-                      ..currentUser = tc.user;
+        ..currentGarden = garden
+        ..currentUser = user;
 
       final getIt = GetIt.instance;
       final mockBuildContext = MockBuildContext();
@@ -1462,17 +1593,23 @@ void main() {
 
       // Stub
       final items = ResultList<RecordModel>(items: [
-        tc.getUserGardenRecordRecordModel(role: AppUserGardenRole.administrator)
+        getUserGardenRecordRecordModel(
+          userGardenRecord: AppUserGardenRecordFactory(
+            role: AppUserGardenRole.administrator
+          ),
+        )
       ]);
       getUserGardenRecordRoleStub(
         mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
-        userID: tc.user.id,
-        gardenID: tc.garden.id,
+        userID: user.id,
+        gardenID: garden.id,
         returnValue: items
       );
 
-      final recordModel = tc.getUserGardenRecordRecordModel(
-        role: AppUserGardenRole.administrator);
+      final recordModel = getUserGardenRecordRecordModel(
+        userGardenRecord: AppUserGardenRecordFactory(
+          role: AppUserGardenRole.administrator),
+        );
       userGardenRecordsRepositoryUpdateStub(
         mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
         userGardenRecordID: map[GenericField.id],
@@ -1483,8 +1620,8 @@ void main() {
       // check nothing called yet
       verifyNever(() => mockUserGardenRecordsRepository.getList(
           filter: ""
-            "${UserGardenRecordField.user} = '${tc.user.id}' && "
-            "${UserGardenRecordField.garden} = '${tc.garden.id}'",
+            "${UserGardenRecordField.user} = '${user.id}' && "
+            "${UserGardenRecordField.garden} = '${garden.id}'",
           sort: "-updated"
         )
       );
@@ -1501,8 +1638,8 @@ void main() {
       // getList() called for getUserGardenRecordRole() and during verify() (x2)
       verify(() => mockUserGardenRecordsRepository.getList(
           filter: ""
-            "${UserGardenRecordField.user} = '${tc.user.id}' && "
-            "${UserGardenRecordField.garden} = '${tc.garden.id}'",
+            "${UserGardenRecordField.user} = '${user.id}' && "
+            "${UserGardenRecordField.garden} = '${garden.id}'",
           sort: "-updated"
         )
       ).called(2);
@@ -1519,25 +1656,21 @@ void main() {
     tearDown(() => GetIt.instance.reset());
 
     test("updateUserGardenRole isChangingOwner", () async {
-      final tc = TestContext();
+      final user = AppUserFactory();
+      final garden = GardenFactory(creator: user);
 
-      final otherUser = AppUser(
-        firstName: "firstName",
-        id: "id",
-        lastName: "lastName",
-        username: "username"
-      );
+      final otherUser = AppUserFactory();
 
       final Map<dynamic, dynamic> map = {
         GenericField.id: "id",
-        UserGardenRecordField.garden: tc.garden.id,
+        UserGardenRecordField.garden: garden.id,
         UserGardenRecordField.role: AppUserGardenRole.owner.name,
         UserGardenRecordField.user: otherUser.id
       };
 
       final appState = AppState.skipSubscribe()
-                      ..currentGarden = tc.garden
-                      ..currentUser = tc.user;
+        ..currentGarden = garden
+        ..currentUser = user;
 
       final getIt = GetIt.instance;
       final mockBuildContext = MockBuildContext();
@@ -1552,29 +1685,46 @@ void main() {
 
       // otherUser -> getUserGardenRecordRole()
       final otherUserRecordRoleItems = ResultList<RecordModel>(items: [
-        tc.getUserGardenRecordRecordModel(role: AppUserGardenRole.administrator)
+        getUserGardenRecordRecordModel(
+          userGardenRecord: AppUserGardenRecordFactory(
+            garden: garden,
+            role: AppUserGardenRole.administrator,
+            user: otherUser,
+          ),
+        )
       ]);
       getUserGardenRecordRoleStub(
         mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
         userID: otherUser.id,
-        gardenID: tc.garden.id,
+        gardenID: garden.id,
         returnValue: otherUserRecordRoleItems
       );
 
       // currentUser -> getUserGardenRecordRole()
       final currentUserRecordRoleItems = ResultList<RecordModel>(items: [
-        tc.getUserGardenRecordRecordModel(role: AppUserGardenRole.owner)
+        getUserGardenRecordRecordModel(
+          userGardenRecord: AppUserGardenRecordFactory(
+            garden: garden,
+            role: AppUserGardenRole.owner,
+            user: user,
+          ),
+        )
       ]);
        getUserGardenRecordRoleStub(
         mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
-        userID: tc.user.id,
-        gardenID: tc.garden.id,
+        userID: user.id,
+        gardenID: garden.id,
         returnValue: currentUserRecordRoleItems
       );
 
       // otherUser -> update()
-      final otherUserRecordModel = tc.getUserGardenRecordRecordModel(
-        role: AppUserGardenRole.administrator);
+      final otherUserRecordModel = getUserGardenRecordRecordModel(
+        userGardenRecord: AppUserGardenRecordFactory(
+          garden: garden,
+          role: AppUserGardenRole.administrator,
+          user: otherUser
+        ),
+      );
       userGardenRecordsRepositoryUpdateStub(
         mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
         userGardenRecordID: map[GenericField.id],
@@ -1584,28 +1734,37 @@ void main() {
 
       // currentUser -> getUserGardenRecord()
       final currentUserGardenRecordItems = ResultList<RecordModel>(items: [
-        tc.getUserGardenRecordRecordModel(
-          expand: [
+        getUserGardenRecordRecordModel(
+          userGardenRecord: AppUserGardenRecordFactory(
+            garden: garden,
+            id: "testRecordID",
+            role: AppUserGardenRole.owner,
+            user: user,
+          ),
+          expandFields: [
             UserGardenRecordField.user,
             UserGardenRecordField.garden
           ],
-          recordID: "testRecordID",
-          role: AppUserGardenRole.owner
         )
       ]);
       getUserGardenRecordStub(
         mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
-        userID: tc.user.id,
-        gardenID: tc.garden.id,
+        userID: user.id,
+        gardenID: garden.id,
         userGardenRecordReturnValue: currentUserGardenRecordItems,
         mockUsersRepository: mockUsersRepository,
-        gardenCreatorID: tc.user.id,
-        gardenCreatorReturnValue: tc.getUserRecordModel()
+        gardenCreatorID: user.id,
+        gardenCreatorReturnValue: getUserRecordModel(user: user)
       );
 
       // currentUser -> update()
-      final currentUserRecordModel = tc.getUserGardenRecordRecordModel(
-        role: AppUserGardenRole.administrator);
+      final currentUserRecordModel = getUserGardenRecordRecordModel(
+        userGardenRecord: AppUserGardenRecordFactory(
+          garden: garden,
+          role: AppUserGardenRole.administrator,
+          user: user
+        ),
+      );
       userGardenRecordsRepositoryUpdateStub(
         mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
         userGardenRecordID: "testRecordID",
@@ -1617,14 +1776,14 @@ void main() {
       verifyNever(() => mockUserGardenRecordsRepository.getList(
           filter: ""
             "${UserGardenRecordField.user} = '${otherUser.id}' && "
-            "${UserGardenRecordField.garden} = '${tc.garden.id}'",
+            "${UserGardenRecordField.garden} = '${garden.id}'",
           sort: "-updated"
         )
       );
       verifyNever(() => mockUserGardenRecordsRepository.getList(
           filter: ""
-            "${UserGardenRecordField.user} = '${tc.user.id}' && "
-            "${UserGardenRecordField.garden} = '${tc.garden.id}'",
+            "${UserGardenRecordField.user} = '${user.id}' && "
+            "${UserGardenRecordField.garden} = '${garden.id}'",
           sort: "-updated"
         )
       );
@@ -1638,12 +1797,12 @@ void main() {
       verifyNever(() => mockUserGardenRecordsRepository.getList(
         expand: "${UserGardenRecordField.user}, ${UserGardenRecordField.garden}",
         filter: ""
-          "${UserGardenRecordField.user} = '${tc.user.id}' && "
-          "${UserGardenRecordField.garden} = '${tc.garden.id}'",
+          "${UserGardenRecordField.user} = '${user.id}' && "
+          "${UserGardenRecordField.garden} = '${garden.id}'",
         sort: "-updated"
       ));
       verifyNever(() =>  mockUsersRepository.getFirstListItem(
-        filter: "${GenericField.id} = '${tc.user.id}'"
+        filter: "${GenericField.id} = '${user.id}'"
       ));
       verifyNever(() => mockUserGardenRecordsRepository.update(
         id: "testRecordID",
@@ -1659,14 +1818,14 @@ void main() {
       verify(() => mockUserGardenRecordsRepository.getList(
           filter: ""
             "${UserGardenRecordField.user} = '${otherUser.id}' && "
-            "${UserGardenRecordField.garden} = '${tc.garden.id}'",
+            "${UserGardenRecordField.garden} = '${garden.id}'",
           sort: "-updated"
         )
       ).called(1);
       verify(() => mockUserGardenRecordsRepository.getList(
           filter: ""
-            "${UserGardenRecordField.user} = '${tc.user.id}' && "
-            "${UserGardenRecordField.garden} = '${tc.garden.id}'",
+            "${UserGardenRecordField.user} = '${user.id}' && "
+            "${UserGardenRecordField.garden} = '${garden.id}'",
           sort: "-updated"
         )
       ).called(1);
@@ -1680,12 +1839,12 @@ void main() {
       verify(() => mockUserGardenRecordsRepository.getList(
         expand: "${UserGardenRecordField.user}, ${UserGardenRecordField.garden}",
         filter: ""
-          "${UserGardenRecordField.user} = '${tc.user.id}' && "
-          "${UserGardenRecordField.garden} = '${tc.garden.id}'",
+          "${UserGardenRecordField.user} = '${user.id}' && "
+          "${UserGardenRecordField.garden} = '${garden.id}'",
         sort: "-updated"
       )).called(1);
       verify(() =>  mockUsersRepository.getFirstListItem(
-        filter: "${GenericField.id} = '${tc.user.id}'"
+        filter: "${GenericField.id} = '${user.id}'"
       ));
       verify(() => mockUserGardenRecordsRepository.update(
         id: "testRecordID",
@@ -1699,25 +1858,21 @@ void main() {
     tearDown(() => GetIt.instance.reset());
 
     ft.testWidgets("updateUserGardenRole PermissionException", (tester) async {
-      final tc = TestContext();
+      final user = AppUserFactory();
+      final garden = GardenFactory();
 
-      final otherUser = AppUser(
-        firstName: "firstName",
-        id: "id",
-        lastName: "lastName",
-        username: "username"
-      );
+      final otherUser = AppUserFactory();
 
       final Map<dynamic, dynamic> map = {
         GenericField.id: "id",
-        UserGardenRecordField.garden: tc.garden.id,
+        UserGardenRecordField.garden: garden.id,
         UserGardenRecordField.role: AppUserGardenRole.owner.name,
         UserGardenRecordField.user: otherUser.id
       };
 
       final appState = AppState.skipSubscribe()
-                      ..currentGarden = tc.garden
-                      ..currentUser = tc.user;
+        ..currentGarden = garden
+        ..currentUser = user;
 
       final getIt = GetIt.instance;
       final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
@@ -1731,23 +1886,35 @@ void main() {
 
       // otherUser -> getUserGardenRecordRole()
       final otherUserRecordRoleItems = ResultList<RecordModel>(items: [
-        tc.getUserGardenRecordRecordModel(role: AppUserGardenRole.administrator)
+        getUserGardenRecordRecordModel(
+          userGardenRecord: AppUserGardenRecordFactory(
+            garden: garden,
+            role: AppUserGardenRole.administrator,
+            user: otherUser,
+          ),
+        )
       ]);
       getUserGardenRecordRoleStub(
         mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
         userID: otherUser.id,
-        gardenID: tc.garden.id,
+        gardenID: garden.id,
         returnValue: otherUserRecordRoleItems
       );
 
       // currentUser -> getUserGardenRecordRole()
       final currentUserRecordRoleItems = ResultList<RecordModel>(items: [
-        tc.getUserGardenRecordRecordModel(role: AppUserGardenRole.member)
+        getUserGardenRecordRecordModel(
+          userGardenRecord: AppUserGardenRecordFactory(
+            garden: garden,
+            role: AppUserGardenRole.member,
+            user: user,
+          ),
+        )
       ]);
        getUserGardenRecordRoleStub(
         mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
-        userID: tc.user.id,
-        gardenID: tc.garden.id,
+        userID: user.id,
+        gardenID: garden.id,
         returnValue: currentUserRecordRoleItems
       );
 
@@ -1799,12 +1966,12 @@ void main() {
     tearDown(() => GetIt.instance.reset());
 
     test("updateUser", () async {
-      final tc = TestContext();
+      final user = AppUserFactory();
 
       final Map<String, dynamic> map = {
-        GenericField.id: tc.user.id,
-        UserField.firstName: tc.user.firstName,
-        UserField.lastName: tc.user.lastName,
+        GenericField.id: user.id,
+        UserField.firstName: user.firstName,
+        UserField.lastName: user.lastName,
       };
 
       final getIt = GetIt.instance;
@@ -1821,7 +1988,7 @@ void main() {
           }
         )
       ).thenAnswer(
-        (_) async => (tc.getUserRecordModel(), {})
+        (_) async => (getUserRecordModel(user: user), {})
       );
 
       // Check record is not null and errors is empty
@@ -1898,12 +2065,13 @@ void main() {
     tearDown(() => GetIt.instance.reset());
 
     test("updateUserSettings", () async {
-      final tc = TestContext();
+      final user = AppUserFactory();
+      final userSettings = AppUserSettingsFactory(user: user);
 
       final Map<String, dynamic> map = {
-        GenericField.id: tc.user.id,
-        UserSettingsField.defaultCurrency: tc.userSettings.defaultCurrency,
-        UserSettingsField.defaultInstructions: tc.userSettings.defaultInstructions,
+        GenericField.id: user.id,
+        UserSettingsField.defaultCurrency: userSettings.defaultCurrency,
+        UserSettingsField.defaultInstructions: userSettings.defaultInstructions,
       };
 
       final getIt = GetIt.instance;
@@ -1924,7 +2092,7 @@ void main() {
           }
         )
       ).thenAnswer(
-        (_) async => (tc.getUserSettingsRecordModel(), {})
+        (_) async => (getUserSettingsRecordModel(userSettings: userSettings), {})
       );
 
       // Check record is not null, and errors is empty

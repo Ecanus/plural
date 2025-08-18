@@ -36,7 +36,7 @@ import 'package:plural_app/src/utils/route_to_view_button.dart';
 
 Future createCreateAskDialog(BuildContext context) async {
   final userGardenRecord = await getUserGardenRecord(
-    userID: GetIt.instance<AppState>().currentUser!.id,
+    userID: GetIt.instance<AppState>().currentUserID!,
     gardenID: GetIt.instance<AppState>().currentGarden!.id,
   );
 
@@ -78,7 +78,7 @@ class _CreateAskViewState extends State<CreateAskView> {
     _formKey = GlobalKey<FormState>();
 
     _appForm = AppForm.fromMap(Ask.emptyMap());
-    _appForm.setValue(fieldName: AskField.creator, value: _appState.currentUser!.id);
+    _appForm.setValue(fieldName: AskField.creator, value: _appState.currentUserID!);
     _appForm.setValue(fieldName: AskField.garden, value: _appState.currentGarden!.id);
     _appForm.setValue(
       fieldName: AppFormFields.rebuild,

@@ -22,7 +22,7 @@ import 'package:plural_app/src/utils/app_form.dart';
 import 'package:plural_app/src/utils/app_state.dart';
 
 // Test
-import '../test_context.dart';
+import '../test_factories.dart';
 import '../test_mocks.dart';
 import '../tester_functions.dart';
 
@@ -126,7 +126,8 @@ void main() {
     });
 
     testWidgets("showRolePickerDialog select value", (tester) async {
-      final tc = TestContext();
+      final user = AppUserFactory();
+      final garden = GardenFactory(creator: user);
 
       final AppForm appForm = AppForm();
       final GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -135,8 +136,8 @@ void main() {
       appForm.setValue(fieldName: fieldName, value: null);
 
       final appState = AppState.skipSubscribe()
-                        ..currentGarden = tc.garden
-                        ..currentUser = tc.user;
+        ..currentGarden = garden
+        ..currentUser = user;
 
       final getIt = GetIt.instance;
       final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
@@ -148,14 +149,20 @@ void main() {
       when(
         () => mockUserGardenRecordsRepository.getList(
           filter: ""
-          "${UserGardenRecordField.user} = '${tc.user.id}' && "
-          "${UserGardenRecordField.garden} = '${tc.garden.id}'",
+          "${UserGardenRecordField.user} = '${user.id}' && "
+          "${UserGardenRecordField.garden} = '${garden.id}'",
           sort: "-updated"
         )
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(
           items: [
-            tc.getUserGardenRecordRecordModel(role: AppUserGardenRole.administrator),
+            getUserGardenRecordRecordModel(
+              userGardenRecord: AppUserGardenRecordFactory(
+                garden: garden,
+                role: AppUserGardenRole.administrator,
+                user: user,
+              ),
+            )
           ]
         )
       );
@@ -201,7 +208,10 @@ void main() {
     tearDown(() => GetIt.instance.reset());
 
     testWidgets("getUserGardenRoleCards", (tester) async {
-      final tc = TestContext();
+      final user = AppUserFactory();
+      final garden = GardenFactory(
+        creator: user
+      );
 
       final AppForm appForm = AppForm();
       final GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -210,8 +220,8 @@ void main() {
       appForm.setValue(fieldName: fieldName, value: null);
 
       final appState = AppState.skipSubscribe()
-                        ..currentGarden = tc.garden
-                        ..currentUser = tc.user;
+        ..currentGarden = garden
+        ..currentUser = user;
 
       final getIt = GetIt.instance;
       final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
@@ -223,14 +233,20 @@ void main() {
       when(
         () => mockUserGardenRecordsRepository.getList(
           filter: ""
-          "${UserGardenRecordField.user} = '${tc.user.id}' && "
-          "${UserGardenRecordField.garden} = '${tc.garden.id}'",
+          "${UserGardenRecordField.user} = '${user.id}' && "
+          "${UserGardenRecordField.garden} = '${garden.id}'",
           sort: "-updated"
         )
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(
           items: [
-            tc.getUserGardenRecordRecordModel(role: AppUserGardenRole.owner),
+            getUserGardenRecordRecordModel(
+              userGardenRecord: AppUserGardenRecordFactory(
+                garden: garden,
+                role: AppUserGardenRole.owner,
+                user: user
+              )
+            ),
           ]
         )
       );
@@ -266,14 +282,20 @@ void main() {
       when(
         () => mockUserGardenRecordsRepository.getList(
           filter: ""
-          "${UserGardenRecordField.user} = '${tc.user.id}' && "
-          "${UserGardenRecordField.garden} = '${tc.garden.id}'",
+          "${UserGardenRecordField.user} = '${user.id}' && "
+          "${UserGardenRecordField.garden} = '${garden.id}'",
           sort: "-updated"
         )
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(
           items: [
-            tc.getUserGardenRecordRecordModel(role: AppUserGardenRole.administrator),
+            getUserGardenRecordRecordModel(
+              userGardenRecord: AppUserGardenRecordFactory(
+                garden: garden,
+                role: AppUserGardenRole.administrator,
+                user: user
+              )
+            ),
           ]
         )
       );
@@ -309,14 +331,20 @@ void main() {
       when(
         () => mockUserGardenRecordsRepository.getList(
           filter: ""
-          "${UserGardenRecordField.user} = '${tc.user.id}' && "
-          "${UserGardenRecordField.garden} = '${tc.garden.id}'",
+          "${UserGardenRecordField.user} = '${user.id}' && "
+          "${UserGardenRecordField.garden} = '${garden.id}'",
           sort: "-updated"
         )
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(
           items: [
-            tc.getUserGardenRecordRecordModel(role: AppUserGardenRole.member),
+            getUserGardenRecordRecordModel(
+              userGardenRecord: AppUserGardenRecordFactory(
+                garden: garden,
+                role: AppUserGardenRole.member,
+                user: user
+              )
+            ),
           ]
         )
       );

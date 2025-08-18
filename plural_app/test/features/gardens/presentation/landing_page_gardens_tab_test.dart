@@ -20,15 +20,19 @@ import 'package:plural_app/src/features/gardens/presentation/landing_page_listed
 import 'package:plural_app/src/utils/app_state.dart';
 
 // Tests
-import '../../../test_context.dart';
+import '../../../test_factories.dart';
 import '../../../test_mocks.dart';
+import '../../../test_stubs/users_repository_stubs.dart';
 
 void main() {
   group("LandingPageGardensTab test", () {
     testWidgets("snapshot.hasData", (tester) async {
-      final tc = TestContext();
+      final user = AppUserFactory();
+      final garden1 = GardenFactory();
+      final garden2 = GardenFactory();
+
       final appState = AppState()
-                        ..currentUser = tc.user;
+        ..currentUser = user;
 
       final getIt = GetIt.instance;
       final mockUsersRepository = MockUsersRepository();
@@ -42,21 +46,29 @@ void main() {
       // UserGardenRecordsRepository.getList()
       when(
         () => mockUserGardenRecordsRepository.getList(
-          expand: any(named: "expand"),
-          filter: "${UserGardenRecordField.user} = '${tc.user.id}'",
-          sort: any(named: "sort"),
+          expand: "${UserGardenRecordField.user}, ${UserGardenRecordField.garden}",
+          filter: "${UserGardenRecordField.user} = '${user.id}'",
+          sort: "${UserGardenRecordField.garden}.${GardenField.name}",
         )
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(
           items: [
-            tc.getUserGardenRecordRecordModel(
-              expand: [
+            getUserGardenRecordRecordModel(
+              userGardenRecord: AppUserGardenRecordFactory(
+                garden: garden1,
+                user: user,
+              ),
+              expandFields: [
                 UserGardenRecordField.user,
                 UserGardenRecordField.garden
               ]
             ),
-            tc.getUserGardenRecordRecordModel(
-              expand: [
+            getUserGardenRecordRecordModel(
+              userGardenRecord: AppUserGardenRecordFactory(
+                garden: garden2,
+                user: user,
+              ),
+              expandFields: [
                 UserGardenRecordField.user,
                 UserGardenRecordField.garden
               ]
@@ -66,10 +78,15 @@ void main() {
       );
 
       // UsersRepository.getFirstListItem()
-      when(
-        () => mockUsersRepository.getFirstListItem(filter: any(named: "filter"))
-      ).thenAnswer(
-        (_) async => tc.getUserRecordModel()
+      getFirstListItemStub(
+        mockUsersRepository: mockUsersRepository,
+        userID: garden1.creator.id,
+        returnValue: getUserRecordModel(user: garden1.creator)
+      );
+      getFirstListItemStub(
+        mockUsersRepository: mockUsersRepository,
+        userID: garden2.creator.id,
+        returnValue: getUserRecordModel(user: garden2.creator)
       );
 
       await tester.pumpWidget(
@@ -96,9 +113,10 @@ void main() {
     tearDown(() => GetIt.instance.reset());
 
     testWidgets("empty", (tester) async {
-      final tc = TestContext();
+      final user = AppUserFactory();
+
       final appState = AppState()
-                        ..currentUser = tc.user;
+        ..currentUser = user;
 
       final getIt = GetIt.instance;
       final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
@@ -111,7 +129,7 @@ void main() {
       when(
         () => mockUserGardenRecordsRepository.getList(
           expand: any(named: "expand"),
-          filter: "${UserGardenRecordField.user} = '${tc.user.id}'",
+          filter: "${UserGardenRecordField.user} = '${user.id}'",
           sort: any(named: "sort"),
         )
       ).thenAnswer(
@@ -146,9 +164,10 @@ void main() {
     tearDown(() => GetIt.instance.reset());
 
     testWidgets("snapshot.hasError", (tester) async {
-      final tc = TestContext();
+      final user = AppUserFactory();
+
       final appState = AppState()
-                        ..currentUser = tc.user;
+        ..currentUser = user;
 
       final getIt = GetIt.instance;
       final pb = MockPocketBase();

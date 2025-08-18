@@ -21,15 +21,16 @@ import 'package:plural_app/src/features/gardens/presentation/garden_timeline.dar
 import 'package:plural_app/src/utils/app_state.dart';
 
 // Tests
-import '../../../test_context.dart';
+import '../../../test_factories.dart';
 import '../../../test_mocks.dart';
 
 void main() {
   group("AdminPage test", () {
     testWidgets("widgets", (tester) async {
-      final tc = TestContext();
+      final garden = GardenFactory();
+
       final appState = AppState.skipSubscribe()
-                        ..currentGarden = tc.garden;
+        ..currentGarden = garden;
 
       final getIt = GetIt.instance;
       final mockAsksRepository = MockAsksRepository();
@@ -48,7 +49,7 @@ void main() {
           sort: any(named: "sort"),
         )
       ).thenAnswer(
-        (_) async => ResultList<RecordModel>(items: [tc.getAskRecordModel()])
+        (_) async => ResultList<RecordModel>(items: [getAskRecordModel()])
       );
 
       // mockUsersRepository.getFirstListItem()
@@ -57,7 +58,7 @@ void main() {
           filter: any(named: "filter")
         )
       ).thenAnswer(
-        (_) async => tc.getUserRecordModel()
+        (_) async => getUserRecordModel()
       );
 
       await tester.pumpWidget(

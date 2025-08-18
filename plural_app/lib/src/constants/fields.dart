@@ -45,8 +45,8 @@ class SignInField {
 }
 
 class UserField {
-  static const email = "email";
-  static const emailVisibility = "emailVisibility";
+  static const email = "email"; // only for login/signup/forgotpassword
+  static const emailVisibility = "emailVisibility"; // only for signup
   static const firstName = "firstName";
   static const instructions = "instructions";
   static const lastName = "lastName";

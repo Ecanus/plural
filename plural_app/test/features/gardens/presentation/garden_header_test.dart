@@ -11,15 +11,16 @@ import 'package:plural_app/src/features/gardens/presentation/garden_header.dart'
 import 'package:plural_app/src/utils/app_state.dart';
 
 // Tests
-import '../../../test_context.dart';
+import '../../../test_factories.dart';
 import '../../../test_mocks.dart';
 
 void main() {
   group("GardenHeader", () {
     testWidgets("garden name", (tester) async {
-      final tc = TestContext();
+      final garden = GardenFactory();
+
       final appState = AppState.skipSubscribe()
-                        ..currentGarden = tc.garden;
+        ..currentGarden = garden;
 
       await tester.pumpWidget(
         MaterialApp(
@@ -33,20 +34,20 @@ void main() {
 
       // Check text widget is rendered; GardenClock is rendered;
       // refresh button is rendered
-      expect(find.text(tc.garden.name), findsOneWidget);
+      expect(find.text(garden.name), findsOneWidget);
       expect(find.byType(GardenClock), findsOneWidget);
       expect(find.byType(IconButton), findsOneWidget);
     });
 
     testWidgets("refresh", (tester) async {
-      final tc = TestContext();
+      final garden = GardenFactory();
       final mockAppState = MockAppState();
 
       // AppState.currentGarden()
       when(
         () => mockAppState.currentGarden
       ).thenAnswer(
-        (_) => tc.garden
+        (_) => garden
       );
       // AppState.refresh()
       when(
@@ -73,10 +74,10 @@ void main() {
     });
 
     testWidgets("isAdminPage", (tester) async {
-      final tc = TestContext();
+      final garden = GardenFactory();
 
       final appState = AppState.skipSubscribe()
-                        ..currentGarden = tc.garden;
+        ..currentGarden = garden;
 
       await tester.pumpWidget(
         MaterialApp(

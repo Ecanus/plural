@@ -22,8 +22,9 @@ import 'package:plural_app/src/utils/app_form.dart';
 import 'package:plural_app/src/utils/app_state.dart';
 
 // Tests
-import '../../../test_context.dart';
+import '../../../test_factories.dart';
 import '../../../test_mocks.dart';
+import '../../../test_stubs/users_repository_stubs.dart';
 
 void main() {
   group("Ask submitCreate", () {
@@ -31,17 +32,19 @@ void main() {
       final testList = [1, 2, 3];
       void func() => testList.clear();
 
-      final tc = TestContext();
+      final user = AppUserFactory();
+      final garden = GardenFactory(creator: user);
+
       final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
       // AppForm
       const fieldName = "champs";
       final appForm = AppForm()
-                      ..setValue(fieldName: AppFormFields.rebuild, value: func, isAux: true)
-                      ..setValue(fieldName: fieldName, value: null);
+        ..setValue(fieldName: AppFormFields.rebuild, value: func, isAux: true)
+        ..setValue(fieldName: fieldName, value: null);
       final appState = AppState.skipSubscribe()
-                      ..currentGarden = tc.garden // for getAsksByUserID
-                      ..currentUser = tc.user;
+        ..currentGarden = garden // for getAsksByUserID
+        ..currentUser = user;
 
       // GetIt
       final getIt = GetIt.instance;
@@ -56,7 +59,7 @@ void main() {
       when(
         () => mockAsksRepository.create(body: appForm.fields)
       ).thenAnswer(
-        (_) async => (tc.getAskRecordModel(), {})
+        (_) async => (getAskRecordModel(), {})
       );
 
       // AsksRepository.getList()
@@ -65,14 +68,16 @@ void main() {
           filter: any(named: "filter"), sort: any(named: "sort")
         )
       ).thenAnswer(
-        (_) async => ResultList<RecordModel>(items: [tc.getAskRecordModel()])
+        (_) async => ResultList<RecordModel>(items: [
+          getAskRecordModel(ask: AskFactory(creator: user))]
+        )
       );
 
       // UsersRepository.getFirstListItem()
-      when(
-        () => mockUsersRepository.getFirstListItem(filter: any(named: "filter"))
-      ).thenAnswer(
-        (_) async => tc.getUserRecordModel()
+      getFirstListItemStub(
+        mockUsersRepository: mockUsersRepository,
+        userID: user.id,
+        returnValue: getUserRecordModel(user: user)
       );
 
       await tester.pumpWidget(
@@ -146,16 +151,16 @@ void main() {
       final testList = [1, 2, 3];
       void func() => testList.clear();
 
-      final tc = TestContext();
+      final user = AppUserFactory();
       final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
       // AppForm
       const fieldName = "fields";
       final appForm = AppForm()
-                      ..setValue(fieldName: AppFormFields.rebuild, value: func, isAux: true)
-                      ..setValue(fieldName: fieldName, value: null);
+        ..setValue(fieldName: AppFormFields.rebuild, value: func, isAux: true)
+        ..setValue(fieldName: fieldName, value: null);
       final appState = AppState()
-                      ..currentUser = tc.user;
+        ..currentUser = user;
 
       // GetIt
       final getIt = GetIt.instance;
@@ -243,11 +248,11 @@ void main() {
       final testList = [1, 2, 3];
       void func() => testList.clear();
 
-      final tc = TestContext();
+      final user = AppUserFactory();
       final appForm = AppForm()
-                      ..setValue(fieldName: AppFormFields.rebuild, value: func, isAux: true);
+        ..setValue(fieldName: AppFormFields.rebuild, value: func, isAux: true);
       final appState = AppState()
-                      ..currentUser = tc.user;
+        ..currentUser = user;
 
       final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
@@ -274,14 +279,16 @@ void main() {
           filter: any(named: "filter"), sort: any(named: "sort")
         )
       ).thenAnswer(
-        (_) async => ResultList<RecordModel>(items: [tc.getAskRecordModel()])
+        (_) async => ResultList<RecordModel>(items: [
+          getAskRecordModel(ask: AskFactory(creator: user))]
+        )
       );
 
       // UsersRepository.getFirstListItem()
-      when(
-        () => mockUsersRepository.getFirstListItem(filter: any(named: "filter"))
-      ).thenAnswer(
-        (_) async => tc.getUserRecordModel()
+      getFirstListItemStub(
+        mockUsersRepository: mockUsersRepository,
+        userID: user.id,
+        returnValue: getUserRecordModel(user: user)
       );
 
       // AppDialogViewRouter.routeToAskDialogListView()
@@ -363,15 +370,14 @@ void main() {
       final testList = [1, 2, 3];
       void func() => testList.clear();
 
-      final tc = TestContext();
       final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
       // AppForm
       const fieldName = "champs";
       final appForm = AppForm()
-                      ..setValue(fieldName: GenericField.id, value: "ID")
-                      ..setValue(fieldName: AppFormFields.rebuild, value: func, isAux: true)
-                      ..setValue(fieldName: fieldName, value: null);
+        ..setValue(fieldName: GenericField.id, value: "ID")
+        ..setValue(fieldName: AppFormFields.rebuild, value: func, isAux: true)
+        ..setValue(fieldName: fieldName, value: null);
 
       // GetIt
       final getIt = GetIt.instance;
@@ -385,7 +391,7 @@ void main() {
           body: appForm.fields
         )
       ).thenAnswer(
-        (_) async => (tc.getAskRecordModel(), {})
+        (_) async => (getAskRecordModel(), {})
       );
 
       await tester.pumpWidget(
@@ -540,15 +546,14 @@ void main() {
       final testList = [1, 2, 3];
       void func() => testList.clear();
 
-      final tc = TestContext();
       final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
       // AppForm
       const fieldName = "champs";
       final appForm = AppForm()
-                      ..setValue(fieldName: GenericField.id, value: "ID")
-                      ..setValue(fieldName: AppFormFields.rebuild, value: func, isAux: true)
-                      ..setValue(fieldName: fieldName, value: null);
+        ..setValue(fieldName: GenericField.id, value: "ID")
+        ..setValue(fieldName: AppFormFields.rebuild, value: func, isAux: true)
+        ..setValue(fieldName: fieldName, value: null);
 
       // GetIt
       final getIt = GetIt.instance;
@@ -562,7 +567,7 @@ void main() {
           body: appForm.fields
         )
       ).thenAnswer(
-        (_) async => (tc.getAskRecordModel(), {})
+        (_) async => (getAskRecordModel(), {})
       );
 
       await tester.pumpWidget(

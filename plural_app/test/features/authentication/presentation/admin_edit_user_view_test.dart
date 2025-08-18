@@ -13,7 +13,6 @@ import 'package:plural_app/src/constants/fields.dart';
 // Auth
 import 'package:plural_app/src/features/authentication/data/user_garden_records_repository.dart';
 import 'package:plural_app/src/features/authentication/data/users_repository.dart';
-import 'package:plural_app/src/features/authentication/domain/app_user.dart';
 import 'package:plural_app/src/features/authentication/domain/app_user_garden_record.dart';
 import 'package:plural_app/src/features/authentication/presentation/admin_edit_user_view.dart';
 import 'package:plural_app/src/features/authentication/presentation/expel_user_button.dart';
@@ -23,18 +22,24 @@ import 'package:plural_app/src/utils/app_dialog_view_router.dart';
 import 'package:plural_app/src/utils/app_state.dart';
 
 // Test
-import '../../../test_context.dart';
+import '../../../test_factories.dart';
 import '../../../test_mocks.dart';
 import '../../../test_stubs.dart';
+import '../../../test_stubs/users_repository_stubs.dart';
 
 void main() {
   group("AdminEditUserView", () {
     testWidgets("widgets", (tester) async {
-      final tc = TestContext();
+      final user = AppUserFactory();
+      final garden = GardenFactory();
+      final userGardenRecord = AppUserGardenRecordFactory(
+        garden: garden,
+        user: user,
+      );
 
       final appState = AppState.skipSubscribe()
-                        ..currentGarden = tc.garden
-                        ..currentUser = tc.user;
+        ..currentGarden = garden
+        ..currentUser = user;
 
       final getIt = GetIt.instance;
       final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
@@ -48,43 +53,53 @@ void main() {
 
       // user -> auth_api.getUserGardenRecordRole()
       final userGardenRecordRoleItems = ResultList<RecordModel>(items: [
-        tc.getUserGardenRecordRecordModel(role: AppUserGardenRole.administrator)
+        getUserGardenRecordRecordModel(
+          userGardenRecord: AppUserGardenRecordFactory(
+            garden: garden,
+            role: AppUserGardenRole.administrator,
+            user: user
+          ),
+        )
       ]);
       getUserGardenRecordRoleStub(
         mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
-        userID: tc.user.id,
-        gardenID: tc.garden.id,
+        userID: user.id,
+        gardenID: garden.id,
         returnValue: userGardenRecordRoleItems
       );
 
       // user -> auth_api.getCurrentGardenUserGardenRecords()
       final currentGardenUserGardenRecordsItems = ResultList<RecordModel>(items: [
-        tc.getUserGardenRecordRecordModel(
-          expand: [
+        getUserGardenRecordRecordModel(
+          userGardenRecord: AppUserGardenRecordFactory(
+            garden: garden,
+            role: AppUserGardenRole.owner,
+            user: user,
+          ),
+          expandFields: [
             UserGardenRecordField.user,
             UserGardenRecordField.garden
           ],
-          role: AppUserGardenRole.owner,
         )
       ]);
       getCurrentGardenUserGardenRecordsStub(
         mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
-        gardenID: tc.garden.id,
+        gardenID: garden.id,
         returnValue: currentGardenUserGardenRecordsItems,
       );
 
       // user -> UsersRepository.getFirstListItem()
-      usersRepositoryGetFirstListItemStub(
+      getFirstListItemStub(
         mockUsersRepository: mockUsersRepository,
-        userID: tc.user.id,
-        returnValue: tc.getUserRecordModel()
+        userID: garden.creator.id,
+        returnValue: getUserRecordModel(user: garden.creator)
       );
 
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
             body: AppDialog(
-              view: AdminEditUserView(userGardenRecord: tc.userGardenRecord)
+              view: AdminEditUserView(userGardenRecord: userGardenRecord)
             ),
           ),
         )
@@ -96,7 +111,7 @@ void main() {
       verifyNever(
         () => mockUserGardenRecordsRepository.getList(
           expand: UserGardenRecordField.user,
-          filter: "${UserGardenRecordField.garden} = '${tc.garden.id}'",
+          filter: "${UserGardenRecordField.garden} = '${garden.id}'",
           sort: "${UserGardenRecordField.user}.${UserField.username}"
         )
       );
@@ -110,7 +125,7 @@ void main() {
       verify(
         () => mockUserGardenRecordsRepository.getList(
           expand: UserGardenRecordField.user,
-          filter: "${UserGardenRecordField.garden} = '${tc.garden.id}'",
+          filter: "${UserGardenRecordField.garden} = '${garden.id}'",
           sort: "${UserGardenRecordField.user}.${UserField.username}"
         )
       ).called(1);
@@ -119,17 +134,15 @@ void main() {
     tearDown(() => GetIt.instance.reset());
 
     testWidgets("ExpelUserButton", (tester) async {
-      final tc = TestContext();
+      final currentUser = AppUserFactory();
 
-      final otherUser = AppUser(
-        firstName: "firstName",
-        id: "id",
-        lastName: "lastName",
-        username: "username"
+      final otherUser = AppUserFactory();
+      final otherUserGardenRecord = AppUserGardenRecordFactory(
+        user: otherUser,
       );
 
       final appState = AppState.skipSubscribe()
-                        ..currentUser = otherUser;
+        ..currentUser = currentUser;
 
       final getIt = GetIt.instance;
       getIt.registerLazySingleton<AppState>(() => appState);
@@ -139,13 +152,13 @@ void main() {
         MaterialApp(
           home: Scaffold(
             body: AppDialog(
-              view: AdminEditUserView(userGardenRecord: tc.userGardenRecord)
+              view: AdminEditUserView(userGardenRecord: otherUserGardenRecord)
             ),
           ),
         )
       );
 
-      // Check no ExpelUserButton (because isCurrentUser)
+      // Check ExpelUserButton shows (because userGardenRecord belongs to non-currentUser)
       expect(find.byType(ExpelUserButton), findsOneWidget);
     });
 

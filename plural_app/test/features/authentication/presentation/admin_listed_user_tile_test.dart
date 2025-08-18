@@ -7,7 +7,6 @@ import 'package:mocktail/mocktail.dart';
 import 'package:plural_app/src/constants/themes.dart';
 
 // Auth
-import 'package:plural_app/src/features/authentication/domain/app_user.dart';
 import 'package:plural_app/src/features/authentication/domain/app_user_garden_record.dart';
 import 'package:plural_app/src/features/authentication/presentation/admin_listed_user_tile.dart';
 
@@ -16,16 +15,21 @@ import 'package:plural_app/src/utils/app_dialog_view_router.dart';
 import 'package:plural_app/src/utils/app_state.dart';
 
 // Tests
-import '../../../test_context.dart';
+import '../../../test_factories.dart';
 import '../../../test_mocks.dart';
 
 void main() {
   group("AdminListedUserTile", () {
     testWidgets("isCurrentUser", (tester) async {
-      final tc = TestContext();
+      final user = AppUserFactory();
+      final garden = GardenFactory();
+      final userGardenRecord = AppUserGardenRecordFactory(
+        garden: garden,
+        user: user
+      );
 
       final appState = AppState.skipSubscribe()
-                        ..currentUser = tc.user;
+        ..currentUser = user;
 
       final getIt = GetIt.instance;
       getIt.registerLazySingleton<AppState>(() => appState);
@@ -37,27 +41,22 @@ void main() {
           home: Scaffold(
             body: ListView(
               children: [
-                AdminListedUserTile(userGardenRecord: tc.userGardenRecord)
+                AdminListedUserTile(userGardenRecord: userGardenRecord)
               ],
             ),
           ),
         )
       );
 
-      // Check Icon.person is shown is isCurrentUser
+      // Check Icon.person is shown becaause userGardenRecord belongs to currentUser
       expect(find.byIcon(Icons.person), findsOneWidget);
 
-      // Change userGardenRecord.user (so that !isCurrentUser)
-      final newUser = AppUser(
-        firstName: "firstName",
-        id: "id",
-        lastName: "lastName",
-        username: "username"
-      );
-      final newUserGardenRecord = AppUserGardenRecord(
-        garden: tc.garden,
+      // Create userGardenRecord with user != isCurrentUser. Role is member
+      final newUser = AppUserFactory();
+      final newUserGardenRecord = AppUserGardenRecordFactory(
+        garden: garden,
         doDocumentReadDate: DateTime(2000, 1, 31),
-        id: "garden",
+        id: "newUserGardenRecord",
         role: AppUserGardenRole.member,
         user: newUser
       );
@@ -75,17 +74,22 @@ void main() {
         )
       );
 
-      // Check Icon.person is shown is isCurrentUser
+      // Check Icon.person is not shown because newUserGardenRecord does not belong to currentUser
       expect(find.byIcon(Icons.person), findsNothing);
     });
 
     tearDown(() => GetIt.instance.reset());
 
     testWidgets("isEditable", (tester) async {
-      final tc = TestContext();
+      final user = AppUserFactory();
+      final garden = GardenFactory();
+      final userGardenRecord = AppUserGardenRecordFactory(
+        garden: garden,
+        user: user
+      );
 
       final appState = AppState.skipSubscribe()
-                        ..currentUser = tc.user;
+        ..currentUser = user;
 
       final mockAppDialogViewRouter = MockAppDialogViewRouter();
 
@@ -93,17 +97,12 @@ void main() {
       getIt.registerLazySingleton<AppState>(() => appState);
       getIt.registerLazySingleton<AppDialogViewRouter>(() => mockAppDialogViewRouter);
 
-      // Use a User who is the owner (so that the tile not isEditable)
-      final newUser = AppUser(
-        firstName: "firstName",
-        id: "id",
-        lastName: "lastName",
-        username: "username"
-      );
+      // Create a User that is the owner (so that the tile not isEditable)
+      final newUser = AppUserFactory();
       final newUserGardenRecord = AppUserGardenRecord(
-        garden: tc.garden,
+        garden: garden,
         doDocumentReadDate: DateTime(2000, 1, 31),
-        id: "garden",
+        id: "newUserGardenRecord",
         role: AppUserGardenRole.owner,
         user: newUser
       );
@@ -124,9 +123,9 @@ void main() {
       // Check Icon.arrow_forward_ios is not shown if not isEditable
       expect(find.byIcon(Icons.arrow_forward_ios), findsNothing);
 
-      // Now, use a user who is a member (so that the tile is editable)
+      // Now, try with user with role of member instead (so that the tile is editable)
       when(
-        () => mockAppDialogViewRouter.routeToAdminEditUserView(tc.userGardenRecord)
+        () => mockAppDialogViewRouter.routeToAdminEditUserView(userGardenRecord)
       ).thenAnswer(
         (_) async => {}
       );
@@ -137,7 +136,7 @@ void main() {
           home: Scaffold(
             body: ListView(
               children: [
-                AdminListedUserTile(userGardenRecord: tc.userGardenRecord)
+                AdminListedUserTile(userGardenRecord: userGardenRecord)
               ],
             ),
           ),
@@ -148,7 +147,7 @@ void main() {
       expect(find.byIcon(Icons.arrow_forward_ios), findsOneWidget);
 
       verifyNever(
-        () => mockAppDialogViewRouter.routeToAdminEditUserView(tc.userGardenRecord)
+        () => mockAppDialogViewRouter.routeToAdminEditUserView(userGardenRecord)
       );
 
       // Tap on the ListTile (to test on the method)
@@ -156,7 +155,7 @@ void main() {
       await tester.pumpAndSettle();
 
       verify(
-        () => mockAppDialogViewRouter.routeToAdminEditUserView(tc.userGardenRecord)
+        () => mockAppDialogViewRouter.routeToAdminEditUserView(userGardenRecord)
       ).called(1);
     });
 

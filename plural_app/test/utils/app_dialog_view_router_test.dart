@@ -41,9 +41,10 @@ import 'package:plural_app/src/utils/app_dialog_view_router.dart';
 import 'package:plural_app/src/utils/app_state.dart';
 
 // Tests
-import '../test_context.dart';
+import '../test_factories.dart';
 import '../test_mocks.dart';
 import '../test_stubs.dart';
+import '../test_stubs/users_repository_stubs.dart';
 
 void main() {
   group("AppDialogViewRouter", () {
@@ -110,29 +111,28 @@ void main() {
     tearDown(() => GetIt.instance.reset());
 
     test("routeToEditAskView", () async {
-      final tc = TestContext();
       final appDialogViewRouter = AppDialogViewRouter();
 
       expect(appDialogViewRouter.viewNotifier.value, isA<SizedBox>());
-      appDialogViewRouter.routeToEditAskView(tc.ask);
+      appDialogViewRouter.routeToEditAskView(AskFactory());
       expect(appDialogViewRouter.viewNotifier.value, isA<EditAskView>());
     });
 
     test("routeToExamineAskView", () async {
-      final tc = TestContext();
       final appDialogViewRouter = AppDialogViewRouter();
 
       expect(appDialogViewRouter.viewNotifier.value, isA<SizedBox>());
-      appDialogViewRouter.routeToExamineAskView(tc.ask);
+      appDialogViewRouter.routeToExamineAskView(AskFactory());
       expect(appDialogViewRouter.viewNotifier.value, isA<ExamineAskView>());
     });
 
     test("routeToListedAsksView", () async {
-      final tc = TestContext();
+      final user = AppUserFactory();
+      final garden = GardenFactory();
 
       final appState = AppState.skipSubscribe()
-                        ..currentGarden = tc.garden // for getAsksByUserID
-                        ..currentUser = tc.user;
+        ..currentGarden = garden // for getAsksByUserID
+        ..currentUser = user;
 
       final getIt = GetIt.instance;
       final mockAsksRepository = MockAsksRepository();
@@ -145,11 +145,13 @@ void main() {
       getAsksByUserIDStub(
         mockAsksRepository: mockAsksRepository,
         asksSort: GenericField.created,
-        gardenID: tc.garden.id,
-        asksReturnValue: ResultList<RecordModel>(items: [tc.getAskRecordModel()]),
+        gardenID: garden.id,
+        asksReturnValue: ResultList<RecordModel>(items: [
+          getAskRecordModel(ask: AskFactory(creator: user))
+        ]),
         mockUsersRepository: mockUsersRepository,
-        userID: tc.user.id,
-        usersReturnValue: tc.getUserRecordModel(),
+        userID: user.id,
+        usersReturnValue: getUserRecordModel(user: user),
       );
 
       final appDialogViewRouter = AppDialogViewRouter();
@@ -162,11 +164,12 @@ void main() {
     tearDown(() => GetIt.instance.reset());
 
     test("routeToSponsoredAsksView", () async {
-      final tc = TestContext();
+      final user = AppUserFactory();
+      final garden = GardenFactory();
 
       final appState = AppState.skipSubscribe()
-                        ..currentGarden = tc.garden // for getAsksByUserID
-                        ..currentUser = tc.user;
+        ..currentGarden = garden // for getAsksByUserID
+        ..currentUser = user;
 
       final getIt = GetIt.instance;
       final mockAsksRepository = MockAsksRepository();
@@ -180,19 +183,21 @@ void main() {
       final nowString = DateFormat(Formats.dateYMMddHHms).format(datetimeNow);
 
       final asksFilter = ""
-        "${AskField.garden} = '${tc.garden.id}' " // mind the trailing space
+        "${AskField.garden} = '${garden.id}' " // mind the trailing space
         "&& ${AskField.targetMetDate} = null"
         "&& ${AskField.deadlineDate} > '$nowString'"
-        "&& ${AskField.creator} != '${tc.user.id}'"
-        "&& ${AskField.sponsors} ~ '${tc.user.id}'";
+        "&& ${AskField.creator} != '${user.id}'"
+        "&& ${AskField.sponsors} ~ '${user.id}'";
 
       getAsksByGardenIDStub(
         mockAsksRepository: mockAsksRepository,
         asksFilter: asksFilter,
-        asksReturnValue: ResultList<RecordModel>(items: [tc.getAskRecordModel()]),
+        asksReturnValue: ResultList<RecordModel>(items: [
+          getAskRecordModel(ask: AskFactory(creator: user))
+        ]),
         mockUsersRepository: mockUsersRepository,
-        userID: tc.user.id,
-        usersReturnValue: tc.getUserRecordModel(),
+        userID: user.id,
+        usersReturnValue: getUserRecordModel(user: user),
       );
 
       final appDialogViewRouter = AppDialogViewRouter();
@@ -205,21 +210,22 @@ void main() {
     tearDown(() => GetIt.instance.reset());
 
     test("routeToAdminEditUserView", () async {
-      final tc = TestContext();
       final appDialogViewRouter = AppDialogViewRouter();
 
       expect(appDialogViewRouter.viewNotifier.value, isA<SizedBox>());
-      appDialogViewRouter.routeToAdminEditUserView(tc.userGardenRecord);
+      appDialogViewRouter.routeToAdminEditUserView(AppUserGardenRecordFactory());
       expect(appDialogViewRouter.viewNotifier.value, isA<AdminEditUserView>());
     });
 
     test("routeToAdminListedUsersView", () async {
-      final tc = TestContext();
+      final user = AppUserFactory();
+      final garden = GardenFactory();
+
       final appDialogViewRouter = AppDialogViewRouter();
 
       final appState = AppState.skipSubscribe()
-                      ..currentGarden = tc.garden
-                      ..currentUser = tc.user;
+        ..currentGarden = garden
+        ..currentUser = user;
 
       final getIt = GetIt.instance;
       final mockBuildContext = MockBuildContext();
@@ -235,41 +241,61 @@ void main() {
       // getUserGardenRecordRole() through AppState.verify()
       final items1 = ResultList<RecordModel>(
         items: [
-          tc.getUserGardenRecordRecordModel(role: AppUserGardenRole.administrator),
+          getUserGardenRecordRecordModel(
+            userGardenRecord: AppUserGardenRecordFactory(
+              garden: garden,
+              role: AppUserGardenRole.administrator,
+              user: user,
+            ),
+          ),
         ]
       );
       getUserGardenRecordRoleStub(
         mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
-        userID: tc.user.id,
-        gardenID: tc.garden.id,
+        userID: user.id,
+        gardenID: garden.id,
         returnValue: items1
       );
 
       // getCurrentGardenUserGardenRecords() through AppState.verify()
       final items = ResultList<RecordModel>(
         items: [
-          tc.getUserGardenRecordRecordModel(
-            expand: [
+          getUserGardenRecordRecordModel(
+            userGardenRecord: AppUserGardenRecordFactory(
+              garden: garden,
+              role: AppUserGardenRole.owner
+            ),
+            expandFields: [
               UserGardenRecordField.user,
               UserGardenRecordField.garden
             ],
-            role: AppUserGardenRole.owner
           ),
-          tc.getUserGardenRecordRecordModel(
-            expand: [
+          getUserGardenRecordRecordModel(
+            userGardenRecord: AppUserGardenRecordFactory(
+              garden: garden,
+              role: AppUserGardenRole.administrator
+            ),
+            expandFields: [
               UserGardenRecordField.user,
               UserGardenRecordField.garden
             ],
-            role: AppUserGardenRole.administrator
           ),
-          tc.getUserGardenRecordRecordModel(
-            expand: [
+          getUserGardenRecordRecordModel(
+            userGardenRecord: AppUserGardenRecordFactory(
+              garden: garden,
+              role: AppUserGardenRole.member
+            ),
+            expandFields: [
               UserGardenRecordField.user,
               UserGardenRecordField.garden
             ]
           ),
-          tc.getUserGardenRecordRecordModel(
-            expand: [
+          getUserGardenRecordRecordModel(
+            userGardenRecord: AppUserGardenRecordFactory(
+              garden: garden,
+              role: AppUserGardenRole.member
+            ),
+            expandFields: [
               UserGardenRecordField.user,
               UserGardenRecordField.garden
             ]
@@ -278,15 +304,15 @@ void main() {
       );
       getCurrentGardenUserGardenRecordsStub(
         mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
-        gardenID: tc.garden.id,
+        gardenID: garden.id,
         returnValue: items,
       );
 
       // UsersRepository.getFirstListItem()
-      usersRepositoryGetFirstListItemStub(
+      getFirstListItemStub(
         mockUsersRepository: mockUsersRepository,
-        userID: tc.user.id,
-        returnValue: tc.getUserRecordModel(),
+        userID: garden.creator.id,
+        returnValue: getUserRecordModel(user: garden.creator),
       );
 
       expect(appDialogViewRouter.viewNotifier.value, isA<SizedBox>());
@@ -297,11 +323,12 @@ void main() {
     tearDown(() => GetIt.instance.reset());
 
     test("routeToUserSettingsView", () async {
-      final tc = TestContext();
+      final user = AppUserFactory();
+      final userSettings = AppUserSettingsFactory(user: user);
 
       final appState = AppState()
-                        ..currentUser = tc.user
-                        ..currentUserSettings = tc.userSettings;
+        ..currentUser = user
+        ..currentUserSettings = userSettings;
 
       final getIt = GetIt.instance;
       getIt.registerLazySingleton<AppState>(() => appState);
@@ -344,6 +371,7 @@ void main() {
 
       final user = AppUserFactory();
       final garden = GardenFactory();
+
       final userGardenRecord = AppUserGardenRecordFactory(
         garden: garden,
         user: user,
@@ -386,12 +414,10 @@ void main() {
       );
 
       // UsersRepository.getFirstListItem()
-      when(
-        () => mockUsersRepository.getFirstListItem(
-          filter: "${GenericField.id} = '${user.id}'",
-        )
-      ).thenAnswer(
-        (_) async => getUserRecordModel(user: garden.creator)
+      getFirstListItemStub(
+        mockUsersRepository: mockUsersRepository,
+        userID: garden.creator.id,
+        returnValue: getUserRecordModel(user: garden.creator)
       );
 
       expect(appDialogViewRouter.viewNotifier.value, isA<SizedBox>());
@@ -410,17 +436,18 @@ void main() {
     });
 
     test("routeToAdminListedInvitationsView", () async {
-      final appDialogViewRouter = AppDialogViewRouter();
+      final user = AppUserFactory();
+      final garden = GardenFactory();
 
-      final tc = TestContext();
+      final appDialogViewRouter = AppDialogViewRouter();
 
       final expiryDateThreshold = DateTime.now();
       final expiryDateThresholdString =
         DateFormat(Formats.dateYMMdd).format(expiryDateThreshold);
 
       final appState = AppState.skipSubscribe()
-        ..currentGarden = tc.garden
-        ..currentUser = tc.user;
+        ..currentGarden = garden
+        ..currentUser = user;
 
       final getIt = GetIt.instance;
       final mockBuildContext = MockBuildContext();
@@ -437,12 +464,18 @@ void main() {
 
       // getUserGardenRecordRole() through AppState.verify()
       final items = ResultList<RecordModel>(items: [
-        tc.getUserGardenRecordRecordModel(role: AppUserGardenRole.administrator)
+        getUserGardenRecordRecordModel(
+          userGardenRecord: AppUserGardenRecordFactory(
+            garden: garden,
+            role: AppUserGardenRole.administrator,
+            user: user
+          ),
+        )
       ]);
       getUserGardenRecordRoleStub(
         mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
-        userID: tc.user.id,
-        gardenID: tc.garden.id,
+        userID: user.id,
+        gardenID: garden.id,
         returnValue: items
       );
 
@@ -451,14 +484,14 @@ void main() {
         () => mockInvitationsRepository.getList(
           expand: "${InvitationField.creator}, ${InvitationField.invitee}",
           filter: ""
-            "${InvitationField.garden} = '${tc.garden.id}' "
+            "${InvitationField.garden} = '${garden.id}' "
             "&& ${InvitationField.expiryDate} > '$expiryDateThresholdString'",
           sort: GenericField.created
         )
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(items: [
-          tc.getPrivateInvitationRecordModel(
-            expand: [InvitationField.creator, InvitationField.invitee]
+          getPrivateInvitationRecordModel(
+            expandFields: [InvitationField.creator, InvitationField.invitee]
           ),
         ])
       );

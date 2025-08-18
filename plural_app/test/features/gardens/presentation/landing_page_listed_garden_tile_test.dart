@@ -25,17 +25,18 @@ import 'package:plural_app/src/features/gardens/presentation/landing_page_listed
 import 'package:plural_app/src/utils/app_state.dart';
 
 // Tests
-import '../../../test_context.dart';
+import '../../../test_factories.dart';
 import '../../../test_mocks.dart';
 
 void main() {
   group("LandingPageListedGardenTile", () {
     testWidgets("LandingPageListedGardenTile", (tester) async {
-      final tc = TestContext();
+      final user = AppUserFactory();
+      final garden = GardenFactory();
 
       final appState = AppState()
-                        ..currentGarden = null
-                        ..currentUser = tc.user;
+        ..currentGarden = null
+        ..currentUser = user;
 
       final getIt = GetIt.instance;
       final mockAsksRepository = MockAsksRepository();
@@ -102,24 +103,29 @@ void main() {
         (_) async => () {}
       );
 
-      // UserGardenRecordsRepository.getList()
+      // UserGardenRecordsRepository.getList() via AppUser.hasRole()
       when(
         () => mockUserGardenRecordsRepository.getList(
           filter: ""
-            "${UserGardenRecordField.user} = '${tc.user.id}' && "
-            "${UserGardenRecordField.garden} = '${tc.garden.id}'",
+            "${UserGardenRecordField.user} = '${user.id}' && "
+            "${UserGardenRecordField.garden} = '${garden.id}'",
           sort: any(named: "sort")
           )
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(
           items: [
-            tc.getUserGardenRecordRecordModel(
-              expand: [
+            getUserGardenRecordRecordModel(
+              userGardenRecord: AppUserGardenRecordFactory(
+                garden: garden,
+                id: "testGardenRecordID",
+                role: AppUserGardenRole.member,
+                user: user,
+              ),
+              expandFields: [
                 UserGardenRecordField.user,
                 UserGardenRecordField.garden
               ],
-              recordID: "TestGardenRecordID",
-              role: AppUserGardenRole.member),
+            ),
           ]
         )
       );
@@ -127,10 +133,10 @@ void main() {
       // UsersRepository.getFirstListItem()
       when(
         () => mockUsersRepository.getFirstListItem(
-          filter: "${GenericField.id} = '${tc.user.id}'"
+          filter: "${GenericField.id} = '${user.id}'"
           )
       ).thenAnswer(
-        (_) async => tc.getUserRecordModel()
+        (_) async =>  getUserRecordModel()
       );
 
       final testRouter = GoRouter(
@@ -145,7 +151,7 @@ void main() {
             builder: (_, __) => Scaffold(
               body: Builder(
                 builder: (BuildContext context) {
-                  return LandingPageListedGardenTile(garden: tc.garden);
+                  return LandingPageListedGardenTile(garden: garden);
                 }
               ),
             )
@@ -160,7 +166,7 @@ void main() {
       );
 
       // Check title is rendered; appState.currentGarden is null
-      expect(find.text(tc.garden.name), findsOneWidget);
+      expect(find.text(garden.name), findsOneWidget);
       expect(appState.currentGarden, null);
 
       // Tap on the ListTile
@@ -168,17 +174,18 @@ void main() {
       await tester.pumpAndSettle();
 
       // Check appState.currentGarden has updated
-      expect(appState.currentGarden, tc.garden);
+      expect(appState.currentGarden, garden);
     });
 
     tearDown(() => GetIt.instance.reset());
 
     testWidgets("no UserGardenRecord found", (tester) async {
-      final tc = TestContext();
+      final user = AppUserFactory();
+      final garden = GardenFactory();
 
       final appState = AppState.skipSubscribe()
                         ..currentGarden = null
-                        ..currentUser = tc.user;
+                        ..currentUser = user;
 
       final getIt = GetIt.instance;
       final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
@@ -190,8 +197,8 @@ void main() {
       when(
         () => mockUserGardenRecordsRepository.getList(
           filter: ""
-            "${UserGardenRecordField.user} = '${tc.user.id}' && "
-            "${UserGardenRecordField.garden} = '${tc.garden.id}'",
+            "${UserGardenRecordField.user} = '${user.id}' && "
+            "${UserGardenRecordField.garden} = '${garden.id}'",
           sort: any(named: "sort")
           )
       ).thenAnswer(
@@ -212,7 +219,7 @@ void main() {
             builder: (_, __) => Scaffold(
             body: Builder(
               builder: (BuildContext context) {
-                return LandingPageListedGardenTile(garden: tc.garden);
+                return LandingPageListedGardenTile(garden: garden);
               }
             ),
           )
@@ -227,7 +234,7 @@ void main() {
       );
 
       // Check title is rendered; appState.currentGarden is null
-      expect(find.text(tc.garden.name), findsOneWidget);
+      expect(find.text(garden.name), findsOneWidget);
       expect(appState.currentGarden, null);
 
       // Tap on the ListTile
