@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart' as ft;
+import '../../../test_stubs/users_repository_stubs.dart' as users_repository;
 
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -34,8 +35,8 @@ import 'package:plural_app/src/utils/exceptions.dart';
 // Tests
 import '../../../test_factories.dart';
 import '../../../test_mocks.dart';
-import '../../../test_stubs.dart';
-import '../../../test_stubs/users_repository_stubs.dart';
+import '../../../test_record_models.dart';
+import '../../../test_stubs/asks_api_stubs.dart';
 
 void main() {
   group("asks_api", () {
@@ -104,6 +105,9 @@ void main() {
     });
 
     ft.testWidgets("deleteAsk isAdminPage", (tester) async {
+      final testList = [""];
+      void testFunc() => testList[0] = "success";
+
       final ask = AskFactory();
 
       // GetIt
@@ -136,7 +140,12 @@ void main() {
               body: Builder(
                 builder: (BuildContext context) {
                   return ElevatedButton(
-                    onPressed: () => deleteAsk(context, ask.id, isAdminPage: true),
+                    onPressed: () => deleteAsk(
+                      context,
+                      ask.id,
+                      isAdminPage: true,
+                      callback: testFunc
+                    ),
                     child: Text("The ElevatedButton")
                   );
                 }
@@ -162,6 +171,7 @@ void main() {
       verifyNever(() => mockAppState.verify([AppUserGardenPermission.deleteMemberAsks]));
       verifyNever(() => mockAsksRepository.delete(id: ask.id));
       expect(ft.find.byType(UnauthorizedPage), ft.findsNothing);
+      expect(testList[0], "");
 
       // Tap button (to call deleteAsk)
       await tester.tap(ft.find.byType(ElevatedButton));
@@ -172,11 +182,15 @@ void main() {
         [AppUserGardenPermission.deleteMemberAsks])).called(1);
       verify(() => mockAsksRepository.delete(id: ask.id)).called(1);
       expect(ft.find.byType(UnauthorizedPage), ft.findsNothing);
+      expect(testList[0], "success");
     });
 
     tearDown(() => GetIt.instance.reset());
 
     ft.testWidgets("deleteAsk !isAdminPage", (tester) async {
+      final testList = [""];
+      void testFunc() => testList[0] = "success";
+
       final ask = AskFactory();
 
       // GetIt
@@ -209,7 +223,12 @@ void main() {
               body: Builder(
                 builder: (BuildContext context) {
                   return ElevatedButton(
-                    onPressed: () => deleteAsk(context, ask.id, isAdminPage: false),
+                    onPressed: () => deleteAsk(
+                      context,
+                      ask.id,
+                      isAdminPage: false,
+                      callback: testFunc
+                    ),
                     child: Text("The ElevatedButton")
                   );
                 }
@@ -235,6 +254,7 @@ void main() {
       verifyNever(() => mockAppState.verify([AppUserGardenPermission.createAndEditAsks]));
       verifyNever(() => mockAsksRepository.delete(id: ask.id));
       expect(ft.find.byType(UnauthorizedPage), ft.findsNothing);
+      expect(testList[0], "");
 
       // Tap button (to call deleteAsk)
       await tester.tap(ft.find.byType(ElevatedButton));
@@ -245,11 +265,15 @@ void main() {
         [AppUserGardenPermission.createAndEditAsks])).called(1);
       verify(() => mockAsksRepository.delete(id: ask.id)).called(1);
       expect(ft.find.byType(UnauthorizedPage), ft.findsNothing);
+      expect(testList[0], "success");
     });
 
     tearDown(() => GetIt.instance.reset());
 
     ft.testWidgets("deleteAsk PermissionException", (tester) async {
+      final testList = [""];
+      void testFunc() => testList[0] = "success";
+
       final ask = AskFactory();
 
       // GetIt
@@ -282,7 +306,12 @@ void main() {
               body: Builder(
                 builder: (BuildContext context) {
                   return ElevatedButton(
-                    onPressed: () => deleteAsk(context, ask.id, isAdminPage: true),
+                    onPressed: () => deleteAsk(
+                      context,
+                      ask.id,
+                      isAdminPage: true,
+                      callback: testFunc,
+                    ),
                     child: Text("The ElevatedButton")
                   );
                 }
@@ -308,15 +337,17 @@ void main() {
       verifyNever(() => mockAppState.verify([AppUserGardenPermission.deleteMemberAsks]));
       verifyNever(() => mockAsksRepository.delete(id: ask.id));
       expect(ft.find.byType(UnauthorizedPage), ft.findsNothing);
+      expect(testList[0], "");
 
       // Tap button (to call deleteAsk)
       await tester.tap(ft.find.byType(ElevatedButton));
       await tester.pumpAndSettle();
 
-      // Check methods called; still no UnauthorizedPage found
+      // Check only verify is called; UnauthorizedPage now found
       verify(() => mockAppState.verify(
         [AppUserGardenPermission.deleteMemberAsks])).called(1);
       verifyNever(() => mockAsksRepository.delete(id: ask.id));
+      expect(testList[0], "");
       expect(ft.find.byType(UnauthorizedPage), ft.findsOneWidget);
     });
 
@@ -502,7 +533,7 @@ void main() {
       );
 
       // UsersRepository.getFirstListItem()
-      getFirstListItemStub(
+      users_repository.getFirstListItemStub(
         mockUsersRepository: mockUsersRepository,
         userID: user.id,
         returnValue: getUserRecordModel(user: user)
@@ -588,7 +619,9 @@ void main() {
 
     ft.testWidgets("isSponsoredToggle", (tester) async {
       final testList = [1, 2, 3];
+      final testList2 = [""];
       void testFunc(value) => testList.clear();
+      void testFunc2() => testList2[0] = "success";
 
       final user = AppUserFactory();
       final ask = AskFactory();
@@ -627,7 +660,12 @@ void main() {
               builder: (BuildContext context) {
                 return ElevatedButton(
                   onPressed: () => isSponsoredToggle(
-                    context, ask.id, testFunc, value: false),
+                    context,
+                    ask.id,
+                    testFunc,
+                    value: false,
+                    addSponsorCallback: testFunc2,
+                  ),
                   child: Text("The ElevatedButton")
                 );
               }
@@ -636,17 +674,17 @@ void main() {
         )
       );
 
-      // Check no snackBar and testList still has contents
-      expect(ft.find.byType(SnackBar), ft.findsNothing);
+      // Check testList still has contents; testList2[0] is still empty string
       expect(testList.isEmpty, false);
+      expect(testList2[0], "");
 
       // Tap ElevatedButton (to call isSponsoredToggle)
       await tester.tap(ft.find.byType(ElevatedButton));
       await tester.pumpAndSettle();
 
-      // Check still no snackBar; testList now empty
-      expect(ft.find.byType(SnackBar), ft.findsNothing);
+      // Check testList2[0] is still empty string; testList now empty
       expect(testList.isEmpty, true);
+      expect(testList2[0], "");
 
        // Value now true
        testList.addAll([1, 2, 3]);
@@ -658,7 +696,12 @@ void main() {
               builder: (BuildContext context) {
                 return ElevatedButton(
                   onPressed: () => isSponsoredToggle(
-                    context, ask.id, testFunc, value: true),
+                    context,
+                    ask.id,
+                    testFunc,
+                    value: true,
+                    addSponsorCallback: testFunc2,
+                  ),
                   child: Text("The ElevatedButton")
                 );
               }
@@ -667,17 +710,17 @@ void main() {
         )
       );
 
-      // Check no snackBar yet and testList still has contents
-      expect(ft.find.byType(SnackBar), ft.findsNothing);
+      // Check testList still has contents; testList2[0] is empty string
       expect(testList.isEmpty, false);
+      expect(testList2[0], "");
 
       // Tap ElevatedButton (to call isSponsoredToggle)
       await tester.tap(ft.find.byType(ElevatedButton));
       await tester.pumpAndSettle();
 
-      // Check snackBar now shows; testList now empty
-      expect(ft.find.byType(SnackBar), ft.findsOneWidget);
+      // Check testList now empty; testList2[0] now "success"
       expect(testList.isEmpty, true);
+      expect(testList2[0], "success");
 
     });
     test("removeSponsor", () async {

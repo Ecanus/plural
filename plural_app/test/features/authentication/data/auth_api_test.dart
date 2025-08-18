@@ -1,4 +1,6 @@
 import 'package:flutter_test/flutter_test.dart' as ft;
+import '../../../test_stubs/user_garden_records_repository_stubs.dart' as user_garden_records_repository;
+import '../../../test_stubs/users_repository_stubs.dart' as users_repository;
 
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -38,12 +40,16 @@ import 'package:plural_app/src/utils/exceptions.dart';
 // Tests
 import '../../../test_factories.dart';
 import '../../../test_mocks.dart';
-import '../../../test_stubs.dart';
-import '../../../test_stubs/users_repository_stubs.dart';
+import '../../../test_record_models.dart';
+import '../../../test_stubs/auth_api_stubs.dart';
 
 void main() {
   group("auth_api", () {
     ft.testWidgets("deleteCurrentUserAccount", (tester) async {
+      final list = [""];
+      void errorCallback() => list[0] = "error";
+      void successCallback() => list[0] = "success";
+
       final user = AppUserFactory();
       final userSettings = AppUserSettingsFactory(user: user);
 
@@ -133,8 +139,12 @@ void main() {
       verifyNever(() => mockUsersRepository.delete(id: user.id));
 
       // Call deleteCurrentUserAccount()
-      final isValid = await deleteCurrentUserAccount();
+      final isValid = await deleteCurrentUserAccount(
+        errorCallback: errorCallback,
+        successCallback: successCallback,
+      );
       expect(isValid, true);
+      expect(list[0], "success");
 
       // Check delete methods were called the correct number of times
       verify(() => mockAsksRepository.bulkDelete(resultList: asksResultList)).called(1);
@@ -157,7 +167,10 @@ void main() {
             body: Builder(
               builder: (BuildContext context) {
                 return ElevatedButton(
-                  onPressed: () => deleteCurrentUserAccount(context: context),
+                  onPressed: () => deleteCurrentUserAccount(
+                    errorCallback: errorCallback,
+                    successCallback: successCallback,
+                  ),
                   child: Text("The ElevatedButton")
                 );
               }
@@ -166,9 +179,7 @@ void main() {
         )
       );
 
-      expect(ft.find.byType(SnackBar), ft.findsNothing);
-
-      // Tap button (to call expelUserFromGarden)
+      // Tap button (to call deleteCurrentUserAccount)
       await tester.tap(ft.find.byType(ElevatedButton));
       await tester.pumpAndSettle();
 
@@ -179,7 +190,7 @@ void main() {
       );
       verifyNever(() => mockUserSettingsRepository.delete(id: userSettings.id));
       verifyNever(() => mockUsersRepository.delete(id: user.id));
-      expect(ft.find.byType(SnackBar), ft.findsOneWidget);
+      expect(list[0], "error");
     });
 
     tearDown(() => GetIt.instance.reset());
@@ -305,7 +316,7 @@ void main() {
 
     ft.testWidgets("expelUserFromGarden", (tester) async {
       final list = [1, 2, 3];
-      void testCallback(BuildContext context) => list.clear();
+      void testCallback() => list.clear();
 
       final user = AppUserFactory();
       final garden = GardenFactory();
@@ -381,7 +392,6 @@ void main() {
       );
 
       // check verify() and delete() not yet called; testCallback not called
-      // can't test SnackBar due to Navigator.pop
       expect(list.isEmpty, false);
       verifyNever(() => mockAppState.verify(any()));
       verifyNever(() => mockUserGardenRecordsRepository.delete(
@@ -393,7 +403,6 @@ void main() {
       await tester.pumpAndSettle();
 
       // check verify() and delete() now called; testCallback called
-      // can't test SnackBar due to Navigator.pop
       expect(list.isEmpty, true);
       verify(() => mockAppState.verify(any())).called(1);
       verify(() => mockUserGardenRecordsRepository.delete(
@@ -405,7 +414,7 @@ void main() {
 
     ft.testWidgets("expelUserFromGarden PermissionException", (tester) async {
       final list = [1, 2, 3];
-      void testCallback(BuildContext context) => list.clear();
+      void testCallback() => list.clear();
 
       final user = AppUserFactory();
       final garden = GardenFactory();
@@ -617,7 +626,7 @@ void main() {
       );
 
       // UsersRepository.getFirstListItem()
-      getFirstListItemStub(
+      users_repository.getFirstListItemStub(
         mockUsersRepository: mockUsersRepository,
         userID: user.id,
         returnValue: getUserRecordModel()
@@ -710,7 +719,7 @@ void main() {
       );
 
       // UsersRepository.getFirstListItem()
-      getFirstListItemStub(
+      users_repository.getFirstListItemStub(
         mockUsersRepository: mockUsersRepository,
         userID: user.id,
         returnValue: getUserRecordModel(user: user)
@@ -946,7 +955,7 @@ void main() {
       );
 
       // UsersRepository.getFirstListItem()
-      getFirstListItemStub(
+      users_repository.getFirstListItemStub(
         mockUsersRepository: mockUsersRepository,
         userID: garden.creator.id,
         returnValue: getUserRecordModel(user: garden.creator)
@@ -1131,22 +1140,22 @@ void main() {
       );
 
       // UsersRepository.getFirstListItem()
-      getFirstListItemStub(
+      users_repository.getFirstListItemStub(
         mockUsersRepository: mockUsersRepository,
         userID: garden1.creator.id,
         returnValue: getUserRecordModel(user: garden1.creator)
       );
-      getFirstListItemStub(
+      users_repository.getFirstListItemStub(
         mockUsersRepository: mockUsersRepository,
         userID: garden2.creator.id,
         returnValue: getUserRecordModel(user: garden2.creator)
       );
-      getFirstListItemStub(
+      users_repository.getFirstListItemStub(
         mockUsersRepository: mockUsersRepository,
         userID: garden3.creator.id,
         returnValue: getUserRecordModel(user: garden3.creator)
       );
-      getFirstListItemStub(
+      users_repository.getFirstListItemStub(
         mockUsersRepository: mockUsersRepository,
         userID: garden4.creator.id,
         returnValue: getUserRecordModel(user: garden4.creator)
@@ -1591,7 +1600,7 @@ void main() {
         () => mockUserGardenRecordsRepository
       );
 
-      // Stub
+      // getUserGardenRecordRoleStub() via verify()
       final items = ResultList<RecordModel>(items: [
         getUserGardenRecordRecordModel(
           userGardenRecord: AppUserGardenRecordFactory(
@@ -1610,7 +1619,7 @@ void main() {
         userGardenRecord: AppUserGardenRecordFactory(
           role: AppUserGardenRole.administrator),
         );
-      userGardenRecordsRepositoryUpdateStub(
+      user_garden_records_repository.updateStub(
         mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
         userGardenRecordID: map[GenericField.id],
         userGardenRoleName: map[UserGardenRecordField.role],
@@ -1683,7 +1692,7 @@ void main() {
       );
       getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
 
-      // otherUser -> getUserGardenRecordRole()
+      // otherUser, getUserGardenRecordRole() via verify()
       final otherUserRecordRoleItems = ResultList<RecordModel>(items: [
         getUserGardenRecordRecordModel(
           userGardenRecord: AppUserGardenRecordFactory(
@@ -1700,7 +1709,7 @@ void main() {
         returnValue: otherUserRecordRoleItems
       );
 
-      // currentUser -> getUserGardenRecordRole()
+      // user, getUserGardenRecordRole() via verify()
       final currentUserRecordRoleItems = ResultList<RecordModel>(items: [
         getUserGardenRecordRecordModel(
           userGardenRecord: AppUserGardenRecordFactory(
@@ -1725,7 +1734,7 @@ void main() {
           user: otherUser
         ),
       );
-      userGardenRecordsRepositoryUpdateStub(
+      user_garden_records_repository.updateStub(
         mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
         userGardenRecordID: map[GenericField.id],
         userGardenRoleName: map[UserGardenRecordField.role],
@@ -1765,7 +1774,7 @@ void main() {
           user: user
         ),
       );
-      userGardenRecordsRepositoryUpdateStub(
+      user_garden_records_repository.updateStub(
         mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
         userGardenRecordID: "testRecordID",
         userGardenRoleName: AppUserGardenRole.administrator.name,

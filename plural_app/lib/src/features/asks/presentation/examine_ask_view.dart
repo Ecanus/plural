@@ -5,6 +5,7 @@ import 'package:get_it/get_it.dart';
 import 'package:plural_app/src/common_widgets/app_dialog.dart';
 import 'package:plural_app/src/common_widgets/app_dialog_footer.dart';
 import 'package:plural_app/src/common_widgets/app_hyperlinkable_text.dart';
+import 'package:plural_app/src/common_widgets/app_snackbars.dart';
 import 'package:plural_app/src/common_widgets/app_tooltip_icon.dart';
 
 // Constants
@@ -181,7 +182,22 @@ class _ExamineAskViewHeaderState extends State<ExamineAskViewHeader> {
                 thumbIcon: thumbIcon,
                 value: _isSponsored,
                 onChanged: (bool value) => isSponsoredToggle(
-                  context, widget.ask.id, setIsSponsored, value: value),
+                  context,
+                  widget.ask.id,
+                  setIsSponsored,
+                  value: value,
+                  addSponsorCallback: () {
+                    if (context.mounted) {
+                      final snackBar = AppSnackBars.getSnackBar(
+                        SnackBarText.askSponsored,
+                        showCloseIcon: false,
+                        snackbarType: SnackbarType.success
+                      );
+
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    }
+                  }
+                ),
               ),
               gapW5,
               Tooltip(

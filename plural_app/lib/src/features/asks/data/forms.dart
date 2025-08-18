@@ -68,13 +68,13 @@ Future<void> submitUpdate(
     formKey.currentState!.save();
 
     // Update DB (should also rebuild Garden Timeline via SubscribeTo)
-    var (record, errorsMap) = await GetIt.instance<AsksRepository>().update(
+    final (record, errorsMap) = await GetIt.instance<AsksRepository>().update(
         id: appForm.getValue(fieldName: GenericField.id),
         body: appForm.fields
       );
 
     if (record != null && context.mounted) {
-      var snackBar = AppSnackBars.getSnackBar(
+      final snackBar = AppSnackBars.getSnackBar(
         SnackBarText.updateAskSuccess,
         showCloseIcon: false,
         snackbarType: SnackbarType.success

@@ -6,9 +6,6 @@ import 'package:intl/intl.dart';
 import 'package:pocketbase/pocketbase.dart';
 import 'package:get_it/get_it.dart';
 
-// Common Widgets
-import 'package:plural_app/src/common_widgets/app_snackbars.dart';
-
 // Constants
 import 'package:plural_app/src/constants/fields.dart';
 import 'package:plural_app/src/constants/formats.dart';
@@ -74,6 +71,7 @@ Future<void> deleteAsk(
   BuildContext context,
   String askID, {
   bool isAdminPage = false,
+  required void Function() callback,
 }) async {
   try {
     // Check permissions
@@ -88,16 +86,7 @@ Future<void> deleteAsk(
     // Deletion should also rebuild Garden Timeline via SubscribeTo
     await GetIt.instance<AsksRepository>().delete(id: askID);
 
-    if (context.mounted) {
-      var snackBar = AppSnackBars.getSnackBar(
-        SnackBarText.deleteAskSuccess,
-        showCloseIcon: false,
-        snackbarType: SnackbarType.success
-      );
-
-      // Display Success Snackbar
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    }
+    callback();
   } on PermissionException {
     if (context.mounted) {
       final newRoute = isAdminPage ? Routes.garden : Routes.landing;
@@ -304,19 +293,13 @@ Future<void> isSponsoredToggle(
   String askID,
   Function(bool) callback, {
   required bool value,
+  required void Function() addSponsorCallback,
 }) async {
   var currentUserID = GetIt.instance<AppState>().currentUserID!;
 
   if (value) {
     await addSponsor(askID, currentUserID);
-
-    final snackBar = AppSnackBars.getSnackBar(
-      SnackBarText.askSponsored,
-      showCloseIcon: false,
-      snackbarType: SnackbarType.success
-    );
-
-    if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    addSponsorCallback();
   } else {
     await removeSponsor(askID, currentUserID);
   }

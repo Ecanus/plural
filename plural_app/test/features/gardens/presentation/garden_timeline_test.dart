@@ -28,7 +28,9 @@ import 'package:plural_app/src/utils/app_state.dart';
 // Tests
 import '../../../test_factories.dart';
 import '../../../test_mocks.dart';
-import '../../../test_stubs.dart';
+import '../../../test_record_models.dart';
+import '../../../test_stubs/asks_api_stubs.dart';
+import '../../../test_stubs/auth_api_stubs.dart';
 
 void main() {
   group("GardenTimeline", () {
@@ -69,7 +71,7 @@ void main() {
       );
       getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
 
-      // Stubs
+      // getUserGardenRecordRole() via verify()
       getUserGardenRecordRoleStub(
         mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
         userID: user.id,
@@ -79,6 +81,7 @@ void main() {
             userGardenRecord: AppUserGardenRecordFactory(user: user))
         ])
       );
+
       getAsksByGardenIDStub(
         mockAsksRepository: mockAsksRepository,
         asksReturnValue: ResultList<RecordModel>(items: [
@@ -141,7 +144,7 @@ void main() {
       );
       getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
 
-      // Stubs
+      // getUserGardenRecordRole() via verify()
       getUserGardenRecordRoleStub(
         mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
         userID: user.id,
@@ -151,6 +154,7 @@ void main() {
             userGardenRecord: AppUserGardenRecordFactory(user: user))
         ])
       );
+
       getAsksByGardenIDStub(
         mockAsksRepository: mockAsksRepository,
         asksReturnValue: ResultList<RecordModel>(items: []),

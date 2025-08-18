@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plural_app/src/common_widgets/app_snackbars.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
@@ -123,7 +124,22 @@ class ConfirmDeleteAskDialog extends StatelessWidget {
                       // Close confirmation, then close the examine/edit ask view
                       Navigator.pop(context);
                       Navigator.pop(context);
-                      deleteAsk(context, askID, isAdminPage: isAdminPage);
+                      deleteAsk(
+                        context,
+                        askID,
+                        isAdminPage: isAdminPage,
+                        callback: () {
+                          if (context.mounted) {
+                            final snackBar = AppSnackBars.getSnackBar(
+                              SnackBarText.deleteAskSuccess,
+                              showCloseIcon: false,
+                              snackbarType: SnackbarType.success
+                            );
+
+                            // Display Success Snackbar
+                            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                          }
+                        });
                     },
                     style: ButtonStyle(
                       backgroundColor: WidgetStateProperty.all<Color>(

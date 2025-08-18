@@ -54,7 +54,20 @@ class AdminListedInvitationTile extends StatelessWidget {
             invitation.uuid != null ?
               IconButton(
                 icon: const Icon(Icons.content_copy),
-                onPressed: () => copyToClipboard(context, invitation.uuid!),
+                onPressed: () => copyToClipboard(
+                  invitation.uuid!,
+                  callback: () {
+                    if (context.mounted) {
+                      final snackBar = AppSnackBars.getSnackBar(
+                        SnackBarText.copiedToClipboard,
+                        showCloseIcon: false,
+                        snackbarType: SnackbarType.success
+                      );
+
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    }
+                  }
+                ),
                 tooltip: AdminInvitationViewText.copyCode,
               ) : SizedBox(),
             IconButton(

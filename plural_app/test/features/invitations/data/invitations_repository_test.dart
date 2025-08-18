@@ -15,6 +15,7 @@ import 'package:plural_app/src/features/invitations/domain/invitation.dart';
 // Tests
 import '../../../test_factories.dart';
 import '../../../test_mocks.dart';
+import '../../../test_record_models.dart';
 
 void main() {
   group("InvitationsRepository", () {

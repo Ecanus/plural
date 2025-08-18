@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart' as ft;
+import '../../../test_stubs/users_repository_stubs.dart' as users_repository;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -37,8 +38,8 @@ import 'package:plural_app/src/localization/lang_en.dart';
 // Tests
 import '../../../test_factories.dart';
 import '../../../test_mocks.dart';
-import '../../../test_stubs.dart';
-import '../../../test_stubs/users_repository_stubs.dart';
+import '../../../test_record_models.dart';
+import '../../../test_stubs/auth_api_stubs.dart';
 
 void main() {
   group("invitations_api", () {
@@ -663,8 +664,7 @@ void main() {
         () => mockUserGardenRecordsRepository
       );
 
-      // TODO: check for all instances of this check. Make sure the comment looks like the one below
-      // getUserGardenRecordRole() through AppState.verify()
+      // getUserGardenRecordRole() via verify()
       final items = ResultList<RecordModel>(items: [
         getUserGardenRecordRecordModel(
           userGardenRecord: AppUserGardenRecordFactory(
@@ -945,12 +945,12 @@ void main() {
       );
 
       // UsersRepository.getFirstListItem()
-      getFirstListItemStub(
+      users_repository.getFirstListItemStub(
         mockUsersRepository: mockUsersRepository,
         userID: garden1.creator.id,
         returnValue: getUserRecordModel(user: garden1.creator)
       );
-      getFirstListItemStub(
+      users_repository.getFirstListItemStub(
         mockUsersRepository: mockUsersRepository,
         userID: garden2.creator.id,
         returnValue: getUserRecordModel(user: garden2.creator)

@@ -27,6 +27,7 @@ import 'package:plural_app/src/utils/app_state.dart';
 // Tests
 import '../../../test_factories.dart';
 import '../../../test_mocks.dart';
+import '../../../test_record_models.dart';
 
 void main() {
   group("LandingPageListedGardenTile", () {

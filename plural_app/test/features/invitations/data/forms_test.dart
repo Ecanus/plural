@@ -27,7 +27,8 @@ import 'package:plural_app/src/utils/app_state.dart';
 // Tests
 import '../../../test_factories.dart';
 import '../../../test_mocks.dart';
-import '../../../test_stubs.dart';
+import '../../../test_record_models.dart';
+import '../../../test_stubs/auth_api_stubs.dart';
 
 void main() {
   group("submitCreate", () {
@@ -64,7 +65,7 @@ void main() {
         () => mockUserGardenRecordsRepository
       );
 
-      // getUserGardenRecordRole() through AppState.verify()
+      // getUserGardenRecordRole() via verify()
       final items = ResultList<RecordModel>(items: [
         getUserGardenRecordRecordModel(
           userGardenRecord: AppUserGardenRecordFactory(

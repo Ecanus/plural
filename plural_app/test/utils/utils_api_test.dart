@@ -35,6 +35,9 @@ class MockClipboard {
 void main() {
   group("utils_api", () {
     testWidgets("copyToClipboard", (tester) async {
+      final testList = [""];
+      void testFunc() => testList[0] = "success";
+
       final MockClipboard mockClipboard = MockClipboard();
 
       tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
@@ -50,7 +53,10 @@ void main() {
             body: Builder(
               builder: (BuildContext context) {
                 return ElevatedButton(
-                  onPressed: () => copyToClipboard(context, stringToCopy),
+                  onPressed: () => copyToClipboard(
+                    stringToCopy,
+                    callback: testFunc,
+                  ),
                   child: Text("The ElevatedButton")
                 );
               }
@@ -61,11 +67,13 @@ void main() {
 
       mockClipboard.clipboardData = <String, dynamic>{'text': 'Hello world'};
 
+      expect(testList[0], "");
+
       // Tap ElevatedButton (to call method)
       await tester.tap(find.byType(ElevatedButton));
       await tester.pumpAndSettle();
 
-      expect(find.byType(SnackBar), findsOneWidget);
+      expect(testList[0], "success");
     });
   });
 }

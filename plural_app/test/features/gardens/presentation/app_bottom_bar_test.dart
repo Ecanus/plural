@@ -1,3 +1,5 @@
+import '../../../test_stubs/users_repository_stubs.dart' as users_repository;
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -32,8 +34,8 @@ import 'package:plural_app/src/utils/app_state.dart';
 // Tests
 import '../../../test_factories.dart';
 import '../../../test_mocks.dart';
-import '../../../test_stubs.dart';
-import '../../../test_stubs/users_repository_stubs.dart';
+import '../../../test_record_models.dart';
+import '../../../test_stubs/auth_api_stubs.dart';
 
 void main() {
   group("AppBottomBar", () {
@@ -377,7 +379,7 @@ void main() {
       );
 
       // UsersRepository.getFirstListItem()
-      getFirstListItemStub(
+      users_repository.getFirstListItemStub(
         mockUsersRepository: mockUsersRepository,
         userID: garden.creator.id,
         returnValue: getUserRecordModel(user: garden.creator)

@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart' as ft;
+import '../../../test_stubs/gardens_repository_stubs.dart' as gardens_repository;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -23,7 +24,8 @@ import 'package:plural_app/src/utils/app_state.dart';
 // Test
 import '../../../test_factories.dart';
 import '../../../test_mocks.dart';
-import '../../../test_stubs.dart';
+import '../../../test_record_models.dart';
+import '../../../test_stubs/auth_api_stubs.dart';
 
 void main() {
   group("gardens forms submitUpdate", () {
@@ -77,7 +79,7 @@ void main() {
         gardenID: garden.id,
         returnValue: items
       );
-      gardensRepositoryUpdateStub(
+      gardens_repository.updateStub(
         mockGardensRepository: mockGardensRepository,
         gardenID: garden.id,
         gardenName: appForm.getValue(fieldName: GardenField.name),
@@ -180,7 +182,7 @@ void main() {
         gardenID: garden.id,
         returnValue: items
       );
-      gardensRepositoryUpdateStub(
+      gardens_repository.updateStub(
         mockGardensRepository: mockGardensRepository,
         gardenID: garden.id,
         gardenName: appForm.getValue(fieldName: GardenField.name),

@@ -32,6 +32,7 @@ import 'package:plural_app/src/utils/route_to_view_button.dart';
 // Tests
 import '../test/test_factories.dart';
 import '../test/test_mocks.dart';
+import '../test/test_record_models.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();

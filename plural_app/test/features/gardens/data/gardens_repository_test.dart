@@ -11,6 +11,7 @@ import 'package:plural_app/src/features/gardens/data/gardens_repository.dart';
 // Tests
 import '../../../test_factories.dart';
 import '../../../test_mocks.dart';
+import '../../../test_record_models.dart';
 
 void main() {
   group("GardensRepository", () {

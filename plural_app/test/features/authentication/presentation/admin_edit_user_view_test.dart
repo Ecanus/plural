@@ -1,3 +1,5 @@
+import '../../../test_stubs/users_repository_stubs.dart' as users_repository;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
@@ -24,8 +26,8 @@ import 'package:plural_app/src/utils/app_state.dart';
 // Test
 import '../../../test_factories.dart';
 import '../../../test_mocks.dart';
-import '../../../test_stubs.dart';
-import '../../../test_stubs/users_repository_stubs.dart';
+import '../../../test_record_models.dart';
+import '../../../test_stubs/auth_api_stubs.dart';
 
 void main() {
   group("AdminEditUserView", () {
@@ -51,7 +53,7 @@ void main() {
       );
       getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
 
-      // user -> auth_api.getUserGardenRecordRole()
+      // user, getUserGardenRecordRole() via verify()
       final userGardenRecordRoleItems = ResultList<RecordModel>(items: [
         getUserGardenRecordRecordModel(
           userGardenRecord: AppUserGardenRecordFactory(
@@ -89,7 +91,7 @@ void main() {
       );
 
       // user -> UsersRepository.getFirstListItem()
-      getFirstListItemStub(
+      users_repository.getFirstListItemStub(
         mockUsersRepository: mockUsersRepository,
         userID: garden.creator.id,
         returnValue: getUserRecordModel(user: garden.creator)

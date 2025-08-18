@@ -1,3 +1,5 @@
+import '../test_stubs/users_repository_stubs.dart' as users_repository;
+
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
@@ -43,8 +45,9 @@ import 'package:plural_app/src/utils/app_state.dart';
 // Tests
 import '../test_factories.dart';
 import '../test_mocks.dart';
-import '../test_stubs.dart';
-import '../test_stubs/users_repository_stubs.dart';
+import '../test_record_models.dart';
+import '../test_stubs/asks_api_stubs.dart';
+import '../test_stubs/auth_api_stubs.dart';
 
 void main() {
   group("AppDialogViewRouter", () {
@@ -238,7 +241,7 @@ void main() {
       );
       getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
 
-      // getUserGardenRecordRole() through AppState.verify()
+      // getUserGardenRecordRole() via verify()
       final items1 = ResultList<RecordModel>(
         items: [
           getUserGardenRecordRecordModel(
@@ -309,7 +312,7 @@ void main() {
       );
 
       // UsersRepository.getFirstListItem()
-      getFirstListItemStub(
+      users_repository.getFirstListItemStub(
         mockUsersRepository: mockUsersRepository,
         userID: garden.creator.id,
         returnValue: getUserRecordModel(user: garden.creator),
@@ -414,7 +417,7 @@ void main() {
       );
 
       // UsersRepository.getFirstListItem()
-      getFirstListItemStub(
+      users_repository.getFirstListItemStub(
         mockUsersRepository: mockUsersRepository,
         userID: garden.creator.id,
         returnValue: getUserRecordModel(user: garden.creator)
@@ -462,7 +465,7 @@ void main() {
         () => mockUserGardenRecordsRepository
       );
 
-      // getUserGardenRecordRole() through AppState.verify()
+      // getUserGardenRecordRole() via verify()
       final items = ResultList<RecordModel>(items: [
         getUserGardenRecordRecordModel(
           userGardenRecord: AppUserGardenRecordFactory(

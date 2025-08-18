@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart' as ft;
+import '../test_stubs/users_repository_stubs.dart' as users_repository;
 
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -32,8 +33,9 @@ import 'package:plural_app/src/utils/exceptions.dart';
 // Tests
 import '../test_factories.dart';
 import '../test_mocks.dart';
-import '../test_stubs.dart';
-import '../test_stubs/users_repository_stubs.dart';
+import '../test_record_models.dart';
+import '../test_stubs/asks_api_stubs.dart';
+import '../test_stubs/auth_api_stubs.dart';
 
 void main() {
   group("AppState", () {
@@ -103,7 +105,7 @@ void main() {
       );
       getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
 
-      // Stubs
+      // getUserGardenRecordRole via verify()
       getUserGardenRecordRoleStub(
         mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
         userID: user.id,
@@ -117,6 +119,7 @@ void main() {
           )
         ])
       );
+
       getAsksByGardenIDStub(
         mockAsksRepository: mockAsksRepository,
         asksReturnValue: ResultList<RecordModel>(items: [
@@ -169,6 +172,7 @@ void main() {
         () => mockUserGardenRecordsRepository
       );
 
+      // getUserGardenRecordRole via verify()
       getUserGardenRecordRoleStub(
         mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
         userID: user.id,
@@ -237,7 +241,7 @@ void main() {
       );
       getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
 
-      // Stubs
+      // getUserGardenRecordRole via verify()
       getUserGardenRecordRoleStub(
         mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
         userID: user.id,
@@ -251,6 +255,7 @@ void main() {
           )
         ])
       );
+
       getAsksByGardenIDStub(
         mockAsksRepository: mockAsksRepository,
         asksReturnValue: ResultList<RecordModel>(items: [
@@ -316,7 +321,7 @@ void main() {
       );
 
       // UsersRepository.getFirstListItem()
-      getFirstListItemStub(
+      users_repository.getFirstListItemStub(
         mockUsersRepository: mockUsersRepository,
         userID: garden.creator.id,
         returnValue: getUserRecordModel(user: garden.creator)
