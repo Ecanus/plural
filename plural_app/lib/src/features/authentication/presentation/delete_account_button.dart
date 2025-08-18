@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+
+// Common Widgets
+import 'package:plural_app/src/common_widgets/app_snackbars.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
+import 'package:plural_app/src/constants/app_values.dart';
+import 'package:plural_app/src/constants/routes.dart';
 import 'package:plural_app/src/constants/styles.dart';
 
 // Auth
@@ -79,6 +85,35 @@ class _ConfirmDeleteAccountDialogState extends State<ConfirmDeleteAccountDialog>
     setState(() {
       _isTextMatch = _controller.text == LandingPageText.confirmDeleteAccountValue;
     });
+  }
+
+  void successCallback() {
+    if (context.mounted) {
+      // Route to Sign in Page
+      GoRouter.of(context).go(Routes.signIn);
+
+      final snackBar = AppSnackBars.getSnackBar(
+        SnackBarText.deletedUserAccount,
+        duration: AppDurations.s9,
+        snackbarType: SnackbarType.success
+      );
+
+      // Display success Snackbar
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
+  }
+
+  void errorCallback() {
+    if (context.mounted) {
+      final snackBar = AppSnackBars.getSnackBar(
+        SnackBarText.deletedUserAccountFailed,
+        duration: AppDurations.s9,
+        snackbarType: SnackbarType.error
+      );
+
+      // Display error Snackbar
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
   }
 
   @override
@@ -174,7 +209,10 @@ class _ConfirmDeleteAccountDialogState extends State<ConfirmDeleteAccountDialog>
                   constraints: BoxConstraints(minHeight: AppHeights.h40),
                   child: FilledButton(
                     onPressed: _isTextMatch ? () {
-                      deleteCurrentUserAccount(context: context);
+                      deleteCurrentUserAccount(
+                        errorCallback: errorCallback,
+                        successCallback: successCallback,
+                      );
                     }
                     : null,
                     style: ButtonStyle(

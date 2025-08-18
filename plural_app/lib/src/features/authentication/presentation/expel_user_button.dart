@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
+// Common Widgets
+import 'package:plural_app/src/common_widgets/app_snackbars.dart';
+
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
+import 'package:plural_app/src/constants/app_values.dart';
 
 // Auth
 import 'package:plural_app/src/features/authentication/data/auth_api.dart';
@@ -136,8 +140,19 @@ class ConfirmExpelUserDialog extends StatelessWidget {
                     onPressed: () => expelUserFromGarden(
                       context,
                       userGardenRecord,
-                      callback: GetIt.instance<AppDialogViewRouter>()
-                        .routeToAdminListedUsersView
+                      callback: () {
+                        GetIt.instance<AppDialogViewRouter>()
+                          .routeToAdminListedUsersView(context);
+
+                        final snackBar = AppSnackBars.getSnackBar(
+                          SnackBarText.expelUserSuccess,
+                          boldMessage: userGardenRecord.user.username,
+                          duration: AppDurations.s9,
+                          snackbarType: SnackbarType.success
+                        );
+
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      }
                     ),
                     style: ButtonStyle(
                       backgroundColor: WidgetStateProperty.all<Color>(
