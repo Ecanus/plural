@@ -136,8 +136,8 @@ void main() {
       appForm.setValue(fieldName: fieldName, value: null);
 
       final appState = AppState.skipSubscribe()
-                        ..currentGarden = garden
-                        ..currentUser = user;
+        ..currentGarden = garden
+        ..currentUser = user;
 
       final getIt = GetIt.instance;
       final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
@@ -220,8 +220,8 @@ void main() {
       appForm.setValue(fieldName: fieldName, value: null);
 
       final appState = AppState.skipSubscribe()
-                        ..currentGarden = garden
-                        ..currentUser = user;
+        ..currentGarden = garden
+        ..currentUser = user;
 
       final getIt = GetIt.instance;
       final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
