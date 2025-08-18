@@ -50,7 +50,7 @@ Help us keep the Plural app open and inclusive. Please read and follow our [Code
 
 Plural uses the following open source packages:
 
-- [Flutter (v3.32.7)](https://flutter.dev/)
+- [Flutter (v3.35.1)](https://flutter.dev/)
 - [PocketBase (v0.29.0)](https://pocketbase.io/)
 
 
