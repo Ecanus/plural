@@ -222,7 +222,7 @@ void addExpandFields(
         GenericField.id: garden.id,
         GenericField.created: "1993-11-11",
         GardenField.creator: garden.creator.id,
-        GardenField.doDocument: "Expaned Do Document",
+        GardenField.doDocument: "Expand Do Document",
         GardenField.doDocumentEditDate: "2000-10-28",
         GardenField.name: garden.name,
       };

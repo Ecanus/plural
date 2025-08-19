@@ -86,7 +86,7 @@ class AppUserFactory extends AppUser {
         firstName: firstName ?? "Yaa",
         id: id!,
         lastName: lastName ?? "Asantewaa",
-        username: username ?? "queenMother",
+        username: username ?? "queenMother-${_cache.length}",
       )
     );
   }
