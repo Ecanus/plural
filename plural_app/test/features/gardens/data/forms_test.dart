@@ -36,6 +36,8 @@ void main() {
       final testList = [1, 2, 3];
       void testFunc() => testList.clear();
 
+      final doDocumentEditDate = DateTime.now();
+
       final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
       final appForm = AppForm()
@@ -84,7 +86,7 @@ void main() {
         gardenID: garden.id,
         gardenName: appForm.getValue(fieldName: GardenField.name),
         gardenDoDocument: appForm.getValue(fieldName: GardenField.doDocument),
-        gardenDoDocumentEditDate: DateTime.now(), // have to use DateTime.now()
+        gardenDoDocumentEditDate: doDocumentEditDate,
         returnValue: (getGardenRecordModel(garden: garden), {})
       );
 
@@ -106,7 +108,11 @@ void main() {
                       ),
                       ElevatedButton(
                         onPressed: () => submitUpdate(
-                          context, formKey, appForm),
+                          context,
+                          formKey,
+                          appForm,
+                          doDocumentEditDate: doDocumentEditDate
+                        ),
                         child: Text("x")
                       ),
                     ],

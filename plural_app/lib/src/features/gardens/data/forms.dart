@@ -19,8 +19,9 @@ import 'package:plural_app/src/utils/app_form.dart';
 Future<void> submitUpdate(
   BuildContext context,
   GlobalKey<FormState> formKey,
-  AppForm appForm,
-) async {
+  AppForm appForm, {
+  DateTime? doDocumentEditDate, // primarily for testing
+}) async {
   if (formKey.currentState!.validate()) {
     SnackBar snackBar;
 
@@ -28,7 +29,11 @@ Future<void> submitUpdate(
     formKey.currentState!.save();
 
     // Update DB (should also rebuild Garden Timeline via SubscribeTo)
-    final (record, errorsMap) = await updateGarden(context, appForm.fields);
+    final (record, errorsMap) = await updateGarden(
+      context,
+      appForm.fields,
+      doDocumentEditDate: doDocumentEditDate
+    );
 
     if (record != null && context.mounted) {
       snackBar = AppSnackBars.getSnackBar(

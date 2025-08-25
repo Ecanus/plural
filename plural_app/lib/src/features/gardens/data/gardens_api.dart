@@ -109,8 +109,9 @@ Future<Function> subscribeTo(String gardenID) async {
 /// [map].
 Future<(RecordModel?, Map?)> updateGarden(
   BuildContext context,
-  Map map,
-) async {
+  Map map, {
+  DateTime? doDocumentEditDate, // primarily for testing
+}) async {
   try {
     // Check permissions first
     await GetIt.instance<AppState>().verify([
@@ -118,12 +119,15 @@ Future<(RecordModel?, Map?)> updateGarden(
       AppUserGardenPermission.editDoDocument,
     ]);
 
-    final doDocumentEditDate = DateFormat(Formats.dateYMMddHHm).format(DateTime.now());
+    doDocumentEditDate = doDocumentEditDate ?? DateTime.now();
+    final doDocumentEditDateString =
+      DateFormat(Formats.dateYMMddHHm).format(doDocumentEditDate);
+
     final (record, errorsMap) = await GetIt.instance<GardensRepository>().update(
       id: map[GenericField.id],
       body: {
         GardenField.doDocument: map[GardenField.doDocument],
-        GardenField.doDocumentEditDate: doDocumentEditDate,
+        GardenField.doDocumentEditDate: doDocumentEditDateString,
         GardenField.name: map[GardenField.name],
       }
     );
