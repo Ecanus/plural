@@ -55,6 +55,8 @@ class AppUserGardenRecord {
   final AppUserGardenRole role;
   final AppUser user;
 
+  static DateTime initialDoDocumentReadDate = DateTime(1900, 1, 1);
+
   AppUserGardenRecord.fromJson(
     Map<String, dynamic> json, AppUser recordUser, Garden recordGarden) :
       garden = recordGarden,

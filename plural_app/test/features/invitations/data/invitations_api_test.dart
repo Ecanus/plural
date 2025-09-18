@@ -81,6 +81,8 @@ void main() {
       when(
         () => mockUserGardenRecordsRepository.create(
           body: {
+            UserGardenRecordField.doDocumentReadDate: DateFormat(Formats.dateYMMdd).format(
+              AppUserGardenRecord.initialDoDocumentReadDate),
             UserGardenRecordField.garden: openInvitation.garden.id,
             UserGardenRecordField.role: AppUserGardenRole.member.name,
             UserGardenRecordField.user: GetIt.instance<AppState>().currentUserID!,
@@ -106,6 +108,8 @@ void main() {
       verifyNever(
         () => mockUserGardenRecordsRepository.create(
           body: {
+            UserGardenRecordField.doDocumentReadDate: DateFormat(Formats.dateYMMdd).format(
+              AppUserGardenRecord.initialDoDocumentReadDate),
             UserGardenRecordField.garden: openInvitation.garden.id,
             UserGardenRecordField.role: AppUserGardenRole.member.name,
             UserGardenRecordField.user: GetIt.instance<AppState>().currentUserID!,
@@ -128,6 +132,8 @@ void main() {
       verify(
         () => mockUserGardenRecordsRepository.create(
           body: {
+            UserGardenRecordField.doDocumentReadDate: DateFormat(Formats.dateYMMdd).format(
+              AppUserGardenRecord.initialDoDocumentReadDate),
             UserGardenRecordField.garden: openInvitation.garden.id,
             UserGardenRecordField.role: AppUserGardenRole.member.name,
             UserGardenRecordField.user: GetIt.instance<AppState>().currentUserID!,
@@ -1019,6 +1025,8 @@ void main() {
       when(
         () => mockUserGardenRecordsRepository.create(
           body: {
+            UserGardenRecordField.doDocumentReadDate: DateFormat(Formats.dateYMMdd).format(
+              AppUserGardenRecord.initialDoDocumentReadDate),
             UserGardenRecordField.garden: openInvitation.garden.id,
             UserGardenRecordField.role: AppUserGardenRole.member.name,
             UserGardenRecordField.user: user.id,
@@ -1047,6 +1055,8 @@ void main() {
       verifyNever(
         () => mockUserGardenRecordsRepository.create(
           body: {
+            UserGardenRecordField.doDocumentReadDate: DateFormat(Formats.dateYMMdd).format(
+              AppUserGardenRecord.initialDoDocumentReadDate),
             UserGardenRecordField.garden: openInvitation.garden.id,
             UserGardenRecordField.role: AppUserGardenRole.member.name,
             UserGardenRecordField.user: user.id,
@@ -1073,6 +1083,8 @@ void main() {
       verify(
         () => mockUserGardenRecordsRepository.create(
           body: {
+            UserGardenRecordField.doDocumentReadDate: DateFormat(Formats.dateYMMdd).format(
+              AppUserGardenRecord.initialDoDocumentReadDate),
             UserGardenRecordField.garden: openInvitation.garden.id,
             UserGardenRecordField.role: AppUserGardenRole.member.name,
             UserGardenRecordField.user: user.id,
@@ -1084,6 +1096,8 @@ void main() {
       when(
         () => mockUserGardenRecordsRepository.create(
           body: {
+            UserGardenRecordField.doDocumentReadDate: DateFormat(Formats.dateYMMdd).format(
+              AppUserGardenRecord.initialDoDocumentReadDate),
             UserGardenRecordField.garden: openInvitation.garden.id,
             UserGardenRecordField.role: AppUserGardenRole.member.name,
             UserGardenRecordField.user: user.id,

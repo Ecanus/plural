@@ -467,6 +467,7 @@ Future<(bool, Map)> signup(
       body: {
         UserSettingsField.defaultCurrency: "",
         UserSettingsField.defaultInstructions: "",
+        UserSettingsField.gardenTimelineDisplayCount: 3,
         UserSettingsField.user: userRecord.id
     });
 

@@ -48,6 +48,8 @@ Future<void> acceptInvitationAndCreateUserGardenRecord(
   // Create UserGardenRecord
   await GetIt.instance<UserGardenRecordsRepository>().create(
     body: {
+      UserGardenRecordField.doDocumentReadDate: DateFormat(Formats.dateYMMdd).format(
+        AppUserGardenRecord.initialDoDocumentReadDate),
       UserGardenRecordField.garden: invitation.garden.id,
       UserGardenRecordField.role: AppUserGardenRole.member.name,
       UserGardenRecordField.user: GetIt.instance<AppState>().currentUserID!,
@@ -308,6 +310,8 @@ Future<void> validateInvitationUUIDAndCreateUserGardenRecord(
     final (_, errorsMap) =
       await GetIt.instance<UserGardenRecordsRepository>().create(
         body: {
+          UserGardenRecordField.doDocumentReadDate: DateFormat(Formats.dateYMMdd).format(
+            AppUserGardenRecord.initialDoDocumentReadDate),
           UserGardenRecordField.garden: recordJson[InvitationField.garden],
           UserGardenRecordField.role: AppUserGardenRole.member.name,
           UserGardenRecordField.user: GetIt.instance<AppState>().currentUserID!,

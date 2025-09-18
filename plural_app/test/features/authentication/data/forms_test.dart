@@ -1307,6 +1307,7 @@ void main() {
         () => recordService.create(body: {
           UserSettingsField.defaultCurrency: "",
           UserSettingsField.defaultInstructions: "",
+          UserSettingsField.gardenTimelineDisplayCount: 3,
           UserSettingsField.user: getUserRecordModel(user: user).id,
         })
       ).thenAnswer(
@@ -1359,6 +1360,7 @@ void main() {
       verify(() => recordService.create(body: {
         UserSettingsField.defaultCurrency: "",
         UserSettingsField.defaultInstructions: "",
+        UserSettingsField.gardenTimelineDisplayCount: 3,
         UserSettingsField.user: getUserRecordModel(user: user).id,
       })).called(1);
       verify(() => recordService.requestVerification(email)).called(1);
