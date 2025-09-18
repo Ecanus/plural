@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+
+// Common Widgets
 import 'package:plural_app/src/common_widgets/app_snackbars.dart';
 
 // Constants
@@ -9,6 +12,9 @@ import 'package:plural_app/src/features/asks/data/asks_api.dart';
 
 // Localization
 import 'package:plural_app/src/localization/lang_en.dart';
+
+// Utils
+import 'package:plural_app/src/utils/app_dialog_view_router.dart';
 
 class DeleteAskButton extends StatelessWidget {
   const DeleteAskButton({
@@ -123,7 +129,6 @@ class ConfirmDeleteAskDialog extends StatelessWidget {
                     onPressed: () {
                       // Close confirmation, then close the examine/edit ask view
                       Navigator.pop(context);
-                      Navigator.pop(context);
                       deleteAsk(
                         context,
                         askID,
@@ -138,6 +143,9 @@ class ConfirmDeleteAskDialog extends StatelessWidget {
 
                             // Display Success Snackbar
                             ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+                            // Route to Listed Asks View
+                            GetIt.instance<AppDialogViewRouter>().routeToListedAsksView();
                           }
                         });
                     },

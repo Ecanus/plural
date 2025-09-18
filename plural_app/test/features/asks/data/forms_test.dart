@@ -368,10 +368,18 @@ void main() {
 
   group("Ask submitUpdate", () {
     ft.testWidgets("valid update", (tester) async {
+      final garden = GardenFactory();
+      final user = AppUserFactory();
+
+      // test as well
       final testList = [1, 2, 3];
       void func() => testList.clear();
 
       final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+      final appState = AppState.skipSubscribe()
+        ..currentGarden = garden
+        ..currentUser = user;
 
       // AppForm
       const fieldName = "champs";
@@ -383,7 +391,22 @@ void main() {
       // GetIt
       final getIt = GetIt.instance;
       final mockAsksRepository = MockAsksRepository();
+      final mockUsersRepository = MockUsersRepository();
       getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
+      getIt.registerLazySingleton<AppDialogViewRouter>(() => AppDialogViewRouter());
+      getIt.registerLazySingleton<AppState>(() => appState);
+      getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
+
+      // AsksRepository.getList()
+      when(
+        () => mockAsksRepository.getList(
+          filter: any(named: "filter"), sort: any(named: "sort"))
+      ).thenAnswer(
+        (_) async => ResultList<RecordModel>(items: [
+          getAskRecordModel(),
+          getAskRecordModel(),
+        ])
+      );
 
       // AsksRepository.update()
       when(
@@ -393,6 +416,13 @@ void main() {
         )
       ).thenAnswer(
         (_) async => (getAskRecordModel(), {})
+      );
+
+      // UsersRepository.getFirstListItem()
+      users_repository.getFirstListItemStub(
+        mockUsersRepository: mockUsersRepository,
+        userID: user.id,
+        returnValue: getUserRecordModel(user: user)
       );
 
       await tester.pumpWidget(
@@ -441,11 +471,12 @@ void main() {
       expect(appForm.getValue(fieldName: fieldName), "Updated Value!");
 
       // Check methods were called
-      // NOTE: cannot check on formKey.currentState or Snackbar due to inner Navigator.pop()
       verify(() => mockAsksRepository.update(
         id: "ID",
         body: appForm.fields
       )).called(1);
+      expect(formKey.currentState!.validate(), true);
+      expect(ft.find.byType(SnackBar), ft.findsOneWidget);
 
       // Check testList still has values (no error)
       expect(testList.isNotEmpty, true);

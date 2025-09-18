@@ -144,6 +144,10 @@ class AskViewText {
   static const emptyListedAsksViewSubtitle = ""
     "Click the '$createAsk' button below to get started.";
 
+  static const emptySponsoredAsksView = "No sponsored Asks found";
+  static const emptySponsoredAsksViewSubtitle = ""
+    "Check the timeline for Asks to sponsor.";
+
   static const goToListedAsks = "Go to My Asks";
   static const goToSponsoredAsks = "Go to Sponsored Asks";
 

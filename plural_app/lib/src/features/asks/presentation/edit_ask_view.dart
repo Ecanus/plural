@@ -320,7 +320,7 @@ class IsTargetMetLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = isTargetMet ?
-      AppThemes.positiveColor
+      Theme.of(context).colorScheme.primary
       : Theme.of(context).colorScheme.onPrimaryFixed;
 
     return Row(

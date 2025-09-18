@@ -83,8 +83,8 @@ Future<void> submitUpdate(
       // Display Success Snackbar
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
 
-      // Close Dialog
-      Navigator.pop(context);
+      // Route to Listed Asks View
+      GetIt.instance<AppDialogViewRouter>().routeToListedAsksView();
     } else {
       // Add errors to corresponding fields
       appForm.setErrors(errorsMap: errorsMap);
