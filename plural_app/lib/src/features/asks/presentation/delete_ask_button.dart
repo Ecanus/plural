@@ -127,8 +127,9 @@ class ConfirmDeleteAskDialog extends StatelessWidget {
                   constraints: BoxConstraints(minHeight: AppHeights.h40),
                   child: FilledButton(
                     onPressed: () {
-                      // Close confirmation, then close the examine/edit ask view
+                      // Close confirmation
                       Navigator.pop(context);
+
                       deleteAsk(
                         context,
                         askID,
@@ -144,8 +145,12 @@ class ConfirmDeleteAskDialog extends StatelessWidget {
                             // Display Success Snackbar
                             ScaffoldMessenger.of(context).showSnackBar(snackBar);
 
-                            // Route to Listed Asks View
-                            GetIt.instance<AppDialogViewRouter>().routeToListedAsksView();
+                            if (isAdminPage) {
+                              Navigator.pop(context);
+                            } else {
+                              // Route to Listed Asks View
+                              GetIt.instance<AppDialogViewRouter>().routeToListedAsksView();
+                            }
                           }
                         });
                     },
