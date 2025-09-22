@@ -81,7 +81,7 @@ class AdminPageBottomBarText {
 }
 
 class AppText {
-  static const pluralApp = "Plural App";
+  static const pluralApp = "Plural";
 }
 
 class AppDialogFooterText {
