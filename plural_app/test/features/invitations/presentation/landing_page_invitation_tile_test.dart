@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
+import 'package:intl/intl.dart';
 import 'package:mocktail/mocktail.dart';
 
 // Constants
 import 'package:plural_app/src/constants/fields.dart';
+import 'package:plural_app/src/constants/formats.dart';
 
 // Auth
 import 'package:plural_app/src/features/authentication/data/user_garden_records_repository.dart';
@@ -78,19 +80,24 @@ void main() {
       when(
         () => mockUserGardenRecordsRepository.create(
           body: {
+            UserGardenRecordField.doDocumentReadDate: DateFormat(Formats.dateYMMdd).format(
+              AppUserGardenRecord.initialDoDocumentReadDate),
             UserGardenRecordField.garden: openInvitation.garden.id,
             UserGardenRecordField.role: AppUserGardenRole.member.name,
             UserGardenRecordField.user: GetIt.instance<AppState>().currentUserID!,
           }
         )
       ).thenAnswer(
-        (_) async => (getUserGardenRecordRecordModel(
-          userGardenRecord: AppUserGardenRecordFactory(
-            garden: openInvitation.garden,
-            role: AppUserGardenRole.member,
-            user: user,
-          )
-        ), {})
+        (_) async => (
+          getUserGardenRecordRecordModel(
+            userGardenRecord: AppUserGardenRecordFactory(
+              garden: openInvitation.garden,
+              role: AppUserGardenRole.member,
+              user: user,
+            )
+          ),
+          {}
+        )
       );
 
       await tester.pumpWidget(
@@ -116,6 +123,8 @@ void main() {
       verifyNever(
         () => mockUserGardenRecordsRepository.create(
           body: {
+            UserGardenRecordField.doDocumentReadDate: DateFormat(Formats.dateYMMdd).format(
+              AppUserGardenRecord.initialDoDocumentReadDate),
             UserGardenRecordField.garden: openInvitation.garden.id,
             UserGardenRecordField.role: AppUserGardenRole.member.name,
             UserGardenRecordField.user: GetIt.instance<AppState>().currentUserID!,
@@ -135,6 +144,8 @@ void main() {
       verify(
         () => mockUserGardenRecordsRepository.create(
           body: {
+            UserGardenRecordField.doDocumentReadDate: DateFormat(Formats.dateYMMdd).format(
+              AppUserGardenRecord.initialDoDocumentReadDate),
             UserGardenRecordField.garden: openInvitation.garden.id,
             UserGardenRecordField.role: AppUserGardenRole.member.name,
             UserGardenRecordField.user: GetIt.instance<AppState>().currentUserID!,

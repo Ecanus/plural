@@ -97,6 +97,7 @@ class _DoDocumentReadCheckboxListTileState extends State<DoDocumentReadCheckboxL
         color: Theme.of(context).colorScheme.primaryContainer
       ),
       child: Card(
+        elevation: AppElevations.e0,
         color: Theme.of(context).colorScheme.primaryContainer,
         child: CheckboxListTile(
           title: Text(

@@ -81,7 +81,7 @@ class AdminPageBottomBarText {
 }
 
 class AppText {
-  static const pluralApp = "Plural App";
+  static const pluralApp = "Plural";
 }
 
 class AppDialogFooterText {
@@ -143,6 +143,10 @@ class AskViewText {
   static const emptyListedAsksView = "No Asks found";
   static const emptyListedAsksViewSubtitle = ""
     "Click the '$createAsk' button below to get started.";
+
+  static const emptySponsoredAsksView = "No sponsored Asks found";
+  static const emptySponsoredAsksViewSubtitle = ""
+    "Check the timeline for Asks to sponsor.";
 
   static const goToListedAsks = "Go to My Asks";
   static const goToSponsoredAsks = "Go to Sponsored Asks";

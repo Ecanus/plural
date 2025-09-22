@@ -50,6 +50,7 @@ class _AppCheckboxListTileFormFieldState extends State<AppCheckboxListTileFormFi
       ),
       child: Card(
         color: Theme.of(context).colorScheme.primaryContainer,
+        elevation: AppElevations.e0,
         child: FormField<bool>(
           builder: (_) {
             return CheckboxListTile(

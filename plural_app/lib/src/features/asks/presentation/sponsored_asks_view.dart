@@ -31,10 +31,12 @@ class SponsoredAsksView extends StatelessWidget {
     return Column(
       children: [
         Expanded(
-          child: ListView(
-            padding: const EdgeInsets.all(AppPaddings.p35),
-            children: sponsoredAskTiles,
-          ),
+          child: sponsoredAskTiles.isEmpty ?
+            EmptySponsoredAsksViewMessage() :
+            ListView(
+              padding: const EdgeInsets.all(AppPaddings.p35),
+              children: sponsoredAskTiles,
+            ),
         ),
         AppDialogFooterBuffer(
           buttons: [
@@ -60,6 +62,28 @@ class SponsoredAsksView extends StatelessWidget {
           title: AppDialogFooterText.sponsoredAsks
         )
       ],
+    );
+  }
+}
+
+class EmptySponsoredAsksViewMessage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            AskViewText.emptySponsoredAsksView,
+            style: Theme.of(context).textTheme.headlineSmall
+          ),
+          gapH25,
+          Text(
+            AskViewText.emptySponsoredAsksViewSubtitle,
+            style: Theme.of(context).textTheme.bodyMedium
+          ),
+        ],
+      ),
     );
   }
 }

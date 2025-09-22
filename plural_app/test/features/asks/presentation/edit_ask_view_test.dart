@@ -1,7 +1,10 @@
+import '../../../test_stubs/users_repository_stubs.dart' as users_repository;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:pocketbase/pocketbase.dart';
 
 // Common Widgets
 import 'package:plural_app/src/common_widgets/app_checkbox_list_tile_form_field.dart';
@@ -19,6 +22,7 @@ import 'package:plural_app/src/features/asks/presentation/delete_ask_button.dart
 import 'package:plural_app/src/features/asks/presentation/edit_ask_view.dart';
 
 // Auth
+import 'package:plural_app/src/features/authentication/data/users_repository.dart';
 import 'package:plural_app/src/features/authentication/domain/app_user_garden_record.dart';
 
 // Localization
@@ -31,26 +35,45 @@ import 'package:plural_app/src/utils/app_state.dart';
 // Tests
 import '../../../test_factories.dart';
 import '../../../test_mocks.dart';
+import '../../../test_record_models.dart';
 import '../../../tester_functions.dart';
 
 void main() {
   group("EditAskView", () {
     testWidgets("widgets", (tester) async {
       final ask = AskFactory();
+      final garden = GardenFactory();
+      final user = AppUserFactory();
 
       // GetIt
       final getIt = GetIt.instance;
       final mockAppState = MockAppState();
       final mockAsksRepository = MockAsksRepository();
+      final mockUsersRepository = MockUsersRepository();
       getIt.registerLazySingleton<AppState>(() => mockAppState);
       getIt.registerLazySingleton<AppDialogViewRouter>(() => AppDialogViewRouter());
       getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
+      getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
 
       // AppState.verify()
       when(
         () => mockAppState.verify([AppUserGardenPermission.createAndEditAsks])
       ).thenAnswer(
         (_) async => {}
+      );
+
+      // AppState.curerntGarden
+      when(
+        () => mockAppState.currentGarden
+      ).thenAnswer(
+        (_) => garden
+      );
+
+      // AppState.currentUserID
+      when(
+        () => mockAppState.currentUserID
+      ).thenAnswer(
+        (_) => user.id
       );
 
       // AppState.timelineAsks
@@ -65,6 +88,24 @@ void main() {
         () => mockAsksRepository.delete(id: ask.id)
       ).thenAnswer(
         (_) async => (true, {})
+      );
+
+      // mockAsksRepository.getList()
+      when(
+        () => mockAsksRepository.getList(
+          filter: any(named: "filter"), sort: any(named: "sort"))
+      ).thenAnswer(
+        (_) async => ResultList<RecordModel>(items: [
+          getAskRecordModel(),
+          getAskRecordModel(),
+        ])
+      );
+
+      // mockUsersRepository.getFirstListItem()
+      users_repository.getFirstListItemStub(
+        mockUsersRepository: mockUsersRepository,
+        userID: user.id,
+        returnValue: getUserRecordModel(user: user)
       );
 
       await tester.pumpWidget(
@@ -286,11 +327,11 @@ void main() {
 
       expect(find.byIcon(Icons.check), findsOneWidget);
       expect(find.byIcon(Icons.not_interested), findsNothing);
-      expect(get<Icon>(tester).color, AppThemes.positiveColor);
+      expect(get<Icon>(tester).color, AppThemes.standard.colorScheme.primary);
 
       expect(find.text(AskViewText.targetMet), findsOneWidget);
       expect(find.text(AskViewText.targetNotMet), findsNothing);
-      expect(get<Text>(tester).style!.color, AppThemes.positiveColor);
+      expect(get<Text>(tester).style!.color, AppThemes.standard.colorScheme.primary);
 
       await tester.pumpWidget(
         MaterialApp(

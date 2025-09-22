@@ -471,7 +471,7 @@ void main() {
         (_) async => getUserRecordModel()
       );
 
-      var asksList = await getAsksByUserID(userID: "");
+      final asksList = await getAsksByUserID(userID: "");
 
       expect(asksList.length, 2);
       expect(asksList.first, isA<Ask>());

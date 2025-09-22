@@ -32,7 +32,8 @@ class LandingPageGardensTab extends StatelessWidget {
             if (snapshot.hasData) {
               return LandingPageGardensList(userGardenRecords: snapshot.data!);
             } else if (snapshot.hasError) {
-              return LandingPageGardensListError(error: snapshot.error);
+              return LandingPageGardensListError(
+                error: snapshot.error, stackTrace: snapshot.stackTrace);
             } else {
               return LandingPageGardensListLoading();
             }
@@ -54,14 +55,14 @@ class LandingPageGardensList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: userGardenRecords.isEmpty ?
-      EmptyLandingPageGardensListMessage() :
-      ListView(
-        padding: const EdgeInsets.all(AppPaddings.p35),
-        children: [
-          for (AppUserGardenRecord record in userGardenRecords)
-            LandingPageListedGardenTile(garden: record.garden)
-        ],
-      ),
+        EmptyLandingPageGardensListMessage() :
+        ListView(
+          padding: const EdgeInsets.all(AppPaddings.p35),
+          children: [
+            for (AppUserGardenRecord record in userGardenRecords)
+              LandingPageListedGardenTile(garden: record.garden)
+          ],
+        ),
     );
   }
 }
@@ -90,14 +91,22 @@ class EmptyLandingPageGardensListMessage extends StatelessWidget {
 class LandingPageGardensListError extends StatelessWidget {
   const LandingPageGardensListError({
     this.error,
+    this.stackTrace,
   });
 
   final Object? error;
+  final StackTrace? stackTrace;
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: Center(child: Text("$error")),
+      child: Center(
+        child: ListView(
+          children: [
+            Text("$error \n\n ${stackTrace.toString()}"),
+          ],
+        )
+      ),
     );
   }
 }

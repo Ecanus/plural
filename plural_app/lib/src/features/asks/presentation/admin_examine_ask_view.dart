@@ -110,7 +110,7 @@ class AdminExamineAskViewHeader extends StatelessWidget {
           gapH35,
           Container(
             constraints: BoxConstraints(maxWidth: AppWidths.w200),
-            child: DeleteAskButton(askID: ask.id)
+            child: DeleteAskButton(askID: ask.id, isAdminPage: true,)
           ),
           gapH20,
           AskTimeLeftText(
