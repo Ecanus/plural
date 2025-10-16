@@ -1,0 +1,21 @@
+services:
+
+  plural-pocketbase:
+    build:
+      context: ./plural_pocketbase
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    volumes:
+      - plural_pb_data:/pb/pb_data
+      - ./plural_pocketbase/pb_migrations:/pb/pb_migrations
+
+volumes:
+  plural_pb_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      # PB_DATA_PATH=/path/to/data docker-compose -f docker-compose.yaml up -d --build
+      device: $PB_DATA_PATH
+
