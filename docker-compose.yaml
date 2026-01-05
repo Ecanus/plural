@@ -1,5 +1,13 @@
 services:
 
+  plural_app:
+    build:
+      context: ./plural_app
+      dockerfile: Dockerfile
+    ports:
+      - 301:301
+    volumes:
+      - plural_web_build:/app/web/build
   plural-pocketbase:
     build:
       context: ./plural_pocketbase
@@ -18,4 +26,12 @@ volumes:
       o: bind
       # PB_DATA_PATH=/path/to/data docker-compose -f docker-compose.yaml up -d --build
       device: $PB_DATA_PATH
+
+  plural_web_build:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      # PB_DATA_PATH=/path/to/data docker-compose -f docker-compose.yaml up -d --build
+      device: $PLURAL_WEB_BUILD_PATH
 
