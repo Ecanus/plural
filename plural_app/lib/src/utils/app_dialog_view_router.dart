@@ -46,10 +46,7 @@ class AppDialogViewRouter {
 
   // Asks
   Future<void> routeToCreateAskView() async {
-    final userGardenRecord = await getUserGardenRecord(
-      userID: GetIt.instance<AppState>().currentUserID!,
-      gardenID: GetIt.instance<AppState>().currentGarden!.id,
-    );
+    final userGardenRecord = GetIt.instance<AppState>().currentUserGardenRecord;
 
     viewNotifier.value = CreateAskView(
       hasReadDoDocument: userGardenRecord!.hasReadDoDocument,
@@ -126,12 +123,8 @@ class AppDialogViewRouter {
   }
 
   Future<void> routeToExamineDoDocumentView() async {
-    final userGardenRecord = await getUserGardenRecord(
-      userID: GetIt.instance<AppState>().currentUserID!,
-      gardenID: GetIt.instance<AppState>().currentGarden!.id,
-    );
-
-    viewNotifier.value = ExamineDoDocumentView(userGardenRecord: userGardenRecord!);
+    viewNotifier.value = ExamineDoDocumentView(
+      userGardenRecord: GetIt.instance<AppState>().currentUserGardenRecord!);
   }
 
   // Invitations

@@ -10,8 +10,10 @@ import 'package:plural_app/src/common_interfaces/repository.dart';
 import 'package:plural_app/src/constants/fields.dart';
 import 'package:plural_app/src/constants/pocketbase.dart';
 
+// Auth
+import 'package:plural_app/src/features/authentication/data/auth_api.dart';
+
 // Gardens
-import 'package:plural_app/src/features/gardens/data/gardens_api.dart';
 import 'package:plural_app/src/features/gardens/domain/garden.dart';
 
 // Utils
@@ -136,7 +138,11 @@ class GardensRepository implements Repository {
       gardenID, (e) async {
         switch (e.action) {
           case EventAction.update:
-            GetIt.instance<AppState>().currentGarden = await getGardenByID(gardenID);
+            final appState = GetIt.instance<AppState>();
+
+            // Update AppState.currentUserGardenRecord (will also call AppState.notifyListeners)
+            appState.currentUserGardenRecord = await getUserGardenRecord(
+              userID: appState.currentUserID!, gardenID: gardenID);
         }
       });
   }

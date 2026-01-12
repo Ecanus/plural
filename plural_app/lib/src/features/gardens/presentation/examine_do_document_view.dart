@@ -112,7 +112,7 @@ class _DoDocumentReadCheckboxListTileState extends State<DoDocumentReadCheckboxL
           controlAffinity: ListTileControlAffinity.leading,
           value: _checkboxValue,
           onChanged: _checkboxValue ? null : (bool? value) {
-            updateCurrentUserGardenRecordDoDocumentReadDate(widget.userGardenRecord.id);
+            updateCurrentUserGardenRecordDoDocumentReadDate();
             setState(() { _checkboxValue = true; });
           }
         ),

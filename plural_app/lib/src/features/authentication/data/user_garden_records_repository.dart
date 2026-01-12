@@ -1,4 +1,5 @@
 import 'dart:developer' as developer;
+import 'package:get_it/get_it.dart';
 
 import 'package:pocketbase/pocketbase.dart';
 
@@ -9,7 +10,11 @@ import 'package:plural_app/src/common_interfaces/repository.dart';
 import 'package:plural_app/src/constants/fields.dart';
 import 'package:plural_app/src/constants/pocketbase.dart';
 
+// Auth
+import 'package:plural_app/src/features/authentication/data/auth_api.dart';
+
 // Utils
+import 'package:plural_app/src/utils/app_state.dart';
 import 'package:plural_app/src/utils/exceptions.dart';
 
 class UserGardenRecordsRepository implements Repository {
@@ -142,6 +147,7 @@ class UserGardenRecordsRepository implements Repository {
   Future<Function> subscribe(String gardenID, Function callback) async {
     return pb.collection(_collection).subscribe(
       Subscribe.all, (e) async {
+        final userGardenRecordID = e.record!.toJson()[GenericField.id];
         final userGardenRecordGardenID = e.record!.toJson()[UserGardenRecordField.garden];
 
         if (userGardenRecordGardenID != gardenID) return;
@@ -150,7 +156,18 @@ class UserGardenRecordsRepository implements Repository {
           case EventAction.create:
           case EventAction.delete:
           case EventAction.update:
-            callback();
+            final appState = GetIt.instance<AppState>();
+
+            // Update AppState.currentUserGardenRecord
+            if (userGardenRecordID == appState.currentUserGardenRecord!.id) {
+              appState.currentUserGardenRecord = await getUserGardenRecord(
+                userID: appState.currentUserID!, gardenID: gardenID);
+            } else {
+              // For now, callback() is notifyAllListeners(). This is the same method called
+              // when AppState.currentUserGardenRecord is set, so use if/else to only call
+              // the method once.
+              callback();
+            }
         }
       });
   }

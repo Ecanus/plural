@@ -76,10 +76,10 @@ Future<void> deleteAsk(
   try {
     // Check permissions
     if (isAdminPage) {
-      await GetIt.instance<AppState>().verify(
+      GetIt.instance<AppState>().verify(
         [AppUserGardenPermission.deleteMemberAsks]);
     } else {
-      await GetIt.instance<AppState>().verify(
+      GetIt.instance<AppState>().verify(
         [AppUserGardenPermission.createAndEditAsks]);
     }
 
@@ -199,7 +199,7 @@ Future<List<Ask>> getAsksForListedAsksView({
   final List<Ask> targetMetAsks = [];
 
   final asks = await getAsksByUserID(
-    sort: GenericField.created,
+    sort: "${AskField.deadlineDate},${GenericField.created}",
     userID: userID,
   );
 

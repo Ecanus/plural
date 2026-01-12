@@ -105,12 +105,12 @@ Future<void> expelUserFromGarden(
 }) async {
   try {
     // Check permissions first
-    await GetIt.instance<AppState>().verify(
+    GetIt.instance<AppState>().verify(
       [AppUserGardenPermission.expelMembers]);
 
     final asksRepository = GetIt.instance<AsksRepository>();
 
-    // Delete all Asks corresponding to userGardenRecord.garden
+    // Delete all Asks with a Garden that matches userGardenRecord.garden
     final askRecords = await asksRepository.getList(
       filter: ""
       "${AskField.creator} = '${userGardenRecord.user.id}'"
@@ -118,7 +118,7 @@ Future<void> expelUserFromGarden(
     );
     await asksRepository.bulkDelete(resultList: askRecords);
 
-    // Delete record (will also call AppState.notifyAllListeners)
+    // Delete userGardenRecord (will also call AppState.notifyAllListeners())
     await GetIt.instance<UserGardenRecordsRepository>().delete(id: userGardenRecord.id);
 
     if (context.mounted) {
@@ -147,8 +147,7 @@ Future<Map<AppUserGardenRole, List<AppUserGardenRecord>>> getCurrentGardenUserGa
 ) async {
   try {
     // Check permissions
-    await GetIt.instance<AppState>().verify(
-      [AppUserGardenPermission.viewAllUsers]);
+    GetIt.instance<AppState>().verify([AppUserGardenPermission.viewAllUsers]);
 
     late AppUserGardenRecord owner;
     final List<AppUserGardenRecord> administrators = [];
@@ -276,6 +275,9 @@ List<AppUserGardenPermission> getUserGardenPermissionGroup(AppUserGardenRole rol
 
 /// Queries on the [UserGardenRecord] collection, to retrieve a UserGardenRecord
 /// corresponding to [userID] and [gardenID].
+///
+/// Returns null if no record is found. Else, returns the corresponding
+/// [AppUserGardenRecord] instance.
 Future<AppUserGardenRecord?> getUserGardenRecord({
   required String userID,
   required String gardenID,
@@ -307,6 +309,9 @@ Future<AppUserGardenRecord?> getUserGardenRecord({
 
 /// Queries on the [UserGardenRecord] collection, to retrieve a UserGardenRecord
 /// corresponding to [userID] and [gardenID].
+///
+/// Returns the [AppUserGardenRole] corresponding to the retrieved UserGardenRecord
+/// if one is found.
 Future<AppUserGardenRole?> getUserGardenRecordRole({
   required String userID,
   required String gardenID,
@@ -544,13 +549,11 @@ Future<(RecordModel?, Map)> updateUser(Map map) async {
   return (record, errorsMap);
 }
 
-/// Updates the doDocumentReadDate of [UserGardenRecord] record with
-/// the given [userGardenRecordID] to DateTime.now().
-Future<void> updateCurrentUserGardenRecordDoDocumentReadDate(
-  String userGardenRecordID
-) async {
+/// Updates the doDocumentReadDate to DateTime.now() for the
+/// [UserGardenRecord] record that matches AppState.currentUserGardenRecord.
+Future<void> updateCurrentUserGardenRecordDoDocumentReadDate() async {
   await GetIt.instance<UserGardenRecordsRepository>().update(
-    id: userGardenRecordID,
+    id: GetIt.instance<AppState>().currentUserGardenRecord!.id,
     body: {
       UserGardenRecordField.doDocumentReadDate:
         DateFormat(Formats.dateYMMddHHm).format(DateTime.now())
@@ -579,10 +582,10 @@ Future<(RecordModel?, Map?)> updateUserGardenRole(
   try {
     // Check permissions
     if (isChangingOwner) {
-      await GetIt.instance<AppState>().verify(
+      GetIt.instance<AppState>().verify(
         [AppUserGardenPermission.changeOwner]);
     } else {
-      await GetIt.instance<AppState>().verify(
+      GetIt.instance<AppState>().verify(
         [AppUserGardenPermission.changeMemberRoles]);
     }
 
