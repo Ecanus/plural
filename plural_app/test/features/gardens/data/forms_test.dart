@@ -4,13 +4,11 @@ import '../../../test_stubs/gardens_repository_stubs.dart' as gardens_repository
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
-import 'package:pocketbase/pocketbase.dart';
 
 // Constants
 import 'package:plural_app/src/constants/fields.dart';
 
 // Auth
-import 'package:plural_app/src/features/authentication/data/user_garden_records_repository.dart';
 import 'package:plural_app/src/features/authentication/domain/app_user_garden_record.dart';
 
 // Gardens
@@ -25,13 +23,18 @@ import 'package:plural_app/src/utils/app_state.dart';
 import '../../../test_factories.dart';
 import '../../../test_mocks.dart';
 import '../../../test_record_models.dart';
-import '../../../test_stubs/auth_api_stubs.dart';
 
 void main() {
-  group("gardens forms submitUpdate", () {
+  group("Garden submitUpdate", () {
     ft.testWidgets("valid", (tester) async {
       final user = AppUserFactory();
       final garden = GardenFactory();
+
+      final userGardenRecord = AppUserGardenRecordFactory(
+        user: user,
+        garden: garden,
+        role: AppUserGardenRole.administrator
+      );
 
       final testList = [1, 2, 3];
       void testFunc() => testList.clear();
@@ -47,40 +50,21 @@ void main() {
             fieldName: GardenField.creator, value: user.id)
         ..setValue(
             fieldName: GardenField.name, value: "NewGardenName")
-          ..setValue(
+        ..setValue(
             fieldName: GardenField.doDocument, value: "New Do Document")
         ..setValue(
             fieldName: AppFormFields.rebuild, value: testFunc, isAux: true);
 
       final appState = AppState.skipSubscribe()
-        ..currentGarden = garden
+        ..currentUserGardenRecord = userGardenRecord
         ..currentUser = user;
 
       final getIt = GetIt.instance;
       final mockGardensRepository = MockGardensRepository();
-      final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
       getIt.registerLazySingleton<AppState>(() => appState);
       getIt.registerLazySingleton<GardensRepository>(() => mockGardensRepository);
-      getIt.registerLazySingleton<UserGardenRecordsRepository>(
-        () => mockUserGardenRecordsRepository
-      );
 
-      // getUserGardenRecordRole() via verify()
-      final items = ResultList<RecordModel>(items: [
-        getUserGardenRecordRecordModel(
-          userGardenRecord: AppUserGardenRecordFactory(
-            garden: garden,
-            role: AppUserGardenRole.administrator,
-            user: user,
-          ),
-        )
-      ]);
-      getUserGardenRecordRoleStub(
-        mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
-        userID: user.id,
-        gardenID: garden.id,
-        returnValue: items
-      );
+      // GardensRepository.update()
       gardens_repository.updateStub(
         mockGardensRepository: mockGardensRepository,
         gardenID: garden.id,
@@ -142,6 +126,12 @@ void main() {
       final user = AppUserFactory();
       final garden = GardenFactory();
 
+      final userGardenRecord = AppUserGardenRecordFactory(
+        user: user,
+        garden: garden,
+        role: AppUserGardenRole.administrator,
+      );
+
       final testList = [1, 2, 3];
       void testFunc() => testList.clear();
 
@@ -160,34 +150,15 @@ void main() {
             fieldName: AppFormFields.rebuild, value: testFunc, isAux: true);
 
       final appState = AppState.skipSubscribe()
-        ..currentGarden = garden
+        ..currentUserGardenRecord = userGardenRecord
         ..currentUser = user;
 
       final getIt = GetIt.instance;
       final mockGardensRepository = MockGardensRepository();
-      final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
       getIt.registerLazySingleton<AppState>(() => appState);
       getIt.registerLazySingleton<GardensRepository>(() => mockGardensRepository);
-      getIt.registerLazySingleton<UserGardenRecordsRepository>(
-        () => mockUserGardenRecordsRepository
-      );
 
-      // getUserGardenRecordRole() via verify()
-      final items = ResultList<RecordModel>(items: [
-        getUserGardenRecordRecordModel(
-          userGardenRecord: AppUserGardenRecordFactory(
-            garden: garden,
-            role: AppUserGardenRole.administrator,
-            user: user
-          ),
-        )
-      ]);
-      getUserGardenRecordRoleStub(
-        mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
-        userID: user.id,
-        gardenID: garden.id,
-        returnValue: items
-      );
+      // GardensRepository.update()
       gardens_repository.updateStub(
         mockGardensRepository: mockGardensRepository,
         gardenID: garden.id,

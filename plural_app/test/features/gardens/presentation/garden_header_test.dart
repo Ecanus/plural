@@ -18,9 +18,10 @@ void main() {
   group("GardenHeader", () {
     testWidgets("garden name", (tester) async {
       final garden = GardenFactory();
+      final userGardenRecord = AppUserGardenRecordFactory(garden: garden);
 
       final appState = AppState.skipSubscribe()
-        ..currentGarden = garden;
+        ..currentUserGardenRecord = userGardenRecord;
 
       await tester.pumpWidget(
         MaterialApp(
@@ -75,9 +76,10 @@ void main() {
 
     testWidgets("isAdminPage", (tester) async {
       final garden = GardenFactory();
+      final userGardenRecord = AppUserGardenRecordFactory(garden: garden);
 
       final appState = AppState.skipSubscribe()
-        ..currentGarden = garden;
+        ..currentUserGardenRecord = userGardenRecord;
 
       await tester.pumpWidget(
         MaterialApp(

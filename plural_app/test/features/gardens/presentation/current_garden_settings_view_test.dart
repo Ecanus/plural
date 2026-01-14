@@ -29,9 +29,10 @@ void main() {
     testWidgets("widgets", (tester) async {
       final user = AppUserFactory();
       final garden = GardenFactory(creator: user);
+      final userGardenRecord = AppUserGardenRecordFactory(user: user, garden: garden);
 
       final appState = AppState.skipSubscribe()
-        ..currentGarden = garden
+        ..currentUserGardenRecord = userGardenRecord
         ..currentUser = user;
 
       final getIt = GetIt.instance;
@@ -136,7 +137,7 @@ void main() {
       when(
         () => mockAppState.isAdministrator()
       ).thenAnswer(
-        (_) async => true
+        (_) => true
       );
 
       final testRouter = GoRouter(

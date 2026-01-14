@@ -62,47 +62,21 @@ void main() {
     test("routeToCreateAskView", () async {
       final user = AppUserFactory(id: "test_user_1");
       final garden = GardenFactory(creator: user);
+      final userGardenRecord = AppUserGardenRecordFactory(user: user, garden: garden);
       final userSettings = AppUserSettingsFactory(user: user);
 
       final appState = AppState.skipSubscribe()
-        ..currentGarden = garden
+        ..currentUserGardenRecord = userGardenRecord
         ..currentUser = user
         ..currentUserSettings = userSettings;
 
       // GetIt
       final getIt = GetIt.instance;
-      final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
       final mockUsersRepository = MockUsersRepository();
 
       getIt.registerLazySingleton<AppState>(() => appState);
       getIt.registerLazySingleton<AppDialogViewRouter>(() => AppDialogViewRouter());
-      getIt.registerLazySingleton<UserGardenRecordsRepository>(
-        () => mockUserGardenRecordsRepository);
       getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
-
-
-      // UserGardenRecordsRepository.getList()
-      final userGardenRecordReturnValue = ResultList<RecordModel>(
-        items: [
-          getUserGardenRecordRecordModel(
-            userGardenRecord: AppUserGardenRecordFactory(
-              user: user,
-              garden: garden
-            ),
-            expandFields: [
-              UserGardenRecordField.user, UserGardenRecordField.garden
-            ]),
-        ]
-      );
-      getUserGardenRecordStub(
-        mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
-        userID: user.id,
-        gardenID: garden.id,
-        userGardenRecordReturnValue: userGardenRecordReturnValue,
-        mockUsersRepository: mockUsersRepository,
-        gardenCreatorID: user.id,
-        gardenCreatorReturnValue: getUserRecordModel(user: user)
-      );
 
       final appDialogViewRouter = AppDialogViewRouter();
 
@@ -131,10 +105,11 @@ void main() {
 
     test("routeToListedAsksView", () async {
       final user = AppUserFactory();
-      final garden = GardenFactory();
+      final garden = GardenFactory(); // for getAsksByUserID
+      final userGardenRecord = AppUserGardenRecordFactory(user: user, garden: garden);
 
       final appState = AppState.skipSubscribe()
-        ..currentGarden = garden // for getAsksByUserID
+        ..currentUserGardenRecord = userGardenRecord
         ..currentUser = user;
 
       final getIt = GetIt.instance;
@@ -147,7 +122,7 @@ void main() {
       // Stubs
       getAsksByUserIDStub(
         mockAsksRepository: mockAsksRepository,
-        asksSort: GenericField.created,
+        asksSort: "${AskField.deadlineDate},${GenericField.created}",
         gardenID: garden.id,
         asksReturnValue: ResultList<RecordModel>(items: [
           getAskRecordModel(ask: AskFactory(creator: user))
@@ -168,10 +143,11 @@ void main() {
 
     test("routeToSponsoredAsksView", () async {
       final user = AppUserFactory();
-      final garden = GardenFactory();
+      final garden = GardenFactory(); // for getAsksByUserID
+      final userGardenRecord = AppUserGardenRecordFactory(user: user, garden: garden);
 
       final appState = AppState.skipSubscribe()
-        ..currentGarden = garden // for getAsksByUserID
+        ..currentUserGardenRecord = userGardenRecord
         ..currentUser = user;
 
       final getIt = GetIt.instance;
@@ -223,11 +199,16 @@ void main() {
     test("routeToAdminListedUsersView", () async {
       final user = AppUserFactory();
       final garden = GardenFactory();
+      final userGardenRecord = AppUserGardenRecordFactory(
+        user: user,
+        garden: garden,
+        role: AppUserGardenRole.administrator
+      );
 
       final appDialogViewRouter = AppDialogViewRouter();
 
       final appState = AppState.skipSubscribe()
-        ..currentGarden = garden
+        ..currentUserGardenRecord = userGardenRecord
         ..currentUser = user;
 
       final getIt = GetIt.instance;
@@ -241,26 +222,7 @@ void main() {
       );
       getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
 
-      // getUserGardenRecordRole() via verify()
-      final items1 = ResultList<RecordModel>(
-        items: [
-          getUserGardenRecordRecordModel(
-            userGardenRecord: AppUserGardenRecordFactory(
-              garden: garden,
-              role: AppUserGardenRole.administrator,
-              user: user,
-            ),
-          ),
-        ]
-      );
-      getUserGardenRecordRoleStub(
-        mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
-        userID: user.id,
-        gardenID: garden.id,
-        returnValue: items1
-      );
-
-      // getCurrentGardenUserGardenRecords() through AppState.verify()
+      // getCurrentGardenUserGardenRecords()
       final items = ResultList<RecordModel>(
         items: [
           getUserGardenRecordRecordModel(
@@ -381,40 +343,14 @@ void main() {
       );
 
       final appState = AppState.skipSubscribe()
-        ..currentGarden = garden
+        ..currentUserGardenRecord = userGardenRecord
         ..currentUser = user;
 
       final getIt = GetIt.instance;
-      final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
       final mockUsersRepository = MockUsersRepository();
 
       getIt.registerLazySingleton<AppState>(() => appState);
-      getIt.registerLazySingleton<UserGardenRecordsRepository>(
-        () => mockUserGardenRecordsRepository
-      );
       getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
-
-      // UserGardenRecordsRepository.getList()
-      when(
-        () => mockUserGardenRecordsRepository.getList(
-          expand: "${UserGardenRecordField.user}, ${UserGardenRecordField.garden}",
-          filter: ""
-            "${UserGardenRecordField.user} = '${user.id}' && "
-            "${UserGardenRecordField.garden} = '${garden.id}'",
-          sort: "-updated"
-        )
-      ).thenAnswer(
-        (_) async => ResultList<RecordModel>(
-          items: [
-            getUserGardenRecordRecordModel(
-              userGardenRecord: userGardenRecord,
-              expandFields: [
-                UserGardenRecordField.user, UserGardenRecordField.garden
-              ],
-            ),
-          ]
-        )
-      );
 
       // UsersRepository.getFirstListItem()
       users_repository.getFirstListItemStub(
@@ -439,48 +375,33 @@ void main() {
     });
 
     test("routeToAdminListedInvitationsView", () async {
+      final appDialogViewRouter = AppDialogViewRouter();
+
       final user = AppUserFactory();
       final garden = GardenFactory();
 
-      final appDialogViewRouter = AppDialogViewRouter();
+      final userGardenRecord = AppUserGardenRecordFactory(
+        user: user,
+        garden: garden,
+        role: AppUserGardenRole.administrator
+      );
 
       final expiryDateThreshold = DateTime.now();
       final expiryDateThresholdString =
         DateFormat(Formats.dateYMMdd).format(expiryDateThreshold);
 
       final appState = AppState.skipSubscribe()
-        ..currentGarden = garden
+        ..currentUserGardenRecord = userGardenRecord
         ..currentUser = user;
 
       final getIt = GetIt.instance;
       final mockBuildContext = MockBuildContext();
       final mockInvitationsRepository = MockInvitationsRepository();
-      final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
 
       getIt.registerLazySingleton<AppDialogViewRouter>(() => AppDialogViewRouter());
       getIt.registerLazySingleton<AppState>(() => appState);
       getIt.registerLazySingleton<InvitationsRepository>(
         () => mockInvitationsRepository);
-      getIt.registerLazySingleton<UserGardenRecordsRepository>(
-        () => mockUserGardenRecordsRepository
-      );
-
-      // getUserGardenRecordRole() via verify()
-      final items = ResultList<RecordModel>(items: [
-        getUserGardenRecordRecordModel(
-          userGardenRecord: AppUserGardenRecordFactory(
-            garden: garden,
-            role: AppUserGardenRole.administrator,
-            user: user
-          ),
-        )
-      ]);
-      getUserGardenRecordRoleStub(
-        mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
-        userID: user.id,
-        gardenID: garden.id,
-        returnValue: items
-      );
 
       // InvitationsRepository.getList()
       when(

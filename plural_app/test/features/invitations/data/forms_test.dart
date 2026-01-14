@@ -28,13 +28,17 @@ import 'package:plural_app/src/utils/app_state.dart';
 import '../../../test_factories.dart';
 import '../../../test_mocks.dart';
 import '../../../test_record_models.dart';
-import '../../../test_stubs/auth_api_stubs.dart';
 
 void main() {
   group("submitCreate", () {
     ft.testWidgets("valid create", (tester) async {
       final user = AppUserFactory();
       final garden = GardenFactory();
+      final userGardenRecord = AppUserGardenRecordFactory(
+        user: user,
+        garden: garden,
+        role: AppUserGardenRole.administrator
+      );
 
       final testList = [1, 2, 3];
       void func() => testList.clear();
@@ -42,7 +46,7 @@ void main() {
       final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
       final appState = AppState.skipSubscribe()
-        ..currentGarden = garden
+        ..currentUserGardenRecord = userGardenRecord
         ..currentUser = user;
 
       final appForm = AppForm.fromMap(Invitation.emptyMap())
@@ -63,23 +67,6 @@ void main() {
       getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
       getIt.registerLazySingleton<UserGardenRecordsRepository>(
         () => mockUserGardenRecordsRepository
-      );
-
-      // getUserGardenRecordRole() via verify()
-      final items = ResultList<RecordModel>(items: [
-        getUserGardenRecordRecordModel(
-          userGardenRecord: AppUserGardenRecordFactory(
-            garden: garden,
-            role: AppUserGardenRole.administrator,
-            user: user,
-          ),
-        )
-      ]);
-      getUserGardenRecordRoleStub(
-        mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
-        userID: user.id,
-        gardenID: garden.id,
-        returnValue: items
       );
 
       // InvitationsRepository.create (Open Invitation)
@@ -168,14 +155,6 @@ void main() {
 
       // Check function calls; snackBar shows; testList still not empty (i.e. no error)
       expect(testList.isEmpty, false);
-      verify(
-        () => mockUserGardenRecordsRepository.getList(
-          filter: ""
-            "${UserGardenRecordField.user} = '${user.id}' && "
-            "${UserGardenRecordField.garden} = '${garden.id}'",
-          sort: "-updated"
-        )
-      ).called(2); // verify() called for both createInvitation() and getCurrentGardenInvitations() (after reroute)
       verify(
         () => mockInvitationsRepository.create(body: appForm.fields)
       ).called(1);

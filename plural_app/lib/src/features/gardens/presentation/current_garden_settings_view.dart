@@ -111,10 +111,9 @@ class GoToLandingPageTile extends StatelessWidget {
 class GoToAdminPageTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<bool>(
-      future: GetIt.instance<AppState>().isAdministrator(),
-      builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-        if (snapshot.hasData && snapshot.data!) {
+    return Builder(
+      builder: (BuildContext context) {
+        if (GetIt.instance<AppState>().isAdministrator()) {
           return Card(
             elevation: AppElevations.e7,
             child: ListTile(

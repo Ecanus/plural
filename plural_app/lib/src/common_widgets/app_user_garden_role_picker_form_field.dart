@@ -112,9 +112,9 @@ Future<void> showRolePickerDialog(
   if (role != null) setTextCallback(role);
 }
 
-Future<List<UserGardenRoleCard>> getUserGardenRoleCards() async {
-  final isAdministrator = await GetIt.instance<AppState>().isAdministrator();
-  final isOwner = await GetIt.instance<AppState>().isOwner();
+List<UserGardenRoleCard> getUserGardenRoleCards() {
+  final isAdministrator = GetIt.instance<AppState>().isAdministrator();
+  final isOwner = GetIt.instance<AppState>().isOwner();
 
   final roles = [
     AppUserGardenRole.administrator,
@@ -149,27 +149,16 @@ class UserGardenRolePickerDialog extends StatelessWidget {
         ),
         child: Column(
           children: [
-            FutureBuilder(
-              future: getUserGardenRoleCards(),
-              builder: (BuildContext context, AsyncSnapshot<List<UserGardenRoleCard>> snapshot) {
-                if (snapshot.hasData) {
-                  return Expanded(
-                    child: ListView(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppPaddings.p15,
-                      ),
-                      children: snapshot.data!,
-                    )
-                  );
-                } else if (snapshot.hasError) {
-                  return Expanded(
-                    child: Center(child: Text(snapshot.error.toString()))
-                  );
-                } else {
-                  return Expanded(
-                    child: Center(child: CircularProgressIndicator(),),
-                  );
-                }
+            Builder(
+              builder: (BuildContext context) {
+                return Expanded(
+                  child: ListView(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppPaddings.p15,
+                    ),
+                    children: getUserGardenRoleCards(),
+                  )
+                );
               }
             ),
             IconButton(

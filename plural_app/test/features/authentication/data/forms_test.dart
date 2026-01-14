@@ -693,11 +693,11 @@ void main() {
             fieldName: UserGardenRecordField.role, value: AppUserGardenRole.member.name)
         ..setValue(
             fieldName: UserGardenRecordField.user, value: userGardenRecordMember.user.id)
-          ..setValue(
+        ..setValue(
             fieldName: AppFormFields.rebuild, value: testFunc, isAux: true);
 
       final appState = AppState.skipSubscribe()
-        ..currentGarden = garden
+        ..currentUserGardenRecord = userGardenRecordAdmin
         ..currentUser = user;
 
       final getIt = GetIt.instance;
@@ -707,7 +707,7 @@ void main() {
         () => mockUserGardenRecordsRepository
       );
 
-      // getUserGardenRecordRole() via verify()
+      // getUserGardenRecordRole()
       final items = ResultList<RecordModel>(items: [
         getUserGardenRecordRecordModel(userGardenRecord: userGardenRecordAdmin)
       ]);
@@ -718,7 +718,7 @@ void main() {
         returnValue: items
       );
 
-      // update to member
+      // Update self (i.e. user) to member
       final recordModel = getUserGardenRecordRecordModel(
         userGardenRecord: userGardenRecordMember
       );
@@ -803,11 +803,11 @@ void main() {
             fieldName: UserGardenRecordField.role, value: AppUserGardenRole.member.name)
         ..setValue(
             fieldName: UserGardenRecordField.user, value: userGardenRecordMember.user.id)
-          ..setValue(
+        ..setValue(
             fieldName: AppFormFields.rebuild, value: testFunc, isAux: true);
 
       final appState = AppState.skipSubscribe()
-        ..currentGarden = garden
+        ..currentUserGardenRecord = userGardenRecordAdmin
         ..currentUser = user;
 
       final getIt = GetIt.instance;
@@ -817,7 +817,7 @@ void main() {
         () => mockUserGardenRecordsRepository
       );
 
-      // getUserGardenRecordRole() via verify()
+      // getUserGardenRecordRole()
       final items = ResultList<RecordModel>(items: [
         getUserGardenRecordRecordModel(userGardenRecord: userGardenRecordAdmin)
       ]);
@@ -828,7 +828,7 @@ void main() {
         returnValue: items
       );
 
-      // update (with error)
+      // Update returns both a null value for record, AND a non-null value for errorsMap (i.e. has an error)
       user_garden_records_repository.updateStub(
         mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
         userGardenRecordID: userGardenRecordMember.id,

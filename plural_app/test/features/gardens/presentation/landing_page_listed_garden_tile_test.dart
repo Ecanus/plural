@@ -36,7 +36,7 @@ void main() {
       final garden = GardenFactory();
 
       final appState = AppState()
-        ..currentGarden = null
+        ..currentUserGardenRecord = null
         ..currentUser = user;
 
       final getIt = GetIt.instance;
@@ -104,9 +104,10 @@ void main() {
         (_) async => () {}
       );
 
-      // UserGardenRecordsRepository.getList() via AppUser.hasRole()
+      // UserGardenRecordsRepository.getList()
       when(
         () => mockUserGardenRecordsRepository.getList(
+          expand: "${UserGardenRecordField.user}, ${UserGardenRecordField.garden}",
           filter: ""
             "${UserGardenRecordField.user} = '${user.id}' && "
             "${UserGardenRecordField.garden} = '${garden.id}'",
@@ -134,7 +135,7 @@ void main() {
       // UsersRepository.getFirstListItem()
       when(
         () => mockUsersRepository.getFirstListItem(
-          filter: "${GenericField.id} = '${user.id}'"
+          filter: "${GenericField.id} = '${garden.creator.id}'"
           )
       ).thenAnswer(
         (_) async =>  getUserRecordModel()
@@ -185,8 +186,8 @@ void main() {
       final garden = GardenFactory();
 
       final appState = AppState.skipSubscribe()
-                        ..currentGarden = null
-                        ..currentUser = user;
+        ..currentUserGardenRecord = null
+        ..currentUser = user;
 
       final getIt = GetIt.instance;
       final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
@@ -194,9 +195,10 @@ void main() {
       getIt.registerLazySingleton<UserGardenRecordsRepository>(
         () => mockUserGardenRecordsRepository);
 
-      // UserGardenRecordsRepository.getList()
+      // UserGardenRecordsRepository.getList(), returns empty list
       when(
         () => mockUserGardenRecordsRepository.getList(
+          expand: "${UserGardenRecordField.user}, ${UserGardenRecordField.garden}",
           filter: ""
             "${UserGardenRecordField.user} = '${user.id}' && "
             "${UserGardenRecordField.garden} = '${garden.id}'",

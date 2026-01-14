@@ -34,7 +34,8 @@ void main() {
       void func() => testList.clear();
 
       final user = AppUserFactory();
-      final garden = GardenFactory(creator: user);
+      final garden = GardenFactory(creator: user); // for getAsksByUserID
+      final userGardenRecord = AppUserGardenRecordFactory(user: user, garden: garden);
 
       final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
@@ -44,7 +45,7 @@ void main() {
         ..setValue(fieldName: AppFormFields.rebuild, value: func, isAux: true)
         ..setValue(fieldName: fieldName, value: null);
       final appState = AppState.skipSubscribe()
-        ..currentGarden = garden // for getAsksByUserID
+        ..currentUserGardenRecord = userGardenRecord
         ..currentUser = user;
 
       // GetIt
@@ -368,8 +369,9 @@ void main() {
 
   group("Ask submitUpdate", () {
     ft.testWidgets("valid update", (tester) async {
-      final garden = GardenFactory();
       final user = AppUserFactory();
+      final garden = GardenFactory();
+      final userGardenRecord = AppUserGardenRecordFactory(user: user, garden: garden);
 
       // test as well
       final testList = [1, 2, 3];
@@ -378,7 +380,7 @@ void main() {
       final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
       final appState = AppState.skipSubscribe()
-        ..currentGarden = garden
+        ..currentUserGardenRecord = userGardenRecord
         ..currentUser = user;
 
       // AppForm

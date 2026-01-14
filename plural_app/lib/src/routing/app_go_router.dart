@@ -37,10 +37,8 @@ class AppGoRouter {
         GoRoute(
           path: Routes.admin,
           builder: (_, __) => AdminPage(),
-          redirect: (_, __) async {
-            final isAdmin = await GetIt.instance<AppState>().isAdministrator();
-
-            if (isAdmin) {
+          redirect: (_, __) {
+            if (GetIt.instance<AppState>().isAdministrator()) {
               return null;
             } else {
               return Uri(

@@ -35,10 +35,11 @@ void main() {
     testWidgets("widgets", (tester) async {
       final user = AppUserFactory(id: "test_user_1");
       final garden = GardenFactory(creator: user);
+      final userGardenRecord = AppUserGardenRecordFactory(user: user, garden: garden);
       final userSettings = AppUserSettingsFactory(user: user);
 
       final appState = AppState.skipSubscribe()
-        ..currentGarden = garden
+        ..currentUserGardenRecord = userGardenRecord
         ..currentUser = user
         ..currentUserSettings = userSettings; // for initialValue of AppCurrencyPickerFormField
 
@@ -114,10 +115,11 @@ void main() {
     testWidgets("empty", (tester) async {
       final user = AppUserFactory(id: "test_user_1");
       final garden = GardenFactory(creator: user);
+      final userGardenRecord = AppUserGardenRecordFactory(user: user, garden: garden);
       final userSettings = AppUserSettingsFactory(user: user);
 
       final appState = AppState.skipSubscribe()
-        ..currentGarden = garden
+        ..currentUserGardenRecord = userGardenRecord
         ..currentUser = user
         ..currentUserSettings = userSettings; // for initialValue of AppCurrencyPickerFormField
 

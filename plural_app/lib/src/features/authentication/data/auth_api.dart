@@ -598,14 +598,10 @@ Future<(RecordModel?, Map?)> updateUserGardenRole(
         }
       );
 
-    // if isChangingOwner, change currentUser from owner to administrator
+    // if isChangingOwner, change currentUserGardenRecord from owner to administrator
     if (isChangingOwner) {
-      final currentUserGardenRecord = await getUserGardenRecord(
-        userID: GetIt.instance<AppState>().currentUserID!,
-        gardenID: GetIt.instance<AppState>().currentGarden!.id
-      );
       await GetIt.instance<UserGardenRecordsRepository>().update(
-        id: currentUserGardenRecord!.id,
+        id: GetIt.instance<AppState>().currentUserGardenRecord!.id,
         body: {
           UserGardenRecordField.role: AppUserGardenRole.administrator.name
         }

@@ -29,9 +29,10 @@ void main() {
   group("GardenPage test", () {
     testWidgets("widgets", (tester) async {
       final garden = GardenFactory();
+      final userGardenRecord = AppUserGardenRecordFactory(garden: garden);
 
       final appState = AppState.skipSubscribe()
-        ..currentGarden = garden;
+        ..currentUserGardenRecord = userGardenRecord;
 
       final getIt = GetIt.instance;
       final mockAsksRepository = MockAsksRepository();

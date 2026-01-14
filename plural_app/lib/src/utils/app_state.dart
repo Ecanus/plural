@@ -80,6 +80,14 @@ class AppState with ChangeNotifier {
   // _timelineAsks
   List<Ask>? get timelineAsks => _timelineAsksList;
 
+  bool isAdministrator() {
+    return currentUserGardenRecord!.role.priority >= AppUserGardenRole.administrator.priority;
+  }
+
+  bool isOwner() {
+    return currentUserGardenRecord!.role.priority >= AppUserGardenRole.owner.priority;
+  }
+
   /// Sets the value of [_currentGarden] to null without notifying listeners.
   ///
   /// Clears all database subscriptions as well.
@@ -143,14 +151,6 @@ class AppState with ChangeNotifier {
 
       return [];
     }
-  }
-
-  Future<bool> isAdministrator() async {
-    return await currentUser!.hasRole(currentGarden!.id, AppUserGardenRole.administrator);
-  }
-
-  Future<bool> isOwner() async {
-    return await currentUser!.hasRole(currentGarden!.id, AppUserGardenRole.owner);
   }
 
   void notifyAllListeners() {
@@ -226,7 +226,7 @@ class AppState with ChangeNotifier {
   ///
   /// Throws a [PermissionException] if [currentUserGardenRecord] is null,
   /// or if no match is found.
-  void verify(List<AppUserGardenPermission> permissions) async {
+  void verify(List<AppUserGardenPermission> permissions) {
     if (currentUserGardenRecord == null) throw PermissionException();
 
     final userRole = currentUserGardenRecord!.role;

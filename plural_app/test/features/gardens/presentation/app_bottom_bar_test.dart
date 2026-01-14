@@ -42,46 +42,24 @@ void main() {
     testWidgets("createCreateAskDialog", (tester) async {
       final user = AppUserFactory(id: "test_user_1");
       final garden = GardenFactory(creator: user);
+      final userGardenRecord = AppUserGardenRecordFactory(
+        user: user,
+        garden: garden
+      );
       final userSettings = AppUserSettingsFactory(user: user);
 
       final appState = AppState.skipSubscribe()
-        ..currentGarden = garden
+        ..currentUserGardenRecord = userGardenRecord
         ..currentUser = user
         ..currentUserSettings = userSettings;
 
       // GetIt
       final getIt = GetIt.instance;
-      final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
       final mockUsersRepository = MockUsersRepository();
 
       getIt.registerLazySingleton<AppState>(() => appState);
       getIt.registerLazySingleton<AppDialogViewRouter>(() => AppDialogViewRouter());
-      getIt.registerLazySingleton<UserGardenRecordsRepository>(
-        () => mockUserGardenRecordsRepository);
       getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
-
-      // UserGardenRecordsRepository.getList()
-      final userGardenRecordReturnValue = ResultList<RecordModel>(
-        items: [
-          getUserGardenRecordRecordModel(
-            userGardenRecord: AppUserGardenRecordFactory(
-              user: user,
-              garden: garden
-            ),
-            expandFields: [
-              UserGardenRecordField.user, UserGardenRecordField.garden
-            ]),
-        ]
-      );
-      getUserGardenRecordStub(
-        mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
-        userID: user.id,
-        gardenID: garden.id,
-        userGardenRecordReturnValue: userGardenRecordReturnValue,
-        mockUsersRepository: mockUsersRepository,
-        gardenCreatorID: user.id,
-        gardenCreatorReturnValue: getUserRecordModel(user: user)
-      );
 
       await tester.pumpWidget(
         MaterialApp(
@@ -152,16 +130,18 @@ void main() {
 
     tearDown(() => GetIt.instance.reset());
 
-    testWidgets("createCurrentGardenDialog", (tester) async {
+    testWidgets("createCurrentGardenSettingsDialog", (tester) async {
       final user = AppUserFactory();
+      final userGardenRecord = AppUserGardenRecordFactory(user: user);
       final userSettings = AppUserSettingsFactory(user: user);
 
       // TestGesture
       final gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
       addTearDown(() async { return gesture.removePointer(); });
 
-      final appState = AppState() // for GoToAdminPageTile
+      final appState = AppState.skipSubscribe() // for GoToAdminPageTile
         ..currentUser = user
+        ..currentUserGardenRecord = userGardenRecord
         ..currentUserSettings = userSettings;
 
       final getIt = GetIt.instance;
@@ -200,13 +180,17 @@ void main() {
     testWidgets("createAdminCurrentGardenSettingsDialog", (tester) async {
       final user = AppUserFactory();
       final garden = GardenFactory(creator: user);
+      final userGardenRecord = AppUserGardenRecordFactory(
+        user: user,
+        garden: garden
+      );
 
       // TestGesture
       final gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
       addTearDown(() async { return gesture.removePointer(); });
 
       final appState = AppState.skipSubscribe()
-        ..currentGarden = garden
+        ..currentUserGardenRecord = userGardenRecord
         ..currentUser = user;
 
       final getIt = GetIt.instance;

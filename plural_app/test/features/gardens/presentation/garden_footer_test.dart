@@ -20,10 +20,11 @@ void main() {
     testWidgets("widgets", (tester) async {
       final user = AppUserFactory();
       final garden = GardenFactory(creator: user);
+      final userGardenRecord = AppUserGardenRecordFactory(user: user, garden: garden);
       final userSettings = AppUserSettingsFactory(user: user);
 
       final appState = AppState.skipSubscribe()
-        ..currentGarden = garden
+        ..currentUserGardenRecord = userGardenRecord
         ..currentUser = user
         ..currentUserSettings = userSettings;
 

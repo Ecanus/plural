@@ -39,7 +39,6 @@ import 'package:plural_app/src/localization/lang_en.dart';
 import '../../../test_factories.dart';
 import '../../../test_mocks.dart';
 import '../../../test_record_models.dart';
-import '../../../test_stubs/auth_api_stubs.dart';
 
 void main() {
   group("invitations_api", () {
@@ -648,13 +647,18 @@ void main() {
     test("getCurrentGardenInvitations", () async {
       final user = AppUserFactory();
       final garden = GardenFactory();
+      final userGardenRecord = AppUserGardenRecordFactory(
+        user: user,
+        garden: garden,
+        role: AppUserGardenRole.administrator
+      );
 
       final expiryDateThreshold = DateTime.now();
       final expiryDateThresholdString =
         DateFormat(Formats.dateYMMdd).format(expiryDateThreshold);
 
       final appState = AppState.skipSubscribe()
-        ..currentGarden = garden
+        ..currentUserGardenRecord = userGardenRecord
         ..currentUser = user;
 
       final getIt = GetIt.instance;
@@ -668,23 +672,6 @@ void main() {
         () => mockInvitationsRepository);
       getIt.registerLazySingleton<UserGardenRecordsRepository>(
         () => mockUserGardenRecordsRepository
-      );
-
-      // getUserGardenRecordRole() via verify()
-      final items = ResultList<RecordModel>(items: [
-        getUserGardenRecordRecordModel(
-          userGardenRecord: AppUserGardenRecordFactory(
-            garden: garden,
-            role: AppUserGardenRole.administrator,
-            user: user,
-          ),
-        )
-      ]);
-      getUserGardenRecordRoleStub(
-        mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
-        userID: user.id,
-        gardenID: garden.id,
-        returnValue: items
       );
 
       // InvitationsRepository.getList()
@@ -750,14 +737,6 @@ void main() {
       expect(invitationsMap[InvitationType.private]!.length, 2);
 
       // Check functions called
-      verify(
-        () => mockUserGardenRecordsRepository.getList(
-          filter: ""
-            "${UserGardenRecordField.user} = '${user.id}' && "
-            "${UserGardenRecordField.garden} = '${garden.id}'",
-          sort: "-updated"
-        )
-      ).called(1);
       verify(
         () => mockInvitationsRepository.getList(
           expand: "${InvitationField.creator}, ${InvitationField.invitee}",
