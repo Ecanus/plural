@@ -3,7 +3,6 @@ import 'package:get_it/get_it.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
-import 'package:plural_app/src/constants/app_values.dart';
 import 'package:plural_app/src/constants/themes.dart';
 
 // Asks
@@ -60,9 +59,7 @@ class ListedAskTile extends StatelessWidget {
         ),
         trailing: ListedAskTileTrailing(tileTrailingAvatar: tileTrailingAvatar),
         onTap: () {
-          Future.delayed(AppDurations.ms80, () {
-            appDialogViewRouter.routeToEditAskView(ask);
-          });
+          appDialogViewRouter.routeToEditAskView(ask);
         },
       ),
     );

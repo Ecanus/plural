@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
-import 'package:mocktail/mocktail.dart';
-import 'package:pocketbase/pocketbase.dart';
 
 // Common Widgets
 import 'package:plural_app/src/common_widgets/app_user_garden_role_picker_form_field.dart';
@@ -11,7 +9,6 @@ import 'package:plural_app/src/common_widgets/app_user_garden_role_picker_form_f
 import 'package:plural_app/src/constants/fields.dart';
 
 // Auth
-import 'package:plural_app/src/features/authentication/data/user_garden_records_repository.dart';
 import 'package:plural_app/src/features/authentication/domain/app_user_garden_record.dart';
 
 // Localization
@@ -23,8 +20,6 @@ import 'package:plural_app/src/utils/app_state.dart';
 
 // Test
 import '../test_factories.dart';
-import '../test_mocks.dart';
-import '../test_record_models.dart';
 import '../tester_functions.dart';
 
 void main() {
@@ -129,6 +124,10 @@ void main() {
     testWidgets("showRolePickerDialog select value", (tester) async {
       final user = AppUserFactory();
       final garden = GardenFactory(creator: user);
+      final userGardenRecord = AppUserGardenRecordFactory(
+        user: user,
+        garden: garden,
+        role: AppUserGardenRole.administrator);
 
       final AppForm appForm = AppForm();
       final GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -137,36 +136,11 @@ void main() {
       appForm.setValue(fieldName: fieldName, value: null);
 
       final appState = AppState.skipSubscribe()
-        ..currentGarden = garden
+        ..currentUserGardenRecord = userGardenRecord
         ..currentUser = user;
 
       final getIt = GetIt.instance;
-      final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
       getIt.registerLazySingleton<AppState>(() => appState);
-      getIt.registerLazySingleton<UserGardenRecordsRepository>(
-        () => mockUserGardenRecordsRepository);
-
-      // UserGardenRecordsRepository.getList()
-      when(
-        () => mockUserGardenRecordsRepository.getList(
-          filter: ""
-          "${UserGardenRecordField.user} = '${user.id}' && "
-          "${UserGardenRecordField.garden} = '${garden.id}'",
-          sort: "-updated"
-        )
-      ).thenAnswer(
-        (_) async => ResultList<RecordModel>(
-          items: [
-            getUserGardenRecordRecordModel(
-              userGardenRecord: AppUserGardenRecordFactory(
-                garden: garden,
-                role: AppUserGardenRole.administrator,
-                user: user,
-              ),
-            )
-          ]
-        )
-      );
 
       await tester.pumpWidget(
         MaterialApp(
@@ -210,8 +184,22 @@ void main() {
 
     testWidgets("getUserGardenRoleCards", (tester) async {
       final user = AppUserFactory();
-      final garden = GardenFactory(
-        creator: user
+      final garden = GardenFactory(creator: user);
+
+      final userGardenRecordOwner = AppUserGardenRecordFactory(
+        user: user,
+        garden: garden,
+        role: AppUserGardenRole.owner
+      );
+      final userGardenRecordAdmin = AppUserGardenRecordFactory(
+        user: user,
+        garden: garden,
+        role: AppUserGardenRole.administrator
+      );
+      final userGardenRecordMember = AppUserGardenRecordFactory(
+        user: user,
+        garden: garden,
+        role: AppUserGardenRole.member
       );
 
       final AppForm appForm = AppForm();
@@ -221,36 +209,11 @@ void main() {
       appForm.setValue(fieldName: fieldName, value: null);
 
       final appState = AppState.skipSubscribe()
-        ..currentGarden = garden
+        ..currentUserGardenRecord = userGardenRecordOwner
         ..currentUser = user;
 
       final getIt = GetIt.instance;
-      final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
       getIt.registerLazySingleton<AppState>(() => appState);
-      getIt.registerLazySingleton<UserGardenRecordsRepository>(
-        () => mockUserGardenRecordsRepository);
-
-      // UserGardenRecordsRepository.getList(). User is Owner
-      when(
-        () => mockUserGardenRecordsRepository.getList(
-          filter: ""
-          "${UserGardenRecordField.user} = '${user.id}' && "
-          "${UserGardenRecordField.garden} = '${garden.id}'",
-          sort: "-updated"
-        )
-      ).thenAnswer(
-        (_) async => ResultList<RecordModel>(
-          items: [
-            getUserGardenRecordRecordModel(
-              userGardenRecord: AppUserGardenRecordFactory(
-                garden: garden,
-                role: AppUserGardenRole.owner,
-                user: user
-              )
-            ),
-          ]
-        )
-      );
 
       await tester.pumpWidget(
         MaterialApp(
@@ -279,27 +242,8 @@ void main() {
       await tester.tap(find.byIcon(Icons.close));
       await tester.pumpAndSettle();
 
-      // UserGardenRecordsRepository.getList(). User is now an Administrator
-      when(
-        () => mockUserGardenRecordsRepository.getList(
-          filter: ""
-          "${UserGardenRecordField.user} = '${user.id}' && "
-          "${UserGardenRecordField.garden} = '${garden.id}'",
-          sort: "-updated"
-        )
-      ).thenAnswer(
-        (_) async => ResultList<RecordModel>(
-          items: [
-            getUserGardenRecordRecordModel(
-              userGardenRecord: AppUserGardenRecordFactory(
-                garden: garden,
-                role: AppUserGardenRole.administrator,
-                user: user
-              )
-            ),
-          ]
-        )
-      );
+      // Set AppState.currentUserGardenRecord to be an admin now
+      appState.currentUserGardenRecord = userGardenRecordAdmin;
 
       await tester.pumpWidget(
         MaterialApp(
@@ -328,27 +272,8 @@ void main() {
       await tester.tap(find.byIcon(Icons.close));
       await tester.pumpAndSettle();
 
-      // UserGardenRecordsRepository.getList(). User is now a Member
-      when(
-        () => mockUserGardenRecordsRepository.getList(
-          filter: ""
-          "${UserGardenRecordField.user} = '${user.id}' && "
-          "${UserGardenRecordField.garden} = '${garden.id}'",
-          sort: "-updated"
-        )
-      ).thenAnswer(
-        (_) async => ResultList<RecordModel>(
-          items: [
-            getUserGardenRecordRecordModel(
-              userGardenRecord: AppUserGardenRecordFactory(
-                garden: garden,
-                role: AppUserGardenRole.member,
-                user: user
-              )
-            ),
-          ]
-        )
-      );
+      // Set AppState.currentUserGardenRecord to be a member now
+      appState.currentUserGardenRecord = userGardenRecordMember;
 
       await tester.pumpWidget(
         MaterialApp(

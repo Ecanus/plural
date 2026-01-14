@@ -62,7 +62,7 @@ class _LandingPageState extends State<LandingPage> {
 
     // Always set currentGarden to null
     // and clear garden-specific database subscriptions when loading this page
-    GetIt.instance<AppState>().clearGardenAndSubscriptions();
+    GetIt.instance<AppState>().clearUserGardenRecordAndSubscriptions();
   }
 
   @override

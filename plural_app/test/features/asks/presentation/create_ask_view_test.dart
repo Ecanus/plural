@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
-import 'package:pocketbase/pocketbase.dart';
 
 // Common Widgets
 import 'package:plural_app/src/common_widgets/app_currency_picker_form_field.dart';
@@ -10,14 +9,10 @@ import 'package:plural_app/src/common_widgets/app_dialog_footer.dart';
 import 'package:plural_app/src/common_widgets/app_dialog_footer_buffer_submit_button.dart';
 import 'package:plural_app/src/common_widgets/app_text_form_field.dart';
 
-// Constants
-import 'package:plural_app/src/constants/fields.dart';
-
 // Asks
 import 'package:plural_app/src/features/asks/presentation/create_ask_view.dart';
 
 // Auth
-import 'package:plural_app/src/features/authentication/data/user_garden_records_repository.dart';
 import 'package:plural_app/src/features/authentication/data/users_repository.dart';
 
 // Localization
@@ -30,54 +25,27 @@ import 'package:plural_app/src/utils/app_state.dart';
 // Tests
 import '../../../test_factories.dart';
 import '../../../test_mocks.dart';
-import '../../../test_record_models.dart';
-import '../../../test_stubs/auth_api_stubs.dart';
 
 void main() {
   group("CreateAskView", () {
     testWidgets("widgets", (tester) async {
       final user = AppUserFactory(id: "test_user_1");
       final garden = GardenFactory(creator: user);
+      final userGardenRecord = AppUserGardenRecordFactory(user: user, garden: garden);
       final userSettings = AppUserSettingsFactory(user: user);
 
       final appState = AppState.skipSubscribe()
-        ..currentGarden = garden
+        ..currentUserGardenRecord = userGardenRecord
         ..currentUser = user
         ..currentUserSettings = userSettings;
 
       // GetIt
       final getIt = GetIt.instance;
-      final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
       final mockUsersRepository = MockUsersRepository();
 
       getIt.registerLazySingleton<AppState>(() => appState);
       getIt.registerLazySingleton<AppDialogViewRouter>(() => AppDialogViewRouter());
-      getIt.registerLazySingleton<UserGardenRecordsRepository>(
-        () => mockUserGardenRecordsRepository);
       getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
-
-      // UserGardenRecordsRepository.getList() via getUserGardenRecord()
-      final userGardenRecordReturnValue = ResultList<RecordModel>(
-        items: [
-          getUserGardenRecordRecordModel(
-            userGardenRecord: AppUserGardenRecordFactory(
-              user: user,
-              garden: garden
-            ),
-            expandFields: [
-              UserGardenRecordField.user, UserGardenRecordField.garden
-            ]),
-        ]
-      );
-      getUserGardenRecordStub(
-        mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
-        userID: user.id,
-        gardenID: garden.id,
-        userGardenRecordReturnValue: userGardenRecordReturnValue,
-        mockUsersRepository: mockUsersRepository,
-        gardenCreatorID: user.id,
-        gardenCreatorReturnValue: getUserRecordModel(user: user)
-      );
 
       await tester.pumpWidget(
         MaterialApp(
@@ -127,47 +95,25 @@ void main() {
         creator: user,
         doDocumentEditDate: editDate,
       );
+      final userGardenRecord = AppUserGardenRecordFactory(
+        user: user,
+        garden: garden,
+        doDocumentReadDate: editDate.add(Duration(days: -2)),
+      );
       final userSettings = AppUserSettingsFactory(user: user);
 
       final appState = AppState.skipSubscribe()
-        ..currentGarden = garden
+        ..currentUserGardenRecord = userGardenRecord
         ..currentUser = user
         ..currentUserSettings = userSettings;
 
       // GetIt
       final getIt = GetIt.instance;
-      final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
       final mockUsersRepository = MockUsersRepository();
 
       getIt.registerLazySingleton<AppState>(() => appState);
       getIt.registerLazySingleton<AppDialogViewRouter>(() => AppDialogViewRouter());
-      getIt.registerLazySingleton<UserGardenRecordsRepository>(
-        () => mockUserGardenRecordsRepository);
       getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
-
-      // UserGardenRecordsRepository.getList() via getUserGardenRecord()
-      final userGardenRecordReturnValue = ResultList<RecordModel>(
-        items: [
-          getUserGardenRecordRecordModel(
-            userGardenRecord: AppUserGardenRecordFactory(
-              user: user,
-              garden: garden,
-              doDocumentReadDate: editDate.add(Duration(days: -2))
-            ),
-            expandFields: [
-              UserGardenRecordField.user, UserGardenRecordField.garden
-            ]),
-        ]
-      );
-      getUserGardenRecordStub(
-        mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
-        userID: user.id,
-        gardenID: garden.id,
-        userGardenRecordReturnValue: userGardenRecordReturnValue,
-        mockUsersRepository: mockUsersRepository,
-        gardenCreatorID: user.id,
-        gardenCreatorReturnValue: getUserRecordModel(user: user)
-      );
 
       await tester.pumpWidget(
         MaterialApp(

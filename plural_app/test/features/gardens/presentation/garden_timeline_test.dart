@@ -12,7 +12,6 @@ import 'package:plural_app/src/constants/themes.dart';
 import 'package:plural_app/src/features/asks/data/asks_repository.dart';
 
 // Auth
-import 'package:plural_app/src/features/authentication/data/user_garden_records_repository.dart';
 import 'package:plural_app/src/features/authentication/data/users_repository.dart';
 
 // Gardens
@@ -30,7 +29,6 @@ import '../../../test_factories.dart';
 import '../../../test_mocks.dart';
 import '../../../test_record_models.dart';
 import '../../../test_stubs/asks_api_stubs.dart';
-import '../../../test_stubs/auth_api_stubs.dart';
 
 void main() {
   group("GardenTimeline", () {
@@ -52,35 +50,24 @@ void main() {
     testWidgets("snapshot.hasData", (tester) async {
       final user = AppUserFactory();
       final garden = GardenFactory();
+      final userGardenRecord = AppUserGardenRecordFactory(
+        user: user,
+        garden: garden,
+      );
       final userSettings = AppUserSettingsFactory(user: user);
 
       final appState = AppState.skipSubscribe()
         ..currentUser = user // For Ask.isCreatedByCurrentUser
-        ..currentGarden = garden
+        ..currentUserGardenRecord = userGardenRecord
         ..currentUserSettings = userSettings;
 
       final getIt = GetIt.instance;
       final mockAsksRepository = MockAsksRepository();
-      final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
       final mockUsersRepository = MockUsersRepository();
 
       getIt.registerLazySingleton<AppState>(() => appState);
       getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
-      getIt.registerLazySingleton<UserGardenRecordsRepository>(
-        () => mockUserGardenRecordsRepository
-      );
       getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
-
-      // getUserGardenRecordRole() via verify()
-      getUserGardenRecordRoleStub(
-        mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
-        userID: user.id,
-        gardenID: garden.id,
-        returnValue: ResultList<RecordModel>(items: [
-          getUserGardenRecordRecordModel(
-            userGardenRecord: AppUserGardenRecordFactory(user: user))
-        ])
-      );
 
       getAsksByGardenIDStub(
         mockAsksRepository: mockAsksRepository,
@@ -125,35 +112,24 @@ void main() {
     testWidgets("snapshot.hasData empty", (tester) async {
       final user = AppUserFactory();
       final garden = GardenFactory();
+      final userGardenRecord = AppUserGardenRecordFactory(
+        user: user,
+        garden: garden,
+      );
       final userSettings = AppUserSettingsFactory(user: user);
 
       final appState = AppState.skipSubscribe()
         ..currentUser = user // For Ask.isCreatedByCurrentUser
-        ..currentGarden = garden
+        ..currentUserGardenRecord = userGardenRecord
         ..currentUserSettings = userSettings;
 
       final getIt = GetIt.instance;
       final mockAsksRepository = MockAsksRepository();
-      final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
       final mockUsersRepository = MockUsersRepository();
 
       getIt.registerLazySingleton<AppState>(() => appState);
       getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
-      getIt.registerLazySingleton<UserGardenRecordsRepository>(
-        () => mockUserGardenRecordsRepository
-      );
       getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
-
-      // getUserGardenRecordRole() via verify()
-      getUserGardenRecordRoleStub(
-        mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
-        userID: user.id,
-        gardenID: garden.id,
-        returnValue: ResultList<RecordModel>(items: [
-          getUserGardenRecordRecordModel(
-            userGardenRecord: AppUserGardenRecordFactory(user: user))
-        ])
-      );
 
       getAsksByGardenIDStub(
         mockAsksRepository: mockAsksRepository,
@@ -200,10 +176,14 @@ void main() {
     testWidgets("snapshot.hasError", (tester) async {
       final user = AppUserFactory();
       final garden = GardenFactory();
+      final userGardenRecord = AppUserGardenRecordFactory(
+        user: user,
+        garden: garden,
+      );
 
       final appState = AppState.skipSubscribe()
         ..currentUser = user
-        ..currentGarden = garden;
+        ..currentUserGardenRecord = userGardenRecord;
 
       final getIt = GetIt.instance;
       final mockAsksRepository = MockAsksRepository();

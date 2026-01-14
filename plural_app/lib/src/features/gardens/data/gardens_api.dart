@@ -114,7 +114,7 @@ Future<(RecordModel?, Map?)> updateGarden(
 }) async {
   try {
     // Check permissions first
-    await GetIt.instance<AppState>().verify([
+    GetIt.instance<AppState>().verify([
       AppUserGardenPermission.changeGardenName,
       AppUserGardenPermission.editDoDocument,
     ]);

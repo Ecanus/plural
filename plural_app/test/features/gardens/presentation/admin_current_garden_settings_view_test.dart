@@ -27,8 +27,10 @@ void main() {
   group("AdminCurrentGardenSettingsView", () {
     testWidgets("widgets", (tester) async {
       final garden = GardenFactory();
+      final userGardenRecord = AppUserGardenRecordFactory(garden: garden);
+
       final appState = AppState.skipSubscribe()
-        ..currentGarden = garden;
+        ..currentUserGardenRecord = userGardenRecord;
 
       final getIt = GetIt.instance;
       getIt.registerLazySingleton<AppState>(() => appState);

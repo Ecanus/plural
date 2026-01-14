@@ -439,9 +439,10 @@ void main() {
 
     test("getAsksByUserID", () async {
       final garden = GardenFactory();
+      final userGardenRecord = AppUserGardenRecordFactory(garden: garden);
 
       final appState = AppState.skipSubscribe()
-                        ..currentGarden = garden;
+        ..currentUserGardenRecord = userGardenRecord;
 
       // GetIt
       final getIt = GetIt.instance;
@@ -462,7 +463,7 @@ void main() {
         ])
       );
 
-      // mockUsersRepository.getFirstListItem()
+      // mockUsersRepository.getFirstListItem(), for Ask.creator
       when(
         () => mockUsersRepository.getFirstListItem(
           filter: any(named: "filter")
@@ -482,10 +483,14 @@ void main() {
     test("getAsksForListedAsksView", () async {
       final user = AppUserFactory();
       final garden = GardenFactory();
+      final userGardenRecord = AppUserGardenRecordFactory(
+        user: user,
+        garden: garden
+      );
 
       final appState = AppState.skipSubscribe()
-                        ..currentGarden = garden
-                        ..currentUser = user;
+        ..currentUserGardenRecord = userGardenRecord
+        ..currentUser = user;
 
       final getIt = GetIt.instance;
       final mockAsksRepository = MockAsksRepository();
@@ -504,7 +509,7 @@ void main() {
       when(
         () => mockAsksRepository.getList(
           filter: filterString,
-          sort: GenericField.created,
+          sort: "${AskField.deadlineDate},${GenericField.created}",
         )
       ).thenAnswer(
         (_) async => ResultList<RecordModel>(items: [
@@ -532,7 +537,7 @@ void main() {
         ])
       );
 
-      // UsersRepository.getFirstListItem()
+      // UsersRepository.getFirstListItem(), for Ask.creator
       users_repository.getFirstListItemStub(
         mockUsersRepository: mockUsersRepository,
         userID: user.id,
@@ -558,8 +563,13 @@ void main() {
         creator: user,
       );
 
+      final userGardenRecord = AppUserGardenRecordFactory(
+        user: user,
+        garden: garden
+      );
+
       final appState = AppState.skipSubscribe()
-        ..currentGarden = garden
+        ..currentUserGardenRecord = userGardenRecord
         ..currentUser = user;
 
       final getIt = GetIt.instance;

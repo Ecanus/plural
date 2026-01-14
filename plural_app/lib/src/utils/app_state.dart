@@ -37,31 +37,33 @@ class AppState with ChangeNotifier {
   // primarily for testing
   bool _skipsSubscriptions = false;
 
-  Garden? _currentGarden; // use Garden and not UserGardenRecord because caching the latter would prevent permission changes from being instantly applied
-
   AppUser? _currentUser;
+  AppUserGardenRecord? _currentUserGardenRecord;
   AppUserSettings? _currentUserSettings;
 
   List<Ask> _timelineAsksList = [];
 
-  // _currentGarden
-  Garden? get currentGarden => _currentGarden;
-  set currentGarden(Garden? newGarden) {
-    // Update subscriptions if newGarden is a new, non-null value
-    if (!_skipsSubscriptions) {
-      if (newGarden != null && newGarden != currentGarden) {
-        updateSubscriptions(newGarden);
-      }
-    }
-
-    _currentGarden = newGarden;
-    notifyListeners();
-  }
+  // currentGarden
+  Garden? get currentGarden => _currentUserGardenRecord?.garden;
 
   // _currentUser
   AppUser? get currentUser => _currentUser;
   set currentUser(AppUser? newUser) {
     _currentUser = newUser;
+    notifyListeners();
+  }
+
+  // _currentUserGardenRecord
+  AppUserGardenRecord? get currentUserGardenRecord => _currentUserGardenRecord;
+  set currentUserGardenRecord(AppUserGardenRecord? newUserGardenRecord) {
+    // Update subscriptions if newUserGardenRecord is a new, non-null value
+    if (!_skipsSubscriptions) {
+      if (newUserGardenRecord != null && newUserGardenRecord != currentUserGardenRecord) {
+        updateSubscriptions(newUserGardenRecord.garden);
+      }
+    }
+
+    _currentUserGardenRecord = newUserGardenRecord;
     notifyListeners();
   }
 
@@ -78,11 +80,19 @@ class AppState with ChangeNotifier {
   // _timelineAsks
   List<Ask>? get timelineAsks => _timelineAsksList;
 
+  bool isAdministrator() {
+    return currentUserGardenRecord!.role.priority >= AppUserGardenRole.administrator.priority;
+  }
+
+  bool isOwner() {
+    return currentUserGardenRecord!.role.priority >= AppUserGardenRole.owner.priority;
+  }
+
   /// Sets the value of [_currentGarden] to null without notifying listeners.
   ///
   /// Clears all database subscriptions as well.
-  Future<void> clearGardenAndSubscriptions() async {
-    _currentGarden = null;
+  Future<void> clearUserGardenRecordAndSubscriptions() async {
+    _currentUserGardenRecord = null;
 
     // Clear all database subscriptions
     final pb = GetIt.instance<PocketBase>();
@@ -100,9 +110,9 @@ class AppState with ChangeNotifier {
   }) async {
     try {
       if (isAdminPage) {
-        await verify([AppUserGardenPermission.viewAdminGardenTimeline]);
+        verify([AppUserGardenPermission.viewAdminGardenTimeline]);
       } else {
-        await verify([AppUserGardenPermission.viewGardenTimeline]);
+        verify([AppUserGardenPermission.viewGardenTimeline]);
       }
 
       final count = isAdminPage ? null : currentUserSettings!.gardenTimelineDisplayCount;
@@ -143,14 +153,6 @@ class AppState with ChangeNotifier {
     }
   }
 
-  Future<bool> isAdministrator() async {
-    return await currentUser!.hasRole(currentGarden!.id, AppUserGardenRole.administrator);
-  }
-
-  Future<bool> isOwner() async {
-    return await currentUser!.hasRole(currentGarden!.id, AppUserGardenRole.owner);
-  }
-
   void notifyAllListeners() {
     notifyListeners();
   }
@@ -166,18 +168,19 @@ class AppState with ChangeNotifier {
   ///
   /// If no corresponding [UserGardenRecord] is found, an error Snackbar will appear,
   /// and the page will be refreshed.
-  Future<void> setGardenAndReroute(
+  Future<void> setUserGardenRecordAndReroute(
     BuildContext context,
     Garden newGarden, {
     GoRouter? goRouter, // primarily for testing
   }) async {
-    final isMember = await currentUser!.hasRole(newGarden.id, AppUserGardenRole.member);
+    final newUserGardenRecord = await getUserGardenRecord(
+      userID: currentUser!.id, gardenID: newGarden.id);
 
     if (context.mounted) {
       final router = goRouter ?? GoRouter.of(context);
 
-      if (isMember) {
-        currentGarden = newGarden; // will also call updateSubscriptions() and notifyListeners()
+      if (newUserGardenRecord != null) {
+        currentUserGardenRecord = newUserGardenRecord; // will also call updateSubscriptions() and notifyListeners()
         router.go(Routes.garden);
       } else {
         // Redirect to UnauthorizedPage
@@ -192,7 +195,7 @@ class AppState with ChangeNotifier {
   }
 
   /// Resets the database subscriptions for all Collections dependant on
-  /// the value of [_currentGarden]
+  /// the value of [newGarden]
   Future<void> updateSubscriptions(Garden newGarden) async {
     // Set new database subscriptions
     // Asks
@@ -219,19 +222,16 @@ class AppState with ChangeNotifier {
     );
   }
 
-  /// Checks if [currentUser]'s role in the [currentGarden]
-  /// has correct matching [permissions].
+  /// Checks if [currentUserGardenRecord]'s role has correct matching [permissions].
   ///
-  /// Throws a [PermissionException] if no match is found.
-  Future<void> verify(List<AppUserGardenPermission> permissions) async {
-    final userRole = await getUserGardenRecordRole(
-      userID: currentUserID!,
-      gardenID: currentGarden!.id
-    );
+  /// Throws a [PermissionException] if [currentUserGardenRecord] is null,
+  /// or if no match is found.
+  void verify(List<AppUserGardenPermission> permissions) {
+    if (currentUserGardenRecord == null) throw PermissionException();
 
-    if (userRole == null) throw PermissionException();
-
+    final userRole = currentUserGardenRecord!.role;
     final userPermissions = getUserGardenPermissionGroup(userRole);
+
     if (!userPermissions.toSet().containsAll(permissions)) throw PermissionException();
   }
 }

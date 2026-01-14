@@ -38,7 +38,7 @@ ButtonLayout _getButtonLayout(BuildContext context, { isAdminPage = false }) {
     final iconColor = Theme.of(context).colorScheme.onPrimary;
 
     return (
-      leftButton: CreateCurrentGardenDialogButton(iconColor: iconColor),
+      leftButton: CreateCurrentGardenSettingsDialogButton(iconColor: iconColor),
       middleButton: CreateCreateAskDialogButton(),
       rightButton: CreateUserSettingsDialogButton(iconColor: iconColor)
     );
@@ -129,8 +129,8 @@ class CreateCreateAskDialogButton extends StatelessWidget {
   }
 }
 
-class CreateCurrentGardenDialogButton extends StatelessWidget {
-  const CreateCurrentGardenDialogButton({
+class CreateCurrentGardenSettingsDialogButton extends StatelessWidget {
+  const CreateCurrentGardenSettingsDialogButton({
     required this.iconColor,
   });
 

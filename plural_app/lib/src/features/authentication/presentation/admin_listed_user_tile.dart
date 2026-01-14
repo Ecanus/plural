@@ -3,7 +3,6 @@ import 'package:get_it/get_it.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
-import 'package:plural_app/src/constants/app_values.dart';
 
 // Auth
 import 'package:plural_app/src/features/authentication/domain/app_user_garden_record.dart';
@@ -55,9 +54,7 @@ class AdminListedUserTile extends StatelessWidget {
             color: Theme.of(context).colorScheme.onSecondary
           ) : SizedBox(),
         onTap: isEditable ? () {
-          Future.delayed(AppDurations.ms80, () {
-            appDialogViewRouter.routeToAdminEditUserView(userGardenRecord);
-          });
+          appDialogViewRouter.routeToAdminEditUserView(userGardenRecord);
         } : null,
       ),
     );

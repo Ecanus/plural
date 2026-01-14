@@ -22,9 +22,6 @@ import 'package:plural_app/src/constants/fields.dart';
 import 'package:plural_app/src/features/asks/data/forms.dart';
 import 'package:plural_app/src/features/asks/domain/ask.dart';
 
-// Auth
-import 'package:plural_app/src/features/authentication/data/auth_api.dart';
-
 // Localization
 import 'package:plural_app/src/localization/lang_en.dart';
 
@@ -35,10 +32,7 @@ import 'package:plural_app/src/utils/app_state.dart';
 import 'package:plural_app/src/utils/route_to_view_button.dart';
 
 Future createCreateAskDialog(BuildContext context) async {
-  final userGardenRecord = await getUserGardenRecord(
-    userID: GetIt.instance<AppState>().currentUserID!,
-    gardenID: GetIt.instance<AppState>().currentGarden!.id,
-  );
+  final userGardenRecord = GetIt.instance<AppState>().currentUserGardenRecord;
 
   if (context.mounted) {
     return showDialog(

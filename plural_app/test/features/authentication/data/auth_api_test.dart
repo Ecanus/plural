@@ -545,9 +545,14 @@ void main() {
     test("getCurrentGardenUserGardenRecords", () async {
       final user = AppUserFactory();
       final garden = GardenFactory();
+      final userGardenRecord = AppUserGardenRecordFactory(
+        user: user,
+        garden: garden,
+        role: AppUserGardenRole.administrator
+      );
 
       final appState = AppState.skipSubscribe()
-        ..currentGarden = garden
+        ..currentUserGardenRecord = userGardenRecord
         ..currentUser = user;
 
       final getIt = GetIt.instance;
@@ -560,20 +565,6 @@ void main() {
         () => mockUserGardenRecordsRepository
       );
       getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
-
-      // getUserGardenRecordRole()
-      final items = ResultList<RecordModel>(items: [
-        getUserGardenRecordRecordModel(
-          userGardenRecord: AppUserGardenRecordFactory(
-            role: AppUserGardenRole.administrator)
-        )
-      ]);
-      getUserGardenRecordRoleStub(
-        mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
-        userID: user.id,
-        gardenID: garden.id,
-        returnValue: items
-      );
 
       // getCurrentGardenUserGardenRecords()
       final currentGardenUserGardenRecordsItems = ResultList<RecordModel>(
@@ -1581,16 +1572,22 @@ void main() {
     test("updateUserGardenRole", () async {
       final user = AppUserFactory();
       final garden = GardenFactory();
+      final userGardenRole = AppUserGardenRecordFactory(
+        user: user,
+        garden: garden,
+        role: AppUserGardenRole.administrator
+      );
 
+      final otherUser = AppUserFactory();
       final Map<dynamic, dynamic> map = {
         GenericField.id: "id",
         UserGardenRecordField.garden: garden.id,
-        UserGardenRecordField.role: AppUserGardenRole.administrator.name,
-        UserGardenRecordField.user: user.id
+        UserGardenRecordField.role: AppUserGardenRole.administrator.name, // will set otherUser to "adminstrator"
+        UserGardenRecordField.user: otherUser.id
       };
 
       final appState = AppState.skipSubscribe()
-        ..currentGarden = garden
+        ..currentUserGardenRecord = userGardenRole
         ..currentUser = user;
 
       final getIt = GetIt.instance;
@@ -1602,17 +1599,17 @@ void main() {
         () => mockUserGardenRecordsRepository
       );
 
-      // getUserGardenRecordRoleStub() via verify()
+      // getUserGardenRecordRoleStub(), otherUser is currently a "member"
       final items = ResultList<RecordModel>(items: [
         getUserGardenRecordRecordModel(
           userGardenRecord: AppUserGardenRecordFactory(
-            role: AppUserGardenRole.administrator
+            role: AppUserGardenRole.member
           ),
         )
       ]);
       getUserGardenRecordRoleStub(
         mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
-        userID: user.id,
+        userID: otherUser.id,
         gardenID: garden.id,
         returnValue: items
       );
@@ -1646,14 +1643,14 @@ void main() {
 
       await updateUserGardenRole(mockBuildContext, map);
 
-      // getList() called for getUserGardenRecordRole() and during verify() (x2)
+      // getList() called for getUserGardenRecordRole()
       verify(() => mockUserGardenRecordsRepository.getList(
           filter: ""
-            "${UserGardenRecordField.user} = '${user.id}' && "
+            "${UserGardenRecordField.user} = '${otherUser.id}' && "
             "${UserGardenRecordField.garden} = '${garden.id}'",
           sort: "-updated"
         )
-      ).called(2);
+      ).called(1);
 
       verify(() => mockUserGardenRecordsRepository.update(
           id: map[GenericField.id],
@@ -1669,18 +1666,22 @@ void main() {
     test("updateUserGardenRole isChangingOwner", () async {
       final user = AppUserFactory();
       final garden = GardenFactory(creator: user);
+      final userGardenRecord = AppUserGardenRecordFactory(
+        user: user,
+        garden: garden,
+        role: AppUserGardenRole.owner, // AppState.currentUserGardenRecord must be owner to change the owner
+      );
 
       final otherUser = AppUserFactory();
-
       final Map<dynamic, dynamic> map = {
         GenericField.id: "id",
         UserGardenRecordField.garden: garden.id,
-        UserGardenRecordField.role: AppUserGardenRole.owner.name,
+        UserGardenRecordField.role: AppUserGardenRole.owner.name, // Changing otherUser to become an Owner
         UserGardenRecordField.user: otherUser.id
       };
 
       final appState = AppState.skipSubscribe()
-        ..currentGarden = garden
+        ..currentUserGardenRecord = userGardenRecord
         ..currentUser = user;
 
       final getIt = GetIt.instance;
@@ -1694,12 +1695,12 @@ void main() {
       );
       getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
 
-      // otherUser, getUserGardenRecordRole() via verify()
+      // otherUser, getUserGardenRecordRole()
       final otherUserRecordRoleItems = ResultList<RecordModel>(items: [
         getUserGardenRecordRecordModel(
           userGardenRecord: AppUserGardenRecordFactory(
             garden: garden,
-            role: AppUserGardenRole.administrator,
+            role: AppUserGardenRole.administrator, // otherUser is currently an Administrator
             user: otherUser,
           ),
         )
@@ -1711,28 +1712,11 @@ void main() {
         returnValue: otherUserRecordRoleItems
       );
 
-      // user, getUserGardenRecordRole() via verify()
-      final currentUserRecordRoleItems = ResultList<RecordModel>(items: [
-        getUserGardenRecordRecordModel(
-          userGardenRecord: AppUserGardenRecordFactory(
-            garden: garden,
-            role: AppUserGardenRole.owner,
-            user: user,
-          ),
-        )
-      ]);
-       getUserGardenRecordRoleStub(
-        mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
-        userID: user.id,
-        gardenID: garden.id,
-        returnValue: currentUserRecordRoleItems
-      );
-
       // otherUser -> update()
       final otherUserRecordModel = getUserGardenRecordRecordModel(
         userGardenRecord: AppUserGardenRecordFactory(
           garden: garden,
-          role: AppUserGardenRole.administrator,
+          role: AppUserGardenRole.owner,
           user: otherUser
         ),
       );
@@ -1743,47 +1727,19 @@ void main() {
         returnValue: (otherUserRecordModel, {}),
       );
 
-      // currentUser -> getUserGardenRecord()
-      final currentUserGardenRecordItems = ResultList<RecordModel>(items: [
-        getUserGardenRecordRecordModel(
-          userGardenRecord: AppUserGardenRecordFactory(
-            garden: garden,
-            id: "testRecordID",
-            role: AppUserGardenRole.owner,
-            user: user,
-          ),
-          expandFields: [
-            UserGardenRecordField.user,
-            UserGardenRecordField.garden
-          ],
-        )
-      ]);
-      getUserGardenRecordStub(
-        mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
-        userID: user.id,
-        gardenID: garden.id,
-        userGardenRecordReturnValue: currentUserGardenRecordItems,
-        mockUsersRepository: mockUsersRepository,
-        gardenCreatorID: user.id,
-        gardenCreatorReturnValue: getUserRecordModel(user: user)
-      );
-
       // currentUser -> update()
       final currentUserRecordModel = getUserGardenRecordRecordModel(
-        userGardenRecord: AppUserGardenRecordFactory(
-          garden: garden,
-          role: AppUserGardenRole.administrator,
-          user: user
-        ),
+        userGardenRecord: userGardenRecord,
       );
       user_garden_records_repository.updateStub(
         mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
-        userGardenRecordID: "testRecordID",
+        userGardenRecordID: userGardenRecord.id,
         userGardenRoleName: AppUserGardenRole.administrator.name,
         returnValue: (currentUserRecordModel, {}),
       );
 
-      // check nothing called yet
+      // Check nothing called yet
+      // otherUser, getUserGardenRecordRole()
       verifyNever(() => mockUserGardenRecordsRepository.getList(
           filter: ""
             "${UserGardenRecordField.user} = '${otherUser.id}' && "
@@ -1791,13 +1747,7 @@ void main() {
           sort: "-updated"
         )
       );
-      verifyNever(() => mockUserGardenRecordsRepository.getList(
-          filter: ""
-            "${UserGardenRecordField.user} = '${user.id}' && "
-            "${UserGardenRecordField.garden} = '${garden.id}'",
-          sort: "-updated"
-        )
-      );
+      // otherUser, update()
       verifyNever(() => mockUserGardenRecordsRepository.update(
           id: map[GenericField.id],
           body: {
@@ -1805,18 +1755,9 @@ void main() {
           }
         )
       );
-      verifyNever(() => mockUserGardenRecordsRepository.getList(
-        expand: "${UserGardenRecordField.user}, ${UserGardenRecordField.garden}",
-        filter: ""
-          "${UserGardenRecordField.user} = '${user.id}' && "
-          "${UserGardenRecordField.garden} = '${garden.id}'",
-        sort: "-updated"
-      ));
-      verifyNever(() =>  mockUsersRepository.getFirstListItem(
-        filter: "${GenericField.id} = '${user.id}'"
-      ));
+      // currentUser, update()
       verifyNever(() => mockUserGardenRecordsRepository.update(
-        id: "testRecordID",
+        id: userGardenRecord.id,
         body: {
           UserGardenRecordField.role: AppUserGardenRole.administrator.name
         }
@@ -1825,7 +1766,8 @@ void main() {
       // Call method
       await updateUserGardenRole(mockBuildContext, map);
 
-      // check methods were called
+      // Check methods were called
+      // otherUser, getUserGardenRecordRole()
       verify(() => mockUserGardenRecordsRepository.getList(
           filter: ""
             "${UserGardenRecordField.user} = '${otherUser.id}' && "
@@ -1833,13 +1775,7 @@ void main() {
           sort: "-updated"
         )
       ).called(1);
-      verify(() => mockUserGardenRecordsRepository.getList(
-          filter: ""
-            "${UserGardenRecordField.user} = '${user.id}' && "
-            "${UserGardenRecordField.garden} = '${garden.id}'",
-          sort: "-updated"
-        )
-      ).called(1);
+      // otherUser, update()
       verify(() => mockUserGardenRecordsRepository.update(
           id: map[GenericField.id],
           body: {
@@ -1847,18 +1783,9 @@ void main() {
           }
         )
       ).called(1);
-      verify(() => mockUserGardenRecordsRepository.getList(
-        expand: "${UserGardenRecordField.user}, ${UserGardenRecordField.garden}",
-        filter: ""
-          "${UserGardenRecordField.user} = '${user.id}' && "
-          "${UserGardenRecordField.garden} = '${garden.id}'",
-        sort: "-updated"
-      )).called(1);
-      verify(() =>  mockUsersRepository.getFirstListItem(
-        filter: "${GenericField.id} = '${user.id}'"
-      ));
+      // currentUser, update()
       verify(() => mockUserGardenRecordsRepository.update(
-        id: "testRecordID",
+        id: userGardenRecord.id,
         body: {
           UserGardenRecordField.role: AppUserGardenRole.administrator.name
         }
@@ -1872,6 +1799,12 @@ void main() {
       final user = AppUserFactory();
       final garden = GardenFactory();
 
+      final userGardenRecord = AppUserGardenRecordFactory(
+        user: user,
+        garden: garden,
+        role: AppUserGardenRole.member // trying to change owner when not already an owner, raises PermissionException
+      );
+
       final otherUser = AppUserFactory();
 
       final Map<dynamic, dynamic> map = {
@@ -1882,7 +1815,7 @@ void main() {
       };
 
       final appState = AppState.skipSubscribe()
-        ..currentGarden = garden
+        ..currentUserGardenRecord = userGardenRecord
         ..currentUser = user;
 
       final getIt = GetIt.instance;
@@ -1895,7 +1828,7 @@ void main() {
       );
       getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
 
-      // otherUser -> getUserGardenRecordRole()
+      // otherUser -> getUserGardenRecordRole(), returns of a role of Administrator
       final otherUserRecordRoleItems = ResultList<RecordModel>(items: [
         getUserGardenRecordRecordModel(
           userGardenRecord: AppUserGardenRecordFactory(
@@ -1911,26 +1844,6 @@ void main() {
         gardenID: garden.id,
         returnValue: otherUserRecordRoleItems
       );
-
-      // currentUser -> getUserGardenRecordRole()
-      final currentUserRecordRoleItems = ResultList<RecordModel>(items: [
-        getUserGardenRecordRecordModel(
-          userGardenRecord: AppUserGardenRecordFactory(
-            garden: garden,
-            role: AppUserGardenRole.member,
-            user: user,
-          ),
-        )
-      ]);
-       getUserGardenRecordRoleStub(
-        mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
-        userID: user.id,
-        gardenID: garden.id,
-        returnValue: currentUserRecordRoleItems
-      );
-
-      // check nothing called yet
-
 
       final testRouter = GoRouter(
         initialLocation: "/test",
@@ -1966,7 +1879,7 @@ void main() {
       // Check not yet in UnauthorizedPage
       expect(ft.find.byType(UnauthorizedPage), ft.findsNothing);
 
-      // Tap button (to call expelUserFromGarden)
+      // Tap button (to call updateUserGardenRole)
       await tester.tap(ft.find.byType(ElevatedButton));
       await tester.pumpAndSettle();
 
@@ -2032,7 +1945,11 @@ void main() {
       final userGardenRecord = AppUserGardenRecordFactory();
       final now = DateTime.now();
 
+      final appState = AppState.skipSubscribe()
+        ..currentUserGardenRecord = userGardenRecord;
+
       final getIt = GetIt.instance;
+      getIt.registerLazySingleton<AppState>(() => appState);
       final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
 
       getIt.registerLazySingleton<UserGardenRecordsRepository>(
@@ -2061,7 +1978,7 @@ void main() {
         )
       );
 
-      await updateCurrentUserGardenRecordDoDocumentReadDate(userGardenRecord.id);
+      await updateCurrentUserGardenRecordDoDocumentReadDate();
 
       verify(() => mockUserGardenRecordsRepository.update(
           id: userGardenRecord.id,

@@ -37,10 +37,11 @@ void main() {
       final userGardenRecord = AppUserGardenRecordFactory(
         garden: garden,
         user: user,
+        role: AppUserGardenRole.administrator
       );
 
       final appState = AppState.skipSubscribe()
-        ..currentGarden = garden
+        ..currentUserGardenRecord = userGardenRecord
         ..currentUser = user;
 
       final getIt = GetIt.instance;
@@ -52,23 +53,6 @@ void main() {
         () => mockUserGardenRecordsRepository
       );
       getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
-
-      // user, getUserGardenRecordRole() via verify()
-      final userGardenRecordRoleItems = ResultList<RecordModel>(items: [
-        getUserGardenRecordRecordModel(
-          userGardenRecord: AppUserGardenRecordFactory(
-            garden: garden,
-            role: AppUserGardenRole.administrator,
-            user: user
-          ),
-        )
-      ]);
-      getUserGardenRecordRoleStub(
-        mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
-        userID: user.id,
-        gardenID: garden.id,
-        returnValue: userGardenRecordRoleItems
-      );
 
       // user -> auth_api.getCurrentGardenUserGardenRecords()
       final currentGardenUserGardenRecordsItems = ResultList<RecordModel>(items: [

@@ -70,7 +70,7 @@ Future<(RecordModel?, Map?)> createInvitation(
 ) async {
   try {
     // Check permissions
-    await GetIt.instance<AppState>().verify([AppUserGardenPermission.createInvitations]);
+    GetIt.instance<AppState>().verify([AppUserGardenPermission.createInvitations]);
 
     // Open Invitation
     if (map[InvitationField.type] == InvitationType.open.name) {
@@ -160,7 +160,7 @@ Future<Map<InvitationType, List<Invitation>>> getCurrentGardenInvitations(
 }) async {
   try {
     // Check permissions
-    await GetIt.instance<AppState>().verify(
+    GetIt.instance<AppState>().verify(
       [AppUserGardenPermission.viewActiveInvitations]
     );
 

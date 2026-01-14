@@ -24,19 +24,23 @@ import 'package:plural_app/src/utils/app_state.dart';
 import '../../../test_factories.dart';
 import '../../../test_mocks.dart';
 import '../../../test_record_models.dart';
-import '../../../test_stubs/auth_api_stubs.dart';
 
 void main() {
   group("AdminListedInvitationTile", () {
     testWidgets("widgets", (tester) async {
       final user = AppUserFactory();
       final garden = GardenFactory();
+      final userGardenRecord = AppUserGardenRecordFactory(
+        user: user,
+        garden: garden,
+        role: AppUserGardenRole.administrator
+      );
 
       final openInvitation = InvitationFactory(type: InvitationType.open);
       final privateInvitation = InvitationFactory(type: InvitationType.private);
 
       final appState = AppState.skipSubscribe()
-        ..currentGarden = garden
+        ..currentUserGardenRecord = userGardenRecord
         ..currentUser = user;
 
       final getIt = GetIt.instance;
@@ -81,23 +85,6 @@ void main() {
             expandFields: [InvitationField.creator, InvitationField.invitee]
           ),
         ])
-      );
-
-      // getUserGardenRecordRole() via verify()
-      final items = ResultList<RecordModel>(items: [
-        getUserGardenRecordRecordModel(
-          userGardenRecord: AppUserGardenRecordFactory(
-            garden: garden,
-            role: AppUserGardenRole.administrator,
-            user: user,
-          ),
-        )
-      ]);
-      getUserGardenRecordRoleStub(
-        mockUserGardenRecordsRepository: mockUserGardenRecordsRepository,
-        userID: user.id,
-        gardenID: garden.id,
-        returnValue: items
       );
 
       await tester.pumpWidget(

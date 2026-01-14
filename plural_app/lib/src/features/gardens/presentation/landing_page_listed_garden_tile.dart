@@ -30,7 +30,7 @@ class LandingPageListedGardenTile extends StatelessWidget {
           style: TextStyle(fontWeight: FontWeight.w500),
         ),
         onTap: () {
-          GetIt.instance<AppState>().setGardenAndReroute(context, garden);
+          GetIt.instance<AppState>().setUserGardenRecordAndReroute(context, garden);
         }
       ),
     );

@@ -43,7 +43,7 @@ void main() {
       );
 
       final appState = AppState.skipSubscribe()
-        ..currentGarden = garden;
+        ..currentUserGardenRecord = userGardenRecord;
 
       // GetIt
       final getIt = GetIt.instance;
