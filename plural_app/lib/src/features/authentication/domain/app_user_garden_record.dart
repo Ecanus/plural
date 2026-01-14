@@ -66,7 +66,7 @@ class AppUserGardenRecord {
       user = recordUser;
 
   bool get hasReadDoDocument {
-    return doDocumentReadDate.isAfter(garden.doDocumentEditDate); // Note: using instance's Garden and not AppState.currentUserRecord.garden
+    return doDocumentReadDate.isAfter(garden.doDocumentEditDate); // Note: using instance's Garden and not AppState.currentUserGardenRecord.garden
   }
 
   Map<String, dynamic> toMap() {
