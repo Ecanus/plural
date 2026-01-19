@@ -49,9 +49,7 @@ Future<void> addSponsor(String askID, String userID) async {
   );
 }
 
-/// Checks if [boon] is strictly less than [targetSum].
-///
-/// Else, throws a [ClientException]
+/// Throws a [ClientException] if [boon] is not strictly less than [targetSum].
 void checkBoonCeiling(int boon, int targetSum) {
   if (boon >= targetSum) {
     Map<String, dynamic> response = {

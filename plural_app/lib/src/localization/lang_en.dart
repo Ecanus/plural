@@ -123,7 +123,7 @@ class AppDialogFooterBufferText {
 }
 
 class AskViewText {
-  static const askTimeLeftBrace = "—";
+  static const askTimeLeftBrace = "✿";
 
   static const boon = "Boon";
 

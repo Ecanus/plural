@@ -16,6 +16,13 @@ import 'package:plural_app/src/localization/lang_en.dart';
 
 void main() {
   group("Form validators test", () {
+    test("validateBlankable", () {
+      expect(validateBlankable(null), AppFormText.invalidValue);
+
+      expect(validateBlankable(""), null);
+      expect(validateBlankable("value"), null);
+    });
+
     test("validateCheckboxFormField", () {
       expect(validateCheckboxFormField(null), AppFormText.invalidValue);
 

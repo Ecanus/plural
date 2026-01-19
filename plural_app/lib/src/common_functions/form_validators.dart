@@ -10,6 +10,16 @@ import 'package:plural_app/src/features/authentication/domain/app_user_garden_re
 // Localization
 import 'package:plural_app/src/localization/lang_en.dart';
 
+/// Validates that [value] is valid for a blankable FormField.
+/// i.e. [value] can be an empty string, but cannot be null
+///
+/// Returns null if valid, else returns a String.
+String? validateBlankable(String? value) {
+  if (value == null) return AppFormText.invalidValue;
+
+  return null;
+}
+
 /// Validates that [value] is valid for a CheckboxFormField.
 ///
 /// Returns null if valid, else returns a String.

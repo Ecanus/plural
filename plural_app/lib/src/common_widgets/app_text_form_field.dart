@@ -79,10 +79,18 @@ class _AppTextFormFieldState extends State<AppTextFormField> {
     var formFieldTypeName = widget.formFieldType.name;
     var textFieldTypeName = widget.textFieldType.name;
 
-    if (formFieldTypeName == "text" && textFieldTypeName == "text") {
-      return validateText;
-    } else if (formFieldTypeName == "digitsOnly" && textFieldTypeName == "digitsOnly") {
-      return validateDigitsOnly;
+    if (
+      formFieldTypeName == FormFieldType.text.name &&
+      textFieldTypeName == TextFieldType.text.name) {
+        return validateText;
+    } else if (
+      formFieldTypeName == FormFieldType.digitsOnly.name &&
+      textFieldTypeName == TextFieldType.digitsOnly.name) {
+        return validateDigitsOnly;
+    } else if (
+      formFieldTypeName == FormFieldType.blankable.name &&
+      textFieldTypeName == TextFieldType.text.name) {
+        return validateBlankable;
     } else {
       return validateText;
     }

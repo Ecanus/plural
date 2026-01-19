@@ -66,7 +66,7 @@ void main() {
       final body = {
         AskField.boon: 0,
         AskField.currency: "",
-        AskField.description: "",
+        AskField.description: "description",
         AskField.deadlineDate: "",
         AskField.instructions: "",
         AskField.targetSum: 10,
@@ -86,7 +86,7 @@ void main() {
 
       // RecordService.create(), No Exception
       when(
-        () => recordService.create(body: any(named: "body"))
+        () => recordService.create(body: body)
       ).thenAnswer(
         (_) async => getAskRecordModel()
       );
@@ -99,6 +99,8 @@ void main() {
       expect(record1, isNotNull);
       expect(errorsMap1.isEmpty, true);
 
+
+
       // boon >= targetSum. Check errors map is not empty
       body[AskField.boon] = 5;
       body[AskField.targetSum] = 5;
@@ -109,7 +111,7 @@ void main() {
 
       // RecordService.create() Raise Exception
       when(
-        () => recordService.create(body: any(named: "body"))
+        () => recordService.create(body: body)
       ).thenThrow(
         ClientExceptionFactory(
           exceptionMessage: "Error with ${AskField.boon}",
@@ -124,6 +126,41 @@ void main() {
       var (record3, errorsMap3) = await asksRepository.create(body: body);
       expect(record3, null);
       expect(errorsMap3.isEmpty, false);
+    });
+
+    test("create empty description", () async {
+      final body = {
+        AskField.boon: 0,
+        AskField.currency: "",
+        AskField.description: "",
+        AskField.deadlineDate: "",
+        AskField.instructions: "",
+        AskField.targetSum: 10,
+        AskField.type: "",
+      };
+
+      final pb = MockPocketBase();
+      final recordService = MockRecordService();
+      final asksRepository = AsksRepository(pb: pb);
+
+      // pb.collection()
+      when(
+        () => pb.collection(Collection.asks)
+      ).thenAnswer(
+        (_) => recordService as RecordService
+      );
+
+      // RecordService.create()
+      when(
+        () => recordService.create(body: body)
+      ).thenAnswer(
+        (_) async => getAskRecordModel()
+      );
+
+      await asksRepository.create(body: body);
+
+      // Value for description gets changed because it was an empty string
+      expect(body[AskField.description], "${body[AskField.targetSum]} ${body[AskField.currency]}");
     });
 
     test("delete", () async {
