@@ -413,6 +413,7 @@ Future<void> logout(
   await usersRepository.unsubscribe();
   await GetIt.instance<AsksRepository>().unsubscribe();
   await GetIt.instance<GardensRepository>().unsubscribe();
+  await GetIt.instance<UserGardenRecordsRepository>().unsubscribe();
   await GetIt.instance<UserSettingsRepository>().unsubscribe();
 
   // Clear logged in credentials and GetIt instance

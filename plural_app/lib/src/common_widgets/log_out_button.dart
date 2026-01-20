@@ -18,7 +18,7 @@ class LogOutButton extends StatelessWidget {
         minHeight: AppHeights.h50,
       ),
       child: OutlinedButton(
-        onPressed: () => logout(context),
+        onPressed: () => logout(context), // need mockGoRouter to test, so test is done in auth_api_test, rather than separate log_out_button_test file
         style: ButtonStyle(
           shape: WidgetStateProperty.all<RoundedRectangleBorder>(
             RoundedRectangleBorder(

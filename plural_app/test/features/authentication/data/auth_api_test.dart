@@ -1256,12 +1256,15 @@ void main() {
       final getIt = GetIt.instance;
       final mockAsksRepository = MockAsksRepository();
       final mockGardenRepository = MockGardensRepository();
+      final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
       final mockUserSettingsRepository = MockUserSettingsRepository();
       final mockUsersRepository = MockUsersRepository();
 
       // getIt.registerLazySingleton<PocketBase>(() => pb as PocketBase);
       getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
       getIt.registerLazySingleton<GardensRepository>(() => mockGardenRepository);
+      getIt.registerLazySingleton<UserGardenRecordsRepository>(
+        () => mockUserGardenRecordsRepository);
       getIt.registerLazySingleton<UserSettingsRepository>(
         () => mockUserSettingsRepository);
       getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
@@ -1274,6 +1277,11 @@ void main() {
       );
       when(
         () => mockGardenRepository.unsubscribe()
+      ).thenAnswer(
+        (_) async => () {}
+      );
+      when(
+        () => mockUserGardenRecordsRepository.unsubscribe()
       ).thenAnswer(
         (_) async => () {}
       );
@@ -1310,6 +1318,7 @@ void main() {
       // Check no calls before logout()
       verifyNever(() => mockAsksRepository.unsubscribe());
       verifyNever(() => mockGardenRepository.unsubscribe());
+      verifyNever(() => mockUserGardenRecordsRepository.unsubscribe());
       verifyNever(() => mockUserSettingsRepository.unsubscribe());
       verifyNever(() => mockUsersRepository.unsubscribe());
       verifyNever(() => mockUsersRepository.clearAuthStore());
@@ -1321,6 +1330,7 @@ void main() {
       // Check all methods called after logout()
       verify(() => mockAsksRepository.unsubscribe()).called(1);
       verify(() => mockGardenRepository.unsubscribe()).called(1);
+      verify(() => mockUserGardenRecordsRepository.unsubscribe()).called(1);
       verify(() => mockUserSettingsRepository.unsubscribe()).called(1);
       verify(() => mockUsersRepository.unsubscribe()).called(1);
       verify(() => mockUsersRepository.clearAuthStore()).called(1);

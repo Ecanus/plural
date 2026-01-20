@@ -9,6 +9,7 @@ import 'package:plural_app/src/common_widgets/app_dialog_footer.dart';
 import 'package:plural_app/src/common_widgets/app_dialog_footer_buffer_submit_button.dart';
 import 'package:plural_app/src/common_widgets/app_text_form_field.dart';
 import 'package:plural_app/src/common_widgets/log_out_button.dart';
+import 'package:plural_app/src/common_widgets/report_bug_button.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
@@ -167,6 +168,13 @@ class _UserSettingsViewState extends State<UserSettingsView> {
                       paddingTop: AppPaddings.p0,
                     ),
                     gapH30,
+                    Divider(
+                      indent: AppIndents.i200,
+                      endIndent: AppIndents.i200,
+                    ),
+                    gapH15,
+                    ReportBugButton(),
+                    gapH10,
                     LogOutButton(),
                   ],
                 ),

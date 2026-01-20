@@ -8,6 +8,7 @@ import 'package:plural_app/src/common_widgets/app_snackbars.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_values.dart';
+import 'package:plural_app/src/constants/urls.dart';
 
 // Localization
 import 'package:plural_app/src/localization/lang_en.dart';
@@ -27,7 +28,7 @@ class AppHyperlinkableText extends StatefulWidget {
     required this.text,
     this.textStyle,
     this.textAlign = TextAlign.start,
-    this.webOnlyWindowName = AppURLValues.blank,
+    this.webOnlyWindowName = AppWebOnlyWindowNames.blank,
     this.webViewConfiguration = const WebViewConfiguration(),
   });
 
