@@ -347,4 +347,6 @@ class UserSettingsViewText {
   static const lastName = "Last name";
 
   static const personalInformationHeader = "Personal Information";
+
+  static const reportBugButton = "Report a bug";
 }
