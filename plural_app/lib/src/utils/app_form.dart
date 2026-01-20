@@ -5,6 +5,7 @@ import 'package:plural_app/src/constants/formats.dart';
 
 // Keep naming consistent with TextFieldType, where possible
 enum FormFieldType {
+  blankable, // can be an empty string, but cannot be null
   currency,
   datetimeNow,
   digitsOnly,
@@ -99,6 +100,8 @@ class AppForm {
     dynamic newValue;
 
     switch (formFieldType) {
+      case FormFieldType.blankable:
+        newValue = value.toString().trim();
       case FormFieldType.currency:
         newValue = value.toString().trim().toUpperCase();
       case FormFieldType.datetimeNow:

@@ -51,9 +51,16 @@ class AsksRepository implements Repository {
   }) async {
     try {
       final boon = body[AskField.boon];
+      final currency = body[AskField.currency];
+      String description = body[AskField.description];
       final targetSum = body[AskField.targetSum];
 
+      // Validate boon < targetSum
       checkBoonCeiling(boon, targetSum);
+
+      // If description == "", set description to targetSum
+      body[AskField.description] = description.isEmpty ?
+        "$targetSum $currency" : description;
 
       final record = await pb.collection(_collection).create(body: body);
       return (record, {});
