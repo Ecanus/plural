@@ -36,33 +36,49 @@ class LogInTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return ListView(
       padding: const EdgeInsets.all(AppPaddings.p50),
-      child: Column(
-        children: [
-          AppTextFormField(
-            appForm: appForm,
-            autofocus: true,
-            fieldName: SignInField.usernameOrEmail,
-            label: SignInPageText.email,
-            maxLength: AppMaxLengths.max50,
-            paddingTop: AppPaddings.p0,
-            validator: validateUsernameOrEmail,
-          ),
-          LogInPasswordFormField(
-            appForm: appForm,
-            maxLength: AppMaxLengths.max64,
-            paddingTop: AppPaddings.p0,
-          ),
-          gapH30,
-          AppElevatedButton(
-            callback: submitLogIn,
-            label: SignInPageText.logIn,
-            positionalArguments: [context, formKey, appForm],
-            namedArguments: {#database: database},
-          ),
-        ],
-      ),
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: AppTextFormField(
+                appForm: appForm,
+                autofocus: true,
+                fieldName: SignInField.usernameOrEmail,
+                label: SignInPageText.email,
+                maxLength: AppMaxLengths.max50,
+                paddingTop: AppPaddings.p0,
+                validator: validateUsernameOrEmail,
+              ),
+            ),
+          ],
+        ),
+        Row(
+          children: [
+            Expanded(
+              child: LogInPasswordFormField(
+                appForm: appForm,
+                maxLength: AppMaxLengths.max64,
+                paddingTop: AppPaddings.p0,
+              ),
+            ),
+          ],
+        ),
+        gapH30,
+        Row(
+          children: [
+            Expanded(
+              child: AppElevatedButton(
+                callback: submitLogIn,
+                label: SignInPageText.logIn,
+                positionalArguments: [context, formKey, appForm],
+                namedArguments: {#database: database},
+              ),
+            ),
+          ],
+        ),
+      ]
     );
   }
 }

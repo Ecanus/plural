@@ -18,6 +18,7 @@ import 'package:plural_app/src/features/authentication/presentation/sign_up_tab.
 // Localization
 import 'package:plural_app/src/localization/lang_en.dart';
 
+/// MediaQuery.sizeOf(context).shortestSide usage comes from https://stackoverflow.com/questions/49484549/can-we-check-the-device-to-be-a-smartphone-or-a-tablet-in-flutter
 class SignInPage extends StatefulWidget {
   const SignInPage({
     this.database, // primarily for testing
@@ -84,9 +85,9 @@ class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateM
     return Scaffold(
       body: Center(
         child: Container(
-          constraints: BoxConstraints.expand(
-            width: AppConstraints.c500,
-            height: AppConstraints.c800,
+          constraints: BoxConstraints(
+            maxWidth: AppConstraints.c500,
+            maxHeight: AppConstraints.c800,
           ),
           child: Form(
             key: _formKey,
@@ -116,7 +117,7 @@ class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateM
           ),
         ),
       ),
-      bottomSheet: MediaQuery.sizeOf(context).height > AppHeights.h800 ?
+      bottomSheet: MediaQuery.sizeOf(context).height > AppHeights.h600 ?
         AppLogo()
         : null,
     );

@@ -58,8 +58,8 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byType(AppLogo), findsOneWidget);
 
-      // height < 800
-      tester.view.physicalSize = Size(tester.view.physicalSize.width, 700 * dpi);
+      // height < 600
+      tester.view.physicalSize = Size(tester.view.physicalSize.width, 500 * dpi);
       await tester.pumpAndSettle();
       expect(find.byType(AppLogo), findsNothing);
     });
