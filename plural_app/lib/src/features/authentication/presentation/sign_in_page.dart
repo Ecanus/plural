@@ -84,9 +84,9 @@ class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateM
     return Scaffold(
       body: Center(
         child: Container(
-          constraints: BoxConstraints.expand(
-            width: AppConstraints.c500,
-            height: AppConstraints.c800,
+          constraints: BoxConstraints(
+            maxWidth: AppConstraints.c500,
+            maxHeight: AppConstraints.c800,
           ),
           child: Form(
             key: _formKey,
@@ -116,7 +116,7 @@ class _SignInPageState extends State<SignInPage> with SingleTickerProviderStateM
           ),
         ),
       ),
-      bottomSheet: MediaQuery.sizeOf(context).height > AppHeights.h800 ?
+      bottomSheet: MediaQuery.sizeOf(context).height > AppHeights.h600 ?
         AppLogo()
         : null,
     );

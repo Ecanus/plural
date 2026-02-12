@@ -55,9 +55,9 @@ class _ForgotPasswordDialogState extends State<ForgotPasswordDialog> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            constraints: BoxConstraints.expand(
-              width: AppConstraints.c500,
-              height: AppConstraints.c400,
+            constraints: BoxConstraints(
+              maxWidth: AppConstraints.c500,
+              maxHeight: AppConstraints.c400,
             ),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(AppBorderRadii.r15),
@@ -66,12 +66,10 @@ class _ForgotPasswordDialogState extends State<ForgotPasswordDialog> {
             child: Form(
               key: _formKey,
               child: Padding(
-                padding: const EdgeInsets.only(
-                  top: AppPaddings.p40,
-                  left: AppPaddings.p40,
-                  right: AppPaddings.p40
+                padding: const EdgeInsets.all(
+                  AppPaddings.p40,
                 ),
-                child: Column(
+                child: ListView(
                   children: [
                     Align(
                       alignment: Alignment.centerLeft,

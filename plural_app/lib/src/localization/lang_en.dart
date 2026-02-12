@@ -197,7 +197,7 @@ class DoDocumentText {
 class ForgotPasswordDialogText {
   static const enterEmail = "Enter email address";
   static const enterEmailToSendInstructions = (
-    "Please enter the email address to send password reset instructions to");
+    "Please enter the email address to send password reset instructions to.");
 }
 
 class GardenSettingsViewText {
