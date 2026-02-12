@@ -70,9 +70,9 @@ class _LandingPageState extends State<LandingPage> {
     return Scaffold(
       body: Center(
         child: Container(
-          constraints: BoxConstraints.expand(
-            width: AppConstraints.c600,
-            height: AppConstraints.c700,
+          constraints: BoxConstraints(
+            maxWidth: AppConstraints.c600,
+            maxHeight: AppConstraints.c700,
           ),
           child: DefaultTabController(
             length: _tabs.length,

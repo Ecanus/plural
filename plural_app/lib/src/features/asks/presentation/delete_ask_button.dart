@@ -137,6 +137,7 @@ class ConfirmDeleteAskDialog extends StatelessWidget {
                         callback: () {
                           if (context.mounted) {
                             final snackBar = AppSnackBars.getSnackBar(
+                              context,
                               SnackBarText.deleteAskSuccess,
                               showCloseIcon: false,
                               snackbarType: SnackbarType.success

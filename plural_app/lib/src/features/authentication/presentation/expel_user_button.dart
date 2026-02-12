@@ -145,6 +145,7 @@ class ConfirmExpelUserDialog extends StatelessWidget {
                           .routeToAdminListedUsersView(context);
 
                         final snackBar = AppSnackBars.getSnackBar(
+                          context,
                           SnackBarText.expelUserSuccess,
                           boldMessage: userGardenRecord.user.username,
                           duration: AppDurations.s9,

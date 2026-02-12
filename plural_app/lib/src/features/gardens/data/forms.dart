@@ -37,6 +37,7 @@ Future<void> submitUpdate(
 
     if (record != null && context.mounted) {
       snackBar = AppSnackBars.getSnackBar(
+        context,
         SnackBarText.updateGardenSuccess,
         snackbarType: SnackbarType.success
       );

@@ -189,6 +189,7 @@ class _ExamineAskViewHeaderState extends State<ExamineAskViewHeader> {
                   addSponsorCallback: () {
                     if (context.mounted) {
                       final snackBar = AppSnackBars.getSnackBar(
+                        context,
                         SnackBarText.askSponsored,
                         showCloseIcon: false,
                         snackbarType: SnackbarType.success

@@ -82,6 +82,9 @@ class AppIndents {
   static const i200 = 200.0;
 }
 
+class AppMediaQuery {
+  static const mobileSize = 600.0;
+}
 class AppPaddings {
   static const p0 = 0.0;
   static const p2 = 2.0;

@@ -41,6 +41,7 @@ class AppSnackBars {
   }
 
   static SnackBar getSnackBar(
+    BuildContext context,
     String mainMessage,
     {
       String boldMessage = "",
@@ -83,7 +84,8 @@ class AppSnackBars {
       duration: duration,
       showCloseIcon: showCloseIcon,
       closeIconColor: snackbarValues.closeIconColor,
-      width: AppWidths.w600
+      width: MediaQuery.sizeOf(context).shortestSide < AppMediaQuery.mobileSize ?
+        null : AppWidths.w600
     );
   }
 }

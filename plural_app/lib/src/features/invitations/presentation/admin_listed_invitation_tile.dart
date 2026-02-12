@@ -59,6 +59,7 @@ class AdminListedInvitationTile extends StatelessWidget {
                   callback: () {
                     if (context.mounted) {
                       final snackBar = AppSnackBars.getSnackBar(
+                        context,
                         SnackBarText.copiedToClipboard,
                         showCloseIcon: false,
                         snackbarType: SnackbarType.success
@@ -163,6 +164,7 @@ class ConfirmExpireInvitationDialog extends StatelessWidget {
                       deleteInvitation(invitationID, callback: () {
                         if (context.mounted) {
                           final snackBar = AppSnackBars.getSnackBar(
+                            context,
                             SnackBarText.deletedInvitation,
                             showCloseIcon: false,
                             snackbarType: SnackbarType.success

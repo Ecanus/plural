@@ -131,6 +131,7 @@ class _OpenInvitationCodeTextFieldState extends State<OpenInvitationCodeTextFiel
     });
 
     final snackBar = AppSnackBars.getSnackBar(
+      context,
       SnackBarText.validInvitationUUID,
       boldMessage: gardenName,
       duration: AppDurations.s9,

@@ -93,6 +93,7 @@ class _ConfirmDeleteAccountDialogState extends State<ConfirmDeleteAccountDialog>
       GoRouter.of(context).go(Routes.signIn);
 
       final snackBar = AppSnackBars.getSnackBar(
+        context,
         SnackBarText.deletedUserAccount,
         duration: AppDurations.s9,
         snackbarType: SnackbarType.success
@@ -106,6 +107,7 @@ class _ConfirmDeleteAccountDialogState extends State<ConfirmDeleteAccountDialog>
   void errorCallback() {
     if (context.mounted) {
       final snackBar = AppSnackBars.getSnackBar(
+        context,
         SnackBarText.deletedUserAccountFailed,
         duration: AppDurations.s9,
         snackbarType: SnackbarType.error
@@ -123,9 +125,9 @@ class _ConfirmDeleteAccountDialogState extends State<ConfirmDeleteAccountDialog>
         padding: const EdgeInsets.symmetric(
           horizontal: AppPaddings.p50,
         ),
-        constraints: BoxConstraints.expand(
-          width: AppConstraints.c600,
-          height: AppConstraints.c350,
+        constraints: BoxConstraints(
+          maxWidth: AppConstraints.c600,
+          maxHeight: AppConstraints.c400,
         ),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(AppBorderRadii.r15),
@@ -136,9 +138,11 @@ class _ConfirmDeleteAccountDialogState extends State<ConfirmDeleteAccountDialog>
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Text(
-                  LandingPageText.confirmDeleteAccount,
-                  style: Theme.of(context).textTheme.headlineMedium,
+                Flexible(
+                  child: Text(
+                    LandingPageText.confirmDeleteAccount,
+                    style: Theme.of(context).textTheme.headlineMedium,
+                  ),
                 ),
               ],
             ),
@@ -158,9 +162,11 @@ class _ConfirmDeleteAccountDialogState extends State<ConfirmDeleteAccountDialog>
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Text(""
-                  "${LandingPageText.confirmDeleteAccountPrompt} "
-                  "'${LandingPageText.confirmDeleteAccountValue}'"
+                Flexible(
+                  child: Text(""
+                    "${LandingPageText.confirmDeleteAccountPrompt} "
+                    "'${LandingPageText.confirmDeleteAccountValue}'"
+                  ),
                 ),
               ],
             ),
@@ -205,27 +211,32 @@ class _ConfirmDeleteAccountDialogState extends State<ConfirmDeleteAccountDialog>
                   ),
                 ),
                 gapW15,
-                Container(
-                  constraints: BoxConstraints(minHeight: AppHeights.h40),
-                  child: FilledButton(
-                    onPressed: _isTextMatch ? () {
-                      deleteCurrentUserAccount(
-                        errorCallback: errorCallback,
-                        successCallback: successCallback,
-                      );
-                    }
-                    : null,
-                    style: ButtonStyle(
-                      backgroundColor: WidgetStateProperty.all<Color>(
-                        Theme.of(context).colorScheme.error
+                Expanded(
+                  child: Container(
+                    constraints: BoxConstraints(minHeight: AppHeights.h40),
+                    child: FilledButton(
+                      onPressed: _isTextMatch ? () {
+                        deleteCurrentUserAccount(
+                          errorCallback: errorCallback,
+                          successCallback: successCallback,
+                        );
+                      }
+                      : null,
+                      style: ButtonStyle(
+                        backgroundColor: WidgetStateProperty.all<Color>(
+                          Theme.of(context).colorScheme.error
+                        ),
+                        padding: WidgetStateProperty.all<EdgeInsets>(EdgeInsets.zero),
+                        shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(AppBorderRadii.r5)
+                          )
+                        ),
                       ),
-                      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(AppBorderRadii.r5)
-                        )
-                      ),
+                      child: MediaQuery.sizeOf(context).shortestSide < AppMediaQuery.mobileSize ?
+                        Text(LandingPageText.deleteAccountShorthand)
+                        : Text(LandingPageText.deleteAccount)
                     ),
-                    child: const Text(LandingPageText.deleteAccount)
                   ),
                 )
               ],

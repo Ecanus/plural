@@ -55,6 +55,7 @@ class LandingPageInvitationTile extends StatelessWidget {
                 invitation,
                 callback: () {
                   final snackBar = AppSnackBars.getSnackBar(
+                    context,
                     SnackBarText.acceptedInvitation,
                     duration: AppDurations.s9,
                     showCloseIcon: true,
@@ -77,6 +78,7 @@ class LandingPageInvitationTile extends StatelessWidget {
                 invitation.id,
                 callback: () {
                   final snackBar = AppSnackBars.getSnackBar(
+                    context,
                     SnackBarText.declinedInvitation,
                     duration: AppDurations.s9,
                     showCloseIcon: true,
