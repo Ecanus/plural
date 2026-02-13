@@ -21,9 +21,11 @@ class AppElevatedButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      height: AppButtonSizes.s50,
+    return Container(
+      constraints: BoxConstraints(
+        minWidth: double.infinity,
+        minHeight: AppButtonSizes.s50,
+      ),
       child: ElevatedButton.icon(
         onPressed: () => Function.apply(callback, positionalArguments, namedArguments),
         style: ElevatedButton.styleFrom(

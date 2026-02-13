@@ -58,6 +58,7 @@ Future<void> openBugReportUrl(BuildContext context) async {
 
   if (!tapResult && context.mounted) {
     final snackBar = AppSnackBars.getSnackBar(
+      context,
       SnackBarText.urlError,
       boldMessage: Urls.bugReport,
       duration: AppDurations.s9,

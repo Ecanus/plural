@@ -17,6 +17,7 @@ void main() {
                   child: SizedBox(height: 100.0, width: 100.0,),
                   onTap: () {
                     final snackBar = AppSnackBars.getSnackBar(
+                      context,
                       "Success Message",
                       showCloseIcon: true,
                       snackbarType: SnackbarType.success
@@ -51,6 +52,7 @@ void main() {
                   child: SizedBox(height: 100.0, width: 100.0,),
                   onTap: () {
                     final snackBar = AppSnackBars.getSnackBar(
+                      context,
                       "Error Message",
                       boldMessage: "and bold message!",
                       showCloseIcon: true,
@@ -86,6 +88,7 @@ void main() {
                   child: SizedBox(height: 100.0, width: 100.0,),
                   onTap: () {
                     final snackBar = AppSnackBars.getSnackBar(
+                      context,
                       "Success Message",
                       showCloseIcon: true,
                       snackbarType: SnackbarType.success
@@ -120,6 +123,7 @@ void main() {
                   child: SizedBox(height: 100.0, width: 100.0,),
                   onTap: () {
                     final snackBar = AppSnackBars.getSnackBar(
+                      context,
                       "Error Message",
                       showCloseIcon: false,
                       snackbarType: SnackbarType.error

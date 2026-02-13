@@ -251,6 +251,7 @@ class LandingPageText {
 
   static const declineInvitation = "Decline Invitation";
   static const deleteAccount = "Delete account";
+  static const deleteAccountShorthand = "Delete";
 
   static const emptyLandingPageGardensListMessage = "No Gardens found";
   static const emptyLandingPageInvitationsMessage = "No Invitations found";

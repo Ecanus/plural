@@ -35,6 +35,7 @@ Future<void> submitCreate(
 
     if (record != null && context.mounted) {
       final snackBar = AppSnackBars.getSnackBar(
+        context,
         SnackBarText.createAskSuccess,
         showCloseIcon: false,
         snackbarType: SnackbarType.success
@@ -75,6 +76,7 @@ Future<void> submitUpdate(
 
     if (record != null && context.mounted) {
       final snackBar = AppSnackBars.getSnackBar(
+        context,
         SnackBarText.updateAskSuccess,
         showCloseIcon: false,
         snackbarType: SnackbarType.success
