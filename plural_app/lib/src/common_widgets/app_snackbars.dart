@@ -84,8 +84,7 @@ class AppSnackBars {
       duration: duration,
       showCloseIcon: showCloseIcon,
       closeIconColor: snackbarValues.closeIconColor,
-      width: MediaQuery.sizeOf(context).shortestSide < AppMediaQuery.mobileSize ?
-        null : AppWidths.w600
+      width: isOnMobileDevice(context) ? null : AppWidths.w600
     );
   }
 }

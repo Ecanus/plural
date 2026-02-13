@@ -23,6 +23,7 @@ class AppConstraints {
   static const c300 = 300.0;
   static const c350 = 350.0;
   static const c400 = 400.0;
+  static const c450 = 450.0;
   static const c500 = 500.0;
   static const c600 = 600.0;
   static const c700 = 700.0;
@@ -150,3 +151,7 @@ const gapH50 = SizedBox(height: AppPaddings.p50);
 const gapH60 = SizedBox(height: AppPaddings.p60);
 const gapH65 = SizedBox(height: AppPaddings.p65);
 const gapH80 = SizedBox(height: AppPaddings.p80);
+
+bool isOnMobileDevice(BuildContext context) {
+  return MediaQuery.sizeOf(context).shortestSide < AppMediaQuery.mobileSize;
+}

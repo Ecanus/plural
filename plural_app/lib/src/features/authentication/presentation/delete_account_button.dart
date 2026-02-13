@@ -127,7 +127,7 @@ class _ConfirmDeleteAccountDialogState extends State<ConfirmDeleteAccountDialog>
         ),
         constraints: BoxConstraints(
           maxWidth: AppConstraints.c600,
-          maxHeight: AppConstraints.c400,
+          maxHeight: isOnMobileDevice(context) ? AppConstraints.c450 : AppConstraints.c350,
         ),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(AppBorderRadii.r15),
@@ -191,7 +191,9 @@ class _ConfirmDeleteAccountDialogState extends State<ConfirmDeleteAccountDialog>
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Container(
+                isOnMobileDevice(context) ?
+                SizedBox()
+                : Container(
                   constraints: BoxConstraints(minHeight: AppHeights.h40),
                   child: OutlinedButton(
                     onPressed: () => Navigator.pop(context),
@@ -210,7 +212,7 @@ class _ConfirmDeleteAccountDialogState extends State<ConfirmDeleteAccountDialog>
                     )
                   ),
                 ),
-                gapW15,
+                isOnMobileDevice(context) ? SizedBox() : gapW15,
                 Expanded(
                   child: Container(
                     constraints: BoxConstraints(minHeight: AppHeights.h40),
@@ -233,7 +235,7 @@ class _ConfirmDeleteAccountDialogState extends State<ConfirmDeleteAccountDialog>
                           )
                         ),
                       ),
-                      child: MediaQuery.sizeOf(context).shortestSide < AppMediaQuery.mobileSize ?
+                      child: isOnMobileDevice(context) ?
                         Text(LandingPageText.deleteAccountShorthand)
                         : Text(LandingPageText.deleteAccount)
                     ),
