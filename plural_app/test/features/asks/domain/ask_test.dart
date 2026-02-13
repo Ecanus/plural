@@ -166,9 +166,9 @@ void main() {
       expect(ask.truncatedDescription, "A short description");
 
       var really40 = "really " * 40;
-      var really28 = "really " * 28;
+      var really7 = "really " * 7;
       ask.description = really40;
-      expect(ask.truncatedDescription, "${really28.trim()} real...");
+      expect(ask.truncatedDescription, "${really7.trim()} r...");
     });
 
     test("isSponsoredByUser", () {

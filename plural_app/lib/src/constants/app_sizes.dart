@@ -51,6 +51,8 @@ class AppFontLetterSpacing {
 }
 
 class AppFontSizes {
+  static const s10 = 10.0;
+  static const s12 = 12.0;
   static const s13 = 13.0;
   static const s14 = 14.0;
   static const s15 = 15.0;

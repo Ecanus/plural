@@ -32,12 +32,14 @@ class GardenTimelineTile extends StatelessWidget {
       ),
     );
 
-    final timelineTileStack = Stack(
-      children: [
-        TileBackground(ask: ask, index: index),
-        TileForeground(ask: ask),
-      ],
-    );
+    final timelineTileStack = isOnMobileDevice(context) ?
+      TileForeground(ask: ask)
+      : Stack(
+        children: [
+          TileBackground(ask: ask, index: index),
+          TileForeground(ask: ask),
+        ],
+      );
 
     final widgets = (index % 2 == 0) ?
       [timelineTileStack, examineButtonContainer]
@@ -97,16 +99,13 @@ class TileForeground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(AppPaddings.p10,),
-      child: Card(
-        color: Theme.of(context).colorScheme.secondary,
-        elevation: AppElevations.e10,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppBorderRadii.r25)
-        ),
-        child: TileContents(ask: ask),
+    return Card(
+      color: Theme.of(context).colorScheme.secondary,
+      elevation: AppElevations.e10,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppBorderRadii.r25)
       ),
+      child: TileContents(ask: ask),
     );
   }
 }
@@ -125,41 +124,41 @@ class TileContents extends StatelessWidget {
     final textColor = hasHiddenContent ?
       Colors.transparent : Theme.of(context).colorScheme.onPrimary;
 
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(
-            left: AppPaddings.p25,
-            top: AppPaddings.p25,
-            right: AppPaddings.p25,
-          ),
-          child: Column(
+    return Padding(
+      padding: const EdgeInsets.all(
+        AppPaddings.p25,
+      ),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: AskTimeLeftText(textColor: textColor, ask: ask)
+              Expanded(
+                child: AskTimeLeftText(
+                  ask: ask,
+                  fontSize: isOnMobileDevice(context) ? AppFontSizes.s10 : null,
+                  textColor: textColor,
+                )
+              ),
+            ],
+          ),
+          gapH10,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Flexible(
+                child: Text(
+                  ask.truncatedDescription,
+                  style: TextStyle(
+                    color: textColor,
+                    fontSize: isOnMobileDevice(context) ? AppFontSizes.s12 : null,
                   ),
-                ],
-              ),
-              gapH10,
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Flexible(
-                    child: Text(
-                      ask.truncatedDescription,
-                      style: TextStyle(color: textColor),
-                    )
-                  )
-                ]
-              ),
-              gapH20,
+                )
+              )
             ]
           ),
-        ),
-      ],
+        ]
+      ),
     );
   }
 }

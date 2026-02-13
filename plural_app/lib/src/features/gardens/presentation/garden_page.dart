@@ -26,12 +26,13 @@ class _GardenPageState extends State<GardenPage> {
         body: Center(
           child: Column(
             children: [
-              gapH60,
+              gapH40,
               GardenHeader(),
               gapH30,
               GardenTimeline(),
+              isOnMobileDevice(context) ? gapH10 : gapH30,
               GardenFooter(),
-              gapH35
+              isOnMobileDevice(context) ? gapH10 : gapH30
             ],
           ),
         ),
