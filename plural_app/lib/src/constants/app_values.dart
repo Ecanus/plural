@@ -38,5 +38,5 @@ class AppOpacities {
 }
 
 class AppRotations {
-  static const degrees10 = 10/360;
+  static const degrees5 = 5/360;
 }

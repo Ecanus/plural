@@ -22,9 +22,9 @@ class AppDialogFooterBuffer extends StatelessWidget {
     return buttons.isEmpty ?
       SizedBox()
       : Container(
-        constraints: BoxConstraints.expand(
-          width: AppConstraints.c600,
-          height: AppConstraints.c60,
+        constraints: BoxConstraints(
+          minWidth: AppConstraints.c600,
+          minHeight: AppConstraints.c60,
         ),
         decoration: BoxDecoration(
           boxShadow: [
@@ -98,13 +98,15 @@ class _AppDialogNavFooterState extends State<AppDialogNavFooter> {
       onEnter: _mouseEnter,
       onExit: _mouseExit,
       child: Container(
-        constraints: BoxConstraints.expand(
-          width: AppConstraints.c800,
-          height: AppConstraints.c100,
+        constraints: BoxConstraints(
+          minWidth: AppConstraints.c800,
+          minHeight: AppConstraints.c100,
         ),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.vertical(
-            bottom: Radius.circular(AppBorderRadii.r15),
+            bottom: isOnSmallScreen(context) ?
+              Radius.zero
+              : Radius.circular(AppBorderRadii.r15),
           ),
           boxShadow: [
             BoxShadow(
@@ -116,7 +118,9 @@ class _AppDialogNavFooterState extends State<AppDialogNavFooter> {
           ],
           color: Theme.of(context).colorScheme.primaryContainer,
         ),
-        padding: const EdgeInsets.symmetric(horizontal: AppPaddings.p35),
+        padding: EdgeInsets.symmetric(
+          horizontal: isOnSmallScreen(context) ? AppPaddings.p10 : AppPaddings.p35
+        ),
         child: Row(
           children: [
             AppDialogFooterNavButton(
@@ -124,7 +128,7 @@ class _AppDialogNavFooterState extends State<AppDialogNavFooter> {
               callback: widget.leftNavCallback,
               dialogIcon: widget.leftDialogIcon,
               direction: NavButtonDirection.left,
-              isMouseHovered: _isMouseHovered,
+              isMouseHovered: isOnSmallScreen(context) || _isMouseHovered,
               tooltipMessage: widget.leftTooltipMessage,
             ),
             Expanded(
@@ -133,7 +137,8 @@ class _AppDialogNavFooterState extends State<AppDialogNavFooter> {
                   widget.title,
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.onPrimary,
-                    fontSize: AppFontSizes.s25,
+                    fontSize: isOnSmallScreen(context) ?
+                      AppFontSizes.s20 : AppFontSizes.s25,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -144,7 +149,7 @@ class _AppDialogNavFooterState extends State<AppDialogNavFooter> {
               callback: widget.rightNavCallback,
               dialogIcon: widget.rightDialogIcon,
               direction: NavButtonDirection.right,
-              isMouseHovered: _isMouseHovered,
+              isMouseHovered: isOnSmallScreen(context) || _isMouseHovered,
               tooltipMessage: widget.rightTooltipMessage,
             ),
           ],
@@ -164,13 +169,15 @@ class AppDialogFooter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      constraints: BoxConstraints.expand(
-        width: AppConstraints.c800,
-        height: AppConstraints.c100,
+      constraints: BoxConstraints(
+        minWidth: AppConstraints.c800,
+        minHeight: AppConstraints.c100,
       ),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.vertical(
-          bottom: Radius.circular(AppBorderRadii.r15),
+          bottom: isOnSmallScreen(context) ?
+            Radius.zero
+            : Radius.circular(AppBorderRadii.r15),
         ),
         boxShadow: [
           BoxShadow(
@@ -187,9 +194,47 @@ class AppDialogFooter extends StatelessWidget {
           title,
           style: TextStyle(
             color: Theme.of(context).colorScheme.onPrimary,
-            fontSize: AppFontSizes.s25,
+            fontSize: isOnSmallScreen(context) ?
+              AppFontSizes.s20 : AppFontSizes.s25,
             fontWeight: FontWeight.bold,
           ),
+        )
+      )
+    );
+  }
+}
+
+class AppDialogFooterCloseFullScreenDialogButton extends StatelessWidget {
+  const AppDialogFooterCloseFullScreenDialogButton({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      constraints: BoxConstraints(
+        minWidth: double.infinity,
+        minHeight: AppButtonSizes.s25,
+      ),
+      decoration: BoxDecoration(
+        boxShadow: [
+          BoxShadow(
+            color: Theme.of(context).shadowColor,
+            blurRadius: blurRadius/2,
+            spreadRadius: spreadRadius,
+            offset: offset
+          )
+        ],
+        color: Theme.of(context).colorScheme.secondaryFixed,
+      ),
+      child: ElevatedButton.icon(
+        onPressed: () => Navigator.pop(context),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Theme.of(context).colorScheme.secondaryFixed
+        ),
+        label: Icon(
+          Icons.close,
+          color: Theme.of(context).colorScheme.onPrimary,
         )
       )
     );

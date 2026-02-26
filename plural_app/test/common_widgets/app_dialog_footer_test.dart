@@ -143,4 +143,53 @@ void main() {
       expect(find.text("Me din de"), findsOneWidget);
     });
   });
+
+  group("AppDialogFooterCloseFullScreenDialogButton", () {
+    testWidgets("initial values", (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Material(
+            child: Builder(
+              builder: (BuildContext context) {
+                return Center(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      showDialog<void>(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return Dialog(
+                            child: AppDialogFooterCloseFullScreenDialogButton(),
+                          );
+                        }
+                      );
+                    },
+                    child: null
+                  )
+                );
+              }
+            )
+          ),
+        ));
+
+      // Check dialog not dispalyed; AppDialogFooterCloseFullScreenDialogButton button not displayed
+      expect(find.byType(Dialog), findsNothing);
+      expect(find.byType(AppDialogFooterCloseFullScreenDialogButton), findsNothing);
+
+      // Tap first ElevatedButton (to open dialog)
+      await tester.tap(find.byType(ElevatedButton).first);
+      await tester.pumpAndSettle();
+
+      // Check AppDialogFooterCloseFullScreenDialogButton is rendered
+      expect(find.byType(AppDialogFooterCloseFullScreenDialogButton), findsOneWidget);
+      expect(find.byIcon(Icons.close), findsOneWidget);
+
+      // Tap AppDialogFooterCloseFullScreenDialogButton
+      await tester.tap(find.byType(AppDialogFooterCloseFullScreenDialogButton));
+      await tester.pumpAndSettle();
+
+      // Check dialog no longer dispalyed; AppDialogFooterCloseFullScreenDialogButton button no longer displayed
+      expect(find.byType(Dialog), findsNothing);
+      expect(find.byType(AppDialogFooterCloseFullScreenDialogButton), findsNothing);
+    });
+  });
 }

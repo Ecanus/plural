@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
 // Common Widgets
+import 'package:plural_app/src/common_widgets/app_dialog_footer.dart';
 import 'package:plural_app/src/common_widgets/close_dialog_button.dart';
 
 // Constants
@@ -33,6 +34,23 @@ class _AppDialogState extends State<AppDialog> {
 
   @override
   Widget build(BuildContext context) {
+    return isOnSmallScreen(context) ?
+      AppDialogFullScreen(appDialogViewRouter: _appDialogViewRouter)
+      : AppDialogDismissable(appDialogViewRouter: _appDialogViewRouter);
+  }
+}
+
+/// AppDialog version used for larger screen devices
+class AppDialogDismissable extends StatelessWidget {
+  const AppDialogDismissable({
+    super.key,
+    required this.appDialogViewRouter,
+  });
+
+  final AppDialogViewRouter appDialogViewRouter;
+
+  @override
+  Widget build(BuildContext context) {
     return GestureDetector( // Because of ListView, need to wrap entire return in GestureDetector for custom barrierDismissable functionality
       onTap: () => Navigator.pop(context),
       child: ListView(
@@ -60,7 +78,7 @@ class _AppDialogState extends State<AppDialog> {
                       children: [
                         Expanded(
                           child: ValueListenableBuilder(
-                            valueListenable: _appDialogViewRouter.viewNotifier,
+                            valueListenable: appDialogViewRouter.viewNotifier,
                             builder: (BuildContext context, Widget view, Widget? _) {
                               return view;
                             }
@@ -75,6 +93,34 @@ class _AppDialogState extends State<AppDialog> {
               ],
             ),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+/// AppDialog version used for small screen devices
+class AppDialogFullScreen extends StatelessWidget {
+  const AppDialogFullScreen({
+    required this.appDialogViewRouter,
+  });
+
+  final AppDialogViewRouter appDialogViewRouter;
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog.fullscreen(
+      child: Column(
+        children: [
+          Expanded(
+            child: ValueListenableBuilder(
+              valueListenable: appDialogViewRouter.viewNotifier,
+              builder: (BuildContext context, Widget view, Widget? _) {
+                return view;
+              }
+            )
+          ),
+          AppDialogFooterCloseFullScreenDialogButton(),
         ],
       ),
     );

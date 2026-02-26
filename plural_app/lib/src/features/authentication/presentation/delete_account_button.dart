@@ -127,7 +127,7 @@ class _ConfirmDeleteAccountDialogState extends State<ConfirmDeleteAccountDialog>
         ),
         constraints: BoxConstraints(
           maxWidth: AppConstraints.c600,
-          maxHeight: isOnMobileDevice(context) ? AppConstraints.c450 : AppConstraints.c350,
+          maxHeight: isOnSmallScreen(context) ? AppConstraints.c450 : AppConstraints.c350,
         ),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(AppBorderRadii.r15),
@@ -191,28 +191,28 @@ class _ConfirmDeleteAccountDialogState extends State<ConfirmDeleteAccountDialog>
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                isOnMobileDevice(context) ?
-                SizedBox()
-                : Container(
-                  constraints: BoxConstraints(minHeight: AppHeights.h40),
-                  child: OutlinedButton(
-                    onPressed: () => Navigator.pop(context),
-                    style: ButtonStyle(
-                      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(AppBorderRadii.r5)
-                        )
+                isOnSmallScreen(context) ?
+                  SizedBox()
+                  : Container(
+                    constraints: BoxConstraints(minHeight: AppHeights.h40),
+                    child: OutlinedButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: ButtonStyle(
+                        shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(AppBorderRadii.r5)
+                          )
+                        ),
                       ),
+                      child: Text(
+                        LandingPageText.cancelConfirmDeleteAccount,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSecondary
+                        ),
+                      )
                     ),
-                    child: Text(
-                      LandingPageText.cancelConfirmDeleteAccount,
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSecondary
-                      ),
-                    )
                   ),
-                ),
-                isOnMobileDevice(context) ? SizedBox() : gapW15,
+                isOnSmallScreen(context) ? SizedBox() : gapW15,
                 Expanded(
                   child: Container(
                     constraints: BoxConstraints(minHeight: AppHeights.h40),
@@ -235,7 +235,7 @@ class _ConfirmDeleteAccountDialogState extends State<ConfirmDeleteAccountDialog>
                           )
                         ),
                       ),
-                      child: isOnMobileDevice(context) ?
+                      child: isOnSmallScreen(context) ?
                         Text(LandingPageText.deleteAccountShorthand)
                         : Text(LandingPageText.deleteAccount)
                     ),

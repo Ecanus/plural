@@ -32,7 +32,7 @@ class GardenTimelineTile extends StatelessWidget {
       ),
     );
 
-    final timelineTileStack = isOnMobileDevice(context) ?
+    final timelineTileStack = isOnSmallScreen(context) ?
       TileForeground(ask: ask)
       : Stack(
         children: [
@@ -75,16 +75,13 @@ class TileBackground extends StatelessWidget {
     final sign = (index % 2 == 0) ? -1 : 1;
 
     return RotationTransition(
-      turns: AlwaysStoppedAnimation(sign * AppRotations.degrees10),
-      child: Container(
-        padding: const EdgeInsets.all(AppPaddings.p20),
-        child: Card.filled(
-          color: Theme.of(context).colorScheme.tertiary,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppBorderRadii.r25),
-          ),
-          child: TileContents(ask: ask, hasHiddenContent: true)
+      turns: AlwaysStoppedAnimation(sign * AppRotations.degrees5),
+      child: Card.filled(
+        color: Theme.of(context).colorScheme.tertiary,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppBorderRadii.r25),
         ),
+        child: TileContents(ask: ask, hasHiddenContent: true)
       ),
     );
   }
@@ -126,9 +123,10 @@ class TileContents extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.all(
-        AppPaddings.p25,
+        AppPaddings.p20,
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -136,7 +134,7 @@ class TileContents extends StatelessWidget {
               Expanded(
                 child: AskTimeLeftText(
                   ask: ask,
-                  fontSize: isOnMobileDevice(context) ? AppFontSizes.s10 : null,
+                  fontSize: isOnSmallScreen(context) ? AppFontSizes.s10 : null,
                   textColor: textColor,
                 )
               ),
@@ -151,7 +149,7 @@ class TileContents extends StatelessWidget {
                   ask.truncatedDescription,
                   style: TextStyle(
                     color: textColor,
-                    fontSize: isOnMobileDevice(context) ? AppFontSizes.s12 : null,
+                    fontSize: isOnSmallScreen(context) ? AppFontSizes.s12 : null,
                   ),
                 )
               )

@@ -30,9 +30,9 @@ class _GardenPageState extends State<GardenPage> {
               GardenHeader(),
               gapH30,
               GardenTimeline(),
-              isOnMobileDevice(context) ? gapH10 : gapH30,
+              isOnSmallScreen(context) ? gapH10 : gapH30,
               GardenFooter(),
-              isOnMobileDevice(context) ? gapH10 : gapH30
+              isOnSmallScreen(context) ? gapH10 : gapH30
             ],
           ),
         ),
