@@ -98,6 +98,12 @@ class _EditAskViewState extends State<EditAskView> {
                       initialValue: widget.ask.deadlineDate,
                       label: AskViewText.deadlineDate,
                     ),
+                    AppCurrencyPickerFormField(
+                      appForm: _appForm,
+                      fieldName: AskField.currency,
+                      initialValue: widget.ask.currency,
+                      label: AskViewText.currency,
+                    ),
                     Row(
                       children: [
                         Expanded(
@@ -122,21 +128,13 @@ class _EditAskViewState extends State<EditAskView> {
                             maxLength: AppMaxLengths.max4,
                             suffixIcon: Tooltip(
                               message: AskViewText.tooltipBoon,
+                              triggerMode: TooltipTriggerMode.tap,
+                              showDuration: AppDurations.s10,
                               child: AppTooltipIcon(isDark: false),
                             ),
                             textFieldType: TextFieldType.digitsOnly,
                           ),
                         ),
-                        gapW20,
-                        Expanded(
-                          flex: AppFlexes.f2,
-                          child: AppCurrencyPickerFormField(
-                            appForm: _appForm,
-                            fieldName: AskField.currency,
-                            initialValue: widget.ask.currency,
-                            label: AskViewText.currency,
-                          )
-                        )
                       ],
                     ),
                     AppTextFormField(
@@ -148,6 +146,8 @@ class _EditAskViewState extends State<EditAskView> {
                       maxLines: null,
                       suffixIcon: Tooltip(
                         message: AskViewText.urlFormattingText,
+                        triggerMode: TooltipTriggerMode.tap,
+                        showDuration: AppDurations.s10,
                         child: AppTooltipIcon(isDark: false),
                       ),
                     ),
@@ -160,6 +160,8 @@ class _EditAskViewState extends State<EditAskView> {
                       maxLines: null,
                       suffixIcon: Tooltip(
                         message: AskViewText.instructionsTooltip,
+                        triggerMode: TooltipTriggerMode.tap,
+                        showDuration: AppDurations.s10,
                         child: AppTooltipIcon(isDark: false),
                       ),
                     ),

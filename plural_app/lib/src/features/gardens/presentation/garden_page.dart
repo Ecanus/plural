@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 
+// Common Functions
+import 'package:plural_app/src/common_functions/app_responsiveness.dart';
+
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
 import 'package:plural_app/src/utils/app_state.dart';
@@ -26,12 +29,13 @@ class _GardenPageState extends State<GardenPage> {
         body: Center(
           child: Column(
             children: [
-              gapH60,
+              gapH40,
               GardenHeader(),
               gapH30,
               GardenTimeline(),
+              getResponsiveUiValue(context, ResponsiveUiKeys.gardenPageTimelineToFooterGap),
               GardenFooter(),
-              gapH35
+              getResponsiveUiValue(context, ResponsiveUiKeys.gardenPageFooterToBaseGap),
             ],
           ),
         ),

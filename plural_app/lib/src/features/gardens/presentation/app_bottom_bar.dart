@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
-import 'package:plural_app/src/constants/app_values.dart';
 
 // Asks
 import 'package:plural_app/src/features/asks/presentation/create_ask_view.dart';
@@ -48,15 +47,9 @@ ButtonLayout _getButtonLayout(BuildContext context, { isAdminPage = false }) {
 class AppBottomBar extends StatelessWidget {
   const AppBottomBar({
     required this.isAdminPage,
-    required this.isMouseHovered,
-    required this.leftButtonOffsetAnimation,
-    required this.rightButtonOffsetAnimation,
   });
 
   final bool isAdminPage;
-  final bool isMouseHovered;
-  final Animation<Offset> leftButtonOffsetAnimation;
-  final Animation<Offset> rightButtonOffsetAnimation;
 
   @override
   Widget build(BuildContext context) {
@@ -66,25 +59,11 @@ class AppBottomBar extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        SlideTransition(
-          position: leftButtonOffsetAnimation,
-          child: AnimatedOpacity(
-            duration: AppDurations.ms80,
-            opacity: isMouseHovered ? 1.0 : 0.0,
-            child: buttonLayout.leftButton,
-          ),
-        ),
+        buttonLayout.leftButton,
         gapW20,
         buttonLayout.middleButton,
         gapW20,
-        SlideTransition(
-          position: rightButtonOffsetAnimation,
-          child: AnimatedOpacity(
-            duration: AppDurations.ms80,
-            opacity: isMouseHovered ? 1.0 : 0.0,
-            child: buttonLayout.rightButton,
-          ),
-        ),
+        buttonLayout.rightButton,
       ],
     );
   }

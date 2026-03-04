@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
+// Common Functions
+import 'package:plural_app/src/common_functions/app_responsiveness.dart';
+
 // Common Widgets
 import 'package:plural_app/src/common_widgets/app_dialog_footer.dart';
 
@@ -59,7 +62,8 @@ class SponsoredAsksView extends StatelessWidget {
           rightDialogIcon: Icons.settings,
           rightNavCallback: appDialogViewRouter.routeToUserSettingsView,
           rightTooltipMessage: AppDialogFooterText.navToSettingsView,
-          title: AppDialogFooterText.sponsoredAsks
+          title: getResponsiveUiValue(
+            context, ResponsiveUiKeys.sponsoredAsksViewNavFooterTitle)
         )
       ],
     );

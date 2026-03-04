@@ -67,7 +67,7 @@ void main() {
           ),
         ));
 
-      // Check text not dispalyed
+      // Check text not displayed
       expect(find.text("Error Message and bold message!"), findsNothing);
 
       await tester.tap(find.byType(GestureDetector));
@@ -102,7 +102,7 @@ void main() {
           ),
         ));
 
-      // Check close button not yet dispalyed
+      // Check close button not yet displayed
       expect(find.byType(IconButton), findsNothing);
 
       await tester.tap(find.byType(GestureDetector));
@@ -137,7 +137,7 @@ void main() {
           ),
         ));
 
-      // Check close button not dispalyed
+      // Check close button not displayed
       expect(find.byType(SnackBar), findsNothing);
       expect(find.byType(IconButton), findsNothing);
 

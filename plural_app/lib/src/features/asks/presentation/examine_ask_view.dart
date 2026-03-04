@@ -10,6 +10,7 @@ import 'package:plural_app/src/common_widgets/app_tooltip_icon.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
+import 'package:plural_app/src/constants/app_values.dart';
 import 'package:plural_app/src/constants/themes.dart';
 
 // Ask
@@ -204,6 +205,8 @@ class _ExamineAskViewHeaderState extends State<ExamineAskViewHeader> {
               Tooltip(
                 message: _isSponsored ?
                   AskViewText.unmarkAsSponsored : AskViewText.markAsSponsored,
+                  triggerMode: TooltipTriggerMode.tap,
+                  showDuration: AppDurations.s10,
                 child: AppTooltipIcon()
               )
             ],
@@ -250,6 +253,8 @@ class BoonColumn extends StatelessWidget {
             gapW5,
             Tooltip(
               message: AskViewText.tooltipBoon,
+              triggerMode: TooltipTriggerMode.tap,
+              showDuration: AppDurations.s10,
               child: AppTooltipIcon()
             )
           ],
