@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
 // Common Widgets
+import 'package:plural_app/src/common_widgets/app_close_confirm_dialog_button.dart';
 import 'package:plural_app/src/common_widgets/app_snackbars.dart';
 
 // Constants
@@ -103,25 +104,7 @@ class ConfirmDeleteAskDialog extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Container(
-                  constraints: BoxConstraints(minHeight: AppHeights.h40),
-                  child: OutlinedButton(
-                    onPressed: () => Navigator.pop(context),
-                    style: ButtonStyle(
-                      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(AppBorderRadii.r5)
-                        )
-                      ),
-                    ),
-                    child: Text(
-                      AskViewText.cancelConfirmDeleteAsk,
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSecondary
-                      ),
-                    )
-                  ),
-                ),
+                AppCloseConfirmDialogButton(),
                 gapW15,
                 Container(
                   constraints: BoxConstraints(minHeight: AppHeights.h40),

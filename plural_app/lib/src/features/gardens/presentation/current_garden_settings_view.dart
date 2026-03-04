@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 
+// Common Functions
+import 'package:plural_app/src/common_functions/app_responsiveness.dart';
+
 // Common Widgets
+import 'package:plural_app/src/common_widgets/app_close_confirm_dialog_button.dart';
 import 'package:plural_app/src/common_widgets/app_dialog.dart';
 import 'package:plural_app/src/common_widgets/app_dialog_footer.dart';
 
@@ -57,8 +61,10 @@ class CurrentGardenSettingsView extends StatelessWidget {
         gapH10,
         Divider(
           color: Theme.of(context).colorScheme.onSecondary,
-          indent: AppIndents.i200,
-          endIndent: AppIndents.i200,
+          indent: getResponsiveUiValue(
+            context, ResponsiveUiKeys.currentGardenSettingsViewDividerIndent),
+          endIndent: getResponsiveUiValue(
+            context, ResponsiveUiKeys.currentGardenSettingsViewDividerIndent),
           thickness: AppDividerThicknesses.dpt2,
         ),
         Expanded(
@@ -214,9 +220,9 @@ class ConfirmExitGardenDialog extends StatelessWidget {
         padding: const EdgeInsets.symmetric(
           horizontal: AppPaddings.p20,
         ),
-        constraints: BoxConstraints.expand(
-          width: AppConstraints.c500,
-          height: AppConstraints.c300,
+        constraints: BoxConstraints(
+          maxWidth: AppConstraints.c500,
+          maxHeight: AppConstraints.c300,
         ),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(AppBorderRadii.r15),
@@ -245,29 +251,11 @@ class ConfirmExitGardenDialog extends StatelessWidget {
                 ),
               ],
             ),
-            gapH50,
+            gapH40,
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Container(
-                  constraints: BoxConstraints(minHeight: AppHeights.h40),
-                  child: OutlinedButton(
-                    onPressed: () => Navigator.pop(context),
-                    style: ButtonStyle(
-                      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(AppBorderRadii.r5)
-                        )
-                      ),
-                    ),
-                    child: Text(
-                      GardenSettingsViewText.cancelConfirmExitGarden,
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSecondary
-                      ),
-                    )
-                  ),
-                ),
+                AppCloseConfirmDialogButton(),
                 gapW15,
                 Container(
                   constraints: BoxConstraints(minHeight: AppHeights.h40),

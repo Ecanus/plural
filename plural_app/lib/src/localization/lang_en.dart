@@ -112,6 +112,7 @@ class AppDialogFooterText {
 
   static const settings = "Settings";
   static const sponsoredAsks = "Sponsored Asks";
+  static const sponsoredAsksShorthand = "Sponsored";
 
   static const examineAsk = "View Ask";
 }
@@ -148,6 +149,7 @@ class AskViewText {
   static const emptySponsoredAsksViewSubtitle = ""
     "Check the timeline for Asks to sponsor.";
 
+  static const goToDoDocument = "Go to Do Document";
   static const goToListedAsks = "Go to My Asks";
   static const goToSponsoredAsks = "Go to Sponsored Asks";
 
@@ -159,8 +161,7 @@ class AskViewText {
 
   static const notVisibleOnTimeline = "Not visible on timeline";
 
-  static const readDoDocumentStart = "Please read and agree to the";
-  static const readDoDocumentEnd = "before continuing.";
+  static const readDoDocument = "Please read and agree to the Do Document before continuing.";
 
   static const selectDateLabel = "Select date";
 
@@ -201,7 +202,6 @@ class ForgotPasswordDialogText {
 }
 
 class GardenSettingsViewText {
-  static const cancelConfirmExitGarden = "Cancel";
   static const confirmExitGarden = "Are you sure?";
   static const confirmExitGardenSubtitle = ""
     "Leaving will permanently remove you from this Garden."
@@ -211,7 +211,7 @@ class GardenSettingsViewText {
   static const exitGarden = "Exit Garden";
 
   static const goToLandingPageLabel = "Go to Landing page";
-  static const goToAdminPageLabel = "Go to Administrator page";
+  static const goToAdminPageLabel = "Go to Admin page";
 
   static const returnToGardenSettings = "Return to Garden settings";
   static const routeToExamineDoDocumentView = "Do Document";
@@ -240,7 +240,6 @@ class InvitationsText {
 class LandingPageText {
   static const acceptInvitation = "Accept Invitation";
 
-  static const cancelConfirmDeleteAccount = "Cancel";
   static const confirmDeleteAccount = "Deleting account";
   static const confirmDeleteAccountPrompt = "To confirm this, type";
   static const confirmDeleteAccountValue = "DELETE";

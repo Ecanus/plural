@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+// Common Functions
+import 'package:plural_app/src/common_functions/app_responsiveness.dart';
+
 // Common Widgets
 import 'package:plural_app/src/common_widgets/app_dialog_footer_nav_button.dart';
 
@@ -104,9 +107,8 @@ class _AppDialogNavFooterState extends State<AppDialogNavFooter> {
         ),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.vertical(
-            bottom: isOnSmallScreen(context) ?
-              Radius.zero
-              : Radius.circular(AppBorderRadii.r15),
+            bottom: getResponsiveUiValue(
+              context, ResponsiveUiKeys.appDialogNavFooterBorderRadiusBottom)
           ),
           boxShadow: [
             BoxShadow(
@@ -119,7 +121,8 @@ class _AppDialogNavFooterState extends State<AppDialogNavFooter> {
           color: Theme.of(context).colorScheme.primaryContainer,
         ),
         padding: EdgeInsets.symmetric(
-          horizontal: isOnSmallScreen(context) ? AppPaddings.p10 : AppPaddings.p35
+          horizontal: getResponsiveUiValue(
+            context, ResponsiveUiKeys.appDialogNavFooterHorizontalPadding)
         ),
         child: Row(
           children: [
@@ -137,8 +140,8 @@ class _AppDialogNavFooterState extends State<AppDialogNavFooter> {
                   widget.title,
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.onPrimary,
-                    fontSize: isOnSmallScreen(context) ?
-                      AppFontSizes.s20 : AppFontSizes.s25,
+                    fontSize: getResponsiveUiValue(
+                      context, ResponsiveUiKeys.appDialogNavFooterFontSize),
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -175,9 +178,8 @@ class AppDialogFooter extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.vertical(
-          bottom: isOnSmallScreen(context) ?
-            Radius.zero
-            : Radius.circular(AppBorderRadii.r15),
+          bottom: getResponsiveUiValue(
+            context, ResponsiveUiKeys.appDialogFooterBorderRadiusBottom),
         ),
         boxShadow: [
           BoxShadow(
@@ -194,8 +196,8 @@ class AppDialogFooter extends StatelessWidget {
           title,
           style: TextStyle(
             color: Theme.of(context).colorScheme.onPrimary,
-            fontSize: isOnSmallScreen(context) ?
-              AppFontSizes.s20 : AppFontSizes.s25,
+            fontSize: getResponsiveUiValue(
+              context, ResponsiveUiKeys.appDialogFooterFontSize),
             fontWeight: FontWeight.bold,
           ),
         )

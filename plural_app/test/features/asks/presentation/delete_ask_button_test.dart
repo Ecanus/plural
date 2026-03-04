@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+// Common Widgets
+import 'package:plural_app/src/common_widgets/app_close_confirm_dialog_button.dart';
+
 // Asks
 import 'package:plural_app/src/features/asks/presentation/delete_ask_button.dart';
 
@@ -31,7 +34,7 @@ void main() {
       expect(find.byType(ConfirmDeleteAskDialog), findsOneWidget);
 
       // Tap OutlinedButton (to close ConfirmDeleteAskDialog)
-      await tester.tap(find.byType(OutlinedButton));
+      await tester.tap(find.byType(AppCloseConfirmDialogButton));
       await tester.pumpAndSettle();
 
       // Check ConfirmDeleteAskDialog has removed

@@ -9,6 +9,7 @@ class AppDurations {
   static const ms250 = Duration(milliseconds: 250);
   static const s3 = Duration(seconds: 3);
   static const s9 = Duration(seconds: 9);
+  static const s10 = Duration(seconds: 10);
 }
 
 class AppMaxLengths {

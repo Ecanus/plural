@@ -6,9 +6,10 @@ import 'package:mocktail/mocktail.dart';
 import 'package:pocketbase/pocketbase.dart';
 
 // Common Widgets
-import 'package:plural_app/src/constants/fields.dart';
+import 'package:plural_app/src/common_widgets/app_close_confirm_dialog_button.dart';
 
 // Constants
+import 'package:plural_app/src/constants/fields.dart';
 import 'package:plural_app/src/constants/routes.dart';
 
 // Asks
@@ -56,7 +57,7 @@ void main() {
       expect(find.byType(ConfirmDeleteAccountDialog), findsOneWidget);
 
       // Tap cancel button (to close dialog)
-      await tester.tap(find.text(LandingPageText.cancelConfirmDeleteAccount));
+      await tester.tap(find.byType(AppCloseConfirmDialogButton));
       await tester.pumpAndSettle();
 
       // Check Dialog no longer displayed

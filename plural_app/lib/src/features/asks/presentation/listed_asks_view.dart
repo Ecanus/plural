@@ -69,20 +69,37 @@ class ListedAsksView extends StatelessWidget {
 class EmptyListedAsksViewMessage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            AskViewText.emptyListedAsksView,
-            style: Theme.of(context).textTheme.headlineSmall
-          ),
-          gapH25,
-          Text(
-            AskViewText.emptyListedAsksViewSubtitle,
-            style: Theme.of(context).textTheme.bodyMedium
-          ),
-        ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppPaddings.p20
+      ),
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  AskViewText.emptyListedAsksView,
+                  style: Theme.of(context).textTheme.headlineSmall
+                ),
+              ],
+            ),
+            gapH25,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Flexible(
+                  child: Text(
+                    AskViewText.emptyListedAsksViewSubtitle,
+                    style: Theme.of(context).textTheme.bodyMedium
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

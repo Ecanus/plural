@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:timeline_tile/timeline_tile.dart';
 
+// Common Functions
+import 'package:plural_app/src/common_functions/app_responsiveness.dart';
+
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
 import 'package:plural_app/src/constants/app_values.dart';
@@ -134,7 +137,10 @@ class TileContents extends StatelessWidget {
               Expanded(
                 child: AskTimeLeftText(
                   ask: ask,
-                  fontSize: isOnSmallScreen(context) ? AppFontSizes.s10 : null,
+                  fontSize: getResponsiveUiValue(
+                    context,
+                    ResponsiveUiKeys.gardenTimelineTileContentsTimeLeftTextFontSize
+                  ),
                   textColor: textColor,
                 )
               ),
@@ -149,7 +155,10 @@ class TileContents extends StatelessWidget {
                   ask.truncatedDescription,
                   style: TextStyle(
                     color: textColor,
-                    fontSize: isOnSmallScreen(context) ? AppFontSizes.s12 : null,
+                    fontSize: getResponsiveUiValue(
+                      context,
+                      ResponsiveUiKeys.gardenTimelineTileContentsTruncatedDescriptionFontSize
+                    ),
                   ),
                 )
               )

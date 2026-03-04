@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 
+// Common Functions
+import 'package:plural_app/src/common_functions/app_responsiveness.dart';
+
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
 import 'package:plural_app/src/utils/app_state.dart';
@@ -30,9 +33,9 @@ class _GardenPageState extends State<GardenPage> {
               GardenHeader(),
               gapH30,
               GardenTimeline(),
-              isOnSmallScreen(context) ? gapH10 : gapH30,
+              getResponsiveUiValue(context, ResponsiveUiKeys.gardenPageVerticalGap),
               GardenFooter(),
-              isOnSmallScreen(context) ? gapH10 : gapH30
+              getResponsiveUiValue(context, ResponsiveUiKeys.gardenPageVerticalGap),
             ],
           ),
         ),

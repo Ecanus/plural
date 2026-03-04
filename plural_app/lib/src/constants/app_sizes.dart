@@ -82,6 +82,7 @@ class AppIconSizes {
 }
 
 class AppIndents {
+  static const i100 = 100.0;
   static const i200 = 200.0;
 }
 
@@ -125,10 +126,12 @@ class AppWidths {
   static const w2 = 2.0;
   static const w3 = 3.0;
   static const w25 = 25.0;
+  static const w40 = 40.0;
   static const w60 = 60.0;
   static const w150 = 150.0;
   static const w175 = 175.0;
   static const w200 = 200.0;
+  static const w300 = 300.0;
   static const w600 = 600.0;
 }
 
@@ -153,7 +156,3 @@ const gapH50 = SizedBox(height: AppPaddings.p50);
 const gapH60 = SizedBox(height: AppPaddings.p60);
 const gapH65 = SizedBox(height: AppPaddings.p65);
 const gapH80 = SizedBox(height: AppPaddings.p80);
-
-bool isOnSmallScreen(BuildContext context) {
-  return MediaQuery.sizeOf(context).shortestSide < AppMediaQuery.mobileSize;
-}
