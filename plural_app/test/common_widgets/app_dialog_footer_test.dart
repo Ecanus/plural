@@ -171,7 +171,7 @@ void main() {
           ),
         ));
 
-      // Check dialog not dispalyed; AppDialogFooterCloseFullScreenDialogButton button not displayed
+      // Check dialog not displayed; AppDialogFooterCloseFullScreenDialogButton button not displayed
       expect(find.byType(Dialog), findsNothing);
       expect(find.byType(AppDialogFooterCloseFullScreenDialogButton), findsNothing);
 
@@ -187,7 +187,7 @@ void main() {
       await tester.tap(find.byType(AppDialogFooterCloseFullScreenDialogButton));
       await tester.pumpAndSettle();
 
-      // Check dialog no longer dispalyed; AppDialogFooterCloseFullScreenDialogButton button no longer displayed
+      // Check dialog no longer displayed; AppDialogFooterCloseFullScreenDialogButton button no longer displayed
       expect(find.byType(Dialog), findsNothing);
       expect(find.byType(AppDialogFooterCloseFullScreenDialogButton), findsNothing);
     });

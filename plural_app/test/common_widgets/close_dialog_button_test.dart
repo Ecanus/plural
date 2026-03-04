@@ -31,7 +31,7 @@ void main() {
           ),
         ));
 
-      // Check dialog not dispalyed; close dialog button not displayed
+      // Check dialog not displayed; close dialog button not displayed
       expect(find.byType(Dialog), findsNothing);
       expect(find.byType(CloseDialogButton), findsNothing);
 
@@ -39,7 +39,7 @@ void main() {
       await tester.tap(find.byType(ElevatedButton));
       await tester.pumpAndSettle();
 
-      // Check dialog dispalyed; close dialog button displayed
+      // Check dialog displayed; close dialog button displayed
       expect(find.byType(Dialog), findsOneWidget);
       expect(find.byType(CloseDialogButton), findsOneWidget);
 
@@ -47,7 +47,7 @@ void main() {
       await tester.tap(find.byType(CloseDialogButton));
       await tester.pumpAndSettle();
 
-      // Check dialog no longer dispalyed; close dialog button no longer displayed
+      // Check dialog no longer displayed; close dialog button no longer displayed
       expect(find.byType(Dialog), findsNothing);
       expect(find.byType(CloseDialogButton), findsNothing);
     });

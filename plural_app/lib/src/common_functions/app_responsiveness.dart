@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
+
+// Localization
 import 'package:plural_app/src/localization/lang_en.dart';
 
 class ResponsiveUiKeys {
@@ -20,7 +22,8 @@ class ResponsiveUiKeys {
   static const deleteAccountButtonDialogMaxHeight = "deleteAccountButtonDialogMaxHeight";
   static const deleteAccountButtonText = "deleteAccountButtonText";
   // GardenPage
-  static const gardenPageVerticalGap = "gardenPageVerticalGap";
+  static const gardenPageFooterToBaseGap = "gardenPageFooterToBaseGap";
+  static const gardenPageTimelineToFooterGap = "gardenPageTimelineToFooterGap";
   // GardenTimelineTile
   static const gardenTimelineTileContentsTimeLeftTextFontSize = "gardenTimelineTileContentsTimeLeftTextFontSize";
   static const gardenTimelineTileContentsTruncatedDescriptionFontSize = "gardenTimelineTileContentsTruncatedDescriptionFontSize";
@@ -53,9 +56,11 @@ Map<dynamic, dynamic> responsiveUiValuesMap = {
   ResponsiveUiKeys.deleteAccountButtonDialogMaxHeight:
     (AppConstraints.c450, AppConstraints.c350),
   ResponsiveUiKeys.deleteAccountButtonText:
-    (Text(LandingPageText.deleteAccountShorthand), Text(LandingPageText.deleteAccount)),
+    (LandingPageText.deleteAccountShorthand, LandingPageText.deleteAccount),
   // GardenPage
-  ResponsiveUiKeys.gardenPageVerticalGap:
+  ResponsiveUiKeys.gardenPageFooterToBaseGap:
+    (gapH25, gapH30),
+  ResponsiveUiKeys.gardenPageTimelineToFooterGap:
     (gapH10, gapH30),
   // GardenTimelineTile
   ResponsiveUiKeys.gardenTimelineTileContentsTimeLeftTextFontSize:

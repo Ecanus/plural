@@ -220,8 +220,10 @@ class _ConfirmDeleteAccountDialogState extends State<ConfirmDeleteAccountDialog>
                           )
                         ),
                       ),
-                      child: getResponsiveUiValue(
-                        context, ResponsiveUiKeys.deleteAccountButtonText)
+                      child: Text(
+                        getResponsiveUiValue(
+                          context, ResponsiveUiKeys.deleteAccountButtonText)
+                      ),
                     ),
                   ),
                 )

@@ -71,7 +71,7 @@ class EmptyListedAsksViewMessage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(
-        horizontal: AppPaddings.p20
+        horizontal: AppPaddings.p25
       ),
       child: Center(
         child: Column(
