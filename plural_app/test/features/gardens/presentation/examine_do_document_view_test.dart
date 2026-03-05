@@ -1,15 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
-import 'package:intl/intl.dart';
 import 'package:mocktail/mocktail.dart';
 
 // Common Widgets
 import 'package:plural_app/src/common_widgets/app_dialog.dart';
-
-// Constants
-import 'package:plural_app/src/constants/fields.dart';
-import 'package:plural_app/src/constants/formats.dart';
 
 // Auth
 import 'package:plural_app/src/features/authentication/data/user_garden_records_repository.dart';
@@ -59,10 +54,7 @@ void main() {
       when(
         () => mockUserGardenRecordsRepository.update(
           id: userGardenRecord.id,
-          body: {
-            UserGardenRecordField.doDocumentReadDate:
-              DateFormat(Formats.dateYMMddHHm).format(now)
-          }
+          body: any(named: "body") // must use any() because DateTime.now() is called internally
         )
       ).thenAnswer(
         (_) async => (
