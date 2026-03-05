@@ -7,6 +7,9 @@ import 'package:plural_app/src/constants/app_sizes.dart';
 import 'package:plural_app/src/localization/lang_en.dart';
 
 class ResponsiveUiKeys {
+  // AdminListedInvitationTile
+  static const adminListedInvitationTileDeleteInvitationText = "adminListedInvitationTileDeleteInvitationText";
+  static const adminListedInvitationTileFontSize = "adminListedInvitationTileFontSize";
   // AppDialogFooter
   static const appDialogFooterBorderRadiusBottom = "appDialogFooterBorderRadiusBottom";
   static const appDialogFooterFontSize = "appDialogFooterFontSize";
@@ -34,6 +37,11 @@ class ResponsiveUiKeys {
 /// Map of responsive values used throughout the app.
 /// First value is for small screens. Second value is for all other screen sizes.
 Map<dynamic, dynamic> responsiveUiValuesMap = {
+  // AdminListedInvitationTile
+  ResponsiveUiKeys.adminListedInvitationTileDeleteInvitationText:
+    (AdminInvitationViewText.deleteInvitationShorthand, AdminInvitationViewText.deleteInvitation),
+  ResponsiveUiKeys.adminListedInvitationTileFontSize:
+    (AppFontSizes.s12, null),
   // AppDialogFooter
   ResponsiveUiKeys.appDialogFooterBorderRadiusBottom:
     (Radius.zero, Radius.circular(AppBorderRadii.r15)),

@@ -1,5 +1,4 @@
 class AdminInvitationViewText {
-  static const cancelConfirmDeleteInvitation = "Cancel";
   static const confirmDeleteInvitation = "Delete Invitation?";
   static const copyCode = "Copy code";
   static const createInvitation = "Create Invitation";
@@ -10,6 +9,7 @@ class AdminInvitationViewText {
     "3) An Invitation to this user is not already active";
 
   static const deleteInvitation = "Delete Invitation";
+  static const deleteInvitationShorthand = "Delete";
 
   static const emptyAdminListedInvitationsViewOpen = ""
     "No active open Invitations found";
@@ -47,7 +47,6 @@ class AdminCurrentGardenSettingsViewText {
 class AdminListedUsersViewText {
   static const adminHeading = "Administrators";
 
-  static const cancelConfirmExpelUser = "Cancel";
   static const confirmExpelUser = "Expel User?";
   static const confirmExpelUserSubtitle = ""
     "Expelling this user will remove them from the Garden, and they will need a new "
@@ -87,7 +86,7 @@ class AppText {
 class AppDialogFooterText {
   static const adminCreateInvitation = "Create Invitation";
   static const adminEditUser = "Edit User";
-  static const adminGardenSettings = "Garden Settings";
+  static const adminGardenSettings = "Garden";
   static const adminListedInvitations = "Active Invitations";
   static const adminListedUsers = "Users";
   static const adminOptionsView = "Options";

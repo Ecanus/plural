@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
 
+// Common Functions
+import 'package:plural_app/src/common_functions/app_responsiveness.dart';
+
 // Common Widgets
+import 'package:plural_app/src/common_widgets/app_close_confirm_dialog_button.dart';
 import 'package:plural_app/src/common_widgets/app_snackbars.dart';
 
 // Constants
@@ -37,6 +41,8 @@ class AdminListedInvitationTile extends StatelessWidget {
           invitation.uuid ?? invitation.invitee?.username
           ?? AdminInvitationViewText.invalidInvitation,
           style: TextStyle(
+            fontSize: getResponsiveUiValue(
+              context, ResponsiveUiKeys.adminListedInvitationTileFontSize),
             fontWeight: FontWeight.w500
           ),
         ),
@@ -45,6 +51,8 @@ class AdminListedInvitationTile extends StatelessWidget {
           "${AdminInvitationViewText.expires} "
           "${DateFormat(Formats.dateYMMdd).format(invitation.expiryDate)}",
           style: TextStyle(
+            fontSize: getResponsiveUiValue(
+              context, ResponsiveUiKeys.adminListedInvitationTileFontSize),
             fontStyle: FontStyle.italic
           ),
         ),
@@ -76,7 +84,7 @@ class AdminListedInvitationTile extends StatelessWidget {
                 Icons.delete,
                 color: Theme.of(context).colorScheme.error,
               ),
-              onPressed: () => showConfirmExpireInvitationDialog(context, invitation.id),
+              onPressed: () => showConfirmDeleteInvitationDialog(context, invitation.id),
               tooltip: AdminInvitationViewText.deleteInvitation,
             ),
           ],
@@ -86,20 +94,20 @@ class AdminListedInvitationTile extends StatelessWidget {
   }
 }
 
-Future<void> showConfirmExpireInvitationDialog(
+Future<void> showConfirmDeleteInvitationDialog(
   BuildContext context,
   String invitationID,
 ) async {
   await showDialog(
     context: context,
     builder: (BuildContext context) {
-      return ConfirmExpireInvitationDialog(invitationID: invitationID);
+      return ConfirmDeleteInvitationDialog(invitationID: invitationID);
     }
   );
 }
 
-class ConfirmExpireInvitationDialog extends StatelessWidget {
-  const ConfirmExpireInvitationDialog({
+class ConfirmDeleteInvitationDialog extends StatelessWidget {
+  const ConfirmDeleteInvitationDialog({
     required this.invitationID,
   });
 
@@ -136,25 +144,7 @@ class ConfirmExpireInvitationDialog extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Container(
-                  constraints: BoxConstraints(minHeight: AppHeights.h40),
-                  child: OutlinedButton(
-                    onPressed: () => Navigator.pop(context),
-                    style: ButtonStyle(
-                      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(AppBorderRadii.r5)
-                        )
-                      ),
-                    ),
-                    child: Text(
-                      AdminInvitationViewText.cancelConfirmDeleteInvitation,
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSecondary
-                      )
-                    ),
-                  )
-                ),
+                AppCloseConfirmDialogButton(),
                 gapW15,
                 Container(
                   constraints: BoxConstraints(minHeight: AppHeights.h40),
@@ -188,7 +178,12 @@ class ConfirmExpireInvitationDialog extends StatelessWidget {
                         )
                       ),
                     ),
-                    child: const Text(AdminInvitationViewText.deleteInvitation)
+                    child: Text(
+                      getResponsiveUiValue(
+                        context,
+                        ResponsiveUiKeys.adminListedInvitationTileDeleteInvitationText
+                      )
+                    )
                   )
                 ),
               ],

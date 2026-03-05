@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+// Common Widgets
+import 'package:plural_app/src/common_widgets/app_close_confirm_dialog_button.dart';
+
 // Auth
 import 'package:plural_app/src/features/authentication/presentation/expel_user_button.dart';
-
-// Localization
-import 'package:plural_app/src/localization/lang_en.dart';
 
 // Test
 import '../../../test_factories.dart';
@@ -38,7 +38,7 @@ void main() {
       expect(find.byType(ConfirmExpelUserDialog), findsOneWidget);
 
       // Tap cancel button (to close dialog)
-      await tester.tap(find.text(AdminListedUsersViewText.cancelConfirmExpelUser));
+      await tester.tap(find.byType(AppCloseConfirmDialogButton));
       await tester.pumpAndSettle();
 
       // Check Dialog no longer displayed
