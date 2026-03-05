@@ -86,6 +86,8 @@ class _LandingPageSettingsTabState extends State<LandingPageSettingsTab> {
                       maxLines: null,
                       suffixIcon: Tooltip(
                         message: AskViewText.instructionsTooltip,
+                        triggerMode: TooltipTriggerMode.tap,
+                        showDuration: AppDurations.s10,
                         child: AppTooltipIcon(isDark: false),
                       ),
                     ),

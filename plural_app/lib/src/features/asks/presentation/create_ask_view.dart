@@ -239,6 +239,7 @@ class CreateAskHeader extends StatelessWidget {
       Padding(
         padding: const EdgeInsets.only(
           top: AppPaddings.p50,
+          bottom: AppPaddings.p20,
           left: AppPaddings.p20,
           right: AppPaddings.p20,
         ),
@@ -271,7 +272,6 @@ class CreateAskHeader extends StatelessWidget {
                 child: Text(AskViewText.goToDoDocument)
               ),
             ),
-            gapH10,
           ],
         ),
       );
