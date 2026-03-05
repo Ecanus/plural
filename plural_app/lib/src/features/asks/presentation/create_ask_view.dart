@@ -104,6 +104,13 @@ class _CreateAskViewState extends State<CreateAskView> {
                       fieldName: AskField.deadlineDate,
                       label: AskViewText.deadlineDate,
                     ),
+                    AppCurrencyPickerFormField(
+                      appForm: _appForm,
+                      enabled: widget.hasReadDoDocument,
+                      fieldName: AskField.currency,
+                      initialValue: _appState.currentUserSettings!.defaultCurrency,
+                      label: AskViewText.currency,
+                    ),
                     Row(
                       children: [
                         Expanded(
@@ -128,22 +135,13 @@ class _CreateAskViewState extends State<CreateAskView> {
                             maxLength: AppMaxLengths.max4,
                             suffixIcon: Tooltip(
                               message: AskViewText.tooltipBoon,
+                              triggerMode: TooltipTriggerMode.tap,
+                              showDuration: AppDurations.s10,
                               child: AppTooltipIcon(isDark: false),
                             ),
                             textFieldType: TextFieldType.digitsOnly,
                           ),
                         ),
-                        gapW20,
-                        Expanded(
-                          flex: AppFlexes.f2,
-                          child: AppCurrencyPickerFormField(
-                            appForm: _appForm,
-                            enabled: widget.hasReadDoDocument,
-                            fieldName: AskField.currency,
-                            initialValue: _appState.currentUserSettings!.defaultCurrency,
-                            label: AskViewText.currency,
-                          )
-                        )
                       ],
                     ),
                     AppTextFormField(
@@ -156,6 +154,8 @@ class _CreateAskViewState extends State<CreateAskView> {
                       maxLines: null,
                       suffixIcon: Tooltip(
                         message: AskViewText.urlFormattingText,
+                        triggerMode: TooltipTriggerMode.tap,
+                        showDuration: AppDurations.s10,
                         child: AppTooltipIcon(isDark: false),
                       ),
                     ),
@@ -169,6 +169,8 @@ class _CreateAskViewState extends State<CreateAskView> {
                       maxLines: null,
                       suffixIcon: Tooltip(
                         message: AskViewText.instructionsTooltip,
+                        triggerMode: TooltipTriggerMode.tap,
+                        showDuration: AppDurations.s10,
                         child: AppTooltipIcon(isDark: false),
                       ),
                     ),
@@ -237,24 +239,37 @@ class CreateAskHeader extends StatelessWidget {
       Padding(
         padding: const EdgeInsets.only(
           top: AppPaddings.p50,
+          bottom: AppPaddings.p20,
+          left: AppPaddings.p20,
+          right: AppPaddings.p20,
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+        child: Column(
           children: [
-            Flexible(
-              child: Text(
-                AskViewText.readDoDocumentStart,
-                style: TextStyle(fontWeight: FontWeight.w500),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Flexible(
+                  child: Text(
+                    AskViewText.readDoDocument,
+                    style: TextStyle(fontWeight: FontWeight.w500),
+                  ),
+                ),
+              ],
+            ),
+            gapH15,
+            Container(
+              constraints: BoxConstraints(
+                maxWidth: AppWidths.w300,
+                minHeight: AppHeights.h40,
               ),
-            ),
-            TextButton(
-              onPressed: () => routeToExamineDoDocumentViewCallback(),
-              child: Text(AskViewText.doDocument),
-            ),
-            Flexible(
-              child: Text(
-                AskViewText.readDoDocumentEnd,
-                style: TextStyle(fontWeight: FontWeight.w500),
+              child: FilledButton(
+                onPressed: () => routeToExamineDoDocumentViewCallback(),
+                style: FilledButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(AppBorderRadii.r5)
+                  )
+                ),
+                child: Text(AskViewText.goToDoDocument)
               ),
             ),
           ],

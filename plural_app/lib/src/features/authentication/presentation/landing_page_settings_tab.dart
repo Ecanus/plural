@@ -85,9 +85,11 @@ class _LandingPageSettingsTabState extends State<LandingPageSettingsTab> {
                       maxLength: AppMaxLengths.max200,
                       maxLines: null,
                       suffixIcon: Tooltip(
-                            message: AskViewText.instructionsTooltip,
-                            child: AppTooltipIcon(isDark: false),
-                          ),
+                        message: AskViewText.instructionsTooltip,
+                        triggerMode: TooltipTriggerMode.tap,
+                        showDuration: AppDurations.s10,
+                        child: AppTooltipIcon(isDark: false),
+                      ),
                     ),
                     gapH30,
                     AppDialogCategoryHeader(
@@ -126,14 +128,20 @@ class _LandingPageSettingsTabState extends State<LandingPageSettingsTab> {
           ),
         ),
         gapH30,
-        AppElevatedButton(
-          callback: submitUpdateSettings,
-          positionalArguments: [context, _formKey, _userAppForm, _userSettingsAppForm],
-          namedArguments: {#currentRoute: Routes.landing},
-          label: LandingPageText.saveChanges,
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: AppPaddings.p10),
+          child: AppElevatedButton(
+            callback: submitUpdateSettings,
+            positionalArguments: [context, _formKey, _userAppForm, _userSettingsAppForm],
+            namedArguments: {#currentRoute: Routes.landing},
+            label: LandingPageText.saveChanges,
+          ),
         ),
         gapH10,
-        LogOutButton(),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: AppPaddings.p10),
+          child: LogOutButton(),
+        ),
       ],
     );
   }

@@ -116,7 +116,7 @@ class Ask {
   }
 
   String get truncatedDescription {
-    const limit = AppMaxLengths.max200;
+    const limit = AppMaxLengths.max50;
 
     // First convert "[link_text](link_address)" markdown to just "link_text"
     List<InlineSpan> strippedDescriptionSpans = stripHttpMarkdown(text: description);

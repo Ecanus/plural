@@ -17,6 +17,7 @@ void main() {
                   child: SizedBox(height: 100.0, width: 100.0,),
                   onTap: () {
                     final snackBar = AppSnackBars.getSnackBar(
+                      context,
                       "Success Message",
                       showCloseIcon: true,
                       snackbarType: SnackbarType.success
@@ -51,6 +52,7 @@ void main() {
                   child: SizedBox(height: 100.0, width: 100.0,),
                   onTap: () {
                     final snackBar = AppSnackBars.getSnackBar(
+                      context,
                       "Error Message",
                       boldMessage: "and bold message!",
                       showCloseIcon: true,
@@ -65,7 +67,7 @@ void main() {
           ),
         ));
 
-      // Check text not dispalyed
+      // Check text not displayed
       expect(find.text("Error Message and bold message!"), findsNothing);
 
       await tester.tap(find.byType(GestureDetector));
@@ -86,6 +88,7 @@ void main() {
                   child: SizedBox(height: 100.0, width: 100.0,),
                   onTap: () {
                     final snackBar = AppSnackBars.getSnackBar(
+                      context,
                       "Success Message",
                       showCloseIcon: true,
                       snackbarType: SnackbarType.success
@@ -99,7 +102,7 @@ void main() {
           ),
         ));
 
-      // Check close button not yet dispalyed
+      // Check close button not yet displayed
       expect(find.byType(IconButton), findsNothing);
 
       await tester.tap(find.byType(GestureDetector));
@@ -120,6 +123,7 @@ void main() {
                   child: SizedBox(height: 100.0, width: 100.0,),
                   onTap: () {
                     final snackBar = AppSnackBars.getSnackBar(
+                      context,
                       "Error Message",
                       showCloseIcon: false,
                       snackbarType: SnackbarType.error
@@ -133,7 +137,7 @@ void main() {
           ),
         ));
 
-      // Check close button not dispalyed
+      // Check close button not displayed
       expect(find.byType(SnackBar), findsNothing);
       expect(find.byType(IconButton), findsNothing);
 

@@ -108,7 +108,7 @@ void main() {
       await tester.tap(find.byIcon(Icons.delete).last);
       await tester.pumpAndSettle();
 
-      expect(find.byType(ConfirmExpireInvitationDialog), findsOneWidget);
+      expect(find.byType(ConfirmDeleteInvitationDialog), findsOneWidget);
 
       // Tap FilledButton to call deleteInvitation()
       await tester.tap(find.byType(FilledButton).last);

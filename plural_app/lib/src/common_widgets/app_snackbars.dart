@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
+// Common Functions
+import 'package:plural_app/src/common_functions/app_responsiveness.dart';
+
 // Constants
-import 'package:plural_app/src/constants/app_sizes.dart';
 import 'package:plural_app/src/constants/app_values.dart';
 import 'package:plural_app/src/constants/themes.dart';
 
@@ -41,6 +43,7 @@ class AppSnackBars {
   }
 
   static SnackBar getSnackBar(
+    BuildContext context,
     String mainMessage,
     {
       String boldMessage = "",
@@ -83,7 +86,7 @@ class AppSnackBars {
       duration: duration,
       showCloseIcon: showCloseIcon,
       closeIconColor: snackbarValues.closeIconColor,
-      width: AppWidths.w600
+      width: getResponsiveUiValue(context, ResponsiveUiKeys.appSnackBarsWidth)
     );
   }
 }

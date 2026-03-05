@@ -44,6 +44,7 @@ Future<void> submitUpdateSettings(
 
     if (userRecord != null && userSettingsRecord != null && context.mounted) {
       final snackBar = AppSnackBars.getSnackBar(
+        context,
         SnackBarText.updateUserSettingsSuccess,
         showCloseIcon: false,
         snackbarType: SnackbarType.success
@@ -94,6 +95,7 @@ Future<void> submitUpdateUserGardenRecord(
     // Handle success
     if (userGardenRecord != null && context.mounted) {
       snackBar = AppSnackBars.getSnackBar(
+        context,
         SnackBarText.updateUserGardenRoleSuccess,
         snackbarType: SnackbarType.success
       );
@@ -173,6 +175,7 @@ Future<void> submitSignUp(
       .animateTo(AuthConstants.logInTabIndex);
 
       final snackBar = AppSnackBars.getSnackBar(
+        context,
         SnackBarText.sentUserVerificationEmail,
         boldMessage: appForm.getValue(fieldName: UserField.email),
         duration: AppDurations.s9,
@@ -215,6 +218,7 @@ Future<void> submitForgotPassword(
 
       if (isValid) {
         final snackBar = AppSnackBars.getSnackBar(
+          context,
           SnackBarText.sentPasswordResetEmail,
           boldMessage: email,
           duration: AppDurations.s9,

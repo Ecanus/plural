@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+// Common Functions
+import 'package:plural_app/src/common_functions/app_responsiveness.dart';
+
 // Common Widgets
+import 'package:plural_app/src/common_widgets/app_close_confirm_dialog_button.dart';
 import 'package:plural_app/src/common_widgets/app_snackbars.dart';
 
 // Constants
@@ -93,6 +97,7 @@ class _ConfirmDeleteAccountDialogState extends State<ConfirmDeleteAccountDialog>
       GoRouter.of(context).go(Routes.signIn);
 
       final snackBar = AppSnackBars.getSnackBar(
+        context,
         SnackBarText.deletedUserAccount,
         duration: AppDurations.s9,
         snackbarType: SnackbarType.success
@@ -106,6 +111,7 @@ class _ConfirmDeleteAccountDialogState extends State<ConfirmDeleteAccountDialog>
   void errorCallback() {
     if (context.mounted) {
       final snackBar = AppSnackBars.getSnackBar(
+        context,
         SnackBarText.deletedUserAccountFailed,
         duration: AppDurations.s9,
         snackbarType: SnackbarType.error
@@ -123,9 +129,10 @@ class _ConfirmDeleteAccountDialogState extends State<ConfirmDeleteAccountDialog>
         padding: const EdgeInsets.symmetric(
           horizontal: AppPaddings.p50,
         ),
-        constraints: BoxConstraints.expand(
-          width: AppConstraints.c600,
-          height: AppConstraints.c350,
+        constraints: BoxConstraints(
+          maxWidth: AppConstraints.c600,
+          maxHeight: getResponsiveUiValue(
+            context, ResponsiveUiKeys.deleteAccountButtonDialogMaxHeight),
         ),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(AppBorderRadii.r15),
@@ -136,9 +143,11 @@ class _ConfirmDeleteAccountDialogState extends State<ConfirmDeleteAccountDialog>
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Text(
-                  LandingPageText.confirmDeleteAccount,
-                  style: Theme.of(context).textTheme.headlineMedium,
+                Flexible(
+                  child: Text(
+                    LandingPageText.confirmDeleteAccount,
+                    style: Theme.of(context).textTheme.headlineMedium,
+                  ),
                 ),
               ],
             ),
@@ -158,9 +167,11 @@ class _ConfirmDeleteAccountDialogState extends State<ConfirmDeleteAccountDialog>
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Text(""
-                  "${LandingPageText.confirmDeleteAccountPrompt} "
-                  "'${LandingPageText.confirmDeleteAccountValue}'"
+                Flexible(
+                  child: Text(""
+                    "${LandingPageText.confirmDeleteAccountPrompt} "
+                    "'${LandingPageText.confirmDeleteAccountValue}'"
+                  ),
                 ),
               ],
             ),
@@ -185,47 +196,35 @@ class _ConfirmDeleteAccountDialogState extends State<ConfirmDeleteAccountDialog>
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Container(
-                  constraints: BoxConstraints(minHeight: AppHeights.h40),
-                  child: OutlinedButton(
-                    onPressed: () => Navigator.pop(context),
-                    style: ButtonStyle(
-                      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(AppBorderRadii.r5)
-                        )
-                      ),
-                    ),
-                    child: Text(
-                      LandingPageText.cancelConfirmDeleteAccount,
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSecondary
-                      ),
-                    )
-                  ),
-                ),
+                AppCloseConfirmDialogButton(),
                 gapW15,
-                Container(
-                  constraints: BoxConstraints(minHeight: AppHeights.h40),
-                  child: FilledButton(
-                    onPressed: _isTextMatch ? () {
-                      deleteCurrentUserAccount(
-                        errorCallback: errorCallback,
-                        successCallback: successCallback,
-                      );
-                    }
-                    : null,
-                    style: ButtonStyle(
-                      backgroundColor: WidgetStateProperty.all<Color>(
-                        Theme.of(context).colorScheme.error
+                Expanded(
+                  child: Container(
+                    constraints: BoxConstraints(minHeight: AppHeights.h40),
+                    child: FilledButton(
+                      onPressed: _isTextMatch ? () {
+                        deleteCurrentUserAccount(
+                          errorCallback: errorCallback,
+                          successCallback: successCallback,
+                        );
+                      }
+                      : null,
+                      style: ButtonStyle(
+                        backgroundColor: WidgetStateProperty.all<Color>(
+                          Theme.of(context).colorScheme.error
+                        ),
+                        padding: WidgetStateProperty.all<EdgeInsets>(EdgeInsets.zero),
+                        shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(AppBorderRadii.r5)
+                          )
+                        ),
                       ),
-                      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(AppBorderRadii.r5)
-                        )
+                      child: Text(
+                        getResponsiveUiValue(
+                          context, ResponsiveUiKeys.deleteAccountButtonText)
                       ),
                     ),
-                    child: const Text(LandingPageText.deleteAccount)
                   ),
                 )
               ],

@@ -23,6 +23,7 @@ class AppConstraints {
   static const c300 = 300.0;
   static const c350 = 350.0;
   static const c400 = 400.0;
+  static const c450 = 450.0;
   static const c500 = 500.0;
   static const c600 = 600.0;
   static const c700 = 700.0;
@@ -50,6 +51,8 @@ class AppFontLetterSpacing {
 }
 
 class AppFontSizes {
+  static const s10 = 10.0;
+  static const s12 = 12.0;
   static const s13 = 13.0;
   static const s14 = 14.0;
   static const s15 = 15.0;
@@ -64,6 +67,7 @@ class AppHeights {
   static const h50 = 50.0;
   static const h60 = 60.0;
   static const h250 = 250.0;
+  static const h600 = 600.0;
   static const h800 = 800.0;
 }
 
@@ -78,9 +82,13 @@ class AppIconSizes {
 }
 
 class AppIndents {
+  static const i100 = 100.0;
   static const i200 = 200.0;
 }
 
+class AppMediaQuery {
+  static const mobileSize = 600.0;
+}
 class AppPaddings {
   static const p0 = 0.0;
   static const p2 = 2.0;
@@ -118,10 +126,12 @@ class AppWidths {
   static const w2 = 2.0;
   static const w3 = 3.0;
   static const w25 = 25.0;
+  static const w40 = 40.0;
   static const w60 = 60.0;
   static const w150 = 150.0;
   static const w175 = 175.0;
   static const w200 = 200.0;
+  static const w300 = 300.0;
   static const w600 = 600.0;
 }
 

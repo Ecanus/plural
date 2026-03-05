@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
 
 // Common Widgets
+import 'package:plural_app/src/common_widgets/app_close_confirm_dialog_button.dart';
 import 'package:plural_app/src/common_widgets/app_dialog_footer.dart';
 
 // Constants
@@ -76,7 +77,7 @@ void main() {
       expect(find.byType(ConfirmExitGardenDialog), findsOneWidget);
 
       // Tap close dialog button
-      await tester.tap(find.text(GardenSettingsViewText.cancelConfirmExitGarden));
+      await tester.tap(find.byType(AppCloseConfirmDialogButton));
       await tester.pumpAndSettle();
 
       // Check ConfirmExitGardenDialog has been removed

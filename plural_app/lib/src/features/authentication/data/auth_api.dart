@@ -557,7 +557,7 @@ Future<void> updateCurrentUserGardenRecordDoDocumentReadDate() async {
     id: GetIt.instance<AppState>().currentUserGardenRecord!.id,
     body: {
       UserGardenRecordField.doDocumentReadDate:
-        DateFormat(Formats.dateYMMddHHm).format(DateTime.now())
+        DateFormat(Formats.dateYMMddHHms).format(DateTime.now())
     }
   );
 }

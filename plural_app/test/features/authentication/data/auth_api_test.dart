@@ -1971,7 +1971,7 @@ void main() {
           id: userGardenRecord.id,
           body: {
             UserGardenRecordField.doDocumentReadDate:
-              DateFormat(Formats.dateYMMddHHm).format(now)
+              DateFormat(Formats.dateYMMddHHms).format(now)
           }
         )
       ).thenAnswer(
@@ -1983,7 +1983,7 @@ void main() {
           id: userGardenRecord.id,
           body: {
             UserGardenRecordField.doDocumentReadDate:
-              DateFormat(Formats.dateYMMddHHm).format(now)
+              DateFormat(Formats.dateYMMddHHms).format(now)
           }
         )
       );
@@ -1994,7 +1994,7 @@ void main() {
           id: userGardenRecord.id,
           body: {
             UserGardenRecordField.doDocumentReadDate:
-              DateFormat(Formats.dateYMMddHHm).format(now)
+              DateFormat(Formats.dateYMMddHHms).format(now)
           }
         )
       ).called(1);

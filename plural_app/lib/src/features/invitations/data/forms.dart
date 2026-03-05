@@ -32,6 +32,7 @@ Future<void> submitCreate(
 
     if (record != null && context.mounted) {
       final snackBar = AppSnackBars.getSnackBar(
+        context,
         SnackBarText.createInvitationSuccess,
         showCloseIcon: false,
         snackbarType: SnackbarType.success

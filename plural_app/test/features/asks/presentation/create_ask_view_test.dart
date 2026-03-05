@@ -131,18 +131,16 @@ void main() {
       );
 
       // Check expected values are found
-      expect(find.text(AskViewText.readDoDocumentStart), findsNothing);
-      expect(find.text(AskViewText.doDocument), findsNothing);
-      expect(find.text(AskViewText.readDoDocumentEnd), findsNothing);
+      expect(find.text(AskViewText.readDoDocument), findsNothing);
+      expect(find.text(AskViewText.goToDoDocument), findsNothing);
 
       // Tap ElevatedButton (to open dialog)
       await tester.tap(find.byType(ElevatedButton));
       await tester.pumpAndSettle();
 
       // Check expected values are found
-      expect(find.text(AskViewText.readDoDocumentStart), findsOneWidget);
-      expect(find.text(AskViewText.doDocument), findsOneWidget);
-      expect(find.text(AskViewText.readDoDocumentEnd), findsOneWidget);
+      expect(find.text(AskViewText.readDoDocument), findsOneWidget);
+      expect(find.text(AskViewText.goToDoDocument), findsOneWidget);
     });
 
     tearDown(() => GetIt.instance.reset());
