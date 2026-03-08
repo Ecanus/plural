@@ -3,5 +3,5 @@ class AppWebOnlyWindowNames {
 }
 
 class Urls {
-  static const bugReport = "https://github.com/Ecanus/plural/issues/new?template=1-bug-report.yaml";
+  static const bugReport = "https://tally.so/r/VLlZkE";
 }
