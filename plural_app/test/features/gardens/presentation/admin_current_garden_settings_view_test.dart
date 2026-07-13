@@ -141,7 +141,62 @@ void main() {
       expect(find.byType(ListView), findsOneWidget);
       expect(find.byType(AppHyperlinkableText), findsOneWidget);
       expect(find.text("Testing the text displays!"), findsOneWidget);
+    });
 
+    testWidgets("AdminExamineDoDocumentDialog", (tester) async {
+      final controller = TextEditingController();
+      controller.text = "this||should||yield||five||cards||";
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (BuildContext context) {
+                return ShowAdminExamineDoDocumentDialogButton(
+                  textEditingController: controller,);
+              }
+            ),
+          ),
+        )
+      );
+
+      expect(find.byType(ListView), findsNothing);
+      expect(find.byType(Card), findsNothing);
+
+      // Tap ShowAdminExamineDoDocumentDialogButton (to open dialog)
+      await tester.tap(find.byType(ShowAdminExamineDoDocumentDialogButton));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(ListView), findsOneWidget);
+      expect(find.byType(Card), findsNWidgets(5));
+    });
+
+    testWidgets("AdminExamineDoDocumentDialogEmpty", (tester) async {
+      final controller = TextEditingController();
+      controller.text = "";
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (BuildContext context) {
+                return ShowAdminExamineDoDocumentDialogButton(
+                  textEditingController: controller,);
+              }
+            ),
+          ),
+        )
+      );
+
+      expect(find.byType(ListView), findsNothing);
+      expect(find.byType(Card), findsNothing);
+
+      // Tap ShowAdminExamineDoDocumentDialogButton (to open dialog)
+      await tester.tap(find.byType(ShowAdminExamineDoDocumentDialogButton));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(ListView), findsOneWidget);
+      expect(find.byType(Card), findsNothing);
     });
   });
 }

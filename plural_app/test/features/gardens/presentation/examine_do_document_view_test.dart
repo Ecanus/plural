@@ -83,5 +83,53 @@ void main() {
     });
 
     tearDown(() => GetIt.instance.reset());
+
+    testWidgets("cards", (tester) async {
+      final garden = GardenFactory(
+        doDocument: "this||yields||four||cards",
+      );
+      final userGardenRecord = AppUserGardenRecordFactory(
+        garden: garden,
+      );
+
+      final appState = AppState.skipSubscribe()
+        ..currentUserGardenRecord = userGardenRecord;
+
+      // GetIt
+      final getIt = GetIt.instance;
+      final mockUserGardenRecordsRepository = MockUserGardenRecordsRepository();
+
+      getIt.registerLazySingleton<AppDialogViewRouter>(() => AppDialogViewRouter());
+      getIt.registerLazySingleton<AppState>(() => appState);
+      getIt.registerLazySingleton<UserGardenRecordsRepository>(
+        () => mockUserGardenRecordsRepository);
+
+
+      // UserGardenRecordsRepository.update()
+      when(
+        () => mockUserGardenRecordsRepository.update(
+          id: userGardenRecord.id,
+          body: any(named: "body") // must use any() because DateTime.now() is called internally
+        )
+      ).thenAnswer(
+        (_) async => (
+          getUserGardenRecordRecordModel(userGardenRecord: userGardenRecord), {})
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: AppDialog(
+              view: ExamineDoDocumentView(userGardenRecord: userGardenRecord,)
+            )
+          ),
+        )
+      );
+
+      // Confirm 5 cards found (4 from DoDocument + 1 from CheckboxListTile)
+      expect(find.byType(Card), findsNWidgets(5));
+    });
+
+    tearDown(() => GetIt.instance.reset());
   });
 }

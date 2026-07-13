@@ -2,6 +2,10 @@ class AppDateValues {
   static const datePickerThreshold = Duration(days: 365);
 }
 
+class AppDelimiters {
+  static const doDocument = "||";
+}
+
 class AppDurations {
   static const ms80 = Duration(milliseconds: 80);
   static const ms120 = Duration(milliseconds: 120);

@@ -137,7 +137,7 @@ class AskViewText {
   static const deadlineDueBy = "due";
   static const deadlinePassed = "Deadline passed";
   static const deleteAsk = "Delete Ask";
-  static const description = "Description";
+  static const description = "Description (optional)";
   static const doDocument = "Do Document";
 
   static const emptyListedAsksView = "No Asks found";

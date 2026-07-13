@@ -7,6 +7,7 @@ import 'package:plural_app/src/common_widgets/app_hyperlinkable_text.dart';
 
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
+import 'package:plural_app/src/constants/app_values.dart';
 
 // Auth
 import 'package:plural_app/src/features/authentication/data/auth_api.dart';
@@ -30,6 +31,7 @@ class ExamineDoDocumentView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final appDialogViewRouter = GetIt.instance<AppDialogViewRouter>();
+    final doDocumentText = GetIt.instance<AppState>().currentGarden!.doDocument;
 
     return Column(
       children: [
@@ -37,18 +39,28 @@ class ExamineDoDocumentView extends StatelessWidget {
           child: ListView(
             padding: const EdgeInsets.all(AppPaddings.p35),
             children: [
-              AppHyperlinkableText(
-                text: GetIt.instance<AppState>().currentGarden!.doDocument,
-                linkStyle: TextStyle(
-                  fontSize: AppFontSizes.s15,
-                  fontWeight: FontWeight.w500,
-                  color: Theme.of(context).primaryColor,
-                ),
-                textStyle: TextStyle(
-                  fontSize: AppFontSizes.s15,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
+                for (String doText in doDocumentText.split(AppDelimiters.doDocument))
+                  doText.trim() == "" ?
+                    SizedBox() :
+                    Card(
+                      elevation: AppElevations.e7,
+                      child: ListTile(
+                        tileColor: Theme.of(context).colorScheme.secondary,
+                        title: AppHyperlinkableText(
+                          text: doText,
+                          textStyle: TextStyle(
+                            color: Theme.of(context).colorScheme.onPrimary,
+                            fontSize: AppFontSizes.s15,
+                            fontWeight: FontWeight.w300,
+                          ),
+                          linkStyle: TextStyle(
+                            color: Theme.of(context).primaryColor,
+                            fontSize: AppFontSizes.s15,
+                            fontWeight: FontWeight.w300,
+                          ),
+                        ),
+                      ),
+                    ),
               gapH60,
               DoDocumentReadCheckboxListTile(userGardenRecord: userGardenRecord)
             ],
