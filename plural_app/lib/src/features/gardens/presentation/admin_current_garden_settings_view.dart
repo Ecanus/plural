@@ -217,17 +217,28 @@ class AdminExamineDoDocumentDialog extends StatelessWidget {
           maxHeight: AppConstraints.c600
         ),
         child: ListView(
+          padding: const EdgeInsets.all(AppPaddings.p35),
           children: [
-            Padding(
-              padding: const EdgeInsets.all(AppPaddings.p35),
-              child: AppHyperlinkableText(
-                text: text,
-                linkStyle: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  color: Theme.of(context).primaryColor,
-                ),
-              ),
-            )
+              for (String doText in text.split(AppDelimiters.doDocument))
+                doText.trim() == "" ?
+                  SizedBox() :
+                  Card(
+                    elevation: AppElevations.e7,
+                    child: ListTile(
+                      tileColor: Theme.of(context).colorScheme.secondary,
+                      title: AppHyperlinkableText(
+                        text: doText.trim(),
+                        textStyle: TextStyle(
+                          color: Theme.of(context).colorScheme.onPrimary,
+                          fontWeight: FontWeight.w300,
+                        ),
+                        linkStyle: TextStyle(
+                          color: Theme.of(context).primaryColor,
+                          fontWeight: FontWeight.w300,
+                        ),
+                      ),
+                    ),
+                  ),
           ],
         ),
       )

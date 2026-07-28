@@ -160,6 +160,8 @@ class AskViewText {
 
   static const notVisibleOnTimeline = "Not visible on timeline";
 
+  static const optionalLabel = "optional";
+
   static const readDoDocument = "Please read and agree to the Do Document before continuing.";
 
   static const selectDateLabel = "Select date";

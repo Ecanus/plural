@@ -149,7 +149,7 @@ class _CreateAskViewState extends State<CreateAskView> {
                       enabled: widget.hasReadDoDocument,
                       fieldName: AskField.description,
                       formFieldType: FormFieldType.blankable,
-                      label: AskViewText.description,
+                      label: "${AskViewText.description} (${AskViewText.optionalLabel})",
                       maxLength: AppMaxLengths.max400,
                       maxLines: null,
                       suffixIcon: Tooltip(
