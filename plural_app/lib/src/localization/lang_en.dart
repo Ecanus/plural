@@ -137,7 +137,7 @@ class AskViewText {
   static const deadlineDueBy = "due";
   static const deadlinePassed = "Deadline passed";
   static const deleteAsk = "Delete Ask";
-  static const description = "Description (optional)";
+  static const description = "Description";
   static const doDocument = "Do Document";
 
   static const emptyListedAsksView = "No Asks found";
@@ -159,6 +159,8 @@ class AskViewText {
   static const markAsSponsored = "Click to mark as sponsored";
 
   static const notVisibleOnTimeline = "Not visible on timeline";
+
+  static const optionalLabel = "optional";
 
   static const readDoDocument = "Please read and agree to the Do Document before continuing.";
 
