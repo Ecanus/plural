@@ -92,12 +92,6 @@ class _EditAskViewState extends State<EditAskView> {
                 key: _formKey,
                 child: Column(
                   children: [
-                    AppDatePickerFormField(
-                      appForm: _appForm,
-                      fieldName: AskField.deadlineDate,
-                      initialValue: widget.ask.deadlineDate,
-                      label: AskViewText.deadlineDate,
-                    ),
                     AppCurrencyPickerFormField(
                       appForm: _appForm,
                       fieldName: AskField.currency,
@@ -164,6 +158,12 @@ class _EditAskViewState extends State<EditAskView> {
                         showDuration: AppDurations.s10,
                         child: AppTooltipIcon(isDark: false),
                       ),
+                    ),
+                    AppDatePickerFormField(
+                      appForm: _appForm,
+                      fieldName: AskField.deadlineDate,
+                      initialValue: widget.ask.deadlineDate,
+                      label: AskViewText.deadlineDate,
                     ),
                     gapH30,
                     Row(

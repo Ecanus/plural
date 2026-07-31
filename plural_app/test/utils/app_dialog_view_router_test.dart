@@ -12,7 +12,6 @@ import 'package:plural_app/src/constants/fields.dart';
 import 'package:plural_app/src/constants/formats.dart';
 
 // Asks
-import 'package:plural_app/src/features/asks/data/asks_repository.dart';
 import 'package:plural_app/src/features/asks/presentation/create_ask_view.dart';
 import 'package:plural_app/src/features/asks/presentation/edit_ask_view.dart';
 import 'package:plural_app/src/features/asks/presentation/examine_ask_view.dart';
@@ -46,7 +45,6 @@ import 'package:plural_app/src/utils/app_state.dart';
 import '../test_factories.dart';
 import '../test_mocks.dart';
 import '../test_record_models.dart';
-import '../test_stubs/asks_api_stubs.dart';
 import '../test_stubs/auth_api_stubs.dart';
 
 void main() {
@@ -104,34 +102,6 @@ void main() {
     });
 
     test("routeToListedAsksView", () async {
-      final user = AppUserFactory();
-      final garden = GardenFactory(); // for getAsksByUserID
-      final userGardenRecord = AppUserGardenRecordFactory(user: user, garden: garden);
-
-      final appState = AppState.skipSubscribe()
-        ..currentUserGardenRecord = userGardenRecord
-        ..currentUser = user;
-
-      final getIt = GetIt.instance;
-      final mockAsksRepository = MockAsksRepository();
-      final mockUsersRepository = MockUsersRepository();
-      getIt.registerLazySingleton<AppState>(() => appState);
-      getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
-      getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
-
-      // Stubs
-      getAsksByUserIDStub(
-        mockAsksRepository: mockAsksRepository,
-        asksSort: "${AskField.deadlineDate},${GenericField.created}",
-        gardenID: garden.id,
-        asksReturnValue: ResultList<RecordModel>(items: [
-          getAskRecordModel(ask: AskFactory(creator: user))
-        ]),
-        mockUsersRepository: mockUsersRepository,
-        userID: user.id,
-        usersReturnValue: getUserRecordModel(user: user),
-      );
-
       final appDialogViewRouter = AppDialogViewRouter();
 
       expect(appDialogViewRouter.viewNotifier.value, isA<SizedBox>());
@@ -142,43 +112,6 @@ void main() {
     tearDown(() => GetIt.instance.reset());
 
     test("routeToSponsoredAsksView", () async {
-      final user = AppUserFactory();
-      final garden = GardenFactory(); // for getAsksByUserID
-      final userGardenRecord = AppUserGardenRecordFactory(user: user, garden: garden);
-
-      final appState = AppState.skipSubscribe()
-        ..currentUserGardenRecord = userGardenRecord
-        ..currentUser = user;
-
-      final getIt = GetIt.instance;
-      final mockAsksRepository = MockAsksRepository();
-      final mockUsersRepository = MockUsersRepository();
-      getIt.registerLazySingleton<AppState>(() => appState);
-      getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
-      getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
-
-      final datetimeNow = DateTime.parse(
-        DateFormat(Formats.dateYMMddHHms).format(DateTime.now())).toLocal();
-      final nowString = DateFormat(Formats.dateYMMddHHms).format(datetimeNow);
-
-      final asksFilter = ""
-        "${AskField.garden} = '${garden.id}' " // mind the trailing space
-        "&& ${AskField.targetMetDate} = null"
-        "&& ${AskField.deadlineDate} > '$nowString'"
-        "&& ${AskField.creator} != '${user.id}'"
-        "&& ${AskField.sponsors} ~ '${user.id}'";
-
-      getAsksByGardenIDStub(
-        mockAsksRepository: mockAsksRepository,
-        asksFilter: asksFilter,
-        asksReturnValue: ResultList<RecordModel>(items: [
-          getAskRecordModel(ask: AskFactory(creator: user))
-        ]),
-        mockUsersRepository: mockUsersRepository,
-        userID: user.id,
-        usersReturnValue: getUserRecordModel(user: user),
-      );
-
       final appDialogViewRouter = AppDialogViewRouter();
 
       expect(appDialogViewRouter.viewNotifier.value, isA<SizedBox>());

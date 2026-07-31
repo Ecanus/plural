@@ -5,6 +5,10 @@ import 'package:mocktail/mocktail.dart';
 import 'package:pocketbase/pocketbase.dart';
 import 'package:provider/provider.dart';
 
+// Common Widgets
+import 'package:plural_app/src/common_widgets/app_future_builder_error.dart';
+import 'package:plural_app/src/common_widgets/app_future_builder_loading.dart';
+
 // Constants
 import 'package:plural_app/src/constants/themes.dart';
 
@@ -97,8 +101,8 @@ void main() {
           )
         ));
 
-      // Check that GardenTimelineLoading is rendered first
-      expect(find.byType(GardenTimelineLoading), findsOneWidget);
+      // Check that AppFutureBuilderLoading is rendered first
+      expect(find.byType(AppFutureBuilderLoading), findsOneWidget);
 
       // Finish animations
       await tester.pumpAndSettle();
@@ -157,8 +161,8 @@ void main() {
           )
         ));
 
-      // Check that GardenTimelineLoading is rendered first
-      expect(find.byType(GardenTimelineLoading), findsOneWidget);
+      // Check that AppFutureBuilderLoading is rendered first
+      expect(find.byType(AppFutureBuilderLoading), findsOneWidget);
       expect(find.byType(GardenTimelineTile), findsNothing);
       expect(find.byType(EmptyTimelineMessage), findsNothing);
 
@@ -166,7 +170,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Check that GardenTimelineList is not rendered. EmptyTimelineMessage is rendered
-      expect(find.byType(GardenTimelineLoading), findsNothing);
+      expect(find.byType(AppFutureBuilderLoading), findsNothing);
       expect(find.byType(GardenTimelineTile), findsNothing);
       expect(find.byType(EmptyTimelineMessage), findsOneWidget);
     });
@@ -192,7 +196,7 @@ void main() {
       getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
       getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
 
-      // AsksRepository.getList()
+      // mockAsksRepository.getList()
       when(
         () => mockAsksRepository.getList(
           filter: any(named: "filter"),
@@ -227,16 +231,16 @@ void main() {
           )
         ));
 
-      // Check that GardenTimelineLoading is rendered first
-      expect(find.byType(GardenTimelineLoading), findsOneWidget);
-      expect(find.byType(GardenTimelineError), findsNothing);
+      // Check that AppFutureBuilderLoading is rendered first
+      expect(find.byType(AppFutureBuilderLoading), findsOneWidget);
+      expect(find.byType(AppFutureBuilderError), findsNothing);
 
       // Finish animations
       await tester.pumpAndSettle();
 
-      // Check that GardenTimelineError is rendered next (because of exception)
-      expect(find.byType(GardenTimelineLoading), findsNothing);
-      expect(find.byType(GardenTimelineError), findsOneWidget);
+      // Check that AppFutureBuilderError is rendered next (because of exception)
+      expect(find.byType(AppFutureBuilderLoading), findsNothing);
+      expect(find.byType(AppFutureBuilderError), findsOneWidget);
     });
 
     tearDown(() => GetIt.instance.reset());

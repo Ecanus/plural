@@ -51,35 +51,15 @@ void main() {
       // GetIt
       final getIt = GetIt.instance;
       final mockAsksRepository = MockAsksRepository();
-      final mockUsersRepository = MockUsersRepository();
       getIt.registerLazySingleton<AppState>(() => appState);
       getIt.registerLazySingleton<AppDialogViewRouter>(() => AppDialogViewRouter());
       getIt.registerLazySingleton<AsksRepository>(() => mockAsksRepository);
-      getIt.registerLazySingleton<UsersRepository>(() => mockUsersRepository);
 
       // AsksRepository.create()
       when(
         () => mockAsksRepository.create(body: appForm.fields)
       ).thenAnswer(
         (_) async => (getAskRecordModel(), {})
-      );
-
-      // AsksRepository.getList()
-      when(
-        () => mockAsksRepository.getList(
-          filter: any(named: "filter"), sort: any(named: "sort")
-        )
-      ).thenAnswer(
-        (_) async => ResultList<RecordModel>(items: [
-          getAskRecordModel(ask: AskFactory(creator: user))]
-        )
-      );
-
-      // UsersRepository.getFirstListItem()
-      users_repository.getFirstListItemStub(
-        mockUsersRepository: mockUsersRepository,
-        userID: user.id,
-        returnValue: getUserRecordModel(user: user)
       );
 
       await tester.pumpWidget(
@@ -117,12 +97,6 @@ void main() {
 
       // Check no method calls before submit; no snackbar
       verifyNever(() => mockAsksRepository.create(body: appForm.fields));
-      verifyNever(() => mockAsksRepository.getList(
-        filter: any(named: "filter"), sort: any(named: "sort"))
-      );
-      verifyNever(() => mockUsersRepository.getFirstListItem(
-        filter: any(named: "filter"))
-      );
       expect(ft.find.byType(SnackBar), ft.findsNothing);
 
       // Tap ElevatedButton (to call submitCreate)
@@ -134,12 +108,6 @@ void main() {
 
       // Check methods were called; check expected values are found
       verify(() => mockAsksRepository.create(body: appForm.fields)).called(1);
-      verify(() => mockAsksRepository.getList(
-        filter: any(named: "filter"), sort: any(named: "sort"))
-      ).called(1);
-      verify(() => mockUsersRepository.getFirstListItem(
-        filter: any(named: "filter"))
-      ).called(1);
       expect(formKey.currentState!.validate(), true);
       expect(ft.find.byType(SnackBar), ft.findsOneWidget);
 
