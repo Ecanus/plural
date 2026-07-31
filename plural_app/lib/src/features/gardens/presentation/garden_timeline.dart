@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+// Common Widgets
+import 'package:plural_app/src/common_widgets/app_future_builder_error.dart';
+import 'package:plural_app/src/common_widgets/app_future_builder_loading.dart';
+
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
 
@@ -39,9 +43,9 @@ class GardenTimeline extends StatelessWidget {
                       return GardenTimelineList(
                         asks: snapshot.data!, isAdminPage: isAdminPage);
                     } else if (snapshot.hasError) {
-                      return GardenTimelineError(error: snapshot.error);
+                      return AppFutureBuilderError(error: snapshot.error);
                     } else {
-                      return GardenTimelineLoading();
+                      return AppFutureBuilderLoading();
                     }
                   }
                 );
@@ -106,37 +110,6 @@ class EmptyTimelineMessage extends StatelessWidget {
             style: Theme.of(context).textTheme.bodyMedium
           ),
         ],
-      ),
-    );
-  }
-}
-
-class GardenTimelineError extends StatelessWidget {
-  const GardenTimelineError({
-    this.error,
-  });
-
-  final Object? error;
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: Center(child: Text("$error")),
-    );
-  }
-}
-
-class GardenTimelineLoading extends StatelessWidget {
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: Center(
-        child: SizedBox(
-          width: AppWidths.w60,
-          height: AppHeights.h60,
-          child: CircularProgressIndicator()
-        ),
       ),
     );
   }

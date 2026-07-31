@@ -98,12 +98,6 @@ class _CreateAskViewState extends State<CreateAskView> {
                 key: _formKey,
                 child: Column(
                   children: [
-                    AppDatePickerFormField(
-                      appForm: _appForm,
-                      enabled: widget.hasReadDoDocument,
-                      fieldName: AskField.deadlineDate,
-                      label: AskViewText.deadlineDate,
-                    ),
                     AppCurrencyPickerFormField(
                       appForm: _appForm,
                       enabled: widget.hasReadDoDocument,
@@ -173,6 +167,12 @@ class _CreateAskViewState extends State<CreateAskView> {
                         showDuration: AppDurations.s10,
                         child: AppTooltipIcon(isDark: false),
                       ),
+                    ),
+                    AppDatePickerFormField(
+                      appForm: _appForm,
+                      enabled: widget.hasReadDoDocument,
+                      fieldName: AskField.deadlineDate,
+                      label: AskViewText.deadlineDate,
                     ),
                     Visibility.maintain( // Hidden form field. Always saves type == monetary for now
                       visible: false,
