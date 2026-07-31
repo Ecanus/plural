@@ -13,10 +13,10 @@ import 'package:plural_app/src/common_widgets/app_future_builder_loading.dart';
 // Constants
 import 'package:plural_app/src/constants/app_sizes.dart';
 import 'package:plural_app/src/constants/formats.dart';
-import 'package:plural_app/src/features/asks/data/asks_api.dart';
-import 'package:plural_app/src/features/asks/domain/ask.dart';
 
 // Asks
+import 'package:plural_app/src/features/asks/data/asks_api.dart';
+import 'package:plural_app/src/features/asks/domain/ask.dart';
 import 'package:plural_app/src/features/asks/presentation/sponsored_ask_tile.dart';
 
 // Localization
@@ -24,7 +24,6 @@ import 'package:plural_app/src/localization/lang_en.dart';
 
 // Utils
 import 'package:plural_app/src/utils/app_dialog_view_router.dart';
-import 'package:plural_app/src/utils/app_state.dart';
 import 'package:plural_app/src/utils/route_to_view_button.dart';
 
 class SponsoredAsksView extends StatefulWidget {
@@ -35,7 +34,6 @@ class SponsoredAsksView extends StatefulWidget {
 class _SponsoredAsksViewState extends State<SponsoredAsksView> {
   late Future<List<Ask>> _asks;
 
-  final appState = GetIt.instance<AppState>();
   final appDialogViewRouter = GetIt.instance<AppDialogViewRouter>();
 
   final datetimeNow = DateTime.parse(
